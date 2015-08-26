@@ -16,6 +16,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".db.GPStrackingProvider"
+            android:authorities="${applicationId}"
+            android:enabled="true"
+            android:permission="android.permission.ACCESS_FINE_LOCATION" >
+            <grant-uri-permission android:pathPrefix="/tracks/" />
+
+            <path-permission
+                android:path="/search_suggest_query"
+                android:readPermission="android.permission.GLOBAL_SEARCH" />
+            <path-permission
+                android:path="/live_folders/tracks"
+                android:readPermission="android.permission.BIND_APPWIDGET" />
+        </provider>
+
     </application>
 
 </manifest>
