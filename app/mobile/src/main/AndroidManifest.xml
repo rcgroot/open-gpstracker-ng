@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.sogeti.android.gpstracker" >
+    package="nl.sogeti.android.gpstracker">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".TrackMapActivity"
-            android:label="@string/app_name" >
+            android:name=".map.TrackMapActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,11 +20,20 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".logger.GPSLoggerService"
+            android:enabled="true"
+            android:permission="android.permission.ACCESS_FINE_LOCATION">
+            <intent-filter android:label="GPS logger">
+                <action android:name="@string/service_action" />
+            </intent-filter>
+        </service>
+
         <provider
             android:name=".db.GPStrackingProvider"
             android:authorities="${applicationId}"
             android:enabled="true"
-            android:permission="android.permission.ACCESS_FINE_LOCATION" >
+            android:permission="android.permission.ACCESS_FINE_LOCATION">
             <grant-uri-permission android:pathPrefix="/tracks/" />
 
             <path-permission

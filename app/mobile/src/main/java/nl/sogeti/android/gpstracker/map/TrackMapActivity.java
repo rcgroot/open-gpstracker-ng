@@ -1,9 +1,11 @@
-package nl.sogeti.android.gpstracker;
+package nl.sogeti.android.gpstracker.map;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import nl.sogeti.android.gpstracker.R;
 
 public class TrackMapActivity extends Activity {
 

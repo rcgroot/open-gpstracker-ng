@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 22
     buildToolsVersion "23.0.0"
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 100
         versionName "2.0"
     }
@@ -21,11 +21,15 @@ android {
             applicationId "nl.sogeti.android.gpstracker"
             resValue "string", "content_authority", applicationId
             buildConfigField "String", "CONTENT_AUTHORITY", '"'+applicationId+'"'
+            resValue "string", "service_action", applicationId + ".service"
+            buildConfigField "String", "SERVICE_ACTION", '"'+applicationId+'.service"'
         }
         development {
             applicationId "nl.sogeti.android.gpstracker.development"
             resValue "string", "content_authority", applicationId
             buildConfigField "String", "CONTENT_AUTHORITY", '"'+applicationId+'"'
+            resValue "string", "service_action", applicationId + ".service"
+            buildConfigField "String", "SERVICE_ACTION", '"'+applicationId+'.service"'
         }
     }
 }

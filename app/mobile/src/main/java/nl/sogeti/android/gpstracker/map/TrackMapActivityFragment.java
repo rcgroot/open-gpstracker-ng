@@ -1,10 +1,12 @@
-package nl.sogeti.android.gpstracker;
+package nl.sogeti.android.gpstracker.map;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import nl.sogeti.android.gpstracker.R;
 
 /**
  * A placeholder fragment containing a simple view.

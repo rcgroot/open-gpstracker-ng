@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="service_name">GPS Tracker</string>
+    <string name="service_gpsdisabled">GPS is disabled, logging is without effect.</string>
+    <string name="service_gpsenabled">GPS is enabled, commencing logging.</string>
+    <string name="service_datadisabled">Network positioning is disabled, logging is without effect.</string>
+    <string name="service_dataenabled">Network positioning is enabled, commencing logging.</string>
+    <string name="service_start">Activating logging service</string>
+    <string name="service_gpsstatus">Logging: %1$s (%2$s with %3$d satellites)</string>
+    <string name="service_networkstatus">Logging: %1$s (%2$s with cell tower and wifi)</string>
+    <string name="service_gpsnostatus">Logging: %1$s (Precision %2$s)</string>
+    <string name="service_connectiondisabled">Network is disabled, network location logging is without effect.</string>
+    <string name="service_gpsproblem">Receiving no location information</string>
+
+    <string-array name="state_choices">
+        <item>Active</item>
+        <item>Paused</item>
+        <item>Stopped</item>
+    </string-array>
+    <string-array name="precision_choices">
+        <item>Custom</item>
+        <item>Fine</item>
+        <item>Normal</item>
+        <item>Coarse</item>
+        <item>Global network</item>
+    </string-array>
+</resources>
