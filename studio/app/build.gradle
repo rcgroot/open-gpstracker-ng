@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+project.archivesBaseName = "opengpstracker"
 
 android {
     compileSdkVersion 22
@@ -8,7 +9,9 @@ android {
         minSdkVersion 21
         targetSdkVersion 22
         versionCode 100
-        versionName "2.0"
+        versionName "2.0-SNAPSHOT"
+        buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
+        buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
     buildTypes {
         release {
@@ -20,17 +23,22 @@ android {
         production {
             applicationId "nl.sogeti.android.gpstracker"
             resValue "string", "content_authority", applicationId
-            buildConfigField "String", "CONTENT_AUTHORITY", '"'+applicationId+'"'
+            buildConfigField "String", "CONTENT_AUTHORITY", '"' + applicationId + '"'
             resValue "string", "service_action", applicationId + ".service"
-            buildConfigField "String", "SERVICE_ACTION", '"'+applicationId+'.service"'
+            buildConfigField "String", "SERVICE_ACTION", '"' + applicationId + '.service"'
         }
         development {
             applicationId "nl.sogeti.android.gpstracker.development"
             resValue "string", "content_authority", applicationId
-            buildConfigField "String", "CONTENT_AUTHORITY", '"'+applicationId+'"'
+            buildConfigField "String", "CONTENT_AUTHORITY", '"' + applicationId + '"'
             resValue "string", "service_action", applicationId + ".service"
-            buildConfigField "String", "SERVICE_ACTION", '"'+applicationId+'.service"'
+            buildConfigField "String", "SERVICE_ACTION", '"' + applicationId + '.service"'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 

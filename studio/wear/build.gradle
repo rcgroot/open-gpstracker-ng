@@ -18,6 +18,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        production {
+            applicationId "nl.sogeti.android.gpstracker"
+        }
+        development {
+            applicationId "nl.sogeti.android.gpstracker.development"
+        }
+    }
+
 }
 
 dependencies {
