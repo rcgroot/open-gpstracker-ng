@@ -1,38 +1,38 @@
 apply plugin: 'com.android.application'
 project.archivesBaseName = "opengpstracker"
 
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def signingProperties = new Properties()
+signingProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
+        applicationId "nl.sogeti.android.gpstracker.v2"
         minSdkVersion 21
-        targetSdkVersion 22
-        versionCode 100
-        versionName "2.0-SNAPSHOT"
+        targetSdkVersion 23
+        versionCode 200
+        versionName "2.0.0-SNAPSHOT"
         buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    signingConfigs {
+        defined {
+            storeFile file(signingProperties["storeFile"])
+            storePassword signingProperties["storePassword"]
+            keyAlias signingProperties["keyAlias"]
+            keyPassword signingProperties["keyPassword"]
         }
     }
-    productFlavors {
-        production {
-            applicationId "nl.sogeti.android.gpstracker"
-            resValue "string", "content_authority", applicationId
-            buildConfigField "String", "CONTENT_AUTHORITY", '"' + applicationId + '"'
-            resValue "string", "service_action", applicationId + ".service"
-            buildConfigField "String", "SERVICE_ACTION", '"' + applicationId + '.service"'
-        }
-        development {
-            applicationId "nl.sogeti.android.gpstracker.development"
-            resValue "string", "content_authority", applicationId
-            buildConfigField "String", "CONTENT_AUTHORITY", '"' + applicationId + '"'
-            resValue "string", "service_action", applicationId + ".service"
-            buildConfigField "String", "SERVICE_ACTION", '"' + applicationId + '.service"'
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.defined
         }
     }
 
@@ -48,7 +48,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':log')
     wearApp project(':wear')
-    compile 'com.google.android.gms:play-services:+'
     testCompile 'junit:junit:4.12'
 }

@@ -6,11 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.R;
+import nl.sogeti.android.gpstracker.v2.R;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class TrackMapActivityFragment extends Fragment {
 
     public TrackMapActivityFragment() {
