@@ -1,24 +1,24 @@
 package nl.sogeti.android.gpstracker.map;
 
 import android.app.Activity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.widget.Toolbar;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import nl.sogeti.android.gpstracker.data.Track;
 import nl.sogeti.android.gpstracker.v2.R;
+import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
 
 public class TrackMapActivity extends Activity {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Track track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track_map);
-        ButterKnife.bind(this);
-        setActionBar(toolbar);
+        ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
+        track = new Track(getString(R.string.app_name));
+        binding.setTrack(track);
+        setActionBar(binding.toolbar);
     }
 }

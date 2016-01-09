@@ -1,28 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <data>
 
-    <fragment
-        android:id="@+id/fragment_map"
-        android:name="nl.sogeti.android.gpstracker.map.TrackMapActivityFragment"
+        <import type="android.widget.Toolbar" />
+
+        <variable
+            name="track"
+            type="nl.sogeti.android.gpstracker.data.Track" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar" />
+        android:orientation="horizontal">
 
-    <fragment
-        android:id="@+id/fragment_control"
-        android:name="nl.sogeti.android.gpstracker.control.ControlFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/fragment_map"
-        android:layout_alignEnd="@+id/fragment_map"
-        tools:layout="@layout/fragment_control" />
-</RelativeLayout>
+        <Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="@{track.name}" />
+
+        <fragment
+            android:id="@+id/fragment_map"
+            android:name="nl.sogeti.android.gpstracker.map.TrackMapActivityFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar" />
+
+        <fragment
+            android:id="@+id/fragment_control"
+            android:name="nl.sogeti.android.gpstracker.control.ControlFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/fragment_map"
+            android:layout_alignEnd="@+id/fragment_map" />
+    </RelativeLayout>
+</layout>
