@@ -49,6 +49,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':log')
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
     wearApp project(':wear')
     testCompile 'junit:junit:4.12'
 }
