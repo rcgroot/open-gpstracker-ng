@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">GPS Tracker</string>
-    <string name="hello_world">hello_world</string>
-    <string name="action_settings">action_settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="permission_explain_need_control">Tracking control needs permission before the controls can be used.</string>
 </resources>

@@ -1,14 +1,42 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="nl.sogeti.android.gpstracker.control.ControlFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_navigation_black_24dp" />
-</LinearLayout>
+    <data>
+
+        <variable
+            name="handler"
+            type="nl.sogeti.android.gpstracker.control.ControlHandler" />
+
+        <variable
+            name="track"
+            type="nl.sogeti.android.gpstracker.data.Track" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:state="@{track.state}"
+        tools:context="nl.sogeti.android.gpstracker.control.ControlFragment">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/widget_control_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:onClick="@{handler.onClickLeft}"
+            android:src="@drawable/ic_navigation_black_24dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/widget_control_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:onClick="@{handler.onClickRight}"
+            android:src="@drawable/ic_navigation_black_24dp" />
+    </LinearLayout>
+</layout>

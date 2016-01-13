@@ -4,7 +4,7 @@
     android:viewportHeight="24.0"
     android:viewportWidth="24.0">
     <path
-        android:name="start"
+        android:name="pause"
         android:fillColor="#FF000000"
-        android:pathData="M12,2L4.5,20.29l0.71,0.71L12,18l6.79,3 0.71,-0.71z" />
+        android:pathData="M6,19h4L10,5L6,5v14zM14,5v14h4L18,5h-4z" />
 </vector>
