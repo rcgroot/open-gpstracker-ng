@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-project.archivesBaseName = "opengpstracker"
+project.archivesBaseName = "opengpstracker-ng"
 
 def keystorePropertiesFile = rootProject.file("keystore.properties");
 def signingProperties = new Properties()
@@ -22,13 +22,9 @@ android {
         buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
-    signingConfigs {
-        defined {
-            storeFile file(signingProperties["storeFile"])
-            storePassword signingProperties["storePassword"]
-            keyAlias signingProperties["keyAlias"]
-            keyPassword signingProperties["keyPassword"]
-        }
+
+    if (rootProject.file("keystore.properties").exists()) {
+        apply from: 'signing.gradle'
     }
 
     buildTypes {
@@ -36,7 +32,6 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.defined
         }
     }
 
