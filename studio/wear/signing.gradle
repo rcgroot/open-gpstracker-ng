@@ -1,0 +1,14 @@
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def signingProperties = new Properties()
+signingProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    signingConfigs {
+        all {
+            storeFile file(signingProperties["storeFile"])
+            storePassword signingProperties["storePassword"]
+            keyAlias signingProperties["keyAlias"]
+            keyPassword signingProperties["keyPassword"]
+        }
+    }
+}

@@ -1,10 +1,9 @@
 apply plugin: 'com.android.application'
 
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-    
+
     defaultConfig {
         applicationId "nl.sogeti.android.gpstracker"
         minSdkVersion 21
@@ -12,6 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    
+    if (rootProject.file("keystore.properties").exists()) {
+        apply from: 'signing.gradle'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
