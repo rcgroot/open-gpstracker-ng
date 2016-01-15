@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
 project.archivesBaseName = "opengpstracker-ng"
 
-def keystorePropertiesFile = rootProject.file("keystore.properties");
-def signingProperties = new Properties()
-signingProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
