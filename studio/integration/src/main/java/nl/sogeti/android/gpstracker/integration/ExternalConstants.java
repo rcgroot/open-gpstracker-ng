@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2015 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -115,6 +115,8 @@ public class ExternalConstants {
      * The precision the service is logging on.
      */
     public static final String EXTRA_LOGGING_PRECISION = "nl.sogeti.android.gpstracker.EXTRA_LOGGING_PRECISION";
+
+    public static final String EXTRA_TRACK_NAME = "nl.sogeti.android.gpstracker.EXTRA_LOGGING_TRACK_NAME";
 
     public static class Commands {
         public static final String COMMAND = "nl.sogeti.android.gpstracker.extra.COMMAND";

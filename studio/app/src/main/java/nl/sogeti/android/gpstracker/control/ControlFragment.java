@@ -166,7 +166,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
 
     @Override
     public void startLogging() {
-        GPSLoggerServiceManager.startGPSLogging(getActivity());
+        GPSLoggerServiceManager.startGPSLogging(getActivity(), "New NG track!");
     }
 
     @Override
