@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "nl.sogeti.android.gpstracker"
+        applicationId "nl.sogeti.android.gpstracker.v2"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
