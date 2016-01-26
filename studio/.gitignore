@@ -7,3 +7,5 @@
 /captures
 
 keystore.properties
+*.iml
+.idea

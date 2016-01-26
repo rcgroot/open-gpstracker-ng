@@ -29,11 +29,9 @@
 package nl.sogeti.android.gpstracker.control;
 
 import android.databinding.BindingAdapter;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 import nl.sogeti.android.gpstracker.data.Track;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -41,6 +39,7 @@ import nl.sogeti.android.gpstracker.v2.R;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_PAUSED;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_STOPPED;
+import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
 
 public class ControlHandler {
 
@@ -53,20 +52,32 @@ public class ControlHandler {
     }
 
     @BindingAdapter({"bind:state"})
-    public static void setState(LinearLayout container, int state) {
+    public static void setState(ViewGroup container, int state) {
         FloatingActionButton left = (FloatingActionButton) container.getChildAt(0);
         FloatingActionButton right = (FloatingActionButton) container.getChildAt(1);
-        if (state == STATE_STOPPED) {
+        if (state == STATE_UNKNOWN) {
             left.setVisibility(View.GONE);
+            right.setVisibility(View.VISIBLE);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
+            right.setEnabled(false);
+        }
+        else if (state == STATE_STOPPED) {
+            left.setVisibility(View.GONE);
+            right.setVisibility(View.VISIBLE);
+            right.setImageResource(R.drawable.ic_navigation_black_24dp);
+            right.setEnabled(true);
         } else if (state == STATE_LOGGING) {
             left.setVisibility(View.VISIBLE);
+            right.setVisibility(View.VISIBLE);
             left.setImageResource(R.drawable.ic_stop_black_24dp);
-            startAnimation(right);
+            right.setImageResource(R.drawable.ic_pause_black_24dp);
+            right.setEnabled(true);
         } else if (state == STATE_PAUSED) {
             left.setVisibility(View.VISIBLE);
+            right.setVisibility(View.VISIBLE);
             left.setImageResource(R.drawable.ic_stop_black_24dp);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
+            right.setEnabled(true);
         }
     }
 
@@ -96,13 +107,5 @@ public class ControlHandler {
         void pauseLogging();
 
         void resumeLogging();
-    }
-
-
-    private static void startAnimation(FloatingActionButton imageView) {
-        Drawable drawable = imageView.getDrawable();
-        if (drawable != null && drawable instanceof Animatable) {
-            ((Animatable) drawable).start();
-        }
     }
 }

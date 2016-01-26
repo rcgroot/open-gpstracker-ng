@@ -32,13 +32,15 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import nl.sogeti.android.gpstracker.v2.BR;
-
+import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
 public class Track extends BaseObservable {
     private String name;
     private int state;
 
     public Track(String name) {
         this.name = name;
+        this.state = STATE_UNKNOWN;
     }
 
     @Bindable
