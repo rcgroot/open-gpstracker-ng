@@ -5,6 +5,7 @@
 .DS_Store
 /build
 /captures
+*.iml 
 
 keystore.properties
 *.iml
