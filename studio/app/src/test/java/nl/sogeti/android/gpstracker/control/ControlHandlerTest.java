@@ -11,14 +11,24 @@ import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_L
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_PAUSED;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_STOPPED;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import nl.sogeti.android.gpstracker.data.Track;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ControlHandlerTest {
 
-    private Track mockTrack;
-    private ControlHandler.Listener mockListener;
+    @Mock
+    Track mockTrack;
+    @Mock
+    ControlHandler.Listener mockListener;
     private ControlHandler sut;
 
     @Before
@@ -37,9 +47,9 @@ public class ControlHandlerTest {
         sut.setState(container, STATE_UNKNOWN);
 
         // Verify
-        Mockito.verify(container.getChildAt(0)).setVisibility(View.GONE);
-        Mockito.verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setEnabled(false);
+        verify(container.getChildAt(0)).setVisibility(View.GONE);
+        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setEnabled(false);
     }
 
     @Test
@@ -51,9 +61,9 @@ public class ControlHandlerTest {
         sut.setState(container, STATE_STOPPED);
 
         // Verify
-        Mockito.verify(container.getChildAt(0)).setVisibility(View.GONE);
-        Mockito.verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setEnabled(true);
+        verify(container.getChildAt(0)).setVisibility(View.GONE);
+        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setEnabled(true);
     }
 
     @Test
@@ -65,9 +75,9 @@ public class ControlHandlerTest {
         sut.setState(container, STATE_PAUSED);
 
         // Verify
-        Mockito.verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setEnabled(true);
+        verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setEnabled(true);
     }
 
     @Test
@@ -79,105 +89,105 @@ public class ControlHandlerTest {
         sut.setState(container, STATE_LOGGING);
 
         // Verify
-        Mockito.verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
-        Mockito.verify(container.getChildAt(1)).setEnabled(true);
+        verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
+        verify(container.getChildAt(1)).setEnabled(true);
     }
 
     @Test
     public void leftClickDuringUnknown() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
+        when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
         sut.onClickLeft(null);
 
         // Verify
-        Mockito.verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockListener);
     }
 
     @Test
     public void leftClickDuringStopped() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_STOPPED);
+        when(mockTrack.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
         sut.onClickLeft(null);
 
         // Verify
-        Mockito.verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockListener);
     }
 
     @Test
     public void leftClickDuringLogging() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_LOGGING);
+        when(mockTrack.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
         sut.onClickLeft(null);
 
         // Verify
-        Mockito.verify(mockListener).stopLogging();
+        verify(mockListener).stopLogging();
     }
 
     @Test
     public void leftClickDuringPaused() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_PAUSED);
+        when(mockTrack.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
         sut.onClickLeft(null);
 
         // Verify
-        Mockito.verify(mockListener).stopLogging();
+        verify(mockListener).stopLogging();
     }
 
     @Test
     public void rightClickDuringUnknown() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
+        when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
         sut.onClickRight(null);
 
         // Verify
-        Mockito.verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockListener);
     }
 
     @Test
     public void rightClickDuringStopped() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_STOPPED);
+        when(mockTrack.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
         sut.onClickRight(null);
 
         // Verify
-        Mockito.verify(mockListener).startLogging();
+        verify(mockListener).startLogging();
     }
 
     @Test
     public void rightClickDuringLogging() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_LOGGING);
+        when(mockTrack.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
         sut.onClickRight(null);
 
         // Verify
-        Mockito.verify(mockListener).pauseLogging();
+        verify(mockListener).pauseLogging();
     }
 
     @Test
     public void rightClickDuringPaused() {
         // Prepare
-        Mockito.when(mockTrack.getState()).thenReturn(STATE_PAUSED);
+        when(mockTrack.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
         sut.onClickRight(null);
 
         // Verify
-        Mockito.verify(mockListener).resumeLogging();
+        verify(mockListener).resumeLogging();
     }
 
     /* Helpers */
@@ -187,8 +197,8 @@ public class ControlHandlerTest {
         ViewGroup container = Mockito.mock(ViewGroup.class);
         FloatingActionButton left = Mockito.mock(FloatingActionButton.class);
         FloatingActionButton right = Mockito.mock(FloatingActionButton.class);
-        Mockito.when(container.getChildAt(0)).thenReturn(left);
-        Mockito.when(container.getChildAt(1)).thenReturn(right);
+        when(container.getChildAt(0)).thenReturn(left);
+        when(container.getChildAt(1)).thenReturn(right);
 
         return container;
     }
