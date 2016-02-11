@@ -26,24 +26,16 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker.map.rendering;
 
-import android.os.Bundle;
+public class Point {
+    public double x, y;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-
-public class TrackMapActivityFragment extends MapFragment implements OnMapReadyCallback {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getMapAsync(this);
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
+    public Point() {
     }
 }

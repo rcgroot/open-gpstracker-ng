@@ -1,3 +1,31 @@
+/*------------------------------------------------------------------------------
+ **     Ident: Sogeti Smart Mobile Solutions
+ **    Author: rene
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ **------------------------------------------------------------------------------
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
+ ** The Netherlands                  |  permission of the copyright holder.
+ *------------------------------------------------------------------------------
+ *
+ *   This file is part of OpenGPSTracker.
+ *
+ *   OpenGPSTracker is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   OpenGPSTracker is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package nl.sogeti.android.gpstracker.control;
 
 import android.support.annotation.NonNull;
@@ -7,6 +35,11 @@ import android.view.ViewGroup;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_PAUSED;
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_STOPPED;
@@ -15,27 +48,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import nl.sogeti.android.gpstracker.data.Track;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ControlHandlerTest {
 
     @Mock
-    Track mockTrack;
+    LoggerViewModel mockLogger;
     @Mock
     ControlHandler.Listener mockListener;
     private ControlHandler sut;
 
     @Before
     public void setup() {
-        mockTrack = Mockito.mock(Track.class);
-        mockListener = Mockito.mock(ControlHandler.Listener.class);
-        sut = new ControlHandler(mockListener, mockTrack);
+        sut = new ControlHandler(mockListener, mockLogger);
     }
 
     @Test
@@ -97,7 +121,7 @@ public class ControlHandlerTest {
     @Test
     public void leftClickDuringUnknown() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
+        when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
         sut.onClickLeft(null);
@@ -109,7 +133,7 @@ public class ControlHandlerTest {
     @Test
     public void leftClickDuringStopped() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_STOPPED);
+        when(mockLogger.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
         sut.onClickLeft(null);
@@ -121,7 +145,7 @@ public class ControlHandlerTest {
     @Test
     public void leftClickDuringLogging() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_LOGGING);
+        when(mockLogger.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
         sut.onClickLeft(null);
@@ -133,7 +157,7 @@ public class ControlHandlerTest {
     @Test
     public void leftClickDuringPaused() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_PAUSED);
+        when(mockLogger.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
         sut.onClickLeft(null);
@@ -145,7 +169,7 @@ public class ControlHandlerTest {
     @Test
     public void rightClickDuringUnknown() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_UNKNOWN);
+        when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
         sut.onClickRight(null);
@@ -157,7 +181,7 @@ public class ControlHandlerTest {
     @Test
     public void rightClickDuringStopped() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_STOPPED);
+        when(mockLogger.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
         sut.onClickRight(null);
@@ -169,7 +193,7 @@ public class ControlHandlerTest {
     @Test
     public void rightClickDuringLogging() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_LOGGING);
+        when(mockLogger.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
         sut.onClickRight(null);
@@ -181,7 +205,7 @@ public class ControlHandlerTest {
     @Test
     public void rightClickDuringPaused() {
         // Prepare
-        when(mockTrack.getState()).thenReturn(STATE_PAUSED);
+        when(mockLogger.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
         sut.onClickRight(null);

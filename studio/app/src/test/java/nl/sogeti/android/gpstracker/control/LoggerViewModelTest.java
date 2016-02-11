@@ -26,40 +26,39 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.data;
+package nl.sogeti.android.gpstracker.control;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import junit.framework.Assert;
 
-import nl.sogeti.android.gpstracker.v2.BR;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
-public class Track extends BaseObservable {
-    private String name;
-    private int state;
 
-    public Track(String name) {
-        this.name = name;
-        this.state = STATE_UNKNOWN;
+@RunWith(MockitoJUnitRunner.class)
+public class LoggerViewModelTest {
+
+    private LoggerViewModel sut;
+
+    @Before
+    public void setup() {
+        sut = new LoggerViewModel();
     }
 
-    @Bindable
-    public String getName() {
-        return name;
+    @Test
+    public void testInit() {
+        // Verify
+        Assert.assertEquals(STATE_UNKNOWN, sut.getState());
     }
 
-    public void setName(String name) {
-        this.name = name;
-        notifyPropertyChanged(BR.name);
-    }
+    @Test
+    public void testState() {
+        // Execute
+        sut.setState(88);
 
-    @Bindable
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-        notifyPropertyChanged(BR.state);
+        // Verify
+        Assert.assertEquals(88, sut.getState());
     }
 }

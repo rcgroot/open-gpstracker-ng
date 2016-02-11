@@ -9,14 +9,14 @@
             type="nl.sogeti.android.gpstracker.control.ControlHandler" />
 
         <variable
-            name="track"
-            type="nl.sogeti.android.gpstracker.data.Track" />
+            name="logger"
+            type="nl.sogeti.android.gpstracker.control.LoggerViewModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:state="@{track.state}"
+        app:state="@{logger.state}"
         tools:context="nl.sogeti.android.gpstracker.control.ControlFragment">
 
         <android.support.design.widget.FloatingActionButton
@@ -27,7 +27,7 @@
             android:layout_margin="16dp"
             android:clickable="true"
             android:onClick="@{handler.onClickLeft}"
-            android:src="@drawable/ic_navigation_black_24dp" />
+            android:src="@drawable/ic_pause_black_24dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/widget_control_right"

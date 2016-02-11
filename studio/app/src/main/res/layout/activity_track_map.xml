@@ -7,10 +7,11 @@
 
         <variable
             name="track"
-            type="nl.sogeti.android.gpstracker.data.Track" />
+            type="nl.sogeti.android.gpstracker.map.TrackViewModel" />
     </data>
 
     <RelativeLayout
+        android:id="@+id/activity_track_map_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -25,7 +26,7 @@
 
         <fragment
             android:id="@+id/fragment_map"
-            android:name="nl.sogeti.android.gpstracker.map.TrackMapActivityFragment"
+            android:name="nl.sogeti.android.gpstracker.map.TrackMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar" />

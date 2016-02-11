@@ -28,28 +28,98 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.content.ContentUris;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
 
-import nl.sogeti.android.gpstracker.control.ControlFragment;
-import nl.sogeti.android.gpstracker.data.Track;
+import nl.sogeti.android.gpstracker.integration.GPStracking;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
 
 public class TrackMapActivity extends AppCompatActivity {
 
-    private Track track;
+    private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
+    private TrackViewModel track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
-        track = new Track(getString(R.string.app_name));
+        if (savedInstanceState == null) {
+            track = new TrackViewModel(this, null, getString(R.string.app_name));
+        } else {
+            track = savedInstanceState.getParcelable(KEY_TRACK_URI);
+        }
         binding.setTrack(track);
         setSupportActionBar(binding.toolbar);
 
-        ((ControlFragment) getFragmentManager().findFragmentById(R.id.fragment_control)).setTrack(track);
+        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
+        mapFragment.setTrack(track);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.add(Menu.NONE, 1, Menu.NONE, "Q/D track select");
+        menu.add(Menu.NONE, 2, Menu.NONE, "Last track");
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        if (id == 1) {
+            showTrackInput();
+        } else if (id == 2) {
+            Cursor tracks = null;
+            try {
+                tracks = getContentResolver().query(GPStracking.Tracks.CONTENT_URI, new String[]{GPStracking.Tracks._ID}, null, null, null);
+                if (tracks.moveToLast()) {
+                    long trackId = tracks.getLong(0);
+                    track.uri.set(ContentUris.withAppendedId(GPStracking.Tracks.CONTENT_URI, trackId));
+                }
+            } finally {
+                if (tracks != null) {
+                    tracks.close();
+                }
+            }
+
+        }
+
+        return true;
+    }
+
+    private void showTrackInput() {
+        final EditText uriField = new EditText(this);
+        uriField.setText("content://nl.sogeti.android.gpstracker/tracks/1");
+        new AlertDialog.Builder(this)
+                .setTitle("Track select")
+                .setMessage("Enter track Uri")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        track.uri.set(Uri.parse(uriField.getText().toString()));
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setView(uriField)
+                .show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_TRACK_URI, track.uri);
     }
 }

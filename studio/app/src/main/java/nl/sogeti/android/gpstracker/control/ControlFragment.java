@@ -45,7 +45,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.data.Track;
 import nl.sogeti.android.gpstracker.integration.ExternalConstants;
 import nl.sogeti.android.gpstracker.integration.GPSLoggerServiceManager;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -57,15 +56,15 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 public class ControlFragment extends Fragment implements ControlHandler.Listener, DialogInterface.OnClickListener {
 
     private static final int REQUEST_TRACKING_CONTROL = 10000001;
-    private Track track;
     private ControlHandler handler;
 
     private FragmentControlBinding binding;
+    private LoggerViewModel logger;
     private GPSLoggerServiceManager serviceManager;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateTrack();
+            updateLogger();
         }
     };
 
@@ -80,6 +79,9 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_control, container, false);
+        binding.setHandler(handler);
+        binding.setLogger(logger);
+
         return binding.getRoot();
     }
 
@@ -99,7 +101,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
         serviceManager.startup(getActivity(), new Runnable() {
             @Override
             public void run() {
-                updateTrack();
+                updateLogger();
             }
         });
         IntentFilter filter = new IntentFilter(ExternalConstants.LOGGING_STATE_CHANGED_ACTION);
@@ -111,17 +113,13 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
         getActivity().getApplicationContext().unregisterReceiver(receiver);
     }
 
-    public void setTrack(Track track) {
-        this.track = track;
-        handler = new ControlHandler(this, track);
-        binding.setHandler(handler);
-        binding.setTrack(track);
-    }
-
-    private void updateTrack() {
-        if (track != null) {
-            track.setState(serviceManager.getLoggingState());
+    private void updateLogger() {
+        if (logger == null) {
+            logger = new LoggerViewModel();
+            handler = new ControlHandler(this, logger);
         }
+
+        logger.setState(serviceManager.getLoggingState());
     }
 
     private void checkTrackingPermission() {

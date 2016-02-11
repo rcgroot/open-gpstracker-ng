@@ -33,7 +33,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.data.Track;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_LOGGING;
@@ -43,12 +42,12 @@ import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_U
 
 public class ControlHandler {
 
+    private final LoggerViewModel logger;
     private Listener listener;
-    private final Track track;
 
-    public ControlHandler(Listener listener, Track track) {
+    public ControlHandler(Listener listener, LoggerViewModel logger) {
         this.listener = listener;
-        this.track = track;
+        this.logger = logger;
     }
 
     @BindingAdapter({"bind:state"})
@@ -60,8 +59,7 @@ public class ControlHandler {
             right.setVisibility(View.VISIBLE);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
             right.setEnabled(false);
-        }
-        else if (state == STATE_STOPPED) {
+        } else if (state == STATE_STOPPED) {
             left.setVisibility(View.GONE);
             right.setVisibility(View.VISIBLE);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
@@ -82,19 +80,19 @@ public class ControlHandler {
     }
 
     public void onClickLeft(View view) {
-        if (track.getState() == STATE_LOGGING) {
+        if (logger.getState() == STATE_LOGGING) {
             listener.stopLogging();
-        } else if (track.getState() == STATE_PAUSED) {
+        } else if (logger.getState() == STATE_PAUSED) {
             listener.stopLogging();
         }
     }
 
     public void onClickRight(View view) {
-        if (track.getState() == STATE_STOPPED) {
+        if (logger.getState() == STATE_STOPPED) {
             listener.startLogging();
-        } else if (track.getState() == STATE_LOGGING) {
+        } else if (logger.getState() == STATE_LOGGING) {
             listener.pauseLogging();
-        } else if (track.getState() == STATE_PAUSED) {
+        } else if (logger.getState() == STATE_PAUSED) {
             listener.resumeLogging();
         }
     }
