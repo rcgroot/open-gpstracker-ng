@@ -32,6 +32,7 @@ import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableParcelable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -57,7 +58,8 @@ public class TrackMapActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             track = new TrackViewModel(this, null, getString(R.string.app_name));
         } else {
-            track = savedInstanceState.getParcelable(KEY_TRACK_URI);
+            Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
+            track = new TrackViewModel(this, uri, "");
         }
         binding.setTrack(track);
         setSupportActionBar(binding.toolbar);
@@ -120,6 +122,6 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri);
+        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
     }
 }

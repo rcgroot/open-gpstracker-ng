@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.databinding.ObservableParcelable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -72,7 +73,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri);
+        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
     }
 
     @Override
