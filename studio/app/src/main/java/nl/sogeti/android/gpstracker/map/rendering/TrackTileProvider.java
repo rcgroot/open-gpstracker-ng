@@ -15,23 +15,27 @@ import nl.sogeti.android.gpstracker.map.TrackViewModel;
 
 public class TrackTileProvider implements TileProvider {
     private static final int TILE_SIZE_DP = 256;
+    public static final int STROKE_WIDTH_DP = 2;
     private final float scaleFactor;
     private final float tileSize;
     private final TrackViewModel track;
     private final Listener listener;
     private final Observable.OnPropertyChangedCallback modelCallback;
+    private final float strokeWidth;
     private PathRenderer pathRenderer;
 
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
-        scaleFactor = context.getResources().getDisplayMetrics().density * 0.6f;
+        float density = context.getResources().getDisplayMetrics().density;
+        scaleFactor = density * 0.6f;
         this.track = track;
         this.listener = listener;
 
         tileSize = TILE_SIZE_DP * scaleFactor;
         modelCallback = new Callback();
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
-        LatLng[] wayPoints = track.waypoints.get();
-        pathRenderer = new PathRenderer(tileSize, wayPoints);
+        LatLng[][] wayPoints = track.waypoints.get();
+        strokeWidth = STROKE_WIDTH_DP * density;
+        pathRenderer = new PathRenderer(tileSize, strokeWidth, wayPoints);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class TrackTileProvider implements TileProvider {
     private class Callback extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
-            pathRenderer = new PathRenderer(tileSize, track.waypoints.get());
+            pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get());
             listener.tilesDidBecomeOutdated(TrackTileProvider.this);
         }
     }

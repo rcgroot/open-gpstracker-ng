@@ -28,10 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.databinding.ObservableParcelable;
@@ -39,14 +36,10 @@ import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-
-import nl.sogeti.android.gpstracker.integration.GPStracking;
-
 public class TrackViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
     public final ObservableField<String> name = new ObservableField<>();
-    public final ObservableField<LatLng[]> waypoints = new ObservableField<>();
+    public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
     private final String defaultName;
     private final Context context;
 
@@ -64,42 +57,9 @@ public class TrackViewModel {
             Uri trackUri = TrackViewModel.this.uri.get();
             if (trackUri == null) {
                 name.set(defaultName);
-                waypoints.set(new LatLng[]{new LatLng(52.3728, 4.8936327), new LatLng(62.9462915, 23.3541427)});
+                waypoints.set(null);
             } else {
-                ArrayList<LatLng> collectedWaypoints = new ArrayList<>();
-                long trackId = ContentUris.parseId(trackUri);
-                //Query Uri on the ContentResolver and update name/waypoints
-                Uri segmentsUri = Uri.withAppendedPath(trackUri, "segments");
-                ContentResolver resolver = context.getContentResolver();
-                Cursor segmentsCursor = null;
-                try {
-                    segmentsCursor = resolver.query(segmentsUri, new String[]{GPStracking.Segments._ID}, null, null, null);
-                    if (segmentsCursor != null && segmentsCursor.moveToFirst()) {
-                        do {
-                            long segmentId = segmentsCursor.getLong(0);
-                            Uri waypointsUri = GPStracking.buildUri(trackId, segmentId);
-                            Cursor waypointsCursor = null;
-                            try {
-                                waypointsCursor = resolver.query(waypointsUri, new String[]{GPStracking.Waypoints.LATITUDE, GPStracking.Waypoints.LONGITUDE}, null, null, null);
-                                if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
-                                    do {
-                                        LatLng latLng = new LatLng(waypointsCursor.getDouble(0), waypointsCursor.getDouble(1));
-                                        collectedWaypoints.add(latLng);
-                                    } while (waypointsCursor.moveToNext());
-                                }
-                            } finally {
-                                if (waypointsCursor != null) {
-                                    waypointsCursor.close();
-                                }
-                            }
-                        } while (segmentsCursor.moveToNext());
-                    }
-                } finally {
-                    if (segmentsCursor != null) {
-                        segmentsCursor.close();
-                    }
-                }
-                waypoints.set(collectedWaypoints.toArray(new LatLng[]{}));
+                TrackTransformer.readTrack(context, trackUri, TrackViewModel.this);
             }
         }
     }

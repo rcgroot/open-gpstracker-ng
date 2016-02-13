@@ -38,18 +38,24 @@ import android.support.annotation.VisibleForTesting;
 import com.google.android.gms.maps.model.LatLng;
 
 public class PathRenderer {
+    private final float strokeWidth;
     private TileProjection projection;
 
-    private Point[] worldPoints;
-    public PathRenderer(float tileSize, LatLng[] wayPoints) {
+    private Point[][] worldPoints;
+
+    public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints) {
+        this.strokeWidth = strokeWidth;
         if (wayPoints == null) {
-            wayPoints = new LatLng[0];
+            wayPoints = new LatLng[0][0];
         }
         projection = new TileProjection(tileSize);
-        worldPoints = new Point[wayPoints.length];
+        worldPoints = new Point[wayPoints.length][];
         for (int i = 0; i < wayPoints.length; i++) {
-            worldPoints[i] = new Point();
-            projection.latLngToWorldCoordinates(wayPoints[i], worldPoints[i]);
+            worldPoints[i] = new Point[wayPoints[i].length];
+            for (int j = 0; j < wayPoints[i].length; j++) {
+                worldPoints[i][j] = new Point();
+                projection.latLngToWorldCoordinates(wayPoints[i][j], worldPoints[i][j]);
+            }
         }
     }
 
@@ -65,20 +71,25 @@ public class PathRenderer {
         // or when points are very close together
         Point previous = new Point();
         Point current = new Point();
-        projection.worldToTileCoordinates(worldPoints[0], previous, x, y, zoom);
-        path.moveTo((float) previous.x, (float) previous.y);
-        for (int i = 1; i < worldPoints.length; i++) {
-            projection.worldToTileCoordinates(worldPoints[i], current, x, y, zoom);
-            if (!completeOffscreen(previous, current) || !toCloseTogether(previous, current)) {
-                path.lineTo((float) current.x, (float) current.y);
-                Point tmp = previous;
-                previous = current;
-                current = tmp;
+        for (int i = 0; i < worldPoints.length; i++) {
+            if (worldPoints[i].length <= 1) {
+                continue;
+            }
+            projection.worldToTileCoordinates(worldPoints[i][0], previous, x, y, zoom);
+            path.moveTo((float) previous.x, (float) previous.y);
+            for (int j = 1; j < worldPoints[i].length; j++) {
+                projection.worldToTileCoordinates(worldPoints[i][j], current, x, y, zoom);
+                if (!completeOffscreen(previous, current) || !toCloseTogether(previous, current)) {
+                    path.lineTo((float) current.x, (float) current.y);
+                    Point tmp = previous;
+                    previous = current;
+                    current = tmp;
+                }
             }
         }
         paint.setColor(Color.GREEN);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(6);
+        paint.setStrokeWidth(this.strokeWidth);
         paint.setAntiAlias(true);
         paint.setPathEffect(new CornerPathEffect(10));
         canvas.drawPath(path, paint);
