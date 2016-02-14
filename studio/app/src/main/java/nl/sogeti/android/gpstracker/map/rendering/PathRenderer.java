@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.map.rendering;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -40,11 +41,14 @@ import com.google.android.gms.maps.model.LatLng;
 public class PathRenderer {
     private final float strokeWidth;
     private TileProjection projection;
-
     private Point[][] worldPoints;
+    private Bitmap startBitmap;
+    private Bitmap endBitmap;
 
-    public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints) {
+    public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
         this.strokeWidth = strokeWidth;
+        this.startBitmap = startBitmap;
+        this.endBitmap = endBitmap;
         if (wayPoints == null) {
             wayPoints = new LatLng[0][0];
         }
@@ -59,23 +63,20 @@ public class PathRenderer {
         }
     }
 
-    @VisibleForTesting
-    TileProjection getProjection() {
-        return projection;
-    }
-
     public void drawPath(Canvas canvas, int x, int y, int zoom) {
-        Paint paint = new Paint();
-        Path path = new Path();
         // Loop through all points, skips parts with both element offscreen
         // or when points are very close together
-        Point previous = new Point();
-        Point current = new Point();
+        Point first = null, last = null, previous = new Point(), current = new Point();
+        Paint paint = new Paint();
+        Path path = new Path();
         for (int i = 0; i < worldPoints.length; i++) {
-            if (worldPoints[i].length <= 1) {
+            if (worldPoints[i].length == 1) {
                 continue;
             }
             projection.worldToTileCoordinates(worldPoints[i][0], previous, x, y, zoom);
+            if (first == null) {
+                first = new Point(previous);
+            }
             path.moveTo((float) previous.x, (float) previous.y);
             for (int j = 1; j < worldPoints[i].length; j++) {
                 projection.worldToTileCoordinates(worldPoints[i][j], current, x, y, zoom);
@@ -86,6 +87,7 @@ public class PathRenderer {
                     current = tmp;
                 }
             }
+            last = new Point(previous);
         }
         paint.setColor(Color.GREEN);
         paint.setStyle(Paint.Style.STROKE);
@@ -94,6 +96,16 @@ public class PathRenderer {
         paint.setPathEffect(new CornerPathEffect(10));
         canvas.drawPath(path, paint);
         path.rewind();
+        drawPin(canvas, paint, startBitmap, first);
+        drawPin(canvas, paint, endBitmap, last);
+    }
+
+    private void drawPin(Canvas canvas, Paint paint, Bitmap bitmap, Point point) {
+        if (startBitmap != null) {
+            float y = ((float) point.y) - bitmap.getHeight();
+            float x = ((float) point.x) - bitmap.getWidth() / 2;
+            canvas.drawBitmap(bitmap, x, y, paint);
+        }
     }
 
     @VisibleForTesting
@@ -104,5 +116,10 @@ public class PathRenderer {
     @VisibleForTesting
     boolean completeOffscreen(Point first, Point seconds) {
         return false;
+    }
+
+    @VisibleForTesting
+    TileProjection getProjection() {
+        return projection;
     }
 }

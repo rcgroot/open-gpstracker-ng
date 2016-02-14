@@ -47,7 +47,7 @@ public class PathRendererTest {
 
     @Before
     public void setup() {
-        sut = new PathRenderer(128, null);
+        sut = new PathRenderer(128, 6, null, null, null);
     }
 
     @Test

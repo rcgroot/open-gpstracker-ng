@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.Observable;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.VectorDrawable;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Tile;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.model.TileProvider;
 import java.io.ByteArrayOutputStream;
 
 import nl.sogeti.android.gpstracker.map.TrackViewModel;
+import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackTileProvider implements TileProvider {
     private static final int TILE_SIZE_DP = 256;
@@ -22,6 +24,8 @@ public class TrackTileProvider implements TileProvider {
     private final Listener listener;
     private final Observable.OnPropertyChangedCallback modelCallback;
     private final float strokeWidth;
+    private final Bitmap endBitmap;
+    private final Bitmap startBitmap;
     private PathRenderer pathRenderer;
 
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
@@ -35,7 +39,21 @@ public class TrackTileProvider implements TileProvider {
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
         LatLng[][] wayPoints = track.waypoints.get();
         strokeWidth = STROKE_WIDTH_DP * density;
-        pathRenderer = new PathRenderer(tileSize, strokeWidth, wayPoints);
+        VectorDrawable startDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_start_24dp);
+        VectorDrawable endDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_end_24dp);
+        startBitmap = renderVectorDrawable(startDrawable);
+        endBitmap = renderVectorDrawable(endDrawable);
+        pathRenderer = new PathRenderer(tileSize, strokeWidth, wayPoints, startBitmap, endBitmap);
+    }
+
+    private Bitmap renderVectorDrawable(VectorDrawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+
+        return bitmap;
     }
 
     @Override
@@ -60,7 +78,7 @@ public class TrackTileProvider implements TileProvider {
     private class Callback extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
-            pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get());
+            pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get(), startBitmap, endBitmap);
             listener.tilesDidBecomeOutdated(TrackTileProvider.this);
         }
     }
