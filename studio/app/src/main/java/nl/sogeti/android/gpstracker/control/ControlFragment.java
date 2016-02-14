@@ -79,8 +79,6 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_control, container, false);
-        binding.setHandler(handler);
-        binding.setLogger(logger);
 
         return binding.getRoot();
     }
@@ -117,6 +115,8 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
         if (logger == null) {
             logger = new LoggerViewModel();
             handler = new ControlHandler(this, logger);
+            binding.setHandler(handler);
+            binding.setLogger(logger);
         }
 
         logger.setState(serviceManager.getLoggingState());
