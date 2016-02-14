@@ -16,11 +16,12 @@ import nl.sogeti.android.gpstracker.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackTileProvider implements TileProvider {
-    private static final int TILE_SIZE_DP = 256;
     public static final int STROKE_WIDTH_DP = 2;
+    private static final int TILE_SIZE_DP = 256;
+    public static final float SPEEDUP_FACTOR = 1f;
     private final float scaleFactor;
     private final float tileSize;
-    private final TrackViewModel track;
+    private TrackViewModel track;
     private final Listener listener;
     private final Observable.OnPropertyChangedCallback modelCallback;
     private final float strokeWidth;
@@ -30,7 +31,7 @@ public class TrackTileProvider implements TileProvider {
 
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
         float density = context.getResources().getDisplayMetrics().density;
-        scaleFactor = density * 0.6f;
+        scaleFactor = density * SPEEDUP_FACTOR;
         this.track = track;
         this.listener = listener;
 
@@ -70,6 +71,15 @@ public class TrackTileProvider implements TileProvider {
         return new Tile((int) tileSize, (int) tileSize, bitmapData);
     }
 
+    public void setTrack(TrackViewModel track) {
+        this.track = track;
+        trackDidChange();
+    }
+
+    private void trackDidChange() {
+        pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get(), startBitmap, endBitmap);
+        listener.tilesDidBecomeOutdated(TrackTileProvider.this);
+    }
 
     public interface Listener {
         void tilesDidBecomeOutdated(TrackTileProvider provider);
@@ -78,8 +88,7 @@ public class TrackTileProvider implements TileProvider {
     private class Callback extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
-            pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get(), startBitmap, endBitmap);
-            listener.tilesDidBecomeOutdated(TrackTileProvider.this);
+            trackDidChange();
         }
     }
 }

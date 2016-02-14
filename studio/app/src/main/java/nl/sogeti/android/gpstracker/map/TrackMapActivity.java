@@ -32,7 +32,6 @@ import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.databinding.ObservableParcelable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -64,8 +63,7 @@ public class TrackMapActivity extends AppCompatActivity {
         binding.setTrack(track);
         setSupportActionBar(binding.toolbar);
 
-        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
-        mapFragment.setTrack(track);
+        setTrackInMap();
     }
 
     @Override
@@ -90,6 +88,7 @@ public class TrackMapActivity extends AppCompatActivity {
                 if (tracks.moveToLast()) {
                     long trackId = tracks.getLong(0);
                     track.uri.set(ContentUris.withAppendedId(GPStracking.Tracks.CONTENT_URI, trackId));
+                    setTrackInMap();
                 }
             } finally {
                 if (tracks != null) {
@@ -100,6 +99,17 @@ public class TrackMapActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
+    }
+
+    private void setTrackInMap() {
+        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
+        mapFragment.setTrack(track);
     }
 
     private void showTrackInput() {
@@ -117,11 +127,5 @@ public class TrackMapActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.cancel, null)
                 .setView(uriField)
                 .show();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
     }
 }

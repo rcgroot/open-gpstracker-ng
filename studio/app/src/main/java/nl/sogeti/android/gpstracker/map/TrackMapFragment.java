@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
-import android.databinding.ObservableParcelable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -45,6 +44,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
     private TrackViewModel track;
     private TileOverlay titleOverLay;
+    private TrackTileProvider tileProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +61,17 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         TileOverlayOptions options = new TileOverlayOptions();
-        options.tileProvider(new TrackTileProvider(getActivity(), track, this));
+        tileProvider = new TrackTileProvider(getActivity(), track, this);
+        options.tileProvider(tileProvider);
         options.fadeIn(true);
         titleOverLay = googleMap.addTileOverlay(options);
     }
 
     public void setTrack(TrackViewModel track) {
         this.track = track;
+        if (tileProvider != null) {
+            tileProvider.setTrack(track);
+        }
     }
 
     @Override

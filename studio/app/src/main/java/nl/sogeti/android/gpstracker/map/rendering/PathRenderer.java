@@ -80,7 +80,7 @@ public class PathRenderer {
             path.moveTo((float) previous.x, (float) previous.y);
             for (int j = 1; j < worldPoints[i].length; j++) {
                 projection.worldToTileCoordinates(worldPoints[i][j], current, x, y, zoom);
-                if (!completeOffscreen(previous, current) || !toCloseTogether(previous, current)) {
+                if (!completeOffscreen(previous, current, canvas) || !toCloseTogether(previous, current)) {
                     path.lineTo((float) current.x, (float) current.y);
                     Point tmp = previous;
                     previous = current;
@@ -108,13 +108,20 @@ public class PathRenderer {
         }
     }
 
-    @VisibleForTesting
-    boolean toCloseTogether(Point first, Point seconds) {
-        return false;
+    private boolean toCloseTogether(Point first, Point second) {
+        return first.squaredDistanceTo(second) < 25.0;
     }
 
-    @VisibleForTesting
-    boolean completeOffscreen(Point first, Point seconds) {
+    private boolean completeOffscreen(Point first, Point second, Canvas canvas) {
+        if (first.y < 0 && second.y < 0)
+            return true;
+        if (first.x < 0 && second.x < 0)
+            return true;
+        if (first.y > canvas.getHeight() && second.y > canvas.getHeight())
+            return true;
+        if (first.x > canvas.getWidth() && second.x > canvas.getWidth())
+            return true;
+
         return false;
     }
 
