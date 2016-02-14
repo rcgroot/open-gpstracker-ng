@@ -124,8 +124,7 @@ public class TrackTransformer {
         }
     }
 
-    private static void close(Cursor trackdwww) {
-    private static void close(Cursor trackdwww) {
+    private static void close(Cursor track) {
         if (track != null) {
             track.close();
         }
