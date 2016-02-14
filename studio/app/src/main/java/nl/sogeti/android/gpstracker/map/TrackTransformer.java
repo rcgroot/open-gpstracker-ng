@@ -48,6 +48,11 @@ public class TrackTransformer {
         final ResultHandler handler = new ResultHandler() {
 
             @Override
+            public void addTrack(String name) {
+                viewModel.name.set(name);
+            }
+
+            @Override
             public void addSegment() {
                 collectedWaypoints.add(new ArrayList<LatLng>());
             }
@@ -79,9 +84,19 @@ public class TrackTransformer {
     }
 
     public static void readTrack(Context context, Uri trackUri, ResultHandler handler) {
+        ContentResolver resolver = context.getContentResolver();
+        Cursor track = null;
+        try {
+            track = resolver.query(trackUri, new String[]{GPStracking.Tracks.NAME}, null, null, null);
+            if (track != null && track.moveToFirst()) {
+                String name = track.getString(0);
+                handler.addTrack(name);
+            }
+        } finally {
+            close(track);
+        }
         long trackId = ContentUris.parseId(trackUri);
         Uri segmentsUri = Uri.withAppendedPath(trackUri, "segments");
-        ContentResolver resolver = context.getContentResolver();
         Cursor segmentsCursor = null;
         try {
             segmentsCursor = resolver.query(segmentsUri, new String[]{GPStracking.Segments._ID}, null, null, null);
@@ -100,21 +115,25 @@ public class TrackTransformer {
                             } while (waypointsCursor.moveToNext());
                         }
                     } finally {
-                        if (waypointsCursor != null) {
-                            waypointsCursor.close();
-                        }
+                        close(waypointsCursor);
                     }
                 } while (segmentsCursor.moveToNext());
             }
         } finally {
-            if (segmentsCursor != null) {
-                segmentsCursor.close();
-            }
+            close(segmentsCursor);
         }
     }
 
+    private static void close(Cursor trackdwww) {
+    private static void close(Cursor trackdwww) {
+        if (track != null) {
+            track.close();
+        }
+    }
 
     interface ResultHandler {
+        void addTrack(String name);
+
         void addSegment();
 
         void addWaypoint(LatLng latLng);
