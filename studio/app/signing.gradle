@@ -9,4 +9,9 @@ android {
             keyPassword env["keyPassword"]
         }
     }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
