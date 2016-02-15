@@ -43,7 +43,7 @@ import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_U
 public class ControlHandler {
 
     private final LoggerViewModel logger;
-    private Listener listener;
+    private final Listener listener;
 
     public ControlHandler(Listener listener, LoggerViewModel logger) {
         this.listener = listener;
@@ -79,6 +79,7 @@ public class ControlHandler {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void onClickLeft(View view) {
         if (logger.getState() == STATE_LOGGING) {
             listener.stopLogging();
@@ -87,6 +88,7 @@ public class ControlHandler {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void onClickRight(View view) {
         if (logger.getState() == STATE_STOPPED) {
             listener.startLogging();

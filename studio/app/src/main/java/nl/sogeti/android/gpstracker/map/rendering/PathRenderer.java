@@ -40,10 +40,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class PathRenderer {
     private final float strokeWidth;
-    private TileProjection projection;
-    private Point[][] worldPoints;
-    private Bitmap startBitmap;
-    private Bitmap endBitmap;
+    private final TileProjection projection;
+    private final Point[][] worldPoints;
+    private final Bitmap startBitmap;
+    private final Bitmap endBitmap;
 
     public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
         this.strokeWidth = strokeWidth;
@@ -69,17 +69,17 @@ public class PathRenderer {
         Point first = null, last = null, previous = new Point(), current = new Point();
         Paint paint = new Paint();
         Path path = new Path();
-        for (int i = 0; i < worldPoints.length; i++) {
-            if (worldPoints[i].length == 1) {
+        for (Point[] worldPoint : worldPoints) {
+            if (worldPoint.length == 1) {
                 continue;
             }
-            projection.worldToTileCoordinates(worldPoints[i][0], previous, x, y, zoom);
+            projection.worldToTileCoordinates(worldPoint[0], previous, x, y, zoom);
             if (first == null) {
                 first = new Point(previous);
             }
             path.moveTo((float) previous.x, (float) previous.y);
-            for (int j = 1; j < worldPoints[i].length; j++) {
-                projection.worldToTileCoordinates(worldPoints[i][j], current, x, y, zoom);
+            for (int j = 1; j < worldPoint.length; j++) {
+                projection.worldToTileCoordinates(worldPoint[j], current, x, y, zoom);
                 if (!completeOffscreen(previous, current, canvas) || !toCloseTogether(previous, current)) {
                     path.lineTo((float) current.x, (float) current.y);
                     Point tmp = previous;
@@ -113,16 +113,18 @@ public class PathRenderer {
     }
 
     private boolean completeOffscreen(Point first, Point second, Canvas canvas) {
-        if (first.y < 0 && second.y < 0)
-            return true;
-        if (first.x < 0 && second.x < 0)
-            return true;
-        if (first.y > canvas.getHeight() && second.y > canvas.getHeight())
-            return true;
-        if (first.x > canvas.getWidth() && second.x > canvas.getWidth())
-            return true;
+        boolean offScreen = false;
+        if (first.y < 0 && second.y < 0) {
+            offScreen = true;
+        } else if (first.x < 0 && second.x < 0) {
+            offScreen = true;
+        } else if (first.y > canvas.getHeight() && second.y > canvas.getHeight()) {
+            offScreen = true;
+        } else if (first.x > canvas.getWidth() && second.x > canvas.getWidth()) {
+            offScreen = true;
+        }
 
-        return false;
+        return offScreen;
     }
 
     @VisibleForTesting

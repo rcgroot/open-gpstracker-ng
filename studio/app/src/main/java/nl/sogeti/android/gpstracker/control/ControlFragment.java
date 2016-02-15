@@ -38,6 +38,7 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -56,12 +57,11 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 public class ControlFragment extends Fragment implements ControlHandler.Listener, DialogInterface.OnClickListener {
 
     private static final int REQUEST_TRACKING_CONTROL = 10000001;
-    private ControlHandler handler;
 
     private FragmentControlBinding binding;
     private LoggerViewModel logger;
     private GPSLoggerServiceManager serviceManager;
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updateLogger();
@@ -114,7 +114,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     private void updateLogger() {
         if (logger == null) {
             logger = new LoggerViewModel();
-            handler = new ControlHandler(this, logger);
+            ControlHandler handler = new ControlHandler(this, logger);
             binding.setHandler(handler);
             binding.setLogger(logger);
         }
@@ -150,7 +150,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TRACKING_CONTROL) {
             for (int i = 0; i < permissions.length; i++) {

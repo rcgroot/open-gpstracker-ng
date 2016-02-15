@@ -31,7 +31,6 @@ package nl.sogeti.android.gpstracker.integration;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.net.Uri.Builder;
-import android.provider.BaseColumns;
 
 /**
  * The GPStracking provider stores all static information about GPStracking.

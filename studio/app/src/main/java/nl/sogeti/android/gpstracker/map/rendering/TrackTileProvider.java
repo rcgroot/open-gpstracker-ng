@@ -19,11 +19,9 @@ public class TrackTileProvider implements TileProvider {
     public static final int STROKE_WIDTH_DP = 2;
     private static final int TILE_SIZE_DP = 256;
     public static final float SPEEDUP_FACTOR = 1f;
-    private final float scaleFactor;
     private final float tileSize;
     private TrackViewModel track;
     private final Listener listener;
-    private final Observable.OnPropertyChangedCallback modelCallback;
     private final float strokeWidth;
     private final Bitmap endBitmap;
     private final Bitmap startBitmap;
@@ -31,12 +29,12 @@ public class TrackTileProvider implements TileProvider {
 
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
         float density = context.getResources().getDisplayMetrics().density;
-        scaleFactor = density * SPEEDUP_FACTOR;
+        float scaleFactor = density * SPEEDUP_FACTOR;
         this.track = track;
         this.listener = listener;
 
         tileSize = TILE_SIZE_DP * scaleFactor;
-        modelCallback = new Callback();
+        Observable.OnPropertyChangedCallback modelCallback = new Callback();
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
         LatLng[][] wayPoints = track.waypoints.get();
         strokeWidth = STROKE_WIDTH_DP * density;

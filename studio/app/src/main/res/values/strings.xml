@@ -2,4 +2,5 @@
     <string name="app_name">GPS Tracker</string>
 
     <string name="permission_explain_need_control">Tracking control needs permission before the controls can be used.</string>
+    <string name="activity_track_map_hint_uri">content://nl.sogeti.android.gpstracker/tracks/1</string>
 </resources>

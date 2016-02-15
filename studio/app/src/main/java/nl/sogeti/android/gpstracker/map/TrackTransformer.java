@@ -70,7 +70,8 @@ public class TrackTransformer {
                 readTrack(context, trackUri, handler);
                 LatLng[][] segmentedWaypoints = new LatLng[collectedWaypoints.size()][];
                 for (int i = 0; i < collectedWaypoints.size(); i++) {
-                    segmentedWaypoints[i] = collectedWaypoints.get(i).toArray(new LatLng[]{});
+                    ArrayList<LatLng> var = collectedWaypoints.get(i);
+                    segmentedWaypoints[i] = var.toArray(new LatLng[var.size()]);
                 }
 
                 return segmentedWaypoints;

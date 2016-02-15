@@ -85,7 +85,7 @@ public class TrackMapActivity extends AppCompatActivity {
             Cursor tracks = null;
             try {
                 tracks = getContentResolver().query(GPStracking.Tracks.CONTENT_URI, new String[]{GPStracking.Tracks._ID}, null, null, null);
-                if (tracks.moveToLast()) {
+                if (tracks != null && tracks.moveToLast()) {
                     long trackId = tracks.getLong(0);
                     track.uri.set(ContentUris.withAppendedId(GPStracking.Tracks.CONTENT_URI, trackId));
                     setTrackInMap();
@@ -114,7 +114,7 @@ public class TrackMapActivity extends AppCompatActivity {
 
     private void showTrackInput() {
         final EditText uriField = new EditText(this);
-        uriField.setText("content://nl.sogeti.android.gpstracker/tracks/1");
+        uriField.setText(R.string.activity_track_map_hint_uri);
         new AlertDialog.Builder(this)
                 .setTitle("Track select")
                 .setMessage("Enter track Uri")

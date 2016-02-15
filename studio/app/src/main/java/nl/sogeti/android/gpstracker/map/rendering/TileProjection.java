@@ -36,8 +36,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 /**
  * Reworked code found on OpenStreetMap Wiki and Stack Overflow
  * <p/>
- * https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
- * https://stackoverflow.com/questions/20382823/google-maps-api-v2-draw-part-of-circle-on-mapfragment
+ *
+ * @see <a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">openstreetmap</a>
+ * @see <a href="https://stackoverflow.com/questions/20382823/google-maps-api-v2-draw-part-of-circle-on-mapfragment">stackoverflow</a>
  */
 public class TileProjection {
 
@@ -62,7 +63,7 @@ public class TileProjection {
      * @return
      * @license Creative Commons Attribution-ShareAlike 2.0 license
      */
-    static double tileTolatitude(int y, int z) {
+    static double tileToLatitude(int y, int z) {
         double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, z);
         return Math.toDegrees(Math.atan(Math.sinh(n)));
     }
@@ -92,8 +93,8 @@ public class TileProjection {
      */
     static LatLngBounds tileBounds(int x, int y, int zoom) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        LatLng northWest = new LatLng(tileTolatitude(y, zoom), tileToLongitude(x, zoom));
-        LatLng southEast = new LatLng(tileTolatitude(y + 1, zoom), tileToLongitude(x + 1, zoom));
+        LatLng northWest = new LatLng(tileToLatitude(y, zoom), tileToLongitude(x, zoom));
+        LatLng southEast = new LatLng(tileToLatitude(y + 1, zoom), tileToLongitude(x + 1, zoom));
         builder.include(northWest).include(southEast);
 
         return builder.build();
@@ -123,8 +124,8 @@ public class TileProjection {
      */
     public void latLngToWorldCoordinates(LatLng latLng, Point worldPoint) {
         worldPoint.x = origin.x + latLng.longitude * pixelsPerLonDegree;
-        double siny = bound(Math.sin(Math.toRadians(latLng.latitude)), -0.9999, 0.9999);
-        worldPoint.y = origin.y + 0.5f * (Math.log((1 + siny) / (1 - siny)) * -pixelsPerLonRadian);
+        double sinY = bound(Math.sin(Math.toRadians(latLng.latitude)), -0.9999, 0.9999);
+        worldPoint.y = origin.y + 0.5f * (Math.log((1 + sinY) / (1 - sinY)) * -pixelsPerLonRadian);
     }
 
     /**

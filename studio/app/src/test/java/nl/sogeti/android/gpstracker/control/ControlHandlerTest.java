@@ -68,7 +68,7 @@ public class ControlHandlerTest {
         ViewGroup container = createButtonViewGroup();
 
         // Execute
-        sut.setState(container, STATE_UNKNOWN);
+        ControlHandler.setState(container, STATE_UNKNOWN);
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.GONE);
@@ -82,7 +82,7 @@ public class ControlHandlerTest {
         ViewGroup container = createButtonViewGroup();
 
         // Execute
-        sut.setState(container, STATE_STOPPED);
+        ControlHandler.setState(container, STATE_STOPPED);
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.GONE);
@@ -96,7 +96,7 @@ public class ControlHandlerTest {
         ViewGroup container = createButtonViewGroup();
 
         // Execute
-        sut.setState(container, STATE_PAUSED);
+        ControlHandler.setState(container, STATE_PAUSED);
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
@@ -110,7 +110,7 @@ public class ControlHandlerTest {
         ViewGroup container = createButtonViewGroup();
 
         // Execute
-        sut.setState(container, STATE_LOGGING);
+        ControlHandler.setState(container, STATE_LOGGING);
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.VISIBLE);

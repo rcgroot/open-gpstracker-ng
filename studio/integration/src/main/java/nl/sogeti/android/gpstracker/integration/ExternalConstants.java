@@ -28,9 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.integration;
 
-/**
- * Created by rene on 15-11-15.
- */
 public class ExternalConstants {
     /**
      * Broadcast intent action indicating that the logger service state has changed. Includes the logging state and
