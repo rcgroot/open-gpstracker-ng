@@ -1,14 +1,17 @@
-def keystorePropertiesFile = rootProject.file("keystore.properties");
-def signingProperties = new Properties()
-signingProperties.load(new FileInputStream(keystorePropertiesFile))
+def env = System.getenv();
 
 android {
     signingConfigs {
-        all {
-            storeFile file(signingProperties["storeFile"])
-            storePassword signingProperties["storePassword"]
-            keyAlias signingProperties["keyAlias"]
-            keyPassword signingProperties["keyPassword"]
+        release {
+            storeFile file(env["storeFile"])
+            storePassword env["storePassword"]
+            keyAlias env["keyAlias"]
+            keyPassword env["keyPassword"]
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
         }
     }
 }

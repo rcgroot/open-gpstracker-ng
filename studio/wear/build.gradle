@@ -12,13 +12,14 @@ android {
         versionName "1.0"
     }
 
-    if (rootProject.file("keystore.properties").exists()) {
+    if (System.getenv().containsKey("storeFile")) {
         apply from: 'signing.gradle'
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
