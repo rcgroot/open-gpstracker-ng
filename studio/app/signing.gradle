@@ -2,7 +2,7 @@ def env = System.getenv();
 
 android {
     signingConfigs {
-        all {
+        release {
             storeFile file(env["storeFile"])
             storePassword env["storePassword"]
             keyAlias env["keyAlias"]
