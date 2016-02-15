@@ -19,7 +19,7 @@ android {
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
 
-    if (rootProject.file("keystore.properties").exists()) {
+    if (System.getenv().containsKey("storeFile")) {
         apply from: 'signing.gradle'
     }
 
