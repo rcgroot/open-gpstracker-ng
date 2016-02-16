@@ -33,7 +33,7 @@ import android.databinding.Bindable;
 
 import nl.sogeti.android.gpstracker.v2.BR;
 
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
 
 public class LoggerViewModel extends BaseObservable {
     private int state;

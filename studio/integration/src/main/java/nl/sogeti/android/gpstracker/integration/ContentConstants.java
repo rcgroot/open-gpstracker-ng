@@ -33,12 +33,12 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 
 /**
- * The GPStracking provider stores all static information about GPStracking.
+ * The GPSTracking provider stores all static information about GPSTracking.
  *
  * @author rene (c) Jan 22, 2009, Sogeti B.V.
  * @version $Id$
  */
-public final class GPStracking {
+public final class ContentConstants {
     /**
      * The authority of this provider: nl.sogeti.android.gpstracker
      */
@@ -46,35 +46,16 @@ public final class GPStracking {
     /**
      * The content:// style Uri for this provider, content://nl.sogeti.android.gpstracker
      */
-    public static final Uri CONTENT_URI = Uri.parse("content://" + GPStracking.AUTHORITY);
-
-    /**
-     * Build a waypoint Uri like:
-     * content://nl.sogeti.android.gpstracker/tracks/2/segments/1/waypoints
-     * using the provided identifiers
-     *
-     * @param trackId
-     * @param segmentId
-     * @return
-     */
-    public static Uri buildUri(long trackId, long segmentId) {
-        Builder builder = Tracks.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, trackId);
-        builder.appendPath(Segments.TABLE);
-        ContentUris.appendId(builder, segmentId);
-        builder.appendPath(Waypoints.TABLE);
-
-        return builder.build();
-    }
+    public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY);
 
     /**
      * Build a waypoint Uri like:
      * content://nl.sogeti.android.gpstracker/tracks/2/segments/1/waypoints/52
      * using the provided identifiers
      *
-     * @param trackId
-     * @param segmentId
-     * @param waypointId
+     * @param trackId identifier denoting the track
+     * @param segmentId identifier denoting the segment
+     * @param waypointId identifier denoting the waypoint
      * @return
      */
     public static Uri buildUri(long trackId, long segmentId, long waypointId) {
@@ -84,6 +65,25 @@ public final class GPStracking {
         ContentUris.appendId(builder, segmentId);
         builder.appendPath(Waypoints.TABLE);
         ContentUris.appendId(builder, waypointId);
+
+        return builder.build();
+    }
+
+    /**
+     * Build a waypoint Uri like:
+     * content://nl.sogeti.android.gpstracker/tracks/2/segments/1/waypoints
+     * using the provided identifiers
+     *
+     * @param trackId identifier denoting the track
+     * @param segmentId identifier denoting the segment
+     * @return
+     */
+    public static Uri buildUri(long trackId, long segmentId) {
+        Builder builder = Tracks.CONTENT_URI.buildUpon();
+        ContentUris.appendId(builder, trackId);
+        builder.appendPath(Segments.TABLE);
+        ContentUris.appendId(builder, segmentId);
+        builder.appendPath(Waypoints.TABLE);
 
         return builder.build();
     }
@@ -107,7 +107,7 @@ public final class GPStracking {
         /**
          * The content:// style URL for this provider, content://nl.sogeti.android.gpstracker/tracks
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + GPStracking.AUTHORITY + "/" + Tracks.TABLE);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Tracks.TABLE);
 
     }
 
@@ -171,7 +171,7 @@ public final class GPStracking {
          * The name of this table
          */
         public static final String TABLE = "media";
-        public static final Uri CONTENT_URI = Uri.parse("content://" + GPStracking.AUTHORITY + "/" + Media.TABLE);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Media.TABLE);
 
     }
 
@@ -196,7 +196,7 @@ public final class GPStracking {
         /**
          * content://nl.sogeti.android.gpstracker/metadata
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + GPStracking.AUTHORITY + "/" + MetaData.TABLE);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + MetaData.TABLE);
     }
 
     /**

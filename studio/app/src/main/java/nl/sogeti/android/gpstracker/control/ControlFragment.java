@@ -36,6 +36,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,8 +47,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.integration.ExternalConstants;
-import nl.sogeti.android.gpstracker.integration.GPSLoggerServiceManager;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 
@@ -60,7 +61,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
 
     private FragmentControlBinding binding;
     private LoggerViewModel logger;
-    private GPSLoggerServiceManager serviceManager;
+    private ServiceManager serviceManager;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -71,7 +72,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serviceManager = new GPSLoggerServiceManager();
+        serviceManager = new ServiceManager();
         connectToService();
     }
 
@@ -102,7 +103,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
                 updateLogger();
             }
         });
-        IntentFilter filter = new IntentFilter(ExternalConstants.LOGGING_STATE_CHANGED_ACTION);
+        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
         getActivity().getApplicationContext().registerReceiver(receiver, filter);
     }
 
@@ -123,18 +124,34 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
     }
 
     private void checkTrackingPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), ExternalConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), ExternalConstants.permission.TRACKING_CONTROL)) {
-                AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        .setMessage(R.string.permission_explain_need_control)
-                        .setPositiveButton(android.R.string.ok, this)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .create();
-                dialog.show();
+        if (ServiceManager.isPackageInstalled(getActivity())) {
+            if (ContextCompat.checkSelfPermission(getActivity(), ServiceConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), ServiceConstants.permission.TRACKING_CONTROL)) {
+                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                            .setMessage(R.string.permission_explain_need_control)
+                            .setPositiveButton(android.R.string.ok, this)
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .create();
+                    dialog.show();
 
-            } else {
-                executePermissionsRequest();
+                } else {
+                    executePermissionsRequest();
+                }
             }
+        }
+        else {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.permission_missing_title)
+                    .setMessage(R.string.permission_missing_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.permission_button_install, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getActivity().getString(R.string.permisson_install_uri)));
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -145,7 +162,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
 
     private void executePermissionsRequest() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{ExternalConstants.permission.TRACKING_CONTROL}, REQUEST_TRACKING_CONTROL);
+            requestPermissions(new String[]{ServiceConstants.permission.TRACKING_CONTROL}, REQUEST_TRACKING_CONTROL);
         }
     }
 
@@ -154,7 +171,7 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_TRACKING_CONTROL) {
             for (int i = 0; i < permissions.length; i++) {
-                if (ExternalConstants.permission.TRACKING_CONTROL.equals(permissions[i])
+                if (ServiceConstants.permission.TRACKING_CONTROL.equals(permissions[i])
                         && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     connectToService();
                 }
@@ -164,21 +181,21 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
 
     @Override
     public void startLogging() {
-        GPSLoggerServiceManager.startGPSLogging(getActivity(), "New NG track!");
+        ServiceManager.startGPSLogging(getActivity(), "New NG track!");
     }
 
     @Override
     public void stopLogging() {
-        GPSLoggerServiceManager.stopGPSLogging(getActivity());
+        ServiceManager.stopGPSLogging(getActivity());
     }
 
     @Override
     public void pauseLogging() {
-        GPSLoggerServiceManager.pauseGPSLogging(getActivity());
+        ServiceManager.pauseGPSLogging(getActivity());
     }
 
     @Override
     public void resumeLogging() {
-        GPSLoggerServiceManager.resumeGPSLogging(getActivity());
+        ServiceManager.resumeGPSLogging(getActivity());
     }
 }

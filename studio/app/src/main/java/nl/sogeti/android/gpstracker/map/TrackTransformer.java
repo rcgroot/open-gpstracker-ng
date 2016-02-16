@@ -39,7 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-import nl.sogeti.android.gpstracker.integration.GPStracking;
+import nl.sogeti.android.gpstracker.integration.ContentConstants;
 
 public class TrackTransformer {
 
@@ -88,7 +88,7 @@ public class TrackTransformer {
         ContentResolver resolver = context.getContentResolver();
         Cursor track = null;
         try {
-            track = resolver.query(trackUri, new String[]{GPStracking.Tracks.NAME}, null, null, null);
+            track = resolver.query(trackUri, new String[]{ContentConstants.Tracks.NAME}, null, null, null);
             if (track != null && track.moveToFirst()) {
                 String name = track.getString(0);
                 handler.addTrack(name);
@@ -100,15 +100,15 @@ public class TrackTransformer {
         Uri segmentsUri = Uri.withAppendedPath(trackUri, "segments");
         Cursor segmentsCursor = null;
         try {
-            segmentsCursor = resolver.query(segmentsUri, new String[]{GPStracking.Segments._ID}, null, null, null);
+            segmentsCursor = resolver.query(segmentsUri, new String[]{ContentConstants.Segments._ID}, null, null, null);
             if (segmentsCursor != null && segmentsCursor.moveToFirst()) {
                 do {
                     long segmentId = segmentsCursor.getLong(0);
                     handler.addSegment();
-                    Uri waypointsUri = GPStracking.buildUri(trackId, segmentId);
+                    Uri waypointsUri = ContentConstants.buildUri(trackId, segmentId);
                     Cursor waypointsCursor = null;
                     try {
-                        waypointsCursor = resolver.query(waypointsUri, new String[]{GPStracking.Waypoints.LATITUDE, GPStracking.Waypoints.LONGITUDE}, null, null, null);
+                        waypointsCursor = resolver.query(waypointsUri, new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE}, null, null, null);
                         if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
                             do {
                                 LatLng latLng = new LatLng(waypointsCursor.getDouble(0), waypointsCursor.getDouble(1));

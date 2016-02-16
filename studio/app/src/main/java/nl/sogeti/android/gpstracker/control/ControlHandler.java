@@ -35,10 +35,10 @@ import android.view.ViewGroup;
 
 import nl.sogeti.android.gpstracker.v2.R;
 
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_LOGGING;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_PAUSED;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_STOPPED;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
 
 public class ControlHandler {
 

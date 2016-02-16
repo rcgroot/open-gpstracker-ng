@@ -28,7 +28,16 @@
  */
 package nl.sogeti.android.gpstracker.integration;
 
-public class ExternalConstants {
+/**
+ * Constants used to communicate with the service
+ */
+public class ServiceConstants {
+
+    /**
+     * Package name of the application which offers the services
+     */
+    public static final String PACKAGE_ID = "nl.sogeti.android.gpstracker";
+
     /**
      * Broadcast intent action indicating that the logger service state has changed. Includes the logging state and
      * its precision.

@@ -40,7 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import nl.sogeti.android.gpstracker.integration.GPStracking;
+import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
@@ -84,10 +84,10 @@ public class TrackMapActivity extends AppCompatActivity {
         } else if (id == 2) {
             Cursor tracks = null;
             try {
-                tracks = getContentResolver().query(GPStracking.Tracks.CONTENT_URI, new String[]{GPStracking.Tracks._ID}, null, null, null);
+                tracks = getContentResolver().query(ContentConstants.Tracks.CONTENT_URI, new String[]{ContentConstants.Tracks._ID}, null, null, null);
                 if (tracks != null && tracks.moveToLast()) {
                     long trackId = tracks.getLong(0);
-                    track.uri.set(ContentUris.withAppendedId(GPStracking.Tracks.CONTENT_URI, trackId));
+                    track.uri.set(ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId));
                     setTrackInMap();
                 }
             } finally {
