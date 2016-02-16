@@ -55,27 +55,46 @@ public class ControlHandler {
         FloatingActionButton left = (FloatingActionButton) container.getChildAt(0);
         FloatingActionButton right = (FloatingActionButton) container.getChildAt(1);
         if (state == STATE_UNKNOWN) {
-            left.setVisibility(View.GONE);
-            right.setVisibility(View.VISIBLE);
+            hideLeftButton(left, right);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
             right.setEnabled(false);
         } else if (state == STATE_STOPPED) {
-            left.setVisibility(View.GONE);
-            right.setVisibility(View.VISIBLE);
+            hideLeftButton(left, right);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
             right.setEnabled(true);
         } else if (state == STATE_LOGGING) {
-            left.setVisibility(View.VISIBLE);
-            right.setVisibility(View.VISIBLE);
+            showLeftButton(left);
             left.setImageResource(R.drawable.ic_stop_black_24dp);
             right.setImageResource(R.drawable.ic_pause_black_24dp);
             right.setEnabled(true);
         } else if (state == STATE_PAUSED) {
-            left.setVisibility(View.VISIBLE);
-            right.setVisibility(View.VISIBLE);
+            showLeftButton(left);
             left.setImageResource(R.drawable.ic_stop_black_24dp);
             right.setImageResource(R.drawable.ic_navigation_black_24dp);
             right.setEnabled(true);
+        }
+    }
+
+    private static void showLeftButton(FloatingActionButton left) {
+        left.setVisibility(View.VISIBLE);
+        left.animate().translationX(0);
+    }
+
+    private static void hideLeftButton(final FloatingActionButton left, FloatingActionButton right) {
+        right.bringToFront();
+        if (left.getVisibility() != View.GONE) {
+            final float distance = right.getX() - left.getX();
+            left.animate().translationX(distance).withEndAction(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            left.setVisibility(View.GONE);
+                        }
+                    }
+            ).start();
+        }
+        else {
+            left.setVisibility(View.GONE);
         }
     }
 
