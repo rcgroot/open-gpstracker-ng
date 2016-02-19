@@ -47,23 +47,18 @@ import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
 public class TrackMapActivity extends AppCompatActivity {
 
-    private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
-    private TrackViewModel track;
+    private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
+    private ActivityTrackMapBinding binding;
+    private TrackViewModel selectedTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
-        if (savedInstanceState == null) {
-            track = new TrackViewModel(this, null, getString(R.string.app_name));
-        } else {
-            Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            track = new TrackViewModel(this, uri, "");
-        }
-        binding.setTrack(track);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
+        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
+        selectedTrack = mapFragment.getTrack();
+        binding.setTrack(selectedTrack);
         setSupportActionBar(binding.toolbar);
-
-        setTrackInMap();
     }
 
     @Override
@@ -87,8 +82,7 @@ public class TrackMapActivity extends AppCompatActivity {
                 tracks = getContentResolver().query(ContentConstants.Tracks.CONTENT_URI, new String[]{ContentConstants.Tracks._ID}, null, null, null);
                 if (tracks != null && tracks.moveToLast()) {
                     long trackId = tracks.getLong(0);
-                    track.uri.set(ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId));
-                    setTrackInMap();
+                    selectedTrack.uri.set(ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId));
                 }
             } finally {
                 if (tracks != null) {
@@ -104,12 +98,7 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
-    }
-
-    private void setTrackInMap() {
-        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
-        mapFragment.setTrack(track);
+        outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.uri.get());
     }
 
     private void showTrackInput() {
@@ -121,7 +110,7 @@ public class TrackMapActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        track.uri.set(Uri.parse(uriField.getText().toString()));
+                        selectedTrack.uri.set(Uri.parse(uriField.getText().toString()));
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)

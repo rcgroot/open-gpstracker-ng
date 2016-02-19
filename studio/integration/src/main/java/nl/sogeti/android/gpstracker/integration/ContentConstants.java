@@ -231,7 +231,7 @@ public final class ContentConstants {
          */
         public static final String LONGITUDE = "longitude";
         /**
-         * The recorded time
+         * The recorded time, the number of milliseconds since Jan. 1, 1970 GMT
          */
         public static final String TIME = "time";
         /**

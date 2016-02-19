@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -28,8 +29,16 @@
             android:id="@+id/fragment_map"
             android:name="nl.sogeti.android.gpstracker.map.TrackMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/toolbar" />
+
+        <fragment
+            android:id="@+id/fragment_recording"
+            android:name="nl.sogeti.android.gpstracker.recording.RecordingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            tools:layout="@layout/fragment_recording" />
 
         <fragment
             android:id="@+id/fragment_control"
@@ -37,6 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/fragment_map"
-            android:layout_alignEnd="@+id/fragment_map" />
+            android:layout_alignEnd="@+id/fragment_map"
+            tools:layout="@layout/fragment_control" />
+
     </RelativeLayout>
 </layout>

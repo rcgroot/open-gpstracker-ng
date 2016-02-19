@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,28 +26,25 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker.recording;
 
 import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableParcelable;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class TrackViewModel {
+import nl.sogeti.android.gpstracker.map.TrackAdaptor;
+
+public class RecordingViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
     public final ObservableField<String> name = new ObservableField<>();
-    public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
-    private final String defaultName;
+    public final ObservableBoolean isRecording = new ObservableBoolean();
+    public final ObservableField<LatLng[]> waypoints = new ObservableField<>();
 
-    public TrackViewModel(Uri uri, String defaultName) {
-        this.defaultName = defaultName;
-        setDefaultName();
+    public RecordingViewModel(Uri uri) {
         this.uri.set(uri);
-    }
-
-    public void setDefaultName() {
-        this.name.set(defaultName);
     }
 }

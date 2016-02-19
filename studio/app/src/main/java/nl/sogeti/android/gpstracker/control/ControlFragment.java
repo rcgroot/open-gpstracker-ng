@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -29,11 +29,8 @@
 package nl.sogeti.android.gpstracker.control;
 
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -55,31 +52,30 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 /**
  * On screen controls for the logging state
  */
-public class ControlFragment extends Fragment implements ControlHandler.Listener, DialogInterface.OnClickListener {
+public class ControlFragment extends Fragment implements DialogInterface.OnClickListener {
 
     private static final int REQUEST_TRACKING_CONTROL = 10000001;
 
     private FragmentControlBinding binding;
-    private LoggerViewModel logger;
-    private ServiceManager serviceManager;
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateLogger();
-        }
-    };
+    private ControlAdaptor controlAdaptor;
+    private LoggerViewModel viewModel;
+    private ControlHandler handler;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serviceManager = new ServiceManager();
-        connectToService();
+        viewModel = new LoggerViewModel();
+        controlAdaptor = new ControlAdaptor(getActivity(), viewModel);
+        handler = new ControlHandler(controlAdaptor, viewModel);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_control, container, false);
+        binding.setLogger(viewModel);
+        binding.setHandler(handler);
 
         return binding.getRoot();
     }
@@ -92,36 +88,10 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
 
     @Override
     public void onDestroy() {
-        disconnectService();
+        controlAdaptor.stop();
         super.onDestroy();
     }
 
-    private void connectToService() {
-        serviceManager.startup(getActivity(), new Runnable() {
-            @Override
-            public void run() {
-                updateLogger();
-            }
-        });
-        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-        getActivity().getApplicationContext().registerReceiver(receiver, filter);
-    }
-
-    private void disconnectService() {
-        serviceManager.shutdown(getActivity());
-        getActivity().getApplicationContext().unregisterReceiver(receiver);
-    }
-
-    private void updateLogger() {
-        if (logger == null) {
-            logger = new LoggerViewModel();
-            ControlHandler handler = new ControlHandler(this, logger);
-            binding.setHandler(handler);
-            binding.setLogger(logger);
-        }
-
-        logger.setState(serviceManager.getLoggingState());
-    }
 
     private void checkTrackingPermission() {
         if (ServiceManager.isPackageInstalled(getActivity())) {
@@ -133,10 +103,12 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
                             .setNegativeButton(android.R.string.cancel, null)
                             .create();
                     dialog.show();
-
                 } else {
                     executePermissionsRequest();
                 }
+            }
+            else {
+                controlAdaptor.start();
             }
         }
         else {
@@ -173,29 +145,9 @@ public class ControlFragment extends Fragment implements ControlHandler.Listener
             for (int i = 0; i < permissions.length; i++) {
                 if (ServiceConstants.permission.TRACKING_CONTROL.equals(permissions[i])
                         && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    connectToService();
+                    controlAdaptor.start();
                 }
             }
         }
-    }
-
-    @Override
-    public void startLogging() {
-        ServiceManager.startGPSLogging(getActivity(), "New NG track!");
-    }
-
-    @Override
-    public void stopLogging() {
-        ServiceManager.stopGPSLogging(getActivity());
-    }
-
-    @Override
-    public void pauseLogging() {
-        ServiceManager.pauseGPSLogging(getActivity());
-    }
-
-    @Override
-    public void resumeLogging() {
-        ServiceManager.resumeGPSLogging(getActivity());
     }
 }

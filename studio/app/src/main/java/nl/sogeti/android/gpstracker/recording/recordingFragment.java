@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,74 +26,66 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker.recording;
 
+import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.v2.R;
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
 
-import nl.sogeti.android.gpstracker.map.rendering.TrackTileProvider;
-
-public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
+public class RecordingFragment extends Fragment {
 
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
-    private TrackViewModel track;
-    private TrackAdaptor trackAdaptor;
-    private TileOverlay titleOverLay;
-    private TrackTileProvider tileProvider;
-
+    private RecordingViewModel recording;
+    private RecordingAdapter recordingAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            track = new TrackViewModel(null, "");
+            recording = new RecordingViewModel( null);
         } else {
             Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            track = new TrackViewModel(uri, "");
+            recording = new RecordingViewModel(uri);
         }
-        trackAdaptor = new TrackAdaptor(track);
-        getMapAsync(this);
+        recordingAdapter = new RecordingAdapter(recording);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
+
+        return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        trackAdaptor.start(getActivity());
+        recordingAdapter.start(getActivity());
     }
 
     @Override
-    public void onDestroy() {
-        trackAdaptor.stop();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        TileOverlayOptions options = new TileOverlayOptions();
-        tileProvider = new TrackTileProvider(getActivity(), track, this);
-        options.tileProvider(tileProvider);
-        options.fadeIn(true);
-        titleOverLay = googleMap.addTileOverlay(options);
+    public void onPause() {
+        recordingAdapter.stop();
+        super.onPause();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
-    }
-
-    @Override
-    public void tilesDidBecomeOutdated(TrackTileProvider provider) {
-        titleOverLay.clearTileCache();
-    }
-
-    public TrackViewModel getTrack() {
-        return track;
+        outState.putParcelable(KEY_TRACK_URI, recording.uri.get());
     }
 }

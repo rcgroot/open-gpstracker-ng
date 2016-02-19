@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,65 +26,46 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 
-public class TrackTransformer {
+public class BaseTrackAdapter {
 
-    public static void readTrack(final Context context, final Uri trackUri, final TrackViewModel viewModel) {
-        final ArrayList<ArrayList<LatLng>> collectedWaypoints = new ArrayList<>();
-        final ResultHandler handler = new ResultHandler() {
+    private Context context;
 
-            @Override
-            public void addTrack(String name) {
-                viewModel.name.set(name);
-            }
-
-            @Override
-            public void addSegment() {
-                collectedWaypoints.add(new ArrayList<LatLng>());
-            }
-
-            @Override
-            public void addWaypoint(LatLng latLng) {
-                collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
-            }
-        };
-
-        new AsyncTask<Void, Void, LatLng[][]>() {
-
-            @Override
-            protected LatLng[][] doInBackground(Void[] params) {
-                readTrack(context, trackUri, handler);
-                LatLng[][] segmentedWaypoints = new LatLng[collectedWaypoints.size()][];
-                for (int i = 0; i < collectedWaypoints.size(); i++) {
-                    ArrayList<LatLng> var = collectedWaypoints.get(i);
-                    segmentedWaypoints[i] = var.toArray(new LatLng[var.size()]);
-                }
-
-                return segmentedWaypoints;
-            }
-
-            @Override
-            protected void onPostExecute(LatLng[][] segmentedWaypoints) {
-                viewModel.waypoints.set(segmentedWaypoints);
-            }
-        }.execute();
+    public Context getContext() {
+        return context;
     }
 
-    public static void readTrack(Context context, Uri trackUri, ResultHandler handler) {
+    public void start(Context context) {
+        this.context = context;
+    }
+
+    public void stop() {
+        context = null;
+    }
+
+    public interface ResultHandler {
+
+        void addTrack(String name);
+
+        void addSegment();
+        String getWaypointSelection();
+
+        String getWaypointSelectionArgs();
+        void addWaypoint(LatLng latLng);
+    }
+
+    public void readTrack(Uri trackUri, ResultHandler handler) {
         ContentResolver resolver = context.getContentResolver();
         Cursor track = null;
         try {
@@ -129,13 +110,5 @@ public class TrackTransformer {
         if (track != null) {
             track.close();
         }
-    }
-
-    interface ResultHandler {
-        void addTrack(String name);
-
-        void addSegment();
-
-        void addWaypoint(LatLng latLng);
     }
 }
