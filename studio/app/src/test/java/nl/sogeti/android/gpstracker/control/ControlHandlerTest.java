@@ -32,18 +32,25 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_LOGGING;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_PAUSED;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_STOPPED;
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -72,7 +79,6 @@ public class ControlHandlerTest {
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.GONE);
-        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
         verify(container.getChildAt(1)).setEnabled(false);
     }
 
@@ -86,7 +92,6 @@ public class ControlHandlerTest {
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.GONE);
-        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
         verify(container.getChildAt(1)).setEnabled(true);
     }
 
@@ -100,7 +105,6 @@ public class ControlHandlerTest {
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
         verify(container.getChildAt(1)).setEnabled(true);
     }
 
@@ -114,7 +118,6 @@ public class ControlHandlerTest {
 
         // Verify
         verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        verify(container.getChildAt(1)).setVisibility(View.VISIBLE);
         verify(container.getChildAt(1)).setEnabled(true);
     }
 
@@ -220,6 +223,17 @@ public class ControlHandlerTest {
     private ViewGroup createButtonViewGroup() {
         ViewGroup container = Mockito.mock(ViewGroup.class);
         FloatingActionButton left = Mockito.mock(FloatingActionButton.class);
+        final ViewPropertyAnimator mockAnimator = mock(ViewPropertyAnimator.class);
+        when(mockAnimator.translationX(anyFloat())).thenReturn(mockAnimator);
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) throws Exception {
+                ((Runnable) invocation.getArguments()[0]).run();
+                return mockAnimator;
+            }
+        }).when(mockAnimator).withEndAction(any(Runnable.class));
+
+
+        when(left.animate()).thenReturn(mockAnimator);
         FloatingActionButton right = Mockito.mock(FloatingActionButton.class);
         when(container.getChildAt(0)).thenReturn(left);
         when(container.getChildAt(1)).thenReturn(right);

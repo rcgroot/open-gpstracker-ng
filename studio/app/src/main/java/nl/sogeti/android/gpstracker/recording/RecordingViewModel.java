@@ -28,15 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.recording;
 
-import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableParcelable;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
-
-import nl.sogeti.android.gpstracker.map.TrackAdaptor;
 
 public class RecordingViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();

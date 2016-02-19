@@ -48,7 +48,7 @@ public class TrackViewModelTest {
 
     @Before
     public void setup() {
-        sut = new TrackViewModel(context, null, "TestCase");
+        sut = new TrackViewModel(null, "TestCase");
     }
 
     @Test

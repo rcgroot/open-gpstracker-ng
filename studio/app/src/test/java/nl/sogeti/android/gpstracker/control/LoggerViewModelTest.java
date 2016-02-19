@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static nl.sogeti.android.gpstracker.integration.ExternalConstants.STATE_UNKNOWN;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoggerViewModelTest {
