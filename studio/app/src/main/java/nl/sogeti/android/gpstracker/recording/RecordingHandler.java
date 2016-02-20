@@ -28,19 +28,25 @@
  */
 package nl.sogeti.android.gpstracker.recording;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableParcelable;
-import android.net.Uri;
+import android.databinding.BindingAdapter;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.google.android.gms.maps.model.LatLng;
+public class RecordingHandler {
 
-public class RecordingViewModel {
-    public final ObservableBoolean isRecording = new ObservableBoolean();
-    public final ObservableField<String> summary = new ObservableField<>();
-    public final ObservableField<String> name = new ObservableField<>();
-
-    RecordingViewModel() {
-        isRecording.set(false);
+    @BindingAdapter({"bind:isRecording"})
+    public static void setRecording(final ViewGroup container, boolean isRecording) {
+        if (isRecording) {
+            container.setVisibility(View.VISIBLE);
+            container.animate().translationY(0).start();
+        }
+        else {
+            container.animate().translationY(-container.getHeight()).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    container.setVisibility(View.GONE);
+                }
+            }).start();
+        }
     }
 }

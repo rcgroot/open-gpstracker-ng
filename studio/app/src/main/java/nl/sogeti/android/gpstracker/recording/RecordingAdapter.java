@@ -29,10 +29,11 @@
 package nl.sogeti.android.gpstracker.recording;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.databinding.Observable;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -40,59 +41,90 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import nl.sogeti.android.gpstracker.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingAdapter extends BaseTrackAdapter {
 
     private final RecordingViewModel viewModel;
-    private UriChangeListener changeListener;
+    private ContentObserver observer = new TrackObserver();
     private BroadcastReceiver receiver = new LoggingStateReceiver();
+    private boolean isReading;
 
     RecordingAdapter(RecordingViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
     public void start(Context context) {
-        super.start(context);
-        changeListener = new UriChangeListener();
-        viewModel.uri.addOnPropertyChangedCallback(changeListener);
+        super.start(context, true);
         IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
         getContext().registerReceiver(receiver, filter);
     }
 
     public void stop() {
-        viewModel.uri.removeOnPropertyChangedCallback(changeListener);
         getContext().unregisterReceiver(receiver);
+        getContext().getContentResolver().unregisterContentObserver(observer);
         super.stop();
     }
 
-    private class UriChangeListener extends Observable.OnPropertyChangedCallback {
-        @Override
-        public void onPropertyChanged(Observable sender, int propertyId) {
-            Uri trackUri = viewModel.uri.get();
-            if (trackUri == null) {
-                viewModel.isRecording.set(false);
-            } else {
-                viewModel.isRecording.set(true);
+    @Override
+    public void didConnectService() {
+        updateRecordingFromService();
+    }
+
+    private void updateRecordingFromService() {
+        int loggingState = getServiceManager().getLoggingState();
+        long trackId = getServiceManager().getTrackId();
+        Uri trackUri = null;
+        if (trackId != -1) {
+            trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId);
+        }
+        updateRecording(loggingState, trackUri);
+    }
+
+    private void updateRecordingFormIntent(Intent intent) {
+        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
+        Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
+        updateRecording(loggingState, trackUri);
+    }
+
+    private void updateRecording(int loggingState, Uri trackUri) {
+        Boolean isRecording = loggingState == ServiceConstants.STATE_LOGGING;
+        viewModel.isRecording.set(isRecording);
+        if (trackUri != null) {
+            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+            if (!isReading) {
                 readTrack(trackUri, viewModel);
             }
         }
     }
-
     private class LoggingStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //TODO update viewmodel
+            updateRecordingFormIntent(intent);
         }
     }
 
-    public  void readTrack( final Uri trackUri, final RecordingViewModel recordingViewModel) {
+    private class TrackObserver extends ContentObserver {
+        public TrackObserver() {
+            super(null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (!isReading) {
+                updateRecordingFromService();
+            }
+        }
+    }
+
+    public void readTrack(final Uri trackUri, final RecordingViewModel recordingViewModel) {
         final ArrayList<LatLng> collectedWaypoints = new ArrayList<>();
         final ResultHandler handler = new ResultHandler() {
 
-            public static final long TEN_MINUTES_IN_MS = 10L * 60L * 1000L;
+            public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
             @Override
             public void addTrack(String name) {
@@ -105,13 +137,13 @@ public class RecordingAdapter extends BaseTrackAdapter {
 
             @Override
             public String getWaypointSelection() {
-                return ContentConstants.WaypointsColumns.TIME+" > ?";
+                return ContentConstants.WaypointsColumns.TIME + " > ?";
             }
 
             @Override
-            public String getWaypointSelectionArgs() {
+            public String[] getWaypointSelectionArgs() {
 
-                return Long.toString(System.currentTimeMillis() - TEN_MINUTES_IN_MS);
+                return new String[]{Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS)};
             }
 
             @Override
@@ -121,6 +153,10 @@ public class RecordingAdapter extends BaseTrackAdapter {
         };
 
         new AsyncTask<Void, Void, LatLng[]>() {
+            @Override
+            protected void onPreExecute() {
+                isReading = true;
+            }
 
             @Override
             protected LatLng[] doInBackground(Void[] params) {
@@ -132,7 +168,8 @@ public class RecordingAdapter extends BaseTrackAdapter {
 
             @Override
             protected void onPostExecute(LatLng[] segmentedWaypoints) {
-                recordingViewModel.waypoints.set(segmentedWaypoints);
+                recordingViewModel.summary.set(getContext().getString(R.string.fragment_recording_summary, segmentedWaypoints.length));
+                isReading = false;
             }
         }.execute();
     }

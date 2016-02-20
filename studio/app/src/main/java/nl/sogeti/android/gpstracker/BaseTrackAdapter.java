@@ -28,30 +28,67 @@
  */
 package nl.sogeti.android.gpstracker;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
 public class BaseTrackAdapter {
 
     private Context context;
+    private ServiceManager serviceManager;
+    private final BroadcastReceiver receiver = new LoggerStateReceiver();
+
+    public BaseTrackAdapter() {
+        serviceManager = new ServiceManager();
+    }
+
+    public void start(Context context, boolean withService) {
+        this.context = context;
+        if (withService) {
+            serviceManager.startup(context, new Runnable() {
+                @Override
+                public void run() {
+                    didConnectService();
+                }
+            });
+            IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
+            context.registerReceiver(receiver, filter);
+        }
+    }
+
+    public void stop() {
+        serviceManager.shutdown(getContext());
+        context.unregisterReceiver(receiver);
+        context = null;
+    }
 
     public Context getContext() {
         return context;
     }
 
-    public void start(Context context) {
-        this.context = context;
+    public ServiceManager getServiceManager() {
+        return serviceManager;
     }
 
-    public void stop() {
-        context = null;
+    public void didConnectService() {
+    }
+
+    private class LoggerStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            didConnectService();
+        }
     }
 
     public interface ResultHandler {
@@ -59,9 +96,11 @@ public class BaseTrackAdapter {
         void addTrack(String name);
 
         void addSegment();
+
         String getWaypointSelection();
 
-        String getWaypointSelectionArgs();
+        String[] getWaypointSelectionArgs();
+
         void addWaypoint(LatLng latLng);
     }
 
@@ -89,7 +128,11 @@ public class BaseTrackAdapter {
                     Uri waypointsUri = ContentConstants.buildUri(trackId, segmentId);
                     Cursor waypointsCursor = null;
                     try {
-                        waypointsCursor = resolver.query(waypointsUri, new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE}, null, null, null);
+                        waypointsCursor = resolver.query(waypointsUri,
+                                new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE},
+                                handler.getWaypointSelection(),
+                                handler.getWaypointSelectionArgs(),
+                                null);
                         if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
                             do {
                                 LatLng latLng = new LatLng(waypointsCursor.getDouble(0), waypointsCursor.getDouble(1));

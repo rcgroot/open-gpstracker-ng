@@ -54,12 +54,7 @@ public class RecordingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            recording = new RecordingViewModel( null);
-        } else {
-            Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            recording = new RecordingViewModel(uri);
-        }
+        recording = new RecordingViewModel();
         recordingAdapter = new RecordingAdapter(recording);
     }
 
@@ -67,6 +62,7 @@ public class RecordingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
+        binding.setTrack(recording);
 
         return binding.getRoot();
     }
@@ -81,11 +77,5 @@ public class RecordingFragment extends Fragment {
     public void onPause() {
         recordingAdapter.stop();
         super.onPause();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, recording.uri.get());
     }
 }

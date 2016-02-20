@@ -28,79 +28,46 @@
  */
 package nl.sogeti.android.gpstracker.control;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public class ControlAdaptor implements ControlHandler.Listener{
+public class ControlAdaptor extends BaseTrackAdapter implements ControlHandler.Listener {
     private final LoggerViewModel viewModel;
-    private Context context;
-    private ServiceManager serviceManager;
-    private final BroadcastReceiver receiver = new LoggerStateReceiver();
 
-    public ControlAdaptor(Context context, LoggerViewModel viewModel) {
-        this.context = context;
+    public ControlAdaptor(LoggerViewModel viewModel) {
         this.viewModel = viewModel;
-        serviceManager = new ServiceManager();
     }
 
-    public void start() {
-        connectToService();
-        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-        context.registerReceiver(receiver, filter);
+    public void start(Context context) {
+        super.start(context, true);
     }
 
-    public void stop() {
-        disconnectService();
-        context.unregisterReceiver(receiver);
-        context = null;
-    }
-
-    private void connectToService() {
-        serviceManager.startup(context, new Runnable() {
-            @Override
-            public void run() {
-                updateLogger();
-            }
-        });
-    }
-
-    private void disconnectService() {
-        serviceManager.shutdown(context);
-    }
-
-    private void updateLogger() {
-        viewModel.setState(serviceManager.getLoggingState());
+    @Override
+    public void didConnectService() {
+        viewModel.setState(getServiceManager().getLoggingState());
     }
 
     @Override
     public void startLogging() {
-        ServiceManager.startGPSLogging(context, "New NG track!");
+        ServiceManager.startGPSLogging(getContext(), "New NG track!");
     }
 
     @Override
     public void stopLogging() {
-        ServiceManager.stopGPSLogging(context);
+        ServiceManager.stopGPSLogging(getContext());
     }
 
     @Override
     public void pauseLogging() {
-        ServiceManager.pauseGPSLogging(context);
+        ServiceManager.pauseGPSLogging(getContext());
     }
 
     @Override
     public void resumeLogging() {
-        ServiceManager.resumeGPSLogging(context);
+        ServiceManager.resumeGPSLogging(getContext());
     }
 
-    private class LoggerStateReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateLogger();
-        }
-    }
+
 }

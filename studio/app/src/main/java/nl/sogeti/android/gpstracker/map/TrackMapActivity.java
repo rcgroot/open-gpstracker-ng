@@ -59,6 +59,7 @@ public class TrackMapActivity extends AppCompatActivity {
         selectedTrack = mapFragment.getTrack();
         binding.setTrack(selectedTrack);
         setSupportActionBar(binding.toolbar);
+        binding.toolbar.bringToFront();
     }
 
     @Override

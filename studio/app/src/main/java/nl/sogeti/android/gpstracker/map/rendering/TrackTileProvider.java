@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 
 import nl.sogeti.android.gpstracker.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
+import nl.sogeti.android.log.Log;
 
 public class TrackTileProvider implements TileProvider {
     public static final int STROKE_WIDTH_DP = 2;
@@ -58,18 +59,20 @@ public class TrackTileProvider implements TileProvider {
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
         float density = context.getResources().getDisplayMetrics().density;
         float scaleFactor = density * SPEEDUP_FACTOR;
+        this.tileSize = TILE_SIZE_DP * scaleFactor;
+        this.strokeWidth = STROKE_WIDTH_DP * density;
         this.track = track;
         this.listener = listener;
 
-        tileSize = TILE_SIZE_DP * scaleFactor;
         Observable.OnPropertyChangedCallback modelCallback = new Callback();
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
         LatLng[][] wayPoints = track.waypoints.get();
-        strokeWidth = STROKE_WIDTH_DP * density;
+
         VectorDrawable startDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_start_24dp);
         VectorDrawable endDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_end_24dp);
         startBitmap = renderVectorDrawable(startDrawable);
         endBitmap = renderVectorDrawable(endDrawable);
+
         pathRenderer = new PathRenderer(tileSize, strokeWidth, wayPoints, startBitmap, endBitmap);
     }
 
@@ -85,6 +88,7 @@ public class TrackTileProvider implements TileProvider {
 
     @Override
     public Tile getTile(int x, int y, int zoom) {
+        Log.d(this, "public Tile getTile(int "+x+", int "+y+", int "+zoom+")");
         Bitmap bitmap = Bitmap.createBitmap((int) tileSize,
                 (int) tileSize, android.graphics.Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

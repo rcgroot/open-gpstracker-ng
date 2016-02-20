@@ -60,13 +60,15 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
     private ControlAdaptor controlAdaptor;
     private LoggerViewModel viewModel;
     private ControlHandler handler;
+    private AlertDialog installDialog;
+    private AlertDialog permissionDialog;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new LoggerViewModel();
-        controlAdaptor = new ControlAdaptor(getActivity(), viewModel);
+        controlAdaptor = new ControlAdaptor(viewModel);
         handler = new ControlHandler(controlAdaptor, viewModel);
     }
 
@@ -87,6 +89,21 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
     }
 
     @Override
+    public void onPause() {
+        removePermissionDialogs();
+        super.onPause();
+    }
+
+    private void removePermissionDialogs() {
+        if (installDialog != null) {
+            installDialog.dismiss();
+        }
+        if (permissionDialog != null) {
+            permissionDialog.dismiss();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         controlAdaptor.stop();
         super.onDestroy();
@@ -97,22 +114,21 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
         if (ServiceManager.isPackageInstalled(getActivity())) {
             if (ContextCompat.checkSelfPermission(getActivity(), ServiceConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), ServiceConstants.permission.TRACKING_CONTROL)) {
-                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    permissionDialog = new AlertDialog.Builder(getActivity())
                             .setMessage(R.string.permission_explain_need_control)
                             .setPositiveButton(android.R.string.ok, this)
                             .setNegativeButton(android.R.string.cancel, null)
-                            .create();
-                    dialog.show();
+                            .show();
                 } else {
                     executePermissionsRequest();
                 }
             }
             else {
-                controlAdaptor.start();
+                controlAdaptor.start(getActivity());
             }
         }
         else {
-            new AlertDialog.Builder(getActivity())
+            installDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.permission_missing_title)
                     .setMessage(R.string.permission_missing_message)
                     .setNegativeButton(android.R.string.cancel, null)
@@ -145,7 +161,7 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
             for (int i = 0; i < permissions.length; i++) {
                 if (ServiceConstants.permission.TRACKING_CONTROL.equals(permissions[i])
                         && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    controlAdaptor.start();
+                    controlAdaptor.start(getActivity());
                 }
             }
         }

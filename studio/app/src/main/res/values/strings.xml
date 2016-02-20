@@ -7,4 +7,5 @@
     <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
     <string name="permission_button_install">Install</string>
     <string name="permisson_install_uri">https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker</string>
+    <string name="fragment_recording_summary">Recording: %d waypoints in last 5 minutes</string>
 </resources>

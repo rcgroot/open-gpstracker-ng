@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -48,6 +48,7 @@
             android:layout_alignBottom="@id/fragment_map"
             android:layout_alignEnd="@+id/fragment_map"
             tools:layout="@layout/fragment_control" />
+
 
     </RelativeLayout>
 </layout>

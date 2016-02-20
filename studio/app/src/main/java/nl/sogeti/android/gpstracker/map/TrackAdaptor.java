@@ -39,19 +39,22 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.log.Log;
 
 public class TrackAdaptor extends BaseTrackAdapter {
 
     private TrackViewModel viewModel;
     private ContentObserver observer = new TrackObserver();
     private TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
+    private boolean isReading;
 
     public TrackAdaptor(TrackViewModel track) {
         this.viewModel = track;
     }
 
     public void start(Context context) {
-        super.start(context);
+        super.start(context, false);
+        isReading = false;
         readAndWatchUri();
         viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
     }
@@ -69,7 +72,9 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            super.onChange(selfChange, uri);
+            if (!isReading) {
+                readTrack(viewModel.uri.get(), viewModel);
+            }
         }
     }
 
@@ -90,7 +95,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
     private void readAndWatchUri() {
         Uri trackUri = viewModel.uri.get();
-        if (trackUri!=null) {
+        if (trackUri != null) {
             readTrack(trackUri, viewModel);
             getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
         }
@@ -116,7 +121,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
             }
 
             @Override
-            public String getWaypointSelectionArgs() {
+            public String[] getWaypointSelectionArgs() {
                 return null;
             }
 
@@ -127,6 +132,11 @@ public class TrackAdaptor extends BaseTrackAdapter {
         };
 
         new AsyncTask<Void, Void, LatLng[][]>() {
+
+            @Override
+            protected void onPreExecute() {
+                isReading = true;
+            }
 
             @Override
             protected LatLng[][] doInBackground(Void[] params) {
@@ -143,6 +153,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
             @Override
             protected void onPostExecute(LatLng[][] segmentedWaypoints) {
                 viewModel.waypoints.set(segmentedWaypoints);
+                isReading = false;
             }
         }.execute();
     }
