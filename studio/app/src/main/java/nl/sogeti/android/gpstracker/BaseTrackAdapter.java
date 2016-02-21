@@ -46,12 +46,18 @@ import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
 public class BaseTrackAdapter {
 
+    private final BroadcastReceiver receiver = new LoggerStateReceiver();
     private Context context;
     private ServiceManager serviceManager;
-    private final BroadcastReceiver receiver = new LoggerStateReceiver();
 
     public BaseTrackAdapter() {
         serviceManager = new ServiceManager();
+    }
+
+    private static void close(Cursor track) {
+        if (track != null) {
+            track.close();
+        }
     }
 
     public void start(Context context, boolean withService) {
@@ -83,24 +89,6 @@ public class BaseTrackAdapter {
     }
 
     public void didConnectService() {
-    }
-
-    private class LoggerStateReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            didConnectService();
-        }
-    }
-
-    public interface ResultHandler {
-
-        void addTrack(String name);
-
-        void addSegment();
-
-        Pair<String, String[]> getWaypointSelection();
-
-        void addWaypoint(LatLng latLng, long millisecondsTime);
     }
 
     public void readTrack(Uri trackUri, ResultHandler handler) {
@@ -152,9 +140,21 @@ public class BaseTrackAdapter {
         }
     }
 
-    private static void close(Cursor track) {
-        if (track != null) {
-            track.close();
+    public interface ResultHandler {
+
+        void addTrack(String name);
+
+        void addSegment();
+
+        Pair<String, String[]> getWaypointSelection();
+
+        void addWaypoint(LatLng latLng, long millisecondsTime);
+    }
+
+    private class LoggerStateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            didConnectService();
         }
     }
 }

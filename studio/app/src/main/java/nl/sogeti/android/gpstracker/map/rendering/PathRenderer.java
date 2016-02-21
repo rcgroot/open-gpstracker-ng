@@ -82,10 +82,10 @@ public class PathRenderer {
                 projection.worldToTileCoordinates(worldPoint[j], current, x, y, zoom);
 //                if (!completeOffscreen(previous, current, canvas) || !toCloseTogether(previous, current)) {
 
-                    path.lineTo((float) current.x, (float) current.y);
-                    Point tmp = previous;
-                    previous = current;
-                    current = tmp;
+                path.lineTo((float) current.x, (float) current.y);
+                Point tmp = previous;
+                previous = current;
+                current = tmp;
 //                }
             }
             last = new Point(previous);

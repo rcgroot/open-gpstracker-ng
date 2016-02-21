@@ -39,8 +39,7 @@ public class RecordingHandler {
         if (isRecording) {
             container.setVisibility(View.VISIBLE);
             container.animate().translationY(0).start();
-        }
-        else {
+        } else {
             container.animate().translationY(-container.getHeight()).withEndAction(new Runnable() {
                 @Override
                 public void run() {

@@ -122,12 +122,10 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
                 } else {
                     executePermissionsRequest();
                 }
-            }
-            else {
+            } else {
                 controlAdaptor.start(getActivity());
             }
-        }
-        else {
+        } else {
             installDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.permission_missing_title)
                     .setMessage(R.string.permission_missing_message)

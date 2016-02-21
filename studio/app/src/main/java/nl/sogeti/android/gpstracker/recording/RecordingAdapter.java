@@ -104,6 +104,10 @@ public class RecordingAdapter extends BaseTrackAdapter {
         }
     }
 
+    public void readTrack(final Uri trackUri, final RecordingViewModel recordingViewModel) {
+        new TrackReader(trackUri, recordingViewModel).execute();
+    }
+
     private class LoggingStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -124,18 +128,13 @@ public class RecordingAdapter extends BaseTrackAdapter {
         }
     }
 
-    public void readTrack(final Uri trackUri, final RecordingViewModel recordingViewModel) {
-        new TrackReader(trackUri, recordingViewModel).execute();
-    }
-
     private class TrackReader extends AsyncTask<Void, Void, LatLng[]> implements ResultHandler {
+        public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
         final Uri trackUri;
         final RecordingViewModel recordingViewModel;
-
-        double speed;
         final List<LatLng> collectedWaypoints = new ArrayList<>();
         final List<Long> collectedTimes = new ArrayList<>();
-        public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
+        double speed;
 
         TrackReader(final Uri trackUri, final RecordingViewModel recordingViewModel) {
             this.trackUri = trackUri;
@@ -175,14 +174,14 @@ public class RecordingAdapter extends BaseTrackAdapter {
             double meters = 0.0;
             if (waypoints.length > 0) {
                 for (int i = 1; i < waypoints.length; i++) {
-                    seconds += collectedTimes.get(i) - collectedTimes.get(i - 1);
+                    seconds += collectedTimes.get(i) / 1000 - collectedTimes.get(i - 1) / 1000;
                     LatLng start = collectedWaypoints.get(i);
                     LatLng end = collectedWaypoints.get(i - 1);
                     float[] result = new float[1];
                     Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, result);
                     meters += result[0];
                 }
-                speed = meters / (seconds / 1000.0);
+                speed = meters / 1000 / (seconds / 3600);
             }
 
             return waypoints;

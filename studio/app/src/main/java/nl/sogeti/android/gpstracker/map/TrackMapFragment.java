@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import nl.sogeti.android.gpstracker.map.rendering.TrackTileProvider;
+import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
 
@@ -52,10 +53,10 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            track = new TrackViewModel(null, "");
+            track = new TrackViewModel(null, getString(R.string.app_name));
         } else {
             Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            track = new TrackViewModel(uri, "");
+            track = new TrackViewModel(uri, getString(R.string.app_name));
         }
         trackAdaptor = new TrackAdaptor(track);
         getMapAsync(this);

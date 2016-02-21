@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
-import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.databinding.ObservableParcelable;
 import android.net.Uri;

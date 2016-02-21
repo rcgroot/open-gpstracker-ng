@@ -92,8 +92,7 @@ public class ControlHandler {
                         }
                     }
             ).start();
-        }
-        else {
+        } else {
             left.setVisibility(View.GONE);
         }
     }

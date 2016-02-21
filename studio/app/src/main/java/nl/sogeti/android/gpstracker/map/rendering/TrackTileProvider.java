@@ -42,18 +42,17 @@ import java.io.ByteArrayOutputStream;
 
 import nl.sogeti.android.gpstracker.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.log.Log;
 
 public class TrackTileProvider implements TileProvider {
     public static final int STROKE_WIDTH_DP = 2;
-    private static final int TILE_SIZE_DP = 256;
     public static final float SPEEDUP_FACTOR = 1f;
+    private static final int TILE_SIZE_DP = 256;
     private final float tileSize;
-    private TrackViewModel track;
     private final Listener listener;
     private final float strokeWidth;
     private final Bitmap endBitmap;
     private final Bitmap startBitmap;
+    private TrackViewModel track;
     private PathRenderer pathRenderer;
 
     public TrackTileProvider(Context context, TrackViewModel track, Listener listener) {
@@ -88,7 +87,7 @@ public class TrackTileProvider implements TileProvider {
 
     @Override
     public Tile getTile(int x, int y, int zoom) {
-        Log.d(this, "public Tile getTile(int "+x+", int "+y+", int "+zoom+")");
+//        Log.d(this, "public Tile getTile(int "+x+", int "+y+", int "+zoom+")");
         Bitmap bitmap = Bitmap.createBitmap((int) tileSize,
                 (int) tileSize, android.graphics.Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

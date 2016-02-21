@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.log.Log;
 
 public class TrackAdaptor extends BaseTrackAdapter {
 
@@ -55,7 +56,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
     public void start(Context context) {
         super.start(context, false);
         isReading = false;
-        readAndWatchUri();
+        readUri();
         viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
     }
 
@@ -65,6 +66,14 @@ public class TrackAdaptor extends BaseTrackAdapter {
         super.stop();
     }
 
+    private void readUri() {
+        Uri trackUri = viewModel.uri.get();
+        if (trackUri != null) {
+            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+            new TrackReader(trackUri, viewModel).execute();
+        }
+    }
+
     private class TrackObserver extends ContentObserver {
         public TrackObserver() {
             super(null);
@@ -72,12 +81,12 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+            Log.d(this, "Uri changed " + uri + "(currently reading:" + isReading + ")");
             if (!isReading) {
                 new TrackReader(viewModel.uri.get(), viewModel).execute();
             }
         }
     }
-
 
     private class TrackUriChangeListener extends Observable.OnPropertyChangedCallback {
         @Override
@@ -88,23 +97,16 @@ public class TrackAdaptor extends BaseTrackAdapter {
                 viewModel.setDefaultName();
                 viewModel.waypoints.set(null);
             } else {
-                readAndWatchUri();
+                readUri();
             }
-        }
-    }
-
-    private void readAndWatchUri() {
-        Uri trackUri = viewModel.uri.get();
-        if (trackUri != null) {
-            new TrackReader(trackUri, viewModel).execute();
         }
     }
 
     private class TrackReader extends AsyncTask<Void, Void, LatLng[][]> implements ResultHandler {
 
+        final ArrayList<ArrayList<LatLng>> collectedWaypoints = new ArrayList<>();
         private final Uri trackUri;
         private final TrackViewModel viewModel;
-        final ArrayList<ArrayList<LatLng>> collectedWaypoints = new ArrayList<>();
 
         TrackReader(final Uri trackUri, final TrackViewModel viewModel) {
             this.trackUri = trackUri;
