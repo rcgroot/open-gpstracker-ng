@@ -34,12 +34,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
@@ -100,6 +103,7 @@ public class RecordingAdapter extends BaseTrackAdapter {
             }
         }
     }
+
     private class LoggingStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -121,57 +125,74 @@ public class RecordingAdapter extends BaseTrackAdapter {
     }
 
     public void readTrack(final Uri trackUri, final RecordingViewModel recordingViewModel) {
-        final ArrayList<LatLng> collectedWaypoints = new ArrayList<>();
-        final ResultHandler handler = new ResultHandler() {
-
-            public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
-
-            @Override
-            public void addTrack(String name) {
-                recordingViewModel.name.set(name);
-            }
-
-            @Override
-            public void addSegment() {
-            }
-
-            @Override
-            public String getWaypointSelection() {
-                return ContentConstants.WaypointsColumns.TIME + " > ?";
-            }
-
-            @Override
-            public String[] getWaypointSelectionArgs() {
-
-                return new String[]{Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS)};
-            }
-
-            @Override
-            public void addWaypoint(LatLng latLng) {
-                collectedWaypoints.add(latLng);
-            }
-        };
-
-        new AsyncTask<Void, Void, LatLng[]>() {
-            @Override
-            protected void onPreExecute() {
-                isReading = true;
-            }
-
-            @Override
-            protected LatLng[] doInBackground(Void[] params) {
-                readTrack(trackUri, handler);
-                LatLng[] waypoints = new LatLng[collectedWaypoints.size()];
-
-                return waypoints;
-            }
-
-            @Override
-            protected void onPostExecute(LatLng[] segmentedWaypoints) {
-                recordingViewModel.summary.set(getContext().getString(R.string.fragment_recording_summary, segmentedWaypoints.length));
-                isReading = false;
-            }
-        }.execute();
+        new TrackReader(trackUri, recordingViewModel).execute();
     }
 
+    private class TrackReader extends AsyncTask<Void, Void, LatLng[]> implements ResultHandler {
+        final Uri trackUri;
+        final RecordingViewModel recordingViewModel;
+
+        double speed;
+        final List<LatLng> collectedWaypoints = new ArrayList<>();
+        final List<Long> collectedTimes = new ArrayList<>();
+        public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
+
+        TrackReader(final Uri trackUri, final RecordingViewModel recordingViewModel) {
+            this.trackUri = trackUri;
+            this.recordingViewModel = recordingViewModel;
+        }
+
+        @Override
+        public void addTrack(String name) {
+            recordingViewModel.name.set(name);
+        }
+
+        @Override
+        public void addSegment() {
+        }
+
+        @Override
+        public Pair<String, String[]> getWaypointSelection() {
+            return new Pair<>(ContentConstants.WaypointsColumns.TIME + " > ?", new String[]{Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS)});
+        }
+
+        @Override
+        public void addWaypoint(LatLng latLng, long millisecondsTime) {
+            collectedWaypoints.add(latLng);
+            collectedTimes.add(millisecondsTime);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            isReading = true;
+        }
+
+        @Override
+        protected LatLng[] doInBackground(Void[] params) {
+            readTrack(trackUri, this);
+            LatLng[] waypoints = new LatLng[collectedWaypoints.size()];
+            double seconds = 0.0;
+            double meters = 0.0;
+            if (waypoints.length > 0) {
+                for (int i = 1; i < waypoints.length; i++) {
+                    seconds += collectedTimes.get(i) - collectedTimes.get(i - 1);
+                    LatLng start = collectedWaypoints.get(i);
+                    LatLng end = collectedWaypoints.get(i - 1);
+                    float[] result = new float[1];
+                    Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, result);
+                    meters += result[0];
+                }
+                speed = meters / (seconds / 1000.0);
+            }
+
+            return waypoints;
+        }
+
+        @Override
+        protected void onPostExecute(LatLng[] segmentedWaypoints) {
+            String waypoints = getContext().getResources().getQuantityString(R.plurals.fragment_recording_waypoints, segmentedWaypoints.length, segmentedWaypoints.length);
+            recordingViewModel.summary.set(getContext().getString(R.string.fragment_recording_summary, waypoints, speed, "km/h"));
+            isReading = false;
+        }
+    }
 }

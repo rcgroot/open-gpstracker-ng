@@ -135,7 +135,7 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
                     .setPositiveButton(R.string.permission_button_install, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getActivity().getString(R.string.permisson_install_uri)));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getActivity().getString(R.string.permission_install_uri)));
                             startActivity(intent);
                         }
                     })

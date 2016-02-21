@@ -28,7 +28,8 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:onClick="@{handler.onClickLeft}"
-            android:src="@drawable/ic_pause_black_24dp" />
+            android:src="@drawable/ic_pause_black_24dp"
+            android:visibility="gone" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/widget_control_right"

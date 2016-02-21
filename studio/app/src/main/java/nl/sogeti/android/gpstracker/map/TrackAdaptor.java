@@ -33,13 +33,13 @@ import android.database.ContentObserver;
 import android.databinding.Observable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
-import nl.sogeti.android.log.Log;
 
 public class TrackAdaptor extends BaseTrackAdapter {
 
@@ -73,7 +73,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (!isReading) {
-                readTrack(viewModel.uri.get(), viewModel);
+                new TrackReader(viewModel.uri.get(), viewModel).execute();
             }
         }
     }
@@ -96,65 +96,63 @@ public class TrackAdaptor extends BaseTrackAdapter {
     private void readAndWatchUri() {
         Uri trackUri = viewModel.uri.get();
         if (trackUri != null) {
-            readTrack(trackUri, viewModel);
-            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+            new TrackReader(trackUri, viewModel).execute();
         }
     }
 
-    public void readTrack(final Uri trackUri, final TrackViewModel viewModel) {
+    private class TrackReader extends AsyncTask<Void, Void, LatLng[][]> implements ResultHandler {
+
+        private final Uri trackUri;
+        private final TrackViewModel viewModel;
         final ArrayList<ArrayList<LatLng>> collectedWaypoints = new ArrayList<>();
-        final ResultHandler handler = new ResultHandler() {
 
-            @Override
-            public void addTrack(String name) {
-                viewModel.name.set(name);
+        TrackReader(final Uri trackUri, final TrackViewModel viewModel) {
+            this.trackUri = trackUri;
+            this.viewModel = viewModel;
+        }
+
+        @Override
+        public void addTrack(String name) {
+            viewModel.name.set(name);
+        }
+
+        @Override
+        public void addSegment() {
+            collectedWaypoints.add(new ArrayList<LatLng>());
+        }
+
+        @Override
+        public Pair<String, String[]> getWaypointSelection() {
+            return null;
+        }
+
+
+        @Override
+        public void addWaypoint(LatLng latLng, long millisecondsTime) {
+            collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            isReading = true;
+        }
+
+        @Override
+        protected LatLng[][] doInBackground(Void[] params) {
+            readTrack(trackUri, this);
+            LatLng[][] segmentedWaypoints = new LatLng[collectedWaypoints.size()][];
+            for (int i = 0; i < collectedWaypoints.size(); i++) {
+                ArrayList<LatLng> var = collectedWaypoints.get(i);
+                segmentedWaypoints[i] = var.toArray(new LatLng[var.size()]);
             }
 
-            @Override
-            public void addSegment() {
-                collectedWaypoints.add(new ArrayList<LatLng>());
-            }
+            return segmentedWaypoints;
+        }
 
-            @Override
-            public String getWaypointSelection() {
-                return null;
-            }
-
-            @Override
-            public String[] getWaypointSelectionArgs() {
-                return null;
-            }
-
-            @Override
-            public void addWaypoint(LatLng latLng) {
-                collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
-            }
-        };
-
-        new AsyncTask<Void, Void, LatLng[][]>() {
-
-            @Override
-            protected void onPreExecute() {
-                isReading = true;
-            }
-
-            @Override
-            protected LatLng[][] doInBackground(Void[] params) {
-                readTrack(trackUri, handler);
-                LatLng[][] segmentedWaypoints = new LatLng[collectedWaypoints.size()][];
-                for (int i = 0; i < collectedWaypoints.size(); i++) {
-                    ArrayList<LatLng> var = collectedWaypoints.get(i);
-                    segmentedWaypoints[i] = var.toArray(new LatLng[var.size()]);
-                }
-
-                return segmentedWaypoints;
-            }
-
-            @Override
-            protected void onPostExecute(LatLng[][] segmentedWaypoints) {
-                viewModel.waypoints.set(segmentedWaypoints);
-                isReading = false;
-            }
-        }.execute();
+        @Override
+        protected void onPostExecute(LatLng[][] segmentedWaypoints) {
+            TrackAdaptor.this.viewModel.waypoints.set(segmentedWaypoints);
+            isReading = false;
+        }
     }
 }

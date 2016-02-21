@@ -30,10 +30,6 @@ package nl.sogeti.android.gpstracker.recording;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.ObservableParcelable;
-import android.net.Uri;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class RecordingViewModel {
     public final ObservableBoolean isRecording = new ObservableBoolean();

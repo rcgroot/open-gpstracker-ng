@@ -36,6 +36,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -97,11 +98,9 @@ public class BaseTrackAdapter {
 
         void addSegment();
 
-        String getWaypointSelection();
+        Pair<String, String[]> getWaypointSelection();
 
-        String[] getWaypointSelectionArgs();
-
-        void addWaypoint(LatLng latLng);
+        void addWaypoint(LatLng latLng, long millisecondsTime);
     }
 
     public void readTrack(Uri trackUri, ResultHandler handler) {
@@ -128,15 +127,19 @@ public class BaseTrackAdapter {
                     Uri waypointsUri = ContentConstants.buildUri(trackId, segmentId);
                     Cursor waypointsCursor = null;
                     try {
+                        Pair<String, String[]> selection = handler.getWaypointSelection();
+                        if (selection == null) {
+                            selection = new Pair<>(null, null);
+                        }
                         waypointsCursor = resolver.query(waypointsUri,
-                                new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE},
-                                handler.getWaypointSelection(),
-                                handler.getWaypointSelectionArgs(),
+                                new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE, ContentConstants.Waypoints.TIME},
+                                selection.first,
+                                selection.second,
                                 null);
                         if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
                             do {
                                 LatLng latLng = new LatLng(waypointsCursor.getDouble(0), waypointsCursor.getDouble(1));
-                                handler.addWaypoint(latLng);
+                                handler.addWaypoint(latLng, waypointsCursor.getLong(2));
                             } while (waypointsCursor.moveToNext());
                         }
                     } finally {
