@@ -28,12 +28,16 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.databinding.Observable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
@@ -43,22 +47,24 @@ import nl.sogeti.android.gpstracker.v2.R;
 public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
 
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
-    private TrackViewModel track;
+    private TrackViewModel viewModel;
     private TrackAdaptor trackAdaptor;
     private TileOverlay titleOverLay;
     private TrackTileProvider tileProvider;
+    private Observable.OnPropertyChangedCallback uriCallback = new UriChangedCallback();
+    private GoogleMap googleMap;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            track = new TrackViewModel(null, getString(R.string.app_name));
+            viewModel = new TrackViewModel(null, getString(R.string.app_name));
         } else {
             Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            track = new TrackViewModel(uri, getString(R.string.app_name));
+            viewModel = new TrackViewModel(uri, getString(R.string.app_name));
         }
-        trackAdaptor = new TrackAdaptor(track);
+        trackAdaptor = new TrackAdaptor(viewModel);
         getMapAsync(this);
     }
 
@@ -66,18 +72,27 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         trackAdaptor.start(getActivity());
+        viewModel.bounds.addOnPropertyChangedCallback(uriCallback);
+    }
+
+    @Override
+    public void onPause() {
+        viewModel.bounds.removeOnPropertyChangedCallback(uriCallback);
+        trackAdaptor.stop();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        trackAdaptor.stop();
+        googleMap = null;
         super.onDestroy();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
         TileOverlayOptions options = new TileOverlayOptions();
-        tileProvider = new TrackTileProvider(getActivity(), track, this);
+        tileProvider = new TrackTileProvider(getActivity(), viewModel, this);
         options.tileProvider(tileProvider);
         options.fadeIn(true);
         titleOverLay = googleMap.addTileOverlay(options);
@@ -86,7 +101,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, track.uri.get());
+        outState.putParcelable(KEY_TRACK_URI, viewModel.uri.get());
     }
 
     @Override
@@ -94,7 +109,18 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
         titleOverLay.clearTileCache();
     }
 
-    public TrackViewModel getTrack() {
-        return track;
+    public TrackViewModel getViewModel() {
+        return viewModel;
+    }
+
+    private class UriChangedCallback extends Observable.OnPropertyChangedCallback {
+        @Override
+        public void onPropertyChanged(Observable sender, int propertyId) {
+            if (googleMap != null) {
+                LatLngBounds bounds = viewModel.bounds.get();
+                CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, (int) getResources().getDimension(R.dimen.activity_horizontal_margin) * 2);
+                googleMap.animateCamera(update);
+            }
+        }
     }
 }

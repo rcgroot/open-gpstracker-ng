@@ -36,6 +36,7 @@ import android.os.AsyncTask;
 import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 
@@ -107,6 +108,8 @@ public class TrackAdaptor extends BaseTrackAdapter {
         final ArrayList<ArrayList<LatLng>> collectedWaypoints = new ArrayList<>();
         private final Uri trackUri;
         private final TrackViewModel viewModel;
+        private LatLng latLngFirst;
+        private LatLng latLngLast;
 
         TrackReader(final Uri trackUri, final TrackViewModel viewModel) {
             this.trackUri = trackUri;
@@ -131,6 +134,10 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
+            if (latLngFirst == null) {
+                latLngFirst = latLng;
+            }
+            latLngLast = latLng;
             collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
         }
 
@@ -153,7 +160,8 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         protected void onPostExecute(LatLng[][] segmentedWaypoints) {
-            TrackAdaptor.this.viewModel.waypoints.set(segmentedWaypoints);
+            viewModel.bounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+            viewModel.waypoints.set(segmentedWaypoints);
             isReading = false;
         }
     }

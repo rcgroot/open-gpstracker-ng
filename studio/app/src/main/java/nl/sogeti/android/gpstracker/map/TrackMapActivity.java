@@ -56,7 +56,7 @@ public class TrackMapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
         TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
-        selectedTrack = mapFragment.getTrack();
+        selectedTrack = mapFragment.getViewModel();
         binding.setTrack(selectedTrack);
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
