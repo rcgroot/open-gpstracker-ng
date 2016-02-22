@@ -44,20 +44,14 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public class BaseTrackAdapter {
+public abstract class BaseTrackAdapter {
 
-    private final BroadcastReceiver receiver = new LoggerStateReceiver();
     private Context context;
+    private BroadcastReceiver receiver;
     private ServiceManager serviceManager;
 
     public BaseTrackAdapter() {
         serviceManager = new ServiceManager();
-    }
-
-    private static void close(Cursor track) {
-        if (track != null) {
-            track.close();
-        }
     }
 
     public void start(Context context, boolean withService) {
@@ -66,18 +60,31 @@ public class BaseTrackAdapter {
             serviceManager.startup(context, new Runnable() {
                 @Override
                 public void run() {
-                    didConnectService();
+                    didConnectService(serviceManager);
                 }
             });
-            IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-            context.registerReceiver(receiver, filter);
+            registerReceiver();
         }
     }
 
     public void stop() {
-        serviceManager.shutdown(getContext());
-        context.unregisterReceiver(receiver);
+        serviceManager.shutdown(context);
+        unregisterReceiver();
         context = null;
+    }
+
+    private void unregisterReceiver() {
+        if (receiver != null) {
+            context.unregisterReceiver(receiver);
+            receiver = null;
+        }
+    }
+
+    private void registerReceiver() {
+        unregisterReceiver();
+        receiver = new LoggerStateReceiver();
+        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
+        context.registerReceiver(receiver, filter);
     }
 
     public Context getContext() {
@@ -88,8 +95,9 @@ public class BaseTrackAdapter {
         return serviceManager;
     }
 
-    public void didConnectService() {
-    }
+    protected abstract void didConnectService(ServiceManager serviceManager);
+
+    public abstract void didChangeLoggingState(Intent intent);
 
     public void readTrack(Uri trackUri, ResultHandler handler) {
         ContentResolver resolver = context.getContentResolver();
@@ -104,7 +112,7 @@ public class BaseTrackAdapter {
             close(track);
         }
         long trackId = ContentUris.parseId(trackUri);
-        Uri segmentsUri = Uri.withAppendedPath(trackUri, "segments");
+        Uri segmentsUri = Uri.withAppendedPath(trackUri, ContentConstants.Segments.TABLE);
         Cursor segmentsCursor = null;
         try {
             segmentsCursor = resolver.query(segmentsUri, new String[]{ContentConstants.Segments._ID}, null, null, null);
@@ -140,6 +148,12 @@ public class BaseTrackAdapter {
         }
     }
 
+    private static void close(Cursor track) {
+        if (track != null) {
+            track.close();
+        }
+    }
+
     public interface ResultHandler {
 
         void addTrack(String name);
@@ -154,7 +168,7 @@ public class BaseTrackAdapter {
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            didConnectService();
+            didChangeLoggingState(intent);
         }
     }
 }

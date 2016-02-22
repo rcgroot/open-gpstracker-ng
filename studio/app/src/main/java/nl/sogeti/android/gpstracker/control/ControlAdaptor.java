@@ -29,8 +29,10 @@
 package nl.sogeti.android.gpstracker.control;
 
 import android.content.Context;
+import android.content.Intent;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
 public class ControlAdaptor extends BaseTrackAdapter implements ControlHandler.Listener {
@@ -45,8 +47,14 @@ public class ControlAdaptor extends BaseTrackAdapter implements ControlHandler.L
     }
 
     @Override
-    public void didConnectService() {
-        viewModel.setState(getServiceManager().getLoggingState());
+    public void didChangeLoggingState(Intent intent) {
+        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
+        viewModel.setState(loggingState);
+    }
+
+    @Override
+    protected void didConnectService(ServiceManager serviceManager) {
+        viewModel.setState(serviceManager.getLoggingState());
     }
 
     @Override

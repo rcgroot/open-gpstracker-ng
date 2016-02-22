@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.databinding.Observable;
 import android.net.Uri;
@@ -41,12 +42,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.log.Log;
 
 public class TrackAdaptor extends BaseTrackAdapter {
 
     private TrackViewModel viewModel;
-    private ContentObserver observer = new TrackObserver();
+    private ContentObserver observer;
     private TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
 
@@ -63,16 +65,37 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
     public void stop() {
         viewModel.uri.removeOnPropertyChangedCallback(uriChangeListener);
-        getContext().getContentResolver().unregisterContentObserver(observer);
+        startObserver();
         super.stop();
+    }
+
+    private void startObserver() {
+        if (observer != null) {
+            getContext().getContentResolver().unregisterContentObserver(observer);
+            observer = null;
+        }
+    }
+
+    private void stopObserver(Uri trackUri) {
+        startObserver();
+        observer = new TrackObserver();
+        getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
     }
 
     private void readUri() {
         Uri trackUri = viewModel.uri.get();
         if (trackUri != null) {
-            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+            stopObserver(trackUri);
             new TrackReader(trackUri, viewModel).execute();
         }
+    }
+
+    @Override
+    protected void didConnectService(ServiceManager serviceManager) {
+    }
+
+    @Override
+    public void didChangeLoggingState(Intent intent) {
     }
 
     private class TrackObserver extends ContentObserver {
@@ -94,7 +117,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
         public void onPropertyChanged(Observable sender, int propertyId) {
             Uri trackUri = viewModel.uri.get();
             if (trackUri == null) {
-                getContext().getContentResolver().unregisterContentObserver(observer);
+                startObserver();
                 viewModel.setDefaultName();
                 viewModel.waypoints.set(null);
             } else {

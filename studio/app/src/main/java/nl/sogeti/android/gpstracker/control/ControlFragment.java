@@ -91,6 +91,7 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
     @Override
     public void onPause() {
         removePermissionDialogs();
+        controlAdaptor.stop();
         super.onPause();
     }
 
@@ -102,13 +103,6 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
             permissionDialog.dismiss();
         }
     }
-
-    @Override
-    public void onDestroy() {
-        controlAdaptor.stop();
-        super.onDestroy();
-    }
-
 
     private void checkTrackingPermission() {
         if (ServiceManager.isPackageInstalled(getActivity())) {

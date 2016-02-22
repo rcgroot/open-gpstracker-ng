@@ -28,11 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.recording;
 
-import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.location.Location;
 import android.net.Uri;
@@ -47,13 +45,13 @@ import java.util.List;
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingAdapter extends BaseTrackAdapter {
 
     private final RecordingViewModel viewModel;
-    private ContentObserver observer = new TrackObserver();
-    private BroadcastReceiver receiver = new LoggingStateReceiver();
+    private ContentObserver observer;
     private boolean isReading;
 
     RecordingAdapter(RecordingViewModel viewModel) {
@@ -62,24 +60,30 @@ public class RecordingAdapter extends BaseTrackAdapter {
 
     public void start(Context context) {
         super.start(context, true);
-        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-        getContext().registerReceiver(receiver, filter);
     }
 
     public void stop() {
-        getContext().unregisterReceiver(receiver);
-        getContext().getContentResolver().unregisterContentObserver(observer);
+        stopObserver();
         super.stop();
     }
 
-    @Override
-    public void didConnectService() {
-        updateRecordingFromService();
+    private void stopObserver() {
+        if (observer != null) {
+            getContext().getContentResolver().unregisterContentObserver(observer);
+            observer = null;
+        }
     }
 
-    private void updateRecordingFromService() {
-        int loggingState = getServiceManager().getLoggingState();
-        long trackId = getServiceManager().getTrackId();
+    private void startObserver(Uri trackUri) {
+        stopObserver();
+        observer = new TrackObserver();
+        getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+    }
+
+
+    public void didConnectService(ServiceManager service) {
+        int loggingState = service.getLoggingState();
+        long trackId = service.getTrackId();
         Uri trackUri = null;
         if (trackId != -1) {
             trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId);
@@ -87,7 +91,8 @@ public class RecordingAdapter extends BaseTrackAdapter {
         updateRecording(loggingState, trackUri);
     }
 
-    private void updateRecordingFormIntent(Intent intent) {
+    @Override
+    public void didChangeLoggingState(Intent intent) {
         int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
         Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
         updateRecording(loggingState, trackUri);
@@ -97,7 +102,7 @@ public class RecordingAdapter extends BaseTrackAdapter {
         Boolean isRecording = loggingState == ServiceConstants.STATE_LOGGING;
         viewModel.isRecording.set(isRecording);
         if (trackUri != null) {
-            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+            startObserver(trackUri);
             if (!isReading) {
                 readTrack(trackUri, viewModel);
             }
@@ -108,13 +113,6 @@ public class RecordingAdapter extends BaseTrackAdapter {
         new TrackReader(trackUri, recordingViewModel).execute();
     }
 
-    private class LoggingStateReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateRecordingFormIntent(intent);
-        }
-    }
-
     private class TrackObserver extends ContentObserver {
         public TrackObserver() {
             super(null);
@@ -123,7 +121,7 @@ public class RecordingAdapter extends BaseTrackAdapter {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (!isReading) {
-                updateRecordingFromService();
+                didConnectService(getServiceManager());
             }
         }
     }
