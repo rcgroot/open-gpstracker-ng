@@ -28,9 +28,17 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.content.DialogInterface;
 import android.databinding.Observable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,8 +54,9 @@ import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
 
+    private static final int ITEM_ID_EDIT_TRACK = 3;
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
-    private TrackViewModel viewModel;
+    private TrackViewModel trackViewModel;
     private TrackAdaptor trackAdaptor;
     private TileOverlay titleOverLay;
     private TrackTileProvider tileProvider;
@@ -58,13 +67,14 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (savedInstanceState == null) {
-            viewModel = new TrackViewModel(null, getString(R.string.app_name));
+            trackViewModel = new TrackViewModel(null, getString(R.string.app_name));
         } else {
             Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
-            viewModel = new TrackViewModel(uri, getString(R.string.app_name));
+            trackViewModel = new TrackViewModel(uri, getString(R.string.app_name));
         }
-        trackAdaptor = new TrackAdaptor(viewModel);
+        trackAdaptor = new TrackAdaptor(trackViewModel);
         getMapAsync(this);
     }
 
@@ -72,12 +82,12 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         trackAdaptor.start(getActivity());
-        viewModel.bounds.addOnPropertyChangedCallback(uriCallback);
+        trackViewModel.bounds.addOnPropertyChangedCallback(uriCallback);
     }
 
     @Override
     public void onPause() {
-        viewModel.bounds.removeOnPropertyChangedCallback(uriCallback);
+        trackViewModel.bounds.removeOnPropertyChangedCallback(uriCallback);
         trackAdaptor.stop();
         super.onPause();
     }
@@ -89,10 +99,41 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
+        MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_mode_edit_black_24dp);
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, getResources().getColor(R.color.primary_light));
+        menuItem.setIcon(drawable);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(ITEM_ID_EDIT_TRACK).setEnabled(trackViewModel.uri.get()!=null);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean consumed;
+        if (item.getItemId() == ITEM_ID_EDIT_TRACK) {
+            showTrackTitleDialog();
+            consumed = true;
+        } else {
+            consumed = super.onOptionsItemSelected(item);
+        }
+
+        return consumed;
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         TileOverlayOptions options = new TileOverlayOptions();
-        tileProvider = new TrackTileProvider(getActivity(), viewModel, this);
+        tileProvider = new TrackTileProvider(getActivity(), trackViewModel, this);
         options.tileProvider(tileProvider);
         options.fadeIn(true);
         titleOverLay = googleMap.addTileOverlay(options);
@@ -101,7 +142,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_TRACK_URI, viewModel.uri.get());
+        outState.putParcelable(KEY_TRACK_URI, trackViewModel.uri.get());
     }
 
     @Override
@@ -109,18 +150,40 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
         titleOverLay.clearTileCache();
     }
 
-    public TrackViewModel getViewModel() {
-        return viewModel;
+    public TrackViewModel getTrackViewModel() {
+        return trackViewModel;
     }
 
+    private void showTrackTitleDialog() {
+        final Uri trackUri = trackViewModel.uri.get();
+        // TODO make sure that nameField has proper margins
+        final EditText nameField = new EditText(getActivity());
+        nameField.setText(trackViewModel.name.get());
+        nameField.setSelection(0, nameField.getText().length());
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.activity_track_map_rename_title))
+                .setMessage(getString(R.string.activity_track_map_rename_message))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String userInput = nameField.getText().toString();
+                        TrackAdaptor.updateName(getActivity(), trackUri, userInput);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setView(nameField)
+                .show();
+    }
     private class UriChangedCallback extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
+            getActivity().invalidateOptionsMenu();
             if (googleMap != null) {
-                LatLngBounds bounds = viewModel.bounds.get();
+                LatLngBounds bounds = trackViewModel.bounds.get();
                 CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, (int) getResources().getDimension(R.dimen.activity_horizontal_margin) * 2);
                 googleMap.animateCamera(update);
             }
         }
+
     }
 }

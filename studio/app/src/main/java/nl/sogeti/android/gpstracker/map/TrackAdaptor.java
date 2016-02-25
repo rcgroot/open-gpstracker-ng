@@ -28,6 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -42,6 +44,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.log.Log;
 
@@ -96,6 +99,12 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
     @Override
     public void didChangeLoggingState(Intent intent) {
+    }
+
+    public static void updateName(Context context, Uri trackUri, String name) {
+        ContentValues values = new ContentValues();
+        values.put(ContentConstants.TracksColumns.NAME, name);
+        context.getContentResolver().update(trackUri,values, null,null);
     }
 
     private class TrackObserver extends ContentObserver {
