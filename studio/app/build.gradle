@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-project.archivesBaseName = "opengpstracker-ng"
 
 android {
     compileSdkVersion 23
@@ -17,6 +16,7 @@ android {
         versionName "2.0.0-SNAPSHOT"
         buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
+        archivesBaseName = "opengpstracker-ng-$versionName"
     }
 
     if (System.getenv().containsKey("storeFile")) {
@@ -51,5 +51,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     wearApp project(':wear')
     testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:1.9.5"
+    testCompile 'org.mockito:mockito-core:1.9.5'
 }
