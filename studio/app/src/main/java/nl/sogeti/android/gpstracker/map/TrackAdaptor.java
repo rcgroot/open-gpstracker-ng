@@ -45,9 +45,10 @@ import java.util.ArrayList;
 import nl.sogeti.android.gpstracker.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.log.Log;
 
 public class TrackAdaptor extends BaseTrackAdapter {
+
+    public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
     private TrackViewModel viewModel;
     private ContentObserver observer;
@@ -113,7 +114,6 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            Log.d(this, "Uri changed " + uri + "(currently reading:" + isReading + ")");
             if (!isReading) {
                 new TrackReader(viewModel.uri.get(), viewModel).execute();
             }
@@ -141,10 +141,13 @@ public class TrackAdaptor extends BaseTrackAdapter {
         private final TrackViewModel viewModel;
         private LatLng latLngFirst;
         private LatLng latLngLast;
+        private LatLngBounds.Builder headBoundsBuilder;
+        private final long headTime;
 
         TrackReader(final Uri trackUri, final TrackViewModel viewModel) {
             this.trackUri = trackUri;
             this.viewModel = viewModel;
+            this.headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS;
         }
 
         @Override
@@ -165,10 +168,18 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
+            // First and Last make the bounds of the whole track
             if (latLngFirst == null) {
                 latLngFirst = latLng;
             }
             latLngLast = latLng;
+            // Last 5 minutes worth of waypoints make the head
+            if (millisecondsTime > headTime) {
+                if (headBoundsBuilder == null) {
+                    headBoundsBuilder = new LatLngBounds.Builder();
+                }
+                headBoundsBuilder.include(latLng);
+            }
             collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
         }
 
@@ -192,7 +203,10 @@ public class TrackAdaptor extends BaseTrackAdapter {
         @Override
         protected void onPostExecute(LatLng[][] segmentedWaypoints) {
             if (latLngFirst != null && latLngLast != null) {
-                viewModel.bounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+                viewModel.startStopBounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+            }
+            if (headBoundsBuilder != null) {
+                viewModel.trackHeadBounds.set(headBoundsBuilder.build());
             }
             viewModel.waypoints.set(segmentedWaypoints);
             isReading = false;

@@ -50,6 +50,8 @@ import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingAdapter extends BaseTrackAdapter {
 
+    public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
+
     private final RecordingViewModel viewModel;
     private ContentObserver observer;
     private boolean isReading;
@@ -127,7 +129,6 @@ public class RecordingAdapter extends BaseTrackAdapter {
     }
 
     private class TrackReader extends AsyncTask<Void, Void, LatLng[]> implements ResultHandler {
-        public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
         final Uri trackUri;
         final RecordingViewModel recordingViewModel;
         final List<LatLng> collectedWaypoints = new ArrayList<>();

@@ -64,8 +64,8 @@ public class TrackTileProvider implements TileProvider {
         this.modelCallback = new Callback();
         this.track = track;
         this.listener = listener;
-        track.waypoints.addOnPropertyChangedCallback(modelCallback);
 
+        track.waypoints.addOnPropertyChangedCallback(modelCallback);
         LatLng[][] wayPoints = track.waypoints.get();
         VectorDrawable startDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_start_24dp);
         VectorDrawable endDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_end_24dp);

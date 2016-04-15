@@ -39,7 +39,8 @@ public class TrackViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
     public final ObservableField<String> name = new ObservableField<>();
     public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
-    public final ObservableField<LatLngBounds> bounds = new ObservableField<>();
+    public final ObservableField<LatLngBounds> startStopBounds = new ObservableField<>();
+    public final ObservableField<LatLngBounds> trackHeadBounds = new ObservableField<>();
     private final String defaultName;
 
     public TrackViewModel(Uri uri, String defaultName) {

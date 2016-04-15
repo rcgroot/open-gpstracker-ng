@@ -82,12 +82,14 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         trackAdaptor.start(getActivity());
-        trackViewModel.bounds.addOnPropertyChangedCallback(uriCallback);
+        trackViewModel.trackHeadBounds.addOnPropertyChangedCallback(uriCallback);
+        trackViewModel.startStopBounds.addOnPropertyChangedCallback(uriCallback);
     }
 
     @Override
     public void onPause() {
-        trackViewModel.bounds.removeOnPropertyChangedCallback(uriCallback);
+        trackViewModel.trackHeadBounds.removeOnPropertyChangedCallback(uriCallback);
+        trackViewModel.startStopBounds.removeOnPropertyChangedCallback(uriCallback);
         trackAdaptor.stop();
         super.onPause();
     }
@@ -113,7 +115,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(ITEM_ID_EDIT_TRACK).setEnabled(trackViewModel.uri.get()!=null);
+        menu.findItem(ITEM_ID_EDIT_TRACK).setEnabled(trackViewModel.uri.get() != null);
     }
 
     @Override
@@ -156,8 +158,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
 
     private void showTrackTitleDialog() {
         final Uri trackUri = trackViewModel.uri.get();
-        // TODO make sure that nameField has proper margins
-        final EditText nameField = new EditText(getActivity());
+        final EditText nameField = (EditText) getActivity().getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
         nameField.setText(trackViewModel.name.get());
         nameField.setSelection(0, nameField.getText().length());
         new AlertDialog.Builder(getActivity())
@@ -174,16 +175,38 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
                 .setView(nameField)
                 .show();
     }
-    private class UriChangedCallback extends Observable.OnPropertyChangedCallback {
+
+    private class UriChangedCallback extends Observable.OnPropertyChangedCallback implements GoogleMap.CancelableCallback {
+        private boolean isAnimating = false;
+
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
             getActivity().invalidateOptionsMenu();
             if (googleMap != null) {
-                LatLngBounds bounds = trackViewModel.bounds.get();
-                CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, (int) getResources().getDimension(R.dimen.activity_horizontal_margin) * 2);
-                googleMap.animateCamera(update);
+                LatLngBounds bounds = null;
+                LatLngBounds visible = googleMap.getProjection().getVisibleRegion().latLngBounds;
+                LatLngBounds head = trackViewModel.trackHeadBounds.get();
+                if (googleMap.getCameraPosition().zoom == googleMap.getMinZoomLevel()) {
+                    bounds = trackViewModel.startStopBounds.get();
+                } else if (head != null && (!visible.contains(head.northeast) || !visible.contains(head.southwest))) {
+                    bounds = head;
+                }
+                if (bounds != null && !isAnimating) {
+                    CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, (int) getResources().getDimension(R.dimen.activity_horizontal_margin) * 8);
+                    isAnimating = true;
+                    googleMap.animateCamera(update, this);
+                }
             }
         }
 
+        @Override
+        public void onFinish() {
+            isAnimating = false;
+        }
+
+        @Override
+        public void onCancel() {
+            isAnimating = false;
+        }
     }
 }
