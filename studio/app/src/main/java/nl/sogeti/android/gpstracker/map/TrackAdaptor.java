@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -104,7 +103,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
     public static void updateName(Context context, Uri trackUri, String name) {
         ContentValues values = new ContentValues();
         values.put(ContentConstants.TracksColumns.NAME, name);
-        context.getContentResolver().update(trackUri,values, null,null);
+        context.getContentResolver().update(trackUri, values, null, null);
     }
 
     private class TrackObserver extends ContentObserver {
@@ -192,7 +191,9 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
         @Override
         protected void onPostExecute(LatLng[][] segmentedWaypoints) {
-            viewModel.bounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+            if (latLngFirst != null && latLngLast != null) {
+                viewModel.bounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+            }
             viewModel.waypoints.set(segmentedWaypoints);
             isReading = false;
         }

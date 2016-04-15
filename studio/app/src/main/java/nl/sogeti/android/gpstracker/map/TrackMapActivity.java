@@ -85,8 +85,7 @@ public class TrackMapActivity extends AppCompatActivity {
                 }
             }
             consumed = true;
-        }
-        else {
+        } else {
             consumed = super.onOptionsItemSelected(item);
         }
 

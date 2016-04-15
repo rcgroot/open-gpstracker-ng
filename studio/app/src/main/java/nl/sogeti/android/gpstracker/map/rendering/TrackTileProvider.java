@@ -52,6 +52,7 @@ public class TrackTileProvider implements TileProvider {
     private final float strokeWidth;
     private final Bitmap endBitmap;
     private final Bitmap startBitmap;
+    private final Callback modelCallback;
     private TrackViewModel track;
     private PathRenderer pathRenderer;
 
@@ -60,13 +61,12 @@ public class TrackTileProvider implements TileProvider {
         float scaleFactor = density * SPEEDUP_FACTOR;
         this.tileSize = TILE_SIZE_DP * scaleFactor;
         this.strokeWidth = STROKE_WIDTH_DP * density;
+        this.modelCallback = new Callback();
         this.track = track;
         this.listener = listener;
-
-        Observable.OnPropertyChangedCallback modelCallback = new Callback();
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
-        LatLng[][] wayPoints = track.waypoints.get();
 
+        LatLng[][] wayPoints = track.waypoints.get();
         VectorDrawable startDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_start_24dp);
         VectorDrawable endDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_end_24dp);
         startBitmap = renderVectorDrawable(startDrawable);
@@ -102,6 +102,7 @@ public class TrackTileProvider implements TileProvider {
 
     public void setTrack(TrackViewModel track) {
         this.track = track;
+        track.waypoints.addOnPropertyChangedCallback(modelCallback);
         trackDidChange();
     }
 
