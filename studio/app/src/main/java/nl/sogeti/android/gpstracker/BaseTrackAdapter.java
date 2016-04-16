@@ -54,23 +54,27 @@ public abstract class BaseTrackAdapter {
         serviceManager = new ServiceManager();
     }
 
-    public void start(Context context, boolean withService) {
-        this.context = context;
-        if (withService) {
-            serviceManager.startup(context, new Runnable() {
-                @Override
-                public void run() {
-                    didConnectService(serviceManager);
-                }
-            });
-            registerReceiver();
+    public synchronized void start(Context context, boolean withService) {
+        if (this.context == null) {
+            this.context = context;
+            if (withService) {
+                registerReceiver();
+                serviceManager.startup(context, new Runnable() {
+                    @Override
+                    public void run() {
+                        didConnectService(serviceManager);
+                    }
+                });
+            }
         }
     }
 
-    public void stop() {
-        serviceManager.shutdown(context);
-        unregisterReceiver();
-        context = null;
+    public synchronized void stop() {
+        if (context != null) {
+            serviceManager.shutdown(context);
+            unregisterReceiver();
+            context = null;
+        }
     }
 
     private void unregisterReceiver() {

@@ -41,7 +41,6 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
 
 public class RecordingFragment extends Fragment {
 
-    private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
     private RecordingViewModel recording;
     private RecordingAdapter recordingAdapter;
 
