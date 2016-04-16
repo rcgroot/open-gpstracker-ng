@@ -1,0 +1,10 @@
+ext {
+    // App support
+    supportLibraryVersion = '23.3.0'
+    kotlinVersion = '1.0.1-2'
+    playServicesVersion = '8.4.0'
+    wearableVersion = '1.4.0'
+    // Testing
+    junitVersion = '4.12'
+    mockitoVersion = '1.9.5'
+}
