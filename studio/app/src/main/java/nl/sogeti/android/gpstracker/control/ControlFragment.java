@@ -29,39 +29,27 @@
 package nl.sogeti.android.gpstracker.control;
 
 import android.app.Fragment;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import nl.sogeti.android.gpstracker.integration.PermissionRequestor;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 
 /**
  * On screen controls for the logging state
  */
-public class ControlFragment extends Fragment implements DialogInterface.OnClickListener {
-
-    private static final int REQUEST_TRACKING_CONTROL = 10000001;
+public class ControlFragment extends Fragment  {
 
     private FragmentControlBinding binding;
     private ControlAdaptor controlAdaptor;
     private LoggerViewModel viewModel;
     private ControlHandler handler;
-    private AlertDialog installDialog;
-    private AlertDialog permissionDialog;
+    private PermissionRequestor permissionRequestor;
 
 
     @Override
@@ -70,6 +58,7 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
         viewModel = new LoggerViewModel();
         controlAdaptor = new ControlAdaptor(viewModel);
         handler = new ControlHandler(controlAdaptor, viewModel);
+        permissionRequestor = new PermissionRequestor();
     }
 
     @Override
@@ -85,77 +74,22 @@ public class ControlFragment extends Fragment implements DialogInterface.OnClick
     @Override
     public void onResume() {
         super.onResume();
-        checkTrackingPermission();
+        permissionRequestor.checkTrackingPermission(getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                controlAdaptor.start(getActivity());
+            }
+        });
     }
 
     @Override
     public void onPause() {
-        removePermissionDialogs();
+        permissionRequestor.stop();
         controlAdaptor.stop();
         super.onPause();
     }
 
-    private void removePermissionDialogs() {
-        if (installDialog != null) {
-            installDialog.dismiss();
-        }
-        if (permissionDialog != null) {
-            permissionDialog.dismiss();
-        }
-    }
-
-    private void checkTrackingPermission() {
-        if (ServiceManager.isPackageInstalled(getActivity())) {
-            if (ContextCompat.checkSelfPermission(getActivity(), ServiceConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), ServiceConstants.permission.TRACKING_CONTROL)) {
-                    permissionDialog = new AlertDialog.Builder(getActivity())
-                            .setMessage(R.string.permission_explain_need_control)
-                            .setPositiveButton(android.R.string.ok, this)
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show();
-                } else {
-                    executePermissionsRequest();
-                }
-            } else {
-                controlAdaptor.start(getActivity());
-            }
-        } else {
-            installDialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.permission_missing_title)
-                    .setMessage(R.string.permission_missing_message)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.permission_button_install, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getActivity().getString(R.string.permission_install_uri)));
-                            startActivity(intent);
-                        }
-                    })
-                    .show();
-        }
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        executePermissionsRequest();
-    }
-
-    private void executePermissionsRequest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{ServiceConstants.permission.TRACKING_CONTROL}, REQUEST_TRACKING_CONTROL);
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_TRACKING_CONTROL) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (ServiceConstants.permission.TRACKING_CONTROL.equals(permissions[i])
-                        && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    controlAdaptor.start(getActivity());
-                }
-            }
-        }
+        permissionRequestor.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

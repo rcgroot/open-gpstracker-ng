@@ -3,12 +3,6 @@
 
     <string name="activity_track_map_edit">Edit track</string>
 
-    <string name="permission_explain_need_control">Tracking control needs permission before the controls can be used.</string>
-    <string name="permission_missing_title">Missing installation</string>
-    <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
-    <string name="permission_button_install">Install</string>
-    <string name="permission_install_uri">https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker</string>
-
     <string name="fragment_recording_summary">Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s</string>
     <string name="activity_track_map_rename_title">Rename track</string>
     <string name="activity_track_map_rename_message">Enter track name</string>

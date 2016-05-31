@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="gpstracker.android.sogeti.nl.integration">
+    package="nl.sogeti.android.gpstracker.integration">
 
     <uses-permission android:name="nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL" />
     <uses-permission android:name="nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY" />

@@ -43,8 +43,6 @@ import android.support.v4.content.ContextCompat;
 
 import nl.sogeti.android.log.Log;
 
-import static android.content.pm.PackageManager.GET_INTENT_FILTERS;
-
 /**
  * Class to interact with the service that tracks and logs the locations
  */

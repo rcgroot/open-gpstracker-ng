@@ -38,6 +38,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -158,7 +159,9 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
 
     private void showTrackTitleDialog() {
         final Uri trackUri = trackViewModel.uri.get();
-        final EditText nameField = (EditText) getActivity().getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
+        // TODO resume recording would be nice too
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
+        final EditText nameField = (EditText) view.findViewById(R.id.dialog_rename_edittext);
         nameField.setText(trackViewModel.name.get());
         nameField.setSelection(0, nameField.getText().length());
         new AlertDialog.Builder(getActivity())
@@ -172,7 +175,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
-                .setView(nameField)
+                .setView(view)
                 .show();
     }
 

@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="permission_explain_need_control">Tracking control needs permission before the controls can be used.</string>
+    <string name="permission_missing_title">Missing installation</string>
+    <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
+    <string name="permission_button_install">Install</string>
+
+</resources>
