@@ -50,7 +50,7 @@ public class ControlHandler {
         this.logger = logger;
     }
 
-    @BindingAdapter({"bind:state"})
+    @BindingAdapter({"state"})
     public static void setState(ViewGroup container, int state) {
         FloatingActionButton left = (FloatingActionButton) container.getChildAt(0);
         FloatingActionButton right = (FloatingActionButton) container.getChildAt(1);

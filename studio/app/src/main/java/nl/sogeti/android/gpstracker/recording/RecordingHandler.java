@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 
 public class RecordingHandler {
 
-    @BindingAdapter({"bind:isRecording"})
+    @BindingAdapter({"isRecording"})
     public static void setRecording(final ViewGroup container, boolean isRecording) {
         if (isRecording) {
             container.setVisibility(View.VISIBLE);

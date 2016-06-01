@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.view.View;
@@ -78,8 +79,8 @@ public class TrackingControlActivity extends WearableActivity {
 
     private void updateDisplay() {
         if (isAmbient()) {
-            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mTextView.setTextColor(getResources().getColor(android.R.color.white));
+            mContainerView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
+            mTextView.setTextColor(ContextCompat.getColor(this, android.R.color.white));
             mClockView.setVisibility(View.VISIBLE);
 
             mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
