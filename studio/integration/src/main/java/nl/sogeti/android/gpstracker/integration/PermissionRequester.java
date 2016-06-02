@@ -42,7 +42,7 @@ import android.support.v7.app.AlertDialog;
 /**
  * Asks for Open GPS tracker permissions
  */
-public class PermissionRequestor implements DialogInterface.OnClickListener {
+public class PermissionRequester implements DialogInterface.OnClickListener {
 
     private static final int REQUEST_TRACKING_CONTROL = 10000001;
     private static final String INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker";

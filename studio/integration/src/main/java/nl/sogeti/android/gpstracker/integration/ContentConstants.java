@@ -56,7 +56,8 @@ public final class ContentConstants {
      * @param trackId identifier denoting the track
      * @param segmentId identifier denoting the segment
      * @param waypointId identifier denoting the waypoint
-     * @return
+     *
+     * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId, long waypointId) {
         Builder builder = Tracks.CONTENT_URI.buildUpon();
@@ -76,7 +77,8 @@ public final class ContentConstants {
      *
      * @param trackId identifier denoting the track
      * @param segmentId identifier denoting the segment
-     * @return
+     *
+     * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId) {
         Builder builder = Tracks.CONTENT_URI.buildUpon();

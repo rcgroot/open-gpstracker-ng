@@ -38,6 +38,7 @@ import java.util.Locale;
  * <p/>
  * Use either String or Object as tag. Any non-string class will have its simple name used as tag name
  */
+@SuppressWarnings("SameParameterValue")
 public class Log {
     public static final boolean DEBUG = true;
     private static final boolean ADD_LINE_NUMBERS = false;

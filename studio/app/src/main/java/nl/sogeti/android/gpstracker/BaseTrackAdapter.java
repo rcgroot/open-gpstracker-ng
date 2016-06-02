@@ -48,7 +48,7 @@ public abstract class BaseTrackAdapter {
 
     private Context context;
     private BroadcastReceiver receiver;
-    private ServiceManager serviceManager;
+    private final ServiceManager serviceManager;
 
     public BaseTrackAdapter() {
         serviceManager = new ServiceManager();

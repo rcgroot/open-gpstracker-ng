@@ -50,9 +50,9 @@ public class TrackAdaptor extends BaseTrackAdapter {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
-    private TrackViewModel viewModel;
+    private final TrackViewModel viewModel;
     private ContentObserver observer;
-    private TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
+    private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
 
     public TrackAdaptor(TrackViewModel track) {

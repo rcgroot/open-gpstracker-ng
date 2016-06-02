@@ -36,7 +36,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.integration.PermissionRequestor;
+import nl.sogeti.android.gpstracker.integration.PermissionRequester;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 
@@ -45,11 +45,10 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
  */
 public class ControlFragment extends Fragment  {
 
-    private FragmentControlBinding binding;
     private ControlAdaptor controlAdaptor;
     private LoggerViewModel viewModel;
     private ControlHandler handler;
-    private PermissionRequestor permissionRequestor;
+    private PermissionRequester permissionRequester;
 
 
     @Override
@@ -58,13 +57,13 @@ public class ControlFragment extends Fragment  {
         viewModel = new LoggerViewModel();
         controlAdaptor = new ControlAdaptor(viewModel);
         handler = new ControlHandler(controlAdaptor, viewModel);
-        permissionRequestor = new PermissionRequestor();
+        permissionRequester = new PermissionRequester();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_control, container, false);
+        FragmentControlBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_control, container, false);
         binding.setLogger(viewModel);
         binding.setHandler(handler);
 
@@ -74,7 +73,7 @@ public class ControlFragment extends Fragment  {
     @Override
     public void onResume() {
         super.onResume();
-        permissionRequestor.checkTrackingPermission(getActivity(), new Runnable() {
+        permissionRequester.checkTrackingPermission(getActivity(), new Runnable() {
             @Override
             public void run() {
                 controlAdaptor.start(getActivity());
@@ -84,12 +83,12 @@ public class ControlFragment extends Fragment  {
 
     @Override
     public void onPause() {
-        permissionRequestor.stop();
+        permissionRequester.stop();
         controlAdaptor.stop();
         super.onPause();
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionRequestor.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

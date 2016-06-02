@@ -243,7 +243,7 @@ public class ServiceManager {
                 try {
                     this.mGPSLoggerRemote.storeMetaData(key, value);
                 } catch (RemoteException e) {
-                    Log.e(ServiceManager.REMOTE_EXCEPTION, "Could not send datasource to GPSLoggerService.", e);
+                    Log.e(ServiceManager.REMOTE_EXCEPTION, "Could not send data source to GPSLoggerService.", e);
                 }
             } else {
                 Log.e(this, "No GPSLoggerRemote service connected to this manager");
@@ -318,7 +318,7 @@ public class ServiceManager {
                     mBound = false;
                 }
             } catch (IllegalArgumentException e) {
-                Log.w(this, "Failed to unbind a service, prehaps the service disapearded?", e);
+                Log.w(this, "Failed to unbind a service, perhaps the service disappeared?", e);
             }
         }
     }

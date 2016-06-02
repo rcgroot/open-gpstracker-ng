@@ -28,11 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.map;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.databinding.Observable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
@@ -60,8 +62,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     private TrackViewModel trackViewModel;
     private TrackAdaptor trackAdaptor;
     private TileOverlay titleOverLay;
-    private TrackTileProvider tileProvider;
-    private Observable.OnPropertyChangedCallback uriCallback = new UriChangedCallback();
+    private final Observable.OnPropertyChangedCallback uriCallback = new UriChangedCallback();
     private GoogleMap googleMap;
 
 
@@ -107,9 +108,9 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
         menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
         MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_mode_edit_black_24dp);
+        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_mode_edit_black_24dp);
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, getResources().getColor(R.color.primary_light));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.primary_light));
         menuItem.setIcon(drawable);
     }
 
@@ -136,7 +137,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         TileOverlayOptions options = new TileOverlayOptions();
-        tileProvider = new TrackTileProvider(getActivity(), trackViewModel, this);
+        TrackTileProvider tileProvider = new TrackTileProvider(getActivity(), trackViewModel, this);
         options.tileProvider(tileProvider);
         options.fadeIn(true);
         titleOverLay = googleMap.addTileOverlay(options);
@@ -160,13 +161,13 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     private void showTrackTitleDialog() {
         final Uri trackUri = trackViewModel.uri.get();
         // TODO resume recording would be nice too
+        @SuppressLint("InflateParams")
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
         final EditText nameField = (EditText) view.findViewById(R.id.dialog_rename_edittext);
         nameField.setText(trackViewModel.name.get());
         nameField.setSelection(0, nameField.getText().length());
         new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.activity_track_map_rename_title))
-                .setMessage(getString(R.string.activity_track_map_rename_message))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

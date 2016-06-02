@@ -97,8 +97,7 @@ public class ControlHandler {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
-    public void onClickLeft(View view) {
+    public void onClickLeft() {
         if (logger.getState() == STATE_LOGGING) {
             listener.stopLogging();
         } else if (logger.getState() == STATE_PAUSED) {
@@ -106,8 +105,7 @@ public class ControlHandler {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
-    public void onClickRight(View view) {
+    public void onClickRight() {
         if (logger.getState() == STATE_STOPPED) {
             listener.startLogging();
         } else if (logger.getState() == STATE_LOGGING) {

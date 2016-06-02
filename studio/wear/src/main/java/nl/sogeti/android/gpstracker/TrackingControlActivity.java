@@ -86,7 +86,7 @@ public class TrackingControlActivity extends WearableActivity {
             mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
         } else {
             mContainerView.setBackground(null);
-            mTextView.setTextColor(getResources().getColor(android.R.color.black));
+            mTextView.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             mClockView.setVisibility(View.GONE);
         }
     }

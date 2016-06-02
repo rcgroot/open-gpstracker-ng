@@ -46,13 +46,12 @@ public class TrackMapActivity extends AppCompatActivity {
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     public static final int ITEM_ID_LAST_TRACK = 2;
 
-    private ActivityTrackMapBinding binding;
     private TrackViewModel selectedTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
+        ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
         TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
         selectedTrack = mapFragment.getTrackViewModel();
         binding.setTrack(selectedTrack);

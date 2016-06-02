@@ -42,6 +42,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
  */
 public class TileProjection {
 
+    public static final double MAX_PIXEL_COORDINATE = 0.9999;
+    public static final double MIN_PIXEL_COORDINATE = -0.9999;
     private final float tileSize;
 
     private final Point origin;
@@ -124,7 +126,7 @@ public class TileProjection {
      */
     public void latLngToWorldCoordinates(LatLng latLng, Point worldPoint) {
         worldPoint.x = origin.x + latLng.longitude * pixelsPerLonDegree;
-        double sinY = bound(Math.sin(Math.toRadians(latLng.latitude)), -0.9999, 0.9999);
+        double sinY = bound(Math.sin(Math.toRadians(latLng.latitude)));
         worldPoint.y = origin.y + 0.5f * (Math.log((1 + sinY) / (1 - sinY)) * -pixelsPerLonRadian);
     }
 
@@ -146,13 +148,11 @@ public class TileProjection {
      * Stack overflow projection code from Latitude/Longitude to tile pixel coordinates
      *
      * @param value
-     * @param min
-     * @param max
      * @return value bound between min and max
      */
-    private double bound(double value, double min, double max) {
-        value = Math.max(value, min);
-        value = Math.min(value, max);
+    private double bound(double value) {
+        value = Math.max(value, MIN_PIXEL_COORDINATE);
+        value = Math.min(value, MAX_PIXEL_COORDINATE);
 
         return value;
     }

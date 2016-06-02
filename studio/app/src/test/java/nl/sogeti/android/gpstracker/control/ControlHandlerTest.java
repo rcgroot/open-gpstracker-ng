@@ -127,7 +127,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
-        sut.onClickLeft(null);
+        sut.onClickLeft();
 
         // Verify
         verifyZeroInteractions(mockListener);
@@ -139,7 +139,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
-        sut.onClickLeft(null);
+        sut.onClickLeft();
 
         // Verify
         verifyZeroInteractions(mockListener);
@@ -151,7 +151,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
-        sut.onClickLeft(null);
+        sut.onClickLeft();
 
         // Verify
         verify(mockListener).stopLogging();
@@ -163,7 +163,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
-        sut.onClickLeft(null);
+        sut.onClickLeft();
 
         // Verify
         verify(mockListener).stopLogging();
@@ -175,7 +175,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
 
         // Execute
-        sut.onClickRight(null);
+        sut.onClickRight();
 
         // Verify
         verifyZeroInteractions(mockListener);
@@ -187,7 +187,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_STOPPED);
 
         // Execute
-        sut.onClickRight(null);
+        sut.onClickRight();
 
         // Verify
         verify(mockListener).startLogging();
@@ -199,7 +199,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_LOGGING);
 
         // Execute
-        sut.onClickRight(null);
+        sut.onClickRight();
 
         // Verify
         verify(mockListener).pauseLogging();
@@ -211,7 +211,7 @@ public class ControlHandlerTest {
         when(mockLogger.getState()).thenReturn(STATE_PAUSED);
 
         // Execute
-        sut.onClickRight(null);
+        sut.onClickRight();
 
         // Verify
         verify(mockListener).resumeLogging();
