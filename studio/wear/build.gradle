@@ -4,6 +4,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "$rootProject.buildToolsVersion"
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "nl.sogeti.android.gpstracker.v2"
         minSdkVersion 21
