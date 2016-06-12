@@ -11,5 +11,5 @@ ext {
 
     // Testing
     junitVersion = '4.12'
-    mockitoVersion = '1.9.5'
+    mockitoVersion = '1.10.19'
 }

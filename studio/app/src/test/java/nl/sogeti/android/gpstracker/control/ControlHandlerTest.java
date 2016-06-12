@@ -34,11 +34,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -51,6 +51,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.validateMockitoUsage;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -63,62 +64,62 @@ public class ControlHandlerTest {
     @Mock
     ControlHandler.Listener mockListener;
     private ControlHandler sut;
+    @Mock
+    ViewGroup mockContainer;
+    @Mock
+    FloatingActionButton mockLeftButton;
+    @Mock
+    FloatingActionButton mockRightButton;
 
     @Before
     public void setup() {
         sut = new ControlHandler(mockListener, mockLogger);
+        setupButtonViewGroup();
+    }
+
+    @After
+    public void validate() {
+        validateMockitoUsage();
     }
 
     @Test
     public void setStateUnknown() {
-        // Prepare
-        ViewGroup container = createButtonViewGroup();
-
         // Execute
-        ControlHandler.setState(container, STATE_UNKNOWN);
+        ControlHandler.setState(mockContainer, STATE_UNKNOWN);
 
         // Verify
-        verify(container.getChildAt(0)).setVisibility(View.GONE);
-        verify(container.getChildAt(1)).setEnabled(false);
+        verify(mockLeftButton).setVisibility(View.GONE);
+        verify(mockRightButton).setEnabled(false);
     }
 
     @Test
     public void setStateStopped() {
-        // Prepare
-        ViewGroup container = createButtonViewGroup();
-
         // Execute
-        ControlHandler.setState(container, STATE_STOPPED);
+        ControlHandler.setState(mockContainer, STATE_STOPPED);
 
         // Verify
-        verify(container.getChildAt(0)).setVisibility(View.GONE);
-        verify(container.getChildAt(1)).setEnabled(true);
+        verify(mockLeftButton).setVisibility(View.GONE);
+        verify(mockRightButton).setEnabled(true);
     }
 
     @Test
     public void setStatePause() {
-        // Prepare
-        ViewGroup container = createButtonViewGroup();
-
         // Execute
-        ControlHandler.setState(container, STATE_PAUSED);
+        ControlHandler.setState(mockContainer, STATE_PAUSED);
 
         // Verify
-        verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        verify(container.getChildAt(1)).setEnabled(true);
+        verify(mockLeftButton).setVisibility(View.VISIBLE);
+        verify(mockRightButton).setEnabled(true);
     }
 
     @Test
     public void setStateLogging() {
-        // Prepare
-        ViewGroup container = createButtonViewGroup();
-
         // Execute
-        ControlHandler.setState(container, STATE_LOGGING);
+        ControlHandler.setState(mockContainer, STATE_LOGGING);
 
         // Verify
-        verify(container.getChildAt(0)).setVisibility(View.VISIBLE);
-        verify(container.getChildAt(1)).setEnabled(true);
+        verify(mockLeftButton).setVisibility(View.VISIBLE);
+        verify(mockRightButton).setEnabled(true);
     }
 
     @Test
@@ -220,26 +221,27 @@ public class ControlHandlerTest {
     /* Helpers */
 
     @NonNull
-    private ViewGroup createButtonViewGroup() {
-        ViewGroup container = Mockito.mock(ViewGroup.class);
-        FloatingActionButton left = Mockito.mock(FloatingActionButton.class);
+    private void setupButtonViewGroup() {
         final ViewPropertyAnimator mockAnimator = mock(ViewPropertyAnimator.class);
         when(mockAnimator.translationX(anyFloat())).thenReturn(mockAnimator);
-        doAnswer(new Answer<Object>() {
+        when(mockLeftButton.animate()).thenReturn(mockAnimator);
+
+        final Runnable[] runnable = new Runnable[1];
+        when(mockAnimator.withEndAction(any(Runnable.class))).thenAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) throws Exception {
-                ((Runnable) invocation.getArguments()[0]).run();
+                runnable[0] = (Runnable) invocation.getArguments()[0];
                 return mockAnimator;
             }
-        }).when(mockAnimator).withEndAction(any(Runnable.class));
+        });
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                runnable[0].run();
+                return null;
+            }
+        }).when(mockAnimator).start();
 
-
-        when(left.animate()).thenReturn(mockAnimator);
-        FloatingActionButton right = Mockito.mock(FloatingActionButton.class);
-        when(container.getChildAt(0)).thenReturn(left);
-        when(container.getChildAt(1)).thenReturn(right);
-
-        return container;
+        when(mockContainer.getChildAt(0)).thenReturn(mockLeftButton);
+        when(mockContainer.getChildAt(1)).thenReturn(mockRightButton);
     }
-
-
 }

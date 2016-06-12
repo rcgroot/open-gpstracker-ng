@@ -41,6 +41,10 @@ android {
         abortOnError false
         disable 'InvalidPackage'
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
