@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "$rootProject.buildToolsVersion"
 
     dataBinding {
@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId "nl.sogeti.android.gpstracker.v2"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 200
         versionName "2.0.0-SNAPSHOT"
         buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
@@ -43,7 +43,7 @@ android {
     }
 
     testOptions {
-        unitTests.returnDefaultValues = true
+        unitTests.returnDefaultValues = false
     }
 }
 
@@ -56,6 +56,7 @@ dependencies {
     compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
 }

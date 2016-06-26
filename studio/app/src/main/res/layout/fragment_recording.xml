@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,30 +10,29 @@
             type="nl.sogeti.android.gpstracker.recording.RecordingViewModel" />
     </data>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/fragment_recording_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/accent"
-        android:visibility="gone"
         app:isRecording="@{track.isRecording}">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/fragment_recording_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/ic_satellite_black_24dp" />
+            android:background="@drawable/ic_satellite_black_24dp"
+            app:layout_constraintLeft_toLeftOf="@+id/fragment_recording_container"
+            app:layout_constraintTop_toTopOf="@+id/fragment_recording_container" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/fragment_recording_text"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_toEndOf="@+id/fragment_recording_icon"
-            android:text="@{track.summary}" />
+            app:layout_constraintLeft_toRightOf="@+id/fragment_recording_icon"
+            app:layout_constraintRight_toRightOf="@+id/fragment_recording_container"
+            app:layout_constraintTop_toTopOf="@+id/fragment_recording_icon"
+            tools:text="Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>
