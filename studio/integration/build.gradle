@@ -5,7 +5,7 @@ android {
     buildToolsVersion "$rootProject.buildToolsVersion"
 
     defaultConfig {
-        minSdkVersion 10
+        minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -23,7 +23,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':log')
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile 'com.jakewharton.timber:timber:4.1.2'
     testCompile "junit:junit:$rootProject.junitVersion"
 }

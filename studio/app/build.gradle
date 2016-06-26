@@ -49,9 +49,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':log')
     compile project(':integration')
     wearApp project(':wear')
+    compile 'com.jakewharton.timber:timber:4.1.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"

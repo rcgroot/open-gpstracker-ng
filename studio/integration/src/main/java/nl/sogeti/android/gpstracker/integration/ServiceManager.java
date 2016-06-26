@@ -41,7 +41,7 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
-import nl.sogeti.android.log.Log;
+import timber.log.Timber;
 
 /**
  * Class to interact with the service that tracks and logs the locations
@@ -163,10 +163,10 @@ public class ServiceManager {
                 if (mBound) {
                     lastWaypoint = this.mGPSLoggerRemote.getLastWaypoint();
                 } else {
-                    Log.w(this, "Remote interface to logging service not found. Started: " + mBound);
+                    Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Log.e(this, "Could get lastWaypoint GPSLoggerService.", e);
+                Timber.e("Could get lastWaypoint GPSLoggerService.", e);
             }
             return lastWaypoint;
         }
@@ -179,10 +179,10 @@ public class ServiceManager {
                 if (mBound) {
                     distance = this.mGPSLoggerRemote.getTrackedDistance();
                 } else {
-                    Log.w(this, "Remote interface to logging service not found. Started: " + mBound);
+                    Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Log.e(this, "Could get tracked distance from GPSLoggerService.", e);
+                Timber.e("Could get tracked distance from GPSLoggerService.", e);
             }
             return distance;
         }
@@ -195,10 +195,10 @@ public class ServiceManager {
                 if (mBound) {
                     trackId = this.mGPSLoggerRemote.getTrackId();
                 } else {
-                    Log.w(this, "Remote interface to logging service not found. Started: " + mBound);
+                    Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Log.e(this, "Could stat GPSLoggerService.", e);
+                Timber.e("Could stat GPSLoggerService.", e);
             }
             return trackId;
         }
@@ -210,12 +210,12 @@ public class ServiceManager {
             try {
                 if (mBound) {
                     logging = this.mGPSLoggerRemote.loggingState();
-                    //               Log.d( TAG, "mGPSLoggerRemote tells state to be "+logging );
+                    //               Timber.d( TAG, "mGPSLoggerRemote tells state to be "+logging );
                 } else {
-                    Log.w(this, "Remote interface to logging service not found. Started: " + mBound);
+                    Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Log.e(this, "Could stat GPSLoggerService.", e);
+                Timber.e("Could stat GPSLoggerService.", e);
             }
             return logging;
         }
@@ -228,10 +228,10 @@ public class ServiceManager {
                 if (mBound) {
                     prepared = this.mGPSLoggerRemote.isMediaPrepared();
                 } else {
-                    Log.w(this, "Remote interface to logging service not found. Started: " + mBound);
+                    Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Log.e(this, "Could stat GPSLoggerService.", e);
+                Timber.e("Could stat GPSLoggerService.", e);
             }
             return prepared;
         }
@@ -243,10 +243,10 @@ public class ServiceManager {
                 try {
                     this.mGPSLoggerRemote.storeMetaData(key, value);
                 } catch (RemoteException e) {
-                    Log.e(ServiceManager.REMOTE_EXCEPTION, "Could not send data source to GPSLoggerService.", e);
+                    Timber.e(ServiceManager.REMOTE_EXCEPTION, "Could not send data source to GPSLoggerService.", e);
                 }
             } else {
-                Log.e(this, "No GPSLoggerRemote service connected to this manager");
+                Timber.e("No GPSLoggerRemote service connected to this manager");
             }
         }
     }
@@ -257,10 +257,10 @@ public class ServiceManager {
                 try {
                     this.mGPSLoggerRemote.storeMediaUri(mediaUri);
                 } catch (RemoteException e) {
-                    Log.e(ServiceManager.REMOTE_EXCEPTION, "Could not send media to GPSLoggerService.", e);
+                    Timber.e(ServiceManager.REMOTE_EXCEPTION, "Could not send media to GPSLoggerService.", e);
                 }
             } else {
-                Log.e(this, "No GPSLoggerRemote service connected to this manager");
+                Timber.e("No GPSLoggerRemote service connected to this manager");
             }
         }
     }
@@ -297,10 +297,10 @@ public class ServiceManager {
                 if (ContextCompat.checkSelfPermission(context, ServiceConstants.permission.TRACKING_CONTROL) == PackageManager.PERMISSION_GRANTED) {
                     context.bindService(createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
                 } else {
-                    Log.e(this, "Did not bind service because required permission is lacking");
+                    Timber.e("Did not bind service because required permission is lacking");
                 }
             } else {
-                Log.w(this, "Attempting to connect whilst already connected");
+                Timber.w("Attempting to connect whilst already connected");
             }
         }
     }
@@ -318,7 +318,7 @@ public class ServiceManager {
                     mBound = false;
                 }
             } catch (IllegalArgumentException e) {
-                Log.w(this, "Failed to unbind a service, perhaps the service disappeared?", e);
+                Timber.w("Failed to unbind a service, perhaps the service disappeared?", e);
             }
         }
     }

@@ -1,7 +1,7 @@
 ext {
     // Building
     gradlePluginVersion = '2.2.0-alpha4'
-    buildToolsVersion = "24.0.0rc4"
+    buildToolsVersion = '24.0.0rc4'
 
     // App support
     supportLibraryVersion = '24.0.0'
