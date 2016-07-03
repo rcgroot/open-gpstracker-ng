@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -12,7 +11,7 @@
             type="nl.sogeti.android.gpstracker.ng.map.TrackViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:id="@+id/activity_track_map_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,45 +19,37 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="384dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:title="@{track.name}"
-            app:layout_constraintLeft_toLeftOf="@+id/activity_track_map_root"
-            app:layout_constraintTop_toTopOf="@+id/activity_track_map_root"
-            app:layout_constraintRight_toRightOf="@+id/fragment_map" />
+            android:title="@{track.name}" />
 
         <fragment
             android:id="@+id/fragment_map"
             android:name="nl.sogeti.android.gpstracker.ng.map.TrackMapFragment"
-            android:layout_width="384dp"
-            android:layout_height="511dp"
-            tools:layout="@layout/stub"
-            app:layout_constraintLeft_toLeftOf="@+id/activity_track_map_root"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:layout_constraintRight_toRightOf="@+id/activity_track_map_root"
-            app:layout_constraintBottom_toBottomOf="@+id/activity_track_map_root" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            tools:layout="@layout/stub" />
 
         <fragment
             android:id="@+id/fragment_recording"
             android:name="nl.sogeti.android.gpstracker.ng.recording.RecordingFragment"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            tools:layout="@layout/fragment_recording"
-            app:layout_constraintLeft_toLeftOf="@+id/fragment_map"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:layout_constraintRight_toRightOf="@+id/fragment_map" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            tools:layout="@layout/fragment_recording" />
 
         <fragment
             android:id="@+id/fragment_control"
             android:name="nl.sogeti.android.gpstracker.ng.control.ControlFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_control"
-            app:layout_constraintRight_toRightOf="@+id/fragment_map"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_map" />
+            android:layout_alignBottom="@id/fragment_map"
+            android:layout_alignEnd="@+id/fragment_map"
+            tools:layout="@layout/fragment_control" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 </layout>
