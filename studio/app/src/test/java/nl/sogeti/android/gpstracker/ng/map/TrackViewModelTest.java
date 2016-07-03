@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,56 +26,43 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.control;
+package nl.sogeti.android.gpstracker.ng.map;
 
 import android.content.Context;
-import android.content.Intent;
 
-import nl.sogeti.android.gpstracker.BaseTrackAdapter;
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import junit.framework.Assert;
 
-public class ControlAdaptor extends BaseTrackAdapter implements ControlHandler.Listener {
-    private final LoggerViewModel viewModel;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-    public ControlAdaptor(LoggerViewModel viewModel) {
-        this.viewModel = viewModel;
+@RunWith(MockitoJUnitRunner.class)
+public class TrackViewModelTest {
+
+    @Mock
+    Context context;
+
+    private TrackViewModel sut;
+
+    @Before
+    public void setup() {
+        sut = new TrackViewModel(null, "TestCase");
     }
 
-    public void start(Context context) {
-        super.start(context, true);
+    @Test
+    public void testInit() {
+        // Verify
+        Assert.assertEquals("TestCase", sut.name.get());
     }
 
-    @Override
-    public void didChangeLoggingState(Intent intent) {
-        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
-        viewModel.setState(loggingState);
+    @Test
+    public void testName() {
+        // Execute
+        sut.name.set("Test");
+
+        // Verify
+        Assert.assertEquals("Test", sut.name.get());
     }
-
-    @Override
-    protected void didConnectService(ServiceManager serviceManager) {
-        viewModel.setState(serviceManager.getLoggingState());
-    }
-
-    @Override
-    public void startLogging() {
-        ServiceManager.startGPSLogging(getContext(), "New NG track!");
-    }
-
-    @Override
-    public void stopLogging() {
-        ServiceManager.stopGPSLogging(getContext());
-    }
-
-    @Override
-    public void pauseLogging() {
-        ServiceManager.pauseGPSLogging(getContext());
-    }
-
-    @Override
-    public void resumeLogging() {
-        ServiceManager.resumeGPSLogging(getContext());
-    }
-
-
 }

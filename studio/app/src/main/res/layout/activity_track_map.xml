@@ -9,7 +9,7 @@
 
         <variable
             name="track"
-            type="nl.sogeti.android.gpstracker.map.TrackViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.map.TrackViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -31,7 +31,7 @@
 
         <fragment
             android:id="@+id/fragment_map"
-            android:name="nl.sogeti.android.gpstracker.map.TrackMapFragment"
+            android:name="nl.sogeti.android.gpstracker.ng.map.TrackMapFragment"
             android:layout_width="384dp"
             android:layout_height="511dp"
             tools:layout="@layout/stub"
@@ -42,7 +42,7 @@
 
         <fragment
             android:id="@+id/fragment_recording"
-            android:name="nl.sogeti.android.gpstracker.recording.RecordingFragment"
+            android:name="nl.sogeti.android.gpstracker.ng.recording.RecordingFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             tools:layout="@layout/fragment_recording"
@@ -52,7 +52,7 @@
 
         <fragment
             android:id="@+id/fragment_control"
-            android:name="nl.sogeti.android.gpstracker.control.ControlFragment"
+            android:name="nl.sogeti.android.gpstracker.ng.control.ControlFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_control"

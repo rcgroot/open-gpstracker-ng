@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.control;
+package nl.sogeti.android.gpstracker.ng.control;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;

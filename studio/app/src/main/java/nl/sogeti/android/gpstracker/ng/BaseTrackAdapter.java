@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker;
+package nl.sogeti.android.gpstracker.ng;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;

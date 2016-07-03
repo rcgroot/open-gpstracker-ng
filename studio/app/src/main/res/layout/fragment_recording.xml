@@ -7,7 +7,7 @@
 
         <variable
             name="track"
-            type="nl.sogeti.android.gpstracker.recording.RecordingViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

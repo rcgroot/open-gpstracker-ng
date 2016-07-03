@@ -26,39 +26,32 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.control;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
+
+import android.graphics.Canvas;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
-
 @RunWith(MockitoJUnitRunner.class)
-public class LoggerViewModelTest {
+public class PathRendererTest {
 
-    private LoggerViewModel sut;
+    @Mock
+    Canvas canvas;
+    private PathRenderer sut;
 
     @Before
     public void setup() {
-        sut = new LoggerViewModel();
+        sut = new PathRenderer(128, 6, null, null, null);
     }
 
     @Test
-    public void testInit() {
-        // Verify
-        Assert.assertEquals(STATE_UNKNOWN, sut.getState());
-    }
-
-    @Test
-    public void testState() {
-        // Execute
-        sut.setState(88);
-
-        // Verify
-        Assert.assertEquals(88, sut.getState());
+    public void initCreateCorrectProjection() {
+        Assert.assertEquals(128.0, sut.getProjection().getTileSize(), 0.00000001);
     }
 }

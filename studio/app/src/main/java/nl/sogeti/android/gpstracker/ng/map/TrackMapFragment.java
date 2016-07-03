@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker.ng.map;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -52,7 +52,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
-import nl.sogeti.android.gpstracker.map.rendering.TrackTileProvider;
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {

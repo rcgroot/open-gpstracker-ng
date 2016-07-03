@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,63 +26,49 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map.rendering;
+package nl.sogeti.android.gpstracker.ng.recording;
 
-import junit.framework.Assert;
+import android.app.Fragment;
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import org.junit.Test;
+import nl.sogeti.android.gpstracker.v2.R;
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
 
-public class PointTest {
+public class RecordingFragment extends Fragment {
 
-    @Test
-    public void testDistancePositiveRight() {
-        // Setup
-        Point a = new Point(10, 10);
-        Point b = new Point(12, 12);
+    private RecordingViewModel recording;
+    private RecordingAdapter recordingAdapter;
 
-        // Execute
-        double distanceSquared = a.squaredDistanceTo(b);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        recording = new RecordingViewModel();
+        recordingAdapter = new RecordingAdapter(recording);
     }
 
-    @Test
-    public void testDistancePositiveLeft() {
-        // Setup
-        Point a = new Point(10, 10);
-        Point b = new Point(12, 12);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
+        binding.setTrack(recording);
 
-        // Execute
-        double distanceSquared = b.squaredDistanceTo(a);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+        return binding.getRoot();
     }
 
-    @Test
-    public void testDistanceNegativeRight() {
-        // Setup
-        Point a = new Point(-1, -1);
-        Point b = new Point(1, 1);
-
-        // Execute
-        double distanceSquared = a.squaredDistanceTo(b);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    @Override
+    public void onResume() {
+        super.onResume();
+        recordingAdapter.start(getActivity());
     }
 
-    @Test
-    public void testDistanceNegativeLeft() {
-        // Setup
-        Point a = new Point(1, 1);
-        Point b = new Point(-1, -1);
-
-        // Execute
-        double distanceSquared = b.squaredDistanceTo(a);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    @Override
+    public void onPause() {
+        recordingAdapter.stop();
+        super.onPause();
     }
 }

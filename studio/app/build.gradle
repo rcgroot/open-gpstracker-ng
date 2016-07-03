@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "nl.sogeti.android.gpstracker.v2"
+        applicationId "nl.sogeti.android.gpstracker.ng"
         minSdkVersion 21
         targetSdkVersion 24
         versionCode 200

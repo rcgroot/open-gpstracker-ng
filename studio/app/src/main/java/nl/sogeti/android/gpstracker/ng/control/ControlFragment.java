@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.control;
+package nl.sogeti.android.gpstracker.ng.control;
 
 import android.app.Fragment;
 import android.databinding.DataBindingUtil;
@@ -43,7 +43,7 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
 /**
  * On screen controls for the logging state
  */
-public class ControlFragment extends Fragment  {
+public class ControlFragment extends Fragment {
 
     private ControlAdaptor controlAdaptor;
     private LoggerViewModel viewModel;

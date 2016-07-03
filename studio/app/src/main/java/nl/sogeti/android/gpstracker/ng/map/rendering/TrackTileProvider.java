@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map.rendering;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
 import android.content.Context;
 import android.databinding.Observable;
@@ -40,7 +40,7 @@ import com.google.android.gms.maps.model.TileProvider;
 
 import java.io.ByteArrayOutputStream;
 
-import nl.sogeti.android.gpstracker.map.TrackViewModel;
+import nl.sogeti.android.gpstracker.ng.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackTileProvider implements TileProvider {

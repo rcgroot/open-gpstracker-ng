@@ -6,18 +6,18 @@
 
         <variable
             name="handler"
-            type="nl.sogeti.android.gpstracker.control.ControlHandler" />
+            type="nl.sogeti.android.gpstracker.ng.control.ControlHandler" />
 
         <variable
             name="logger"
-            type="nl.sogeti.android.gpstracker.control.LoggerViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.control.LoggerViewModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:state="@{logger.state}"
-        tools:context="nl.sogeti.android.gpstracker.control.ControlFragment">
+        tools:context="nl.sogeti.android.gpstracker.ng.control.ControlFragment">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/widget_control_left"

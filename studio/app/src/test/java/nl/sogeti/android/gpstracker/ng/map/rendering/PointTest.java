@@ -26,32 +26,63 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map.rendering;
-
-import android.graphics.Canvas;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PathRendererTest {
+public class PointTest {
 
-    @Mock
-    Canvas canvas;
-    private PathRenderer sut;
+    @Test
+    public void testDistancePositiveRight() {
+        // Setup
+        Point a = new Point(10, 10);
+        Point b = new Point(12, 12);
 
-    @Before
-    public void setup() {
-        sut = new PathRenderer(128, 6, null, null, null);
+        // Execute
+        double distanceSquared = a.squaredDistanceTo(b);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 
     @Test
-    public void initCreateCorrectProjection() {
-        Assert.assertEquals(128.0, sut.getProjection().getTileSize(), 0.00000001);
+    public void testDistancePositiveLeft() {
+        // Setup
+        Point a = new Point(10, 10);
+        Point b = new Point(12, 12);
+
+        // Execute
+        double distanceSquared = b.squaredDistanceTo(a);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
+    }
+
+    @Test
+    public void testDistanceNegativeRight() {
+        // Setup
+        Point a = new Point(-1, -1);
+        Point b = new Point(1, 1);
+
+        // Execute
+        double distanceSquared = a.squaredDistanceTo(b);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
+    }
+
+    @Test
+    public void testDistanceNegativeLeft() {
+        // Setup
+        Point a = new Point(1, 1);
+        Point b = new Point(-1, -1);
+
+        // Execute
+        double distanceSquared = b.squaredDistanceTo(a);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 }

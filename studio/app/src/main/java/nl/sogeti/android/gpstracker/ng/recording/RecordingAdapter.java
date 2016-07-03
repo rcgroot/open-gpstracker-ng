@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.recording;
+package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -42,7 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.sogeti.android.gpstracker.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.ng.BaseTrackAdapter;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;

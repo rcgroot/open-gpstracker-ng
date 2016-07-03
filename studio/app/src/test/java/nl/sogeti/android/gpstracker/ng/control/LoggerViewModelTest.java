@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,49 +26,39 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.recording;
+package nl.sogeti.android.gpstracker.ng.control;
 
-import android.app.Fragment;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import junit.framework.Assert;
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-public class RecordingFragment extends Fragment {
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
 
-    private RecordingViewModel recording;
-    private RecordingAdapter recordingAdapter;
+@RunWith(MockitoJUnitRunner.class)
+public class LoggerViewModelTest {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recording = new RecordingViewModel();
-        recordingAdapter = new RecordingAdapter(recording);
+    private LoggerViewModel sut;
+
+    @Before
+    public void setup() {
+        sut = new LoggerViewModel();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recording);
-
-        return binding.getRoot();
+    @Test
+    public void testInit() {
+        // Verify
+        Assert.assertEquals(STATE_UNKNOWN, sut.getState());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        recordingAdapter.start(getActivity());
-    }
+    @Test
+    public void testState() {
+        // Execute
+        sut.setState(88);
 
-    @Override
-    public void onPause() {
-        recordingAdapter.stop();
-        super.onPause();
+        // Verify
+        Assert.assertEquals(88, sut.getState());
     }
 }

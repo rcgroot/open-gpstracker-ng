@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker;
+package nl.sogeti.android.gpstracker.ng;
 
 import nl.sogeti.android.gpstracker.v2.BuildConfig;
 import timber.log.Timber;

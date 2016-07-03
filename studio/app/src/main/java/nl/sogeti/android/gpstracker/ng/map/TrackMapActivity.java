@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.map;
+package nl.sogeti.android.gpstracker.ng.map;
 
 import android.content.ContentUris;
 import android.database.Cursor;

@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,17 +26,24 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.recording;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+public class Point {
+    public double x, y;
 
-public class RecordingViewModel {
-    public final ObservableBoolean isRecording = new ObservableBoolean();
-    public final ObservableField<String> summary = new ObservableField<>();
-    public final ObservableField<String> name = new ObservableField<>();
+    public Point() {
+    }
 
-    RecordingViewModel() {
-        isRecording.set(false);
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Point(Point previous) {
+        this(previous.x, previous.y);
+    }
+
+    public double squaredDistanceTo(Point other) {
+        return Math.abs(x - other.x) + Math.abs(y - other.y);
     }
 }
