@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.vanniktech.android.junit.jacoco'
+
+junitJacoco {
+    jacocoVersion = '0.7.7.201606060606'
+}
 
 android {
     compileSdkVersion 24
