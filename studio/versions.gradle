@@ -1,10 +1,10 @@
 ext {
     // Building
     gradlePluginVersion = '2.2.0-alpha7'
-    buildToolsVersion = '24.1.1	'
+    buildToolsVersion = '24.0.0	'
 
     // App support
-    supportLibraryVersion = '24.0.0'
+    supportLibraryVersion = '24.1.1'
     kotlinVersion = '1.0.2-1'
     playServicesVersion = '9.4.0'
     wearableVersion = '1.4.0'
