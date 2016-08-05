@@ -32,12 +32,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import timber.log.Timber;
 
@@ -292,7 +294,15 @@ public class ServiceManager {
                         }
                     }
                 };
-                context.bindService(createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
+                if (ContextCompat.checkSelfPermission(context, ServiceConstants.permission.TRACKING_CONTROL) == PackageManager.PERMISSION_GRANTED) {
+                    context.bindService(createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
+                } else {
+                    try {
+                        context.bindService(createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
+                    } catch (SecurityException e) {
+                        Timber.e("Did not bind service because required permission is lacking");
+                    }
+                }
             } else {
                 Timber.w("Attempting to connect whilst already connected");
             }
