@@ -28,11 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.control;
 
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
+
+import com.android.annotations.NonNull;
 
 import org.junit.After;
 import org.junit.Before;

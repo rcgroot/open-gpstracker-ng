@@ -28,7 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.map.rendering;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import junit.framework.Assert;
 
@@ -37,6 +42,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PathRendererTest {
@@ -53,5 +64,24 @@ public class PathRendererTest {
     @Test
     public void initCreateCorrectProjection() {
         Assert.assertEquals(128.0, sut.getProjection().getTileSize(), 0.00000001);
+    }
+
+    @Test
+    public void singlePointPath() {
+        // Prepare
+        Bitmap start = mock(Bitmap.class);
+        Bitmap stop = mock(Bitmap.class);
+        LatLng[][] latLng = new LatLng[1][1];
+        latLng[0][0] = new LatLng(52.0, 5.0);
+        sut = new PathRenderer(32.0F, 2.0F, latLng, start, stop);
+        Paint paint = mock(Paint.class);
+        Path path = mock(Path.class);
+
+        // Execute
+        sut.drawPath(canvas, 0, 0, 0, paint, path);
+
+        // Verify
+        verify(canvas).drawBitmap(eq(start), anyFloat(), anyFloat(), (Paint) anyObject());
+        verify(canvas).drawPath(eq(path), eq(paint));
     }
 }

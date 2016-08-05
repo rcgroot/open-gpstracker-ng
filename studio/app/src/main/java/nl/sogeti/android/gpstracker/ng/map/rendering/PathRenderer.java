@@ -64,18 +64,22 @@ public class PathRenderer {
     }
 
     public void drawPath(Canvas canvas, int x, int y, int zoom) {
+        Path path = new Path();
+        Paint paint = new Paint();
+        drawPath(canvas, x, y, zoom, paint, path);
+    }
+
+    void drawPath(Canvas canvas, int x, int y, int zoom, Paint paint, Path path) {
         // Loop through all points, skips parts with both element offscreen
         // or when points are very close together
         Point first = null, last = null, previous = new Point(), current = new Point();
-        Paint paint = new Paint();
-        Path path = new Path();
         for (Point[] worldPoint : worldPoints) {
-            if (worldPoint.length == 1) {
-                continue;
-            }
             projection.worldToTileCoordinates(worldPoint[0], previous, x, y, zoom);
             if (first == null) {
                 first = new Point(previous);
+            }
+            if (worldPoint.length == 1) {
+                continue;
             }
             path.moveTo((float) previous.x, (float) previous.y);
             for (int j = 1; j < worldPoint.length; j++) {
@@ -96,13 +100,12 @@ public class PathRenderer {
         paint.setAntiAlias(true);
         paint.setPathEffect(new CornerPathEffect(10));
         canvas.drawPath(path, paint);
-        path.rewind();
         drawPin(canvas, paint, startBitmap, first);
         drawPin(canvas, paint, endBitmap, last);
     }
 
     private void drawPin(Canvas canvas, Paint paint, Bitmap bitmap, Point point) {
-        if (startBitmap != null) {
+        if (startBitmap != null && point != null) {
             float y = ((float) point.y) - bitmap.getHeight();
             float x = ((float) point.x) - bitmap.getWidth() / 2;
             canvas.drawBitmap(bitmap, x, y, paint);
