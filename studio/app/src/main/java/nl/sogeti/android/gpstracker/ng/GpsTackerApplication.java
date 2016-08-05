@@ -7,11 +7,15 @@ import timber.log.Timber;
  * Start app generic services
  */
 public class GpsTackerApplication extends android.app.Application {
+
+
+    boolean debug = BuildConfig.DEBUG;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.DEBUG) {
+        if (debug) {
             Timber.plant(new Timber.DebugTree());
         }
     }

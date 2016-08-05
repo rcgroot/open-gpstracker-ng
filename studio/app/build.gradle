@@ -51,7 +51,7 @@ android {
     }
 
     testOptions {
-        unitTests.returnDefaultValues = false
+        unitTests.returnDefaultValues = true
     }
 }
 
