@@ -34,6 +34,7 @@ import android.databinding.Observable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
@@ -108,7 +109,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
         menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
         MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_mode_edit_black_24dp);
+        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_mode_edit_black_24dp, null);
         drawable = DrawableCompat.wrap(drawable);
         DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.primary_light));
         menuItem.setIcon(drawable);

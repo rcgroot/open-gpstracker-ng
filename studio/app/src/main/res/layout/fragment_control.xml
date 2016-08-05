@@ -26,10 +26,11 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:onClick="@{(view) -> handler.onClickLeft()}"
-            android:src="@drawable/ic_pause_black_24dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_pause_black_24dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/widget_control_right"
@@ -38,8 +39,9 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:onClick="@{(view) -> handler.onClickRight()}"
-            android:src="@drawable/ic_navigation_black_24dp" />
+            app:srcCompat="@drawable/ic_navigation_black_24dp" />
     </LinearLayout>
 </layout>

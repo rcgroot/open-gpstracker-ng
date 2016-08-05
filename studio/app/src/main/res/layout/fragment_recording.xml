@@ -21,9 +21,9 @@
             android:id="@+id/fragment_recording_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_satellite_black_24dp"
             app:layout_constraintLeft_toLeftOf="@+id/fragment_recording_container"
-            app:layout_constraintTop_toTopOf="@+id/fragment_recording_container" />
+            app:layout_constraintTop_toTopOf="@+id/fragment_recording_container"
+            app:srcCompat="@drawable/ic_satellite_black_24dp" />
 
         <TextView
             android:id="@+id/fragment_recording_text"

@@ -32,7 +32,8 @@ import android.content.Context;
 import android.databinding.Observable;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.VectorDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Tile;
@@ -68,15 +69,15 @@ public class TrackTileProvider implements TileProvider {
 
         track.waypoints.addOnPropertyChangedCallback(modelCallback);
         LatLng[][] wayPoints = track.waypoints.get();
-        VectorDrawable startDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_start_24dp);
-        VectorDrawable endDrawable = (VectorDrawable) context.getDrawable(R.drawable.ic_pin_end_24dp);
+        VectorDrawableCompat startDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_start_24dp, null);
+        VectorDrawableCompat endDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_end_24dp, null);
         startBitmap = renderVectorDrawable(startDrawable);
         endBitmap = renderVectorDrawable(endDrawable);
 
         pathRenderer = new PathRenderer(tileSize, strokeWidth, wayPoints, startBitmap, endBitmap);
     }
 
-    private Bitmap renderVectorDrawable(VectorDrawable vectorDrawable) {
+    private Bitmap renderVectorDrawable(Drawable vectorDrawable) {
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

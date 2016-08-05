@@ -23,6 +23,7 @@ android {
         buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
         archivesBaseName = "opengpstracker-ng-$versionName"
+        vectorDrawables.useSupportLibrary = true
     }
 
     if (System.getenv().containsKey("storeFile")) {
