@@ -44,6 +44,8 @@ public class PathRenderer {
     private final Point[][] worldPoints;
     private final Bitmap startBitmap;
     private final Bitmap endBitmap;
+    private final int NORMAL_PATH_SIZE = 250;
+    private boolean isLongTrack;
 
     public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
         this.strokeWidth = strokeWidth;
@@ -54,13 +56,17 @@ public class PathRenderer {
         }
         projection = new TileProjection(tileSize);
         worldPoints = new Point[wayPoints.length][];
+        int pathLength = 0;
         for (int i = 0; i < wayPoints.length; i++) {
-            worldPoints[i] = new Point[wayPoints[i].length];
-            for (int j = 0; j < wayPoints[i].length; j++) {
+            final LatLng[] segmentWayPoint = wayPoints[i];
+            pathLength += segmentWayPoint.length;
+            worldPoints[i] = new Point[segmentWayPoint.length];
+            for (int j = 0; j < segmentWayPoint.length; j++) {
                 worldPoints[i][j] = new Point();
-                projection.latLngToWorldCoordinates(wayPoints[i][j], worldPoints[i][j]);
+                projection.latLngToWorldCoordinates(segmentWayPoint[j], worldPoints[i][j]);
             }
         }
+        isLongTrack = pathLength > NORMAL_PATH_SIZE;
     }
 
     public void drawPath(Canvas canvas, int x, int y, int zoom) {
@@ -70,8 +76,7 @@ public class PathRenderer {
     }
 
     void drawPath(Canvas canvas, int x, int y, int zoom, Paint paint, Path path) {
-        // Loop through all points, skips parts with both element offscreen
-        // or when points are very close together
+        // Loop through all points
         Point first = null, last = null, previous = new Point(), current = new Point();
         for (Point[] worldPoint : worldPoints) {
             projection.worldToTileCoordinates(worldPoint[0], previous, x, y, zoom);
@@ -84,13 +89,24 @@ public class PathRenderer {
             path.moveTo((float) previous.x, (float) previous.y);
             for (int j = 1; j < worldPoint.length; j++) {
                 projection.worldToTileCoordinates(worldPoint[j], current, x, y, zoom);
-//                if (!completeOffscreen(previous, current, canvas) || !toCloseTogether(previous, current)) {
-
+                if (isLongTrack && j < worldPoint.length - 1) {
+                    if (completeOffscreen(previous, current, canvas)) {
+                        // skips parts with both element offscreen
+                        path.moveTo((float) current.x, (float) current.y);
+                        Point tmp = previous;
+                        previous = current;
+                        current = tmp;
+                        continue;
+                    }
+                    if (toCloseTogether(previous, current)) {
+                        // or when points are very close together
+                        continue;
+                    }
+                }
                 path.lineTo((float) current.x, (float) current.y);
                 Point tmp = previous;
                 previous = current;
                 current = tmp;
-//                }
             }
             last = new Point(previous);
         }
