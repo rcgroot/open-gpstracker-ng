@@ -58,7 +58,7 @@ import nl.sogeti.android.gpstracker.v2.R;
 
 public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
 
-    private static final int ITEM_ID_EDIT_TRACK = 3;
+    private static final int ITEM_ID_EDIT_TRACK = 4;
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
     private TrackViewModel trackViewModel;
     private TrackAdaptor trackAdaptor;

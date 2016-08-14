@@ -20,7 +20,7 @@ public class GpsTackerApplicationTest {
     @Test
     public void onCreateDebug() throws Exception {
         // Prepare
-        sut.debug = true;
+        sut.setDebug(true);
 
         // Execute
         sut.onCreate();
@@ -32,7 +32,7 @@ public class GpsTackerApplicationTest {
     @Test
     public void onCreateRelease() throws Exception {
         // Prepare
-        sut.debug = false;
+        sut.setDebug(false);
 
         // Execute
         sut.onCreate();

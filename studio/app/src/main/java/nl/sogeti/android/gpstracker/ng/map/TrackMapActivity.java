@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.map;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
+import nl.sogeti.android.gpstracker.ng.tracks.TrackListFragment;
+import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
@@ -45,6 +48,7 @@ public class TrackMapActivity extends AppCompatActivity {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     public static final int ITEM_ID_LAST_TRACK = 2;
+    private static final int ITEM_ID_LIST_TRACKS = 3;
 
     private TrackViewModel selectedTrack;
 
@@ -62,7 +66,8 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(Menu.NONE, ITEM_ID_LAST_TRACK, Menu.NONE, "Last track");
+        menu.add(Menu.NONE, ITEM_ID_LIST_TRACKS, Menu.NONE, "List tracks");
+        menu.add(Menu.NONE, ITEM_ID_LAST_TRACK, Menu.NONE, "Select last track");
 
         return true;
     }
@@ -70,7 +75,12 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean consumed;
-        if (item.getItemId() == ITEM_ID_LAST_TRACK) {
+        if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
+            Intent intent = new Intent(this, TracksActivity.class);
+            startActivity(intent);
+            consumed = true;
+        }
+        else if (item.getItemId() == ITEM_ID_LAST_TRACK) {
             Cursor tracks = null;
             try {
                 tracks = getContentResolver().query(ContentConstants.Tracks.CONTENT_URI, new String[]{ContentConstants.Tracks._ID}, null, null, null);

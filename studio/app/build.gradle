@@ -46,6 +46,14 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    dataBinding {
+        enabled = true
+    }
+
+    kapt {
+        generateStubs = true
+    }
+
     lintOptions {
         abortOnError false
         disable 'InvalidPackage'
@@ -67,6 +75,7 @@ dependencies {
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
     compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
+    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
 }

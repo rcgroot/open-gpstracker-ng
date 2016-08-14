@@ -51,6 +51,10 @@
             android:layout_alignParentRight="true"
             tools:layout="@layout/fragment_control" />
 
+        <FrameLayout
+            android:id="@+id/activity_track_map_tracklist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 </layout>

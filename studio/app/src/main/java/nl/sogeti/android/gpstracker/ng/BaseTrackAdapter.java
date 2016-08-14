@@ -58,21 +58,25 @@ public abstract class BaseTrackAdapter {
         if (this.context == null) {
             this.context = context;
             if (withService) {
-                registerReceiver();
                 serviceManager.startup(context, new Runnable() {
                     @Override
                     public void run() {
-                        didConnectService(serviceManager);
+                        synchronized(BaseTrackAdapter.this) {
+                            if (BaseTrackAdapter.this.context != null) {
+                                didConnectService(serviceManager);
+                            }
+                        }
                     }
                 });
+                registerReceiver();
             }
         }
     }
 
     public synchronized void stop() {
         if (context != null) {
-            serviceManager.shutdown(context);
             unregisterReceiver();
+            serviceManager.shutdown(context);
             context = null;
         }
     }
