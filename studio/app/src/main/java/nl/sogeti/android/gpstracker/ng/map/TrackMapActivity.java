@@ -28,17 +28,26 @@
  */
 package nl.sogeti.android.gpstracker.ng.map;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
-import nl.sogeti.android.gpstracker.ng.tracks.TrackListFragment;
 import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
@@ -49,6 +58,7 @@ public class TrackMapActivity extends AppCompatActivity {
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     public static final int ITEM_ID_LAST_TRACK = 2;
     private static final int ITEM_ID_LIST_TRACKS = 3;
+    private static final int ITEM_ID_EDIT_TRACK = 4;
 
     private TrackViewModel selectedTrack;
 
@@ -68,6 +78,19 @@ public class TrackMapActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         menu.add(Menu.NONE, ITEM_ID_LIST_TRACKS, Menu.NONE, "List tracks");
         menu.add(Menu.NONE, ITEM_ID_LAST_TRACK, Menu.NONE, "Select last track");
+        menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
+        MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_mode_edit_black_24dp, null);
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.primary_light));
+        menuItem.setIcon(drawable);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(ITEM_ID_EDIT_TRACK).setEnabled(selectedTrack.uri.get() != null);
 
         return true;
     }
@@ -75,12 +98,14 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean consumed;
-        if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
+        if (item.getItemId() == ITEM_ID_EDIT_TRACK) {
+            showTrackTitleDialog();
+            consumed = true;
+        } else if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
             Intent intent = new Intent(this, TracksActivity.class);
             startActivity(intent);
             consumed = true;
-        }
-        else if (item.getItemId() == ITEM_ID_LAST_TRACK) {
+        } else if (item.getItemId() == ITEM_ID_LAST_TRACK) {
             Cursor tracks = null;
             try {
                 tracks = getContentResolver().query(ContentConstants.Tracks.CONTENT_URI, new String[]{ContentConstants.Tracks._ID}, null, null, null);
@@ -105,5 +130,27 @@ public class TrackMapActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.uri.get());
+    }
+
+
+    private void showTrackTitleDialog() {
+        final Uri trackUri = selectedTrack.uri.get();
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
+        final EditText nameField = (EditText) view.findViewById(R.id.dialog_rename_edittext);
+        nameField.setText(selectedTrack.name.get());
+        nameField.setSelection(0, nameField.getText().length());
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.activity_track_map_rename_title))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String userInput = nameField.getText().toString();
+                        TrackPresenter.updateName(TrackMapActivity.this, trackUri, userInput);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .setView(view)
+                .show();
     }
 }
