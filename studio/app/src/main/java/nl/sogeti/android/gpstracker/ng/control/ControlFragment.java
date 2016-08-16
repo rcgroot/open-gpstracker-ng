@@ -45,7 +45,7 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding;
  */
 public class ControlFragment extends Fragment {
 
-    private ControlAdaptor controlAdaptor;
+    private ControlPresenter controlPresenter;
     private LoggerViewModel viewModel;
     private ControlHandler handler;
     private PermissionRequester permissionRequester;
@@ -55,8 +55,8 @@ public class ControlFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new LoggerViewModel();
-        controlAdaptor = new ControlAdaptor(viewModel);
-        handler = new ControlHandler(controlAdaptor, viewModel);
+        controlPresenter = new ControlPresenter(viewModel);
+        handler = new ControlHandler(controlPresenter, viewModel);
         permissionRequester = new PermissionRequester();
     }
 
@@ -76,16 +76,16 @@ public class ControlFragment extends Fragment {
         permissionRequester.checkTrackingPermission(getActivity(), new Runnable() {
             @Override
             public void run() {
-                controlAdaptor.start(getActivity());
+                controlPresenter.start(getActivity());
             }
         });
     }
 
     @Override
     public void onPause() {
-        permissionRequester.stop();
-        controlAdaptor.stop();
         super.onPause();
+        permissionRequester.stop();
+        controlPresenter.stop();
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

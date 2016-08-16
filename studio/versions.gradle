@@ -1,6 +1,6 @@
 ext {
     // Building
-    buildToolsVersion = '24.0.0	'
+    buildToolsVersion = '24.0.1'
     gradlePluginVersion = '2.2.0-beta1'
     dataBindingVersion = '2.2.0-beta1'
 
@@ -9,7 +9,7 @@ ext {
     kotlinVersion = '1.0.3'
     playServicesVersion = '9.4.0'
     wearableVersion = '1.4.0'
-    constraintsLibraryVersion = '1.0.0-alpha4'
+    constraintsLibraryVersion = '1.0.0-alpha7'
 
     // Testing
     junitVersion = '4.12'

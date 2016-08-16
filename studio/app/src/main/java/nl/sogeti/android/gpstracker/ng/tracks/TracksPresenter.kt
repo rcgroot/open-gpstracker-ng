@@ -28,25 +28,49 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracks
 
-import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.view.View
-
+import android.content.Context
+import android.databinding.DataBindingUtil
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.utils.getString
+import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
-class TracksActivity : AppCompatActivity() {
+class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracks)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
+    private var context: Context? = null
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    override fun getItemCount(): Int {
+        return model.track.size
     }
+
+    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        val trackViewModel = model.track[position]
+        if (holder != null) {
+            val binding = holder.binding
+            binding.viewModel = trackViewModel
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
+        val viewHolder = ViewHolder(binding)
+
+        return viewHolder
+    }
+
+    fun start(context: Context) {
+        this.context = context
+        val tracks = ContentConstants.Tracks.CONTENT_URI.map(context, { TrackViewModel(it.getString(ContentConstants.Tracks.NAME)) })
+        model.track.addAll(tracks)
+    }
+
+    fun stop() {
+        context = null
+    }
+
+    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}
 }

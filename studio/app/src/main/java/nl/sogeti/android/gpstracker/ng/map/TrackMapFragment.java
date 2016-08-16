@@ -61,7 +61,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     private static final int ITEM_ID_EDIT_TRACK = 4;
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
     private TrackViewModel trackViewModel;
-    private TrackAdaptor trackAdaptor;
+    private TrackPresenter trackPresenter;
     private TileOverlay titleOverLay;
     private final Observable.OnPropertyChangedCallback uriCallback = new UriChangedCallback();
     private GoogleMap googleMap;
@@ -77,30 +77,30 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
             Uri uri = savedInstanceState.getParcelable(KEY_TRACK_URI);
             trackViewModel = new TrackViewModel(uri, getString(R.string.app_name));
         }
-        trackAdaptor = new TrackAdaptor(trackViewModel);
+        trackPresenter = new TrackPresenter(trackViewModel);
         getMapAsync(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        trackAdaptor.start(getActivity());
+        trackPresenter.start(getActivity());
         trackViewModel.trackHeadBounds.addOnPropertyChangedCallback(uriCallback);
         trackViewModel.startStopBounds.addOnPropertyChangedCallback(uriCallback);
     }
 
     @Override
     public void onPause() {
+        super.onPause();
         trackViewModel.trackHeadBounds.removeOnPropertyChangedCallback(uriCallback);
         trackViewModel.startStopBounds.removeOnPropertyChangedCallback(uriCallback);
-        trackAdaptor.stop();
-        super.onPause();
+        trackPresenter.stop();
     }
 
     @Override
     public void onDestroy() {
-        googleMap = null;
         super.onDestroy();
+        googleMap = null;
     }
 
     @Override
@@ -173,7 +173,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userInput = nameField.getText().toString();
-                        TrackAdaptor.updateName(getActivity(), trackUri, userInput);
+                        TrackPresenter.updateName(getActivity(), trackUri, userInput);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)

@@ -26,49 +26,56 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording;
+package nl.sogeti.android.gpstracker.ng.control;
 
-import android.app.Fragment;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context;
+import android.content.Intent;
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
+import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public class RecordingFragment extends Fragment {
+public class ControlPresenter extends BaseTrackPresentor implements ControlHandler.Listener {
+    private final LoggerViewModel viewModel;
 
-    private RecordingViewModel recordingViewModel;
-    private RecordingPresenter recordingPresenter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recordingViewModel = new RecordingViewModel();
-        recordingPresenter = new RecordingPresenter(recordingViewModel);
+    public ControlPresenter(LoggerViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recordingViewModel);
-
-        return binding.getRoot();
+    public void start(Context context) {
+        super.start(context, true);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        recordingPresenter.start(getActivity());
+    public void didChangeLoggingState(Intent intent) {
+        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
+        viewModel.setState(loggingState);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        recordingPresenter.stop();
+    protected void didConnectService(ServiceManager serviceManager) {
+        viewModel.setState(serviceManager.getLoggingState());
     }
+
+    @Override
+    public void startLogging() {
+        ServiceManager.startGPSLogging(getContext(), "New NG track!");
+    }
+
+    @Override
+    public void stopLogging() {
+        ServiceManager.stopGPSLogging(getContext());
+    }
+
+    @Override
+    public void pauseLogging() {
+        ServiceManager.pauseGPSLogging(getContext());
+    }
+
+    @Override
+    public void resumeLogging() {
+        ServiceManager.resumeGPSLogging(getContext());
+    }
+
+
 }

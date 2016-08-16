@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="model"
-            type="nl.sogeti.android.gpstracker.ng.tracks.TracksModel" />
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.ng.tracks.TracksViewModel" />
     </data>
 
     <FrameLayout

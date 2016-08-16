@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,49 +26,24 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording;
+package nl.sogeti.android.gpstracker.ng.binders
 
-import android.app.Fragment;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.databinding.BindingAdapter
+import android.graphics.Bitmap
+import android.widget.ImageView
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
 
-public class RecordingFragment extends Fragment {
+open class CommonBindingAdapters {
 
-    private RecordingViewModel recordingViewModel;
-    private RecordingPresenter recordingPresenter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recordingViewModel = new RecordingViewModel();
-        recordingPresenter = new RecordingPresenter(recordingViewModel);
+    @BindingAdapter("bitmap")
+    fun setBitmap(view: ImageView, bitmap: Bitmap?) {
+        view.setImageBitmap(bitmap)
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recordingViewModel);
-
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        recordingPresenter.start(getActivity());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        recordingPresenter.stop();
+    @BindingAdapter("srcCompat")
+    fun setSrcCompat(view: ImageView, resource: Int?) {
+        if (resource != null) {
+            view.setImageResource(resource)
+        }
     }
 }

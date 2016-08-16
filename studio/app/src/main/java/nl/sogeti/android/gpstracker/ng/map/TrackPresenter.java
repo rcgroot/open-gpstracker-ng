@@ -42,11 +42,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 
-import nl.sogeti.android.gpstracker.ng.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public class TrackAdaptor extends BaseTrackAdapter {
+public class TrackPresenter extends BaseTrackPresentor {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
@@ -55,7 +55,7 @@ public class TrackAdaptor extends BaseTrackAdapter {
     private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
 
-    public TrackAdaptor(TrackViewModel track) {
+    public TrackPresenter(TrackViewModel track) {
         this.viewModel = track;
     }
 

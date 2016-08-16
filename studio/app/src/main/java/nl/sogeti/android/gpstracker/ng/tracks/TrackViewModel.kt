@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,26 +26,33 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording;
+package nl.sogeti.android.gpstracker.ng.tracks
 
-import android.databinding.BindingAdapter;
-import android.view.View;
-import android.view.ViewGroup;
+import android.databinding.BaseObservable
+import android.databinding.Bindable
+import android.databinding.ObservableField
+import android.databinding.ObservableInt
+import android.graphics.Bitmap
+import nl.sogeti.android.gpstracker.v2.BR
+import nl.sogeti.android.gpstracker.v2.R
 
-public class RecordingHandler {
+class TrackViewModel() : BaseObservable() {
 
-    @BindingAdapter({"isRecording"})
-    public static void setRecording(final ViewGroup container, boolean isRecording) {
-        if (isRecording) {
-            container.setVisibility(View.VISIBLE);
-            container.animate().translationY(0).start();
-        } else {
-            container.animate().translationY(-container.getHeight()).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    container.setVisibility(View.GONE);
-                }
-            }).start();
-        }
+    constructor(name:String) :this(){
+        this.name = name
     }
+    val iconType = ObservableInt(R.drawable.ic_track_type_default_24dp);
+    /**
+     * Just to try out the Bindable annotation
+     */
+    @Bindable
+    var name = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.name)
+        }
+    val startDay = ObservableField<String>("--")
+    val duration = ObservableField<String>("--")
+    val distance = ObservableField<String>("--")
+    val overviewMap = ObservableField<Bitmap>()
 }

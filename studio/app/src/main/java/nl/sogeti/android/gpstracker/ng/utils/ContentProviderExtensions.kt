@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,49 +26,38 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording;
+package nl.sogeti.android.gpstracker.ng.utils
 
-import android.app.Fragment;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
+/* **
+ * Extensions for dealing with the data in content providers
+ * **/
 
-public class RecordingFragment extends Fragment {
+fun Cursor.getString(columnName:String) : String {
+    val index = this.getColumnIndex(columnName)
 
-    private RecordingViewModel recordingViewModel;
-    private RecordingPresenter recordingPresenter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recordingViewModel = new RecordingViewModel();
-        recordingPresenter = new RecordingPresenter(recordingViewModel);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recordingViewModel);
-
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        recordingPresenter.start(getActivity());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        recordingPresenter.stop();
-    }
+    return this.getString(index)
 }
+
+fun <T> Uri.map(context: Context, operation: (Cursor) -> T): List<T> {
+    val result = mutableListOf<T>()
+    var cursor: Cursor? = null
+    try {
+        cursor = context.contentResolver.query(this, null, null, null, null)
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                result.add(operation(cursor))
+            } while (cursor.moveToNext())
+        }
+    } finally {
+        if (cursor != null) {
+            cursor.close()
+        }
+    }
+
+    return result
+}
+

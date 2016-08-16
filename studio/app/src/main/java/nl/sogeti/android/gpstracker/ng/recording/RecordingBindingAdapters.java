@@ -28,47 +28,26 @@
  */
 package nl.sogeti.android.gpstracker.ng.recording;
 
-import android.app.Fragment;
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
+import android.databinding.BindingAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
+import nl.sogeti.android.gpstracker.ng.binders.CommonBindingAdapters;
 
-public class RecordingFragment extends Fragment {
+public class RecordingBindingAdapters extends CommonBindingAdapters {
 
-    private RecordingViewModel recordingViewModel;
-    private RecordingPresenter recordingPresenter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recordingViewModel = new RecordingViewModel();
-        recordingPresenter = new RecordingPresenter(recordingViewModel);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recordingViewModel);
-
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        recordingPresenter.start(getActivity());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        recordingPresenter.stop();
+    @BindingAdapter("isRecording")
+    public void setRecording(final ViewGroup container, boolean isRecording) {
+        if (isRecording) {
+            container.setVisibility(View.VISIBLE);
+            container.animate().translationY(0).start();
+        } else {
+            container.animate().translationY(-container.getHeight()).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    container.setVisibility(View.GONE);
+                }
+            }).start();
+        }
     }
 }

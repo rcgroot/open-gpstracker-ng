@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,56 +26,21 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.control;
+package nl.sogeti.android.gpstracker.ng.binders
 
-import android.content.Context;
-import android.content.Intent;
+import android.databinding.DataBindingComponent
+import nl.sogeti.android.gpstracker.ng.recording.RecordingBindingAdapters
 
-import nl.sogeti.android.gpstracker.ng.BaseTrackAdapter;
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.integration.ServiceManager;
+class CommonBindingComponent : DataBindingComponent {
 
-public class ControlAdaptor extends BaseTrackAdapter implements ControlHandler.Listener {
-    private final LoggerViewModel viewModel;
+    private val trackAdapters = CommonBindingAdapters()
+    private val recordingAdapters = RecordingBindingAdapters()
 
-    public ControlAdaptor(LoggerViewModel viewModel) {
-        this.viewModel = viewModel;
+    override fun getRecordingBindingAdapters(): RecordingBindingAdapters {
+        return recordingAdapters
     }
 
-    public void start(Context context) {
-        super.start(context, true);
+    override fun getCommonBindingAdapters(): CommonBindingAdapters {
+        return trackAdapters
     }
-
-    @Override
-    public void didChangeLoggingState(Intent intent) {
-        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
-        viewModel.setState(loggingState);
-    }
-
-    @Override
-    protected void didConnectService(ServiceManager serviceManager) {
-        viewModel.setState(serviceManager.getLoggingState());
-    }
-
-    @Override
-    public void startLogging() {
-        ServiceManager.startGPSLogging(getContext(), "New NG track!");
-    }
-
-    @Override
-    public void stopLogging() {
-        ServiceManager.stopGPSLogging(getContext());
-    }
-
-    @Override
-    public void pauseLogging() {
-        ServiceManager.pauseGPSLogging(getContext());
-    }
-
-    @Override
-    public void resumeLogging() {
-        ServiceManager.resumeGPSLogging(getContext());
-    }
-
-
 }

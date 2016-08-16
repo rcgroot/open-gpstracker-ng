@@ -42,13 +42,13 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.sogeti.android.gpstracker.ng.BaseTrackAdapter;
+import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.v2.R;
 
-public class RecordingAdapter extends BaseTrackAdapter {
+public class RecordingPresenter extends BaseTrackPresentor {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
@@ -56,7 +56,7 @@ public class RecordingAdapter extends BaseTrackAdapter {
     private ContentObserver observer;
     private boolean isReading;
 
-    RecordingAdapter(RecordingViewModel viewModel) {
+    RecordingPresenter(RecordingViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

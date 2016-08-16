@@ -1,32 +1,27 @@
 package nl.sogeti.android.gpstracker.ng
 
 
-import android.databinding.DataBindingComponent
+import android.app.Application
 import android.databinding.DataBindingUtil
-
-import nl.sogeti.android.gpstracker.ng.binders.MyBindingComponent
+import nl.sogeti.android.gpstracker.ng.binders.CommonBindingComponent
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber
-
 
 /**
  * Start app generic services
  */
-class GpsTackerApplication : android.app.Application() {
+class GpsTackerApplication : Application() {
 
-
-    internal var debug = BuildConfig.DEBUG
+    var debug = BuildConfig.DEBUG
 
     override fun onCreate() {
         super.onCreate()
 
-        val bindingComponent = MyBindingComponent()
+        val bindingComponent = CommonBindingComponent()
         DataBindingUtil.setDefaultComponent(bindingComponent)
 
         if (debug) {
             Timber.plant(Timber.DebugTree())
         }
     }
-
-
 }

@@ -44,13 +44,13 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public abstract class BaseTrackAdapter {
+public abstract class BaseTrackPresentor {
 
     private Context context;
     private BroadcastReceiver receiver;
     private final ServiceManager serviceManager;
 
-    public BaseTrackAdapter() {
+    public BaseTrackPresentor() {
         serviceManager = new ServiceManager();
     }
 
@@ -61,8 +61,8 @@ public abstract class BaseTrackAdapter {
                 serviceManager.startup(context, new Runnable() {
                     @Override
                     public void run() {
-                        synchronized(BaseTrackAdapter.this) {
-                            if (BaseTrackAdapter.this.context != null) {
+                        synchronized(BaseTrackPresentor.this) {
+                            if (BaseTrackPresentor.this.context != null) {
                                 didConnectService(serviceManager);
                             }
                         }
