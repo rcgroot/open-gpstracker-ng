@@ -62,36 +62,51 @@ public class ContentProviderExtensionsTests {
         MockitoAnnotations.initMocks(this);
         given(mockCursor.getColumnIndex("A_NAME")).willReturn(0);
         given(mockCursor.getColumnIndex("AN_OTHER_NAME")).willReturn(1);
+        given(mockCursor.getColumnIndex("NULL_VALUE")).willReturn(2);
         given(mockCursor.getString(0)).willReturn("FirstValue");
         given(mockCursor.getString(1)).willReturn("SecondValue");
+        given(mockCursor.getString(2)).willReturn(null);
         given(mockContext.getContentResolver()).willReturn(mockContentResolver);
     }
 
     @Test
     public void getAStringFromCursor() {
         // Execute
-        ContentProviderExtensionsKt.getString(mockCursor, "A_NAME");
+        String value = ContentProviderExtensionsKt.getString(mockCursor, "A_NAME");
 
         // Verify
         verify(mockCursor).getColumnIndex("A_NAME");
         verify(mockCursor).getString(0);
+        Assert.assertEquals(value, "FirstValue");
     }
 
     @Test
     public void getAnOtherStringFromCursor() {
         // Execute
-        ContentProviderExtensionsKt.getString(mockCursor, "AN_OTHER_NAME");
+        String value = ContentProviderExtensionsKt.getString(mockCursor, "AN_OTHER_NAME");
 
         // Verify
         verify(mockCursor).getColumnIndex("AN_OTHER_NAME");
         verify(mockCursor).getString(1);
+        Assert.assertEquals(value, "SecondValue");
+    }
+
+    @Test
+    public void getAnNullStringFromCursor() {
+        // Execute
+        String value = ContentProviderExtensionsKt.getString(mockCursor, "NULL_VALUE");
+
+        // Verify
+        verify(mockCursor).getColumnIndex("NULL_VALUE");
+        verify(mockCursor).getString(2);
+        Assert.assertEquals(value, "");
     }
 
     @Test
     public void nullCursorMap() {
         // Prepare
         final int invoke = 0;
-        given(mockContentResolver.query(mockUri, null, null, null,null)).willReturn(null);
+        given(mockContentResolver.query(mockUri, null, null, null, null)).willReturn(null);
 
         // Execute
         List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, new Function1<Cursor, String>() {
@@ -105,11 +120,12 @@ public class ContentProviderExtensionsTests {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 0);
     }
+
     @Test
     public void emptyCursorMap() {
         // Prepare
         final int invoke = 0;
-        given(mockContentResolver.query(mockUri, null, null, null,null)).willReturn(mockCursor);
+        given(mockContentResolver.query(mockUri, null, null, null, null)).willReturn(mockCursor);
         given(mockCursor.moveToFirst()).willReturn(false);
 
         // Execute
@@ -130,7 +146,7 @@ public class ContentProviderExtensionsTests {
     public void SingleElementCursorMap() {
         // Prepare
         final int[] invoke = {0};
-        given(mockContentResolver.query(mockUri, null, null, null,null)).willReturn(mockCursor);
+        given(mockContentResolver.query(mockUri, null, null, null, null)).willReturn(mockCursor);
         given(mockCursor.moveToFirst()).willReturn(true);
         given(mockCursor.moveToNext()).willReturn(false);
 

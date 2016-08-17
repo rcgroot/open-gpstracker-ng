@@ -36,10 +36,11 @@ import android.net.Uri
  * Extensions for dealing with the data in content providers
  * **/
 
-fun Cursor.getString(columnName:String) : String {
+fun Cursor.getString(columnName: String): String {
     val index = this.getColumnIndex(columnName)
+    val value = this.getString(index)
 
-    return this.getString(index)
+    return value ?: ""
 }
 
 fun <T> Uri.map(context: Context, operation: (Cursor) -> T): List<T> {
