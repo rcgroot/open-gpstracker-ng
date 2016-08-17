@@ -116,6 +116,7 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
     }
 
     private class UriChangedCallback extends Observable.OnPropertyChangedCallback implements GoogleMap.CancelableCallback {
+        public static final float DEFAULT_ZOOM_LEVEL = 12.0f;
         private boolean isAnimating = false;
 
         @Override
@@ -131,7 +132,8 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
                     bounds = head;
                 }
                 if (bounds != null && !isAnimating) {
-                    CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, (int) getResources().getDimension(R.dimen.activity_horizontal_margin) * 8);
+                    float zoom = Math.max(DEFAULT_ZOOM_LEVEL, googleMap.getCameraPosition().zoom);
+                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), zoom);
                     isAnimating = true;
                     googleMap.animateCamera(update, this);
                 }

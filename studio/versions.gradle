@@ -5,7 +5,7 @@ ext {
     dataBindingVersion = '2.2.0-beta1'
 
     // App support
-    supportLibraryVersion = '24.1.1'
+    supportLibraryVersion = '24.2.0'
     kotlinVersion = '1.0.3'
     playServicesVersion = '9.4.0'
     wearableVersion = '1.4.0'

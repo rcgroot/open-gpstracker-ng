@@ -24,8 +24,8 @@
             android:background="@drawable/checkered_background"
             android:contentDescription="@string/row_track_map"
             android:scaleType="center"
-            app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
-            app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
             app:bitmap="@{viewModel.overviewMap}" />
 
@@ -41,7 +41,7 @@
             android:textColor="@color/primary_light"
             app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
             app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
-            app:layout_constraintRight_toRightOf="@+id/constraintLayout"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/row_track_icon"
             tools:text="Route to work" />
 
@@ -53,20 +53,18 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/row_track_icon_default"
-            app:layout_constraintLeft_toLeftOf="@+id/constraintLayout"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@{viewModel.iconType}" />
 
         <TextView
             android:id="@+id/row_track_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@{viewModel.startDay}"
             android:textColor="@color/primary_light"
-            app:layout_constraintLeft_toLeftOf="@+id/row_track_map"
+            app:layout_constraintLeft_toLeftOf="@+id/row_track_name"
             app:layout_constraintTop_toBottomOf="@+id/row_track_map"
             tools:text="5 jan" />
 
