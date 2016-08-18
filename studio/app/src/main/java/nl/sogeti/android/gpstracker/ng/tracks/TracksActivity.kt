@@ -28,13 +28,15 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracks
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.View
-
+import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.v2.R
 
 class TracksActivity : AppCompatActivity() {
@@ -48,5 +50,12 @@ class TracksActivity : AppCompatActivity() {
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    fun didSelectTrackUri(trackUri: Uri) {
+        val trackIntent = Intent(this, this.javaClass)
+        trackIntent.putExtra(ContentConstants.Tracks.TABLE, trackUri)
+        setResult(Activity.RESULT_OK, trackIntent)
+        finish()
     }
 }

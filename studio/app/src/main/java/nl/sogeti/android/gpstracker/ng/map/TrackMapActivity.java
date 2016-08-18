@@ -59,6 +59,7 @@ public class TrackMapActivity extends AppCompatActivity {
     public static final int ITEM_ID_LAST_TRACK = 2;
     private static final int ITEM_ID_LIST_TRACKS = 3;
     private static final int ITEM_ID_EDIT_TRACK = 4;
+    private static final int REQUEST_CODE_TRACK_SELECTION = 234;
 
     private TrackViewModel selectedTrack;
 
@@ -103,7 +104,7 @@ public class TrackMapActivity extends AppCompatActivity {
             consumed = true;
         } else if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
             Intent intent = new Intent(this, TracksActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_TRACK_SELECTION);
             consumed = true;
         } else if (item.getItemId() == ITEM_ID_LAST_TRACK) {
             Cursor tracks = null;
@@ -132,6 +133,14 @@ public class TrackMapActivity extends AppCompatActivity {
         outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.uri.get());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_TRACK_SELECTION && resultCode == RESULT_OK) {
+            Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TABLE);
+            selectedTrack.uri.set(trackUri);
+        }
+    }
 
     private void showTrackTitleDialog() {
         final Uri trackUri = selectedTrack.uri.get();

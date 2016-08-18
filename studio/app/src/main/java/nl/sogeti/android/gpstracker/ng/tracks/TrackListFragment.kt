@@ -31,14 +31,9 @@ package nl.sogeti.android.gpstracker.ng.tracks
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
-import nl.sogeti.android.gpstracker.ng.utils.getString
-import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 
@@ -56,13 +51,11 @@ class TrackListFragment : Fragment() {
         val model = TracksViewModel()
         this.viewModel = model
         this.tracksPresenter = TracksPresenter(model)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.adapter = tracksPresenter
-        binding.listview.layoutManager = LinearLayoutManager(this.context)
         binding.viewModel = viewModel
 
         return binding.root
