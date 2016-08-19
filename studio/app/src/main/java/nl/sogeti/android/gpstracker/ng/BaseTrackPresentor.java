@@ -61,7 +61,7 @@ public abstract class BaseTrackPresentor {
                 serviceManager.startup(context, new Runnable() {
                     @Override
                     public void run() {
-                        synchronized(BaseTrackPresentor.this) {
+                        synchronized (BaseTrackPresentor.this) {
                             if (BaseTrackPresentor.this.context != null) {
                                 didConnectService(serviceManager);
                             }

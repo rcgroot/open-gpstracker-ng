@@ -2,7 +2,7 @@ ext {
     // Building
     buildToolsVersion = '24.0.1'
     gradlePluginVersion = '2.2.0-beta2'
-    dataBindingVersion = '2.2.0-beta1'
+    dataBindingVersion = '2.2.0-beta2'
 
     // App support
     supportLibraryVersion = '24.2.0'

@@ -187,7 +187,6 @@ public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvi
             return null;
         }
 
-
         @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
             // First and Last make the bounds of the whole track
