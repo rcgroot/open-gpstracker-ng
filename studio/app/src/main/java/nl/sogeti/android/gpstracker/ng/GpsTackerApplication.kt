@@ -23,11 +23,12 @@ class GpsTackerApplication : Application() {
 
         if (debug) {
             Timber.plant(Timber.DebugTree())
-            val builder = StrictMode.ThreadPolicy.Builder()
-            if (builder != null) {
-                StrictMode.setThreadPolicy(builder
-                        .detectAll()
-                        .penaltyLog().build())
+            if (StrictMode.ThreadPolicy.Builder().build() != null) {
+                StrictMode.setThreadPolicy(
+                        StrictMode.ThreadPolicy.Builder()
+                                .detectAll()
+                                .penaltyLog()
+                                .build())
             }
         }
     }
