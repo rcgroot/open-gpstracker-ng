@@ -33,15 +33,16 @@ import android.databinding.Bindable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.graphics.Bitmap
+import android.net.Uri
 import nl.sogeti.android.gpstracker.v2.BR
 import nl.sogeti.android.gpstracker.v2.R
 
-class TrackViewModel() : BaseObservable() {
+class TrackViewModel(val uri: Uri) : BaseObservable() {
 
-    constructor(name:String) :this(){
+    constructor(uri: Uri, name: String) : this(uri) {
         this.name = name
     }
-    val iconType = ObservableInt(R.drawable.ic_track_type_default_24dp);
+
     /**
      * Just to try out the Bindable annotation
      */
@@ -51,6 +52,7 @@ class TrackViewModel() : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.name)
         }
+    val iconType = ObservableInt(R.drawable.ic_track_type_default_24dp);
     val startDay = ObservableField<String>("--")
     val duration = ObservableField<String>("--")
     val distance = ObservableField<String>("--")

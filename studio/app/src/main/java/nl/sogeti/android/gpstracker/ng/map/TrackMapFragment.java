@@ -123,12 +123,10 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
         public void onPropertyChanged(Observable sender, int propertyId) {
             getActivity().invalidateOptionsMenu();
             if (googleMap != null) {
-                LatLngBounds bounds = null;
+                LatLngBounds bounds = trackViewModel.startStopBounds.get();
                 LatLngBounds visible = googleMap.getProjection().getVisibleRegion().latLngBounds;
                 LatLngBounds head = trackViewModel.trackHeadBounds.get();
-                if (googleMap.getCameraPosition().zoom == googleMap.getMinZoomLevel()) {
-                    bounds = trackViewModel.startStopBounds.get();
-                } else if (head != null && (!visible.contains(head.northeast) || !visible.contains(head.southwest))) {
+                if (head != null && (!visible.contains(head.northeast) || !visible.contains(head.southwest))) {
                     bounds = head;
                 }
                 if (bounds != null && !isAnimating) {

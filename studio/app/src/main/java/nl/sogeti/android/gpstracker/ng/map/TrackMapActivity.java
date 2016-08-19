@@ -56,7 +56,6 @@ import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 public class TrackMapActivity extends AppCompatActivity {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
-    public static final int ITEM_ID_LAST_TRACK = 2;
     private static final int ITEM_ID_LIST_TRACKS = 3;
     private static final int ITEM_ID_EDIT_TRACK = 4;
     private static final int REQUEST_CODE_TRACK_SELECTION = 234;
@@ -78,7 +77,6 @@ public class TrackMapActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.add(Menu.NONE, ITEM_ID_LIST_TRACKS, Menu.NONE, "List tracks");
-        menu.add(Menu.NONE, ITEM_ID_LAST_TRACK, Menu.NONE, "Select last track");
         menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
         MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -105,20 +103,6 @@ public class TrackMapActivity extends AppCompatActivity {
         } else if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
             Intent intent = new Intent(this, TracksActivity.class);
             startActivityForResult(intent, REQUEST_CODE_TRACK_SELECTION);
-            consumed = true;
-        } else if (item.getItemId() == ITEM_ID_LAST_TRACK) {
-            Cursor tracks = null;
-            try {
-                tracks = getContentResolver().query(ContentConstants.Tracks.CONTENT_URI, new String[]{ContentConstants.Tracks._ID}, null, null, null);
-                if (tracks != null && tracks.moveToLast()) {
-                    long trackId = tracks.getLong(0);
-                    selectedTrack.uri.set(ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId));
-                }
-            } finally {
-                if (tracks != null) {
-                    tracks.close();
-                }
-            }
             consumed = true;
         } else {
             consumed = super.onOptionsItemSelected(item);

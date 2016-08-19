@@ -29,8 +29,11 @@
 package nl.sogeti.android.gpstracker.ng.tracks
 
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,22 +43,24 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 /**
  * Sets up display and selection of tracks in a list style
  */
-class TrackListFragment : Fragment() {
-
+class TrackListFragment : Fragment(), TracksPresenter.Listener {
     private var tracksPresenter: TracksPresenter? = null
-
     private var viewModel: TracksViewModel? = null
+    var listener: Listener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val model = TracksViewModel()
-        this.viewModel = model
-        this.tracksPresenter = TracksPresenter(model)
+        viewModel = model
+        val tracksPresenter = TracksPresenter(model)
+        tracksPresenter.listener = this
+        this.tracksPresenter = tracksPresenter
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.adapter = tracksPresenter
+        binding.listview.layoutManager = LinearLayoutManager(activity)
         binding.viewModel = viewModel
 
         return binding.root
@@ -69,5 +74,13 @@ class TrackListFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         tracksPresenter?.stop()
+    }
+
+    override fun onTrackSelected(uri: Uri) {
+        listener?.onTrackSelected(uri)
+    }
+
+    interface Listener {
+        fun onTrackSelected(uri: Uri)
     }
 }

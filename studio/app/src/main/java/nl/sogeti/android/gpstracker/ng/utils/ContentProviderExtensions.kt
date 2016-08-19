@@ -43,6 +43,13 @@ fun Cursor.getString(columnName: String): String {
     return value ?: ""
 }
 
+fun Cursor.getLong(columnName: String): Long {
+    val index = this.getColumnIndex(columnName)
+    val value = this.getLong(index)
+
+    return value
+}
+
 fun <T> Uri.map(context: Context, operation: (Cursor) -> T): List<T> {
     val result = mutableListOf<T>()
     var cursor: Cursor? = null

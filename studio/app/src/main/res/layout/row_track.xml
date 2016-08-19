@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.ng.tracks.TracksPresenter"/>
 
         <variable
             name="viewModel"
@@ -27,6 +30,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
+            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
             app:bitmap="@{viewModel.overviewMap}" />
 
         <TextView

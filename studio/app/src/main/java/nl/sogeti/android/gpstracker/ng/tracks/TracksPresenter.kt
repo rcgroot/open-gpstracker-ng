@@ -28,12 +28,16 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracks
 
+import android.content.ContentUris
 import android.content.Context
+import android.database.Cursor
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.v2.R
@@ -42,6 +46,7 @@ import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
 
     private var context: Context? = null
+    var listener: Listener? = null
 
     override fun getItemCount(): Int {
         return model.track.size
@@ -52,6 +57,7 @@ class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksP
         if (holder != null) {
             val binding = holder.binding
             binding.viewModel = trackViewModel
+            binding.presenter = this
         }
     }
 
@@ -64,7 +70,13 @@ class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksP
 
     fun start(context: Context) {
         this.context = context
-        val tracks = ContentConstants.Tracks.CONTENT_URI.map(context, { TrackViewModel(it.getString(ContentConstants.Tracks.NAME)) })
+        val trackCreation: (Cursor) -> TrackViewModel = {
+            val id = it.getLong(ContentConstants.Tracks._ID)
+            val uri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, id);
+            val name = it.getString(ContentConstants.Tracks.NAME)
+            TrackViewModel(uri, name)
+        }
+        val tracks = ContentConstants.Tracks.CONTENT_URI.map(context, trackCreation)
         model.track.addAll(tracks)
     }
 
@@ -72,5 +84,13 @@ class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksP
         context = null
     }
 
+    fun onTrackClick(viewModel: TrackViewModel) {
+        listener?.onTrackSelected(viewModel.uri)
+    }
+
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}
+
+    interface Listener {
+        fun onTrackSelected(uri: Uri)
+    }
 }
