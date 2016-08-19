@@ -31,6 +31,11 @@ package nl.sogeti.android.gpstracker.ng.binders
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.widget.ImageView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLngBounds
 
 
 open class CommonBindingAdapters {
@@ -44,6 +49,34 @@ open class CommonBindingAdapters {
     fun setSrcCompat(view: ImageView, resource: Int?) {
         if (resource != null) {
             view.setImageResource(resource)
+        }
+    }
+
+    @BindingAdapter("mapFocus")
+    fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
+        if (bounds != null) {
+            map.getMapAsync(MapUpdate(bounds))
+        }
+    }
+
+    class MapUpdate(val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
+        val DEFAULT_ZOOM_LEVEL = 12.0f
+        var isAnimating = false
+
+        override fun onMapReady(googleMap: GoogleMap?) {
+            if (googleMap != null && !isAnimating) {
+                val update = CameraUpdateFactory.newLatLngZoom(bounds.center, DEFAULT_ZOOM_LEVEL)
+                isAnimating = true
+                googleMap.animateCamera(update, this)
+            }
+        }
+
+        override fun onFinish() {
+            isAnimating = false
+        }
+
+        override fun onCancel() {
+            isAnimating = false
         }
     }
 }

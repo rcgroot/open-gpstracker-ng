@@ -29,10 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.map;
 
 import android.annotation.SuppressLint;
-import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -66,7 +64,7 @@ public class TrackMapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
-        TrackMapFragment mapFragment = (TrackMapFragment) getFragmentManager().findFragmentById(R.id.fragment_map);
+        TrackMapFragment mapFragment = (TrackMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
         selectedTrack = mapFragment.getTrackViewModel();
         binding.setTrack(selectedTrack);
         setSupportActionBar(binding.toolbar);

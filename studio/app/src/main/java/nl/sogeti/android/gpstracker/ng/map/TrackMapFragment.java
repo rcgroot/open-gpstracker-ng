@@ -28,36 +28,29 @@
  */
 package nl.sogeti.android.gpstracker.ng.map;
 
-import android.databinding.Observable;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.TileOverlay;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-
-import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 import nl.sogeti.android.gpstracker.v2.R;
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding;
 
-public class TrackMapFragment extends MapFragment implements OnMapReadyCallback, TrackTileProvider.Listener {
+public class TrackMapFragment extends Fragment {
 
     private static final String KEY_TRACK_URI = "KEY_TRACK_URI";
     private TrackViewModel trackViewModel;
     private TrackPresenter trackPresenter;
-    private TileOverlay titleOverLay;
-    private final Observable.OnPropertyChangedCallback uriCallback = new UriChangedCallback();
-    private GoogleMap googleMap;
+    private FragmentMapBinding binding;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         if (savedInstanceState == null) {
             trackViewModel = new TrackViewModel(null, getString(R.string.app_name));
         } else {
@@ -65,87 +58,52 @@ public class TrackMapFragment extends MapFragment implements OnMapReadyCallback,
             trackViewModel = new TrackViewModel(uri, getString(R.string.app_name));
         }
         trackPresenter = new TrackPresenter(trackViewModel);
-        getMapAsync(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false);
+        binding.fragmentMapMapview.onCreate(savedInstanceState);
+        binding.setViewModel(trackViewModel);
+        binding.fragmentMapMapview.getMapAsync(trackPresenter);
+
+        return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        binding.fragmentMapMapview.onResume();
         trackPresenter.start(getActivity());
-        trackViewModel.trackHeadBounds.addOnPropertyChangedCallback(uriCallback);
-        trackViewModel.startStopBounds.addOnPropertyChangedCallback(uriCallback);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        trackViewModel.trackHeadBounds.removeOnPropertyChangedCallback(uriCallback);
-        trackViewModel.startStopBounds.removeOnPropertyChangedCallback(uriCallback);
+        binding.fragmentMapMapview.onPause();
         trackPresenter.stop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        googleMap = null;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        TileOverlayOptions options = new TileOverlayOptions();
-        TrackTileProvider tileProvider = new TrackTileProvider(getActivity(), trackViewModel, this);
-        options.tileProvider(tileProvider);
-        options.fadeIn(true);
-        titleOverLay = googleMap.addTileOverlay(options);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        binding.fragmentMapMapview.onSaveInstanceState(outState);
         outState.putParcelable(KEY_TRACK_URI, trackViewModel.uri.get());
     }
 
     @Override
-    public void tilesDidBecomeOutdated(TrackTileProvider provider) {
-        titleOverLay.clearTileCache();
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding.fragmentMapMapview.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        binding.fragmentMapMapview.onLowMemory();
     }
 
     public TrackViewModel getTrackViewModel() {
         return trackViewModel;
-    }
-
-    private class UriChangedCallback extends Observable.OnPropertyChangedCallback implements GoogleMap.CancelableCallback {
-        public static final float DEFAULT_ZOOM_LEVEL = 12.0f;
-        private boolean isAnimating = false;
-
-        @Override
-        public void onPropertyChanged(Observable sender, int propertyId) {
-            getActivity().invalidateOptionsMenu();
-            if (googleMap != null) {
-                LatLngBounds bounds = trackViewModel.startStopBounds.get();
-                LatLngBounds visible = googleMap.getProjection().getVisibleRegion().latLngBounds;
-                LatLngBounds head = trackViewModel.trackHeadBounds.get();
-                if (head != null && (!visible.contains(head.northeast) || !visible.contains(head.southwest))) {
-                    bounds = head;
-                }
-                if (bounds != null && !isAnimating) {
-                    float zoom = Math.max(DEFAULT_ZOOM_LEVEL, googleMap.getCameraPosition().zoom);
-                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), zoom);
-                    isAnimating = true;
-                    googleMap.animateCamera(update, this);
-                }
-            }
-        }
-
-        @Override
-        public void onFinish() {
-            isAnimating = false;
-        }
-
-        @Override
-        public void onCancel() {
-            isAnimating = false;
-        }
     }
 }

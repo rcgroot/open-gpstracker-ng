@@ -37,16 +37,21 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Pair;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 
-public class TrackPresenter extends BaseTrackPresentor {
+public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvider.Listener, OnMapReadyCallback {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
@@ -54,6 +59,8 @@ public class TrackPresenter extends BaseTrackPresentor {
     private ContentObserver observer;
     private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
+    private GoogleMap googleMap;
+    private TileOverlay titleOverLay;
 
     public TrackPresenter(TrackViewModel track) {
         this.viewModel = track;
@@ -83,6 +90,21 @@ public class TrackPresenter extends BaseTrackPresentor {
         startObserver();
         observer = new TrackObserver();
         getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        TileOverlayOptions options = new TileOverlayOptions();
+        TrackTileProvider tileProvider = new TrackTileProvider(getContext(), viewModel, this);
+        options.tileProvider(tileProvider);
+        options.fadeIn(true);
+        titleOverLay = googleMap.addTileOverlay(options);
+    }
+
+    @Override
+    public void tilesDidBecomeOutdated(TrackTileProvider provider) {
+        titleOverLay.clearTileCache();
     }
 
     private void readUri() {
