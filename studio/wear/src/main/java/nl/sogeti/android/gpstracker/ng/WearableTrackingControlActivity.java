@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker;
+package nl.sogeti.android.gpstracker.ng;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -39,7 +39,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackingControlActivity extends WearableActivity {
+import nl.sogeti.android.gpstracker.R;
+
+public class WearableTrackingControlActivity extends WearableActivity {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);

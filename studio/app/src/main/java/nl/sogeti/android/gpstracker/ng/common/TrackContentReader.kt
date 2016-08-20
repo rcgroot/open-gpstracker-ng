@@ -30,13 +30,43 @@ package nl.sogeti.android.gpstracker.ng.common
 
 import android.content.Context
 import android.net.Uri
+import android.provider.BaseColumns._ID
+import com.google.android.gms.maps.model.LatLng
+import nl.sogeti.android.gpstracker.integration.ContentConstants.AUTHORITY
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Segments.SEGMENTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
+import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
+import nl.sogeti.android.gpstracker.ng.utils.append
 import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString
+import nl.sogeti.android.gpstracker.ng.utils.map
 
-fun Uri.readTrack(context: Context, handler: BaseTrackPresentor.ResultHandler) {
+fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
+    if (!AUTHORITY.equals(this.authority)) {
+        return
+    }
+
     val name = this.apply(context, { it.getString(NAME) }, listOf(NAME))
-    handler.addTrack(name)
+    handler.addTrack(name ?: "")
+    val segmentsUri = this.append(SEGMENTS)
+    segmentsUri.map(context, {
+        val segmentId = it.getLong(0)
+        handler.addSegment()
+        val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
+        waypointsUri.map(context, {
+            val latLng = LatLng(it.getDouble(0), it.getDouble(1))
+            handler.addWaypoint(latLng, it.getLong(2))
+        }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
 
+    }, listOf(_ID))
+}
 
+interface ResultHandler {
+
+    fun addTrack(name: String)
+
+    fun addSegment()
+
+    fun addWaypoint(latLng: LatLng, millisecondsTime: Long)
 }

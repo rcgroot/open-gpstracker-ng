@@ -35,17 +35,20 @@ import android.database.ContentObserver;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Pair;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import kotlin.Pair;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
+import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingPresenter extends BaseTrackPresentor {
@@ -150,11 +153,6 @@ public class RecordingPresenter extends BaseTrackPresentor {
         }
 
         @Override
-        public Pair<String, String[]> getWaypointSelection() {
-            return new Pair<>(ContentConstants.WaypointsColumns.TIME + " > ?", new String[]{Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS)});
-        }
-
-        @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
             collectedWaypoints.add(latLng);
             collectedTimes.add(millisecondsTime);
@@ -167,7 +165,10 @@ public class RecordingPresenter extends BaseTrackPresentor {
 
         @Override
         protected LatLng[] doInBackground(Void[] params) {
-            readTrack(trackUri, this);
+            final String sel = ContentConstants.WaypointsColumns.TIME + " > ?";
+            final List<String> args = Arrays.asList(Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS));
+            Pair selection = new Pair<>(sel, args);
+            TrackContentReaderKt.readTrack(trackUri, getContext(), this, selection);
             LatLng[] waypoints = new LatLng[collectedWaypoints.size()];
             double seconds = 0.0;
             double meters = 0.0;

@@ -119,7 +119,7 @@ public class TrackMapActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_TRACK_SELECTION && resultCode == RESULT_OK) {
-            Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TABLE);
+            Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TRACKS);
             selectedTrack.uri.set(trackUri);
         }
     }

@@ -56,7 +56,7 @@ class TracksActivity : AppCompatActivity(), TrackListFragment.Listener {
 
     override fun onTrackSelected(uri: Uri) {
         val trackIntent = Intent(this, this.javaClass)
-        trackIntent.putExtra(ContentConstants.Tracks.TABLE, uri)
+        trackIntent.putExtra(ContentConstants.Tracks.TRACKS, uri)
         setResult(Activity.RESULT_OK, trackIntent)
         finish()
     }

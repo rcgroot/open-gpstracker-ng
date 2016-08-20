@@ -35,7 +35,6 @@ import android.database.ContentObserver;
 import android.databinding.Observable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Pair;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,6 +48,8 @@ import java.util.ArrayList;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
+import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 
 public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvider.Listener, OnMapReadyCallback {
@@ -183,11 +184,6 @@ public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvi
         }
 
         @Override
-        public Pair<String, String[]> getWaypointSelection() {
-            return null;
-        }
-
-        @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
             // First and Last make the bounds of the whole track
             if (latLngFirst == null) {
@@ -211,7 +207,7 @@ public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvi
 
         @Override
         protected LatLng[][] doInBackground(Void[] params) {
-            readTrack(trackUri, this);
+            TrackContentReaderKt.readTrack(trackUri, getContext(), this, null);
             LatLng[][] segmentedWaypoints = new LatLng[collectedWaypoints.size()][];
             for (int i = 0; i < collectedWaypoints.size(); i++) {
                 ArrayList<LatLng> var = collectedWaypoints.get(i);

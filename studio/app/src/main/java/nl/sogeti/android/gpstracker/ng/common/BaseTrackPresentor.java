@@ -29,18 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.common;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
-import android.util.Pair;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
@@ -106,72 +98,6 @@ public abstract class BaseTrackPresentor {
     protected abstract void didConnectService(ServiceManager serviceManager);
 
     public abstract void didChangeLoggingState(Intent intent);
-
-    public void readTrack(Uri trackUri, ResultHandler handler) {
-        ContentResolver resolver = context.getContentResolver();
-        Cursor track = null;
-        try {
-            track = resolver.query(trackUri, new String[]{ContentConstants.Tracks.NAME}, null, null, null);
-            if (track != null && track.moveToFirst()) {
-                String name = track.getString(0);
-                handler.addTrack(name);
-            }
-        } finally {
-            close(track);
-        }
-        long trackId = ContentUris.parseId(trackUri);
-        Uri segmentsUri = Uri.withAppendedPath(trackUri, ContentConstants.Segments.TABLE);
-        Cursor segmentsCursor = null;
-        try {
-            segmentsCursor = resolver.query(segmentsUri, new String[]{ContentConstants.Segments._ID}, null, null, null);
-            if (segmentsCursor != null && segmentsCursor.moveToFirst()) {
-                do {
-                    long segmentId = segmentsCursor.getLong(0);
-                    handler.addSegment();
-                    Uri waypointsUri = ContentConstants.buildUri(trackId, segmentId);
-                    Cursor waypointsCursor = null;
-                    try {
-                        Pair<String, String[]> selection = handler.getWaypointSelection();
-                        if (selection == null) {
-                            selection = new Pair<>(null, null);
-                        }
-                        waypointsCursor = resolver.query(waypointsUri,
-                                new String[]{ContentConstants.Waypoints.LATITUDE, ContentConstants.Waypoints.LONGITUDE, ContentConstants.Waypoints.TIME},
-                                selection.first,
-                                selection.second,
-                                null);
-                        if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
-                            do {
-                                LatLng latLng = new LatLng(waypointsCursor.getDouble(0), waypointsCursor.getDouble(1));
-                                handler.addWaypoint(latLng, waypointsCursor.getLong(2));
-                            } while (waypointsCursor.moveToNext());
-                        }
-                    } finally {
-                        close(waypointsCursor);
-                    }
-                } while (segmentsCursor.moveToNext());
-            }
-        } finally {
-            close(segmentsCursor);
-        }
-    }
-
-    private static void close(Cursor track) {
-        if (track != null) {
-            track.close();
-        }
-    }
-
-    public interface ResultHandler {
-
-        void addTrack(String name);
-
-        void addSegment();
-
-        Pair<String, String[]> getWaypointSelection();
-
-        void addWaypoint(LatLng latLng, long millisecondsTime);
-    }
 
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override

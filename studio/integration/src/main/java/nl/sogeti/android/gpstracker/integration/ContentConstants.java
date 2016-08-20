@@ -53,18 +53,17 @@ public final class ContentConstants {
      * content://nl.sogeti.android.gpstracker/tracks/2/segments/1/waypoints/52
      * using the provided identifiers
      *
-     * @param trackId identifier denoting the track
-     * @param segmentId identifier denoting the segment
+     * @param trackId    identifier denoting the track
+     * @param segmentId  identifier denoting the segment
      * @param waypointId identifier denoting the waypoint
-     *
      * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId, long waypointId) {
         Builder builder = Tracks.CONTENT_URI.buildUpon();
         ContentUris.appendId(builder, trackId);
-        builder.appendPath(Segments.TABLE);
+        builder.appendPath(Segments.SEGMENTS);
         ContentUris.appendId(builder, segmentId);
-        builder.appendPath(Waypoints.TABLE);
+        builder.appendPath(Waypoints.WAYPOINTS);
         ContentUris.appendId(builder, waypointId);
 
         return builder.build();
@@ -75,17 +74,16 @@ public final class ContentConstants {
      * content://nl.sogeti.android.gpstracker/tracks/2/segments/1/waypoints
      * using the provided identifiers
      *
-     * @param trackId identifier denoting the track
+     * @param trackId   identifier denoting the track
      * @param segmentId identifier denoting the segment
-     *
      * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId) {
         Builder builder = Tracks.CONTENT_URI.buildUpon();
         ContentUris.appendId(builder, trackId);
-        builder.appendPath(Segments.TABLE);
+        builder.appendPath(Segments.SEGMENTS);
         ContentUris.appendId(builder, segmentId);
-        builder.appendPath(Waypoints.TABLE);
+        builder.appendPath(Waypoints.WAYPOINTS);
 
         return builder.build();
     }
@@ -105,11 +103,11 @@ public final class ContentConstants {
         /**
          * The name of this table
          */
-        public static final String TABLE = "tracks";
+        public static final String TRACKS = "tracks";
         /**
          * The content:// style URL for this provider, content://nl.sogeti.android.gpstracker/tracks
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Tracks.TABLE);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Tracks.TRACKS);
 
     }
 
@@ -130,7 +128,7 @@ public final class ContentConstants {
         /**
          * The name of this table, segments
          */
-        public static final String TABLE = "segments";
+        public static final String SEGMENTS = "segments";
     }
 
     /**
@@ -150,7 +148,7 @@ public final class ContentConstants {
         /**
          * The name of this table, waypoints
          */
-        public static final String TABLE = "waypoints";
+        public static final String WAYPOINTS = "waypoints";
 
 
     }
@@ -172,8 +170,8 @@ public final class ContentConstants {
         /**
          * The name of this table
          */
-        public static final String TABLE = "media";
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Media.TABLE);
+        public static final String MEDIA = "media";
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Media.MEDIA);
 
     }
 
@@ -194,11 +192,11 @@ public final class ContentConstants {
         /**
          * The name of this table
          */
-        public static final String TABLE = "metadata";
+        public static final String METADATA = "metadata";
         /**
          * content://nl.sogeti.android.gpstracker/metadata
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + MetaData.TABLE);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + MetaData.METADATA);
     }
 
     /**

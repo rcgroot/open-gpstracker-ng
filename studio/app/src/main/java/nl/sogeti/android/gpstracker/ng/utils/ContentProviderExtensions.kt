@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.utils
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -83,4 +84,12 @@ fun <T> Uri.apply(context: Context,
     }
 
     return result
+}
+
+fun Uri.append(path: String): Uri {
+    return Uri.withAppendedPath(this, path)
+}
+
+fun Uri.append(id: Long): Uri {
+    return ContentUris.withAppendedId(this, id)
 }
