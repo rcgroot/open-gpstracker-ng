@@ -7,6 +7,7 @@ junitJacoco {
 }
 
 android {
+    def buildNumber = System.getenv("BUILD_NUMBER")
     compileSdkVersion 24
     buildToolsVersion "$rootProject.buildToolsVersion"
 
@@ -18,9 +19,9 @@ android {
         applicationId "nl.sogeti.android.gpstracker.ng"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 200
+        versionCode buildNumber ?: 1
         versionName "2.0.0-SNAPSHOT"
-        buildConfigField "int", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") as String ?: "0"
+        buildConfigField "int", "BUILD_NUMBER", buildNumber as String ?: "0"
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
         archivesBaseName = "opengpstracker-ng-$versionName"
         vectorDrawables.useSupportLibrary = true
