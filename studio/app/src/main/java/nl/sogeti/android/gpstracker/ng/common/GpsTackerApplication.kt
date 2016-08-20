@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,47 +26,37 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng;
+package nl.sogeti.android.gpstracker.ng.common
 
-import junit.framework.Assert;
+import android.app.Application
+import android.databinding.DataBindingUtil
+import android.os.StrictMode
+import nl.sogeti.android.gpstracker.ng.binders.CommonBindingComponent
+import nl.sogeti.android.gpstracker.v2.BuildConfig
+import timber.log.Timber
 
-import org.junit.Before;
-import org.junit.Test;
+/**
+ * Start app generic services
+ */
+class GpsTackerApplication : Application() {
 
-import nl.sogeti.android.gpstracker.ng.common.GpsTackerApplication;
-import timber.log.Timber;
+    var debug = BuildConfig.DEBUG
 
-public class GpsTackerApplicationTest {
+    override fun onCreate() {
+        super.onCreate()
 
-    private GpsTackerApplication sut;
+        val bindingComponent = CommonBindingComponent()
+        DataBindingUtil.setDefaultComponent(bindingComponent)
 
-    @Before
-    public void setup() {
-        sut = new GpsTackerApplication();
-        Timber.uprootAll();
-    }
-
-    @Test
-    public void onCreateDebug() throws Exception {
-        // Prepare
-        sut.setDebug(true);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 1);
-    }
-
-    @Test
-    public void onCreateRelease() throws Exception {
-        // Prepare
-        sut.setDebug(false);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 0);
+        if (debug) {
+            Timber.plant(Timber.DebugTree())
+            if (StrictMode.ThreadPolicy.Builder().build() != null) {
+                StrictMode.setThreadPolicy(
+                        StrictMode.ThreadPolicy.Builder()
+                                .detectAll()
+                                .penaltyLog()
+                                .build())
+            }
+        }
     }
 }

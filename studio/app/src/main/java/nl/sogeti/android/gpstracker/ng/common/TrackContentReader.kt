@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,47 +26,17 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng;
+package nl.sogeti.android.gpstracker.ng.common
 
-import junit.framework.Assert;
+import android.content.Context
+import android.net.Uri
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
+import nl.sogeti.android.gpstracker.ng.utils.apply
+import nl.sogeti.android.gpstracker.ng.utils.getString
 
-import org.junit.Before;
-import org.junit.Test;
+fun Uri.readTrack(context: Context, handler: BaseTrackPresentor.ResultHandler) {
+    val name = this.apply(context, { it.getString(NAME) }, listOf(NAME))
+    handler.addTrack(name)
 
-import nl.sogeti.android.gpstracker.ng.common.GpsTackerApplication;
-import timber.log.Timber;
 
-public class GpsTackerApplicationTest {
-
-    private GpsTackerApplication sut;
-
-    @Before
-    public void setup() {
-        sut = new GpsTackerApplication();
-        Timber.uprootAll();
-    }
-
-    @Test
-    public void onCreateDebug() throws Exception {
-        // Prepare
-        sut.setDebug(true);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 1);
-    }
-
-    @Test
-    public void onCreateRelease() throws Exception {
-        // Prepare
-        sut.setDebug(false);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 0);
-    }
 }

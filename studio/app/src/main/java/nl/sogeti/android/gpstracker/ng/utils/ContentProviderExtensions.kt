@@ -50,22 +50,37 @@ fun Cursor.getLong(columnName: String): Long {
     return value
 }
 
-fun <T> Uri.map(context: Context, operation: (Cursor) -> T): List<T> {
+fun <T> Uri.map(context: Context,
+                operation: (Cursor) -> T,
+                projection: List<String>? = null,
+                selection: Pair <String, List<String>>? = null): List<T> {
     val result = mutableListOf<T>()
-    var cursor: Cursor? = null
-    try {
-        cursor = context.contentResolver.query(this, null, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                result.add(operation(cursor))
-            } while (cursor.moveToNext())
-        }
-    } finally {
-        if (cursor != null) {
-            cursor.close()
-        }
-    }
+
+    this.apply(context, {
+        do {
+            result.add(operation(it))
+        } while (it.moveToNext())
+    }, projection, selection)
 
     return result
 }
 
+fun <T> Uri.apply(context: Context,
+                  operation: (Cursor) -> T,
+                  projection: List<String>? = null,
+                  selection: Pair <String, List<String>>? = null): T? {
+    val selectionArgs = selection?.second?.toTypedArray()
+    val selection = selection?.first
+    var result: T? = null
+    var cursor: Cursor? = null
+    try {
+        cursor = context.contentResolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
+        if (cursor != null && cursor.moveToFirst()) {
+            result = operation(cursor)
+        }
+    } finally {
+        cursor?.close()
+    }
+
+    return result
+}

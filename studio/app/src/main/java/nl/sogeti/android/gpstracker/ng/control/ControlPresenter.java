@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.control;
 import android.content.Context;
 import android.content.Intent;
 
-import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 

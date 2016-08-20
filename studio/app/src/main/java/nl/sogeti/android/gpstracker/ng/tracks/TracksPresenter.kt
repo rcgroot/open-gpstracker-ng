@@ -85,7 +85,7 @@ class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksP
     }
 
     fun onTrackClick(viewModel: TrackViewModel) {
-        listener?.onTrackSelected(viewModel.uri)
+        listener?.onTrackSelected(viewModel.uri.get())
     }
 
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}

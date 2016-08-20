@@ -114,7 +114,7 @@ public class ContentProviderExtensionsTests {
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
             }
-        });
+        }, null, null);
 
         // Verify
         Assert.assertNotNull(list);
@@ -134,7 +134,7 @@ public class ContentProviderExtensionsTests {
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
             }
-        });
+        }, null, null);
 
         // Verify
         Assert.assertNotNull(list);
@@ -157,7 +157,7 @@ public class ContentProviderExtensionsTests {
                 invoke[0]++;
                 return "invoke_" + invoke[0];
             }
-        });
+        }, null, null);
 
         // Verify
         Assert.assertNotNull(list);

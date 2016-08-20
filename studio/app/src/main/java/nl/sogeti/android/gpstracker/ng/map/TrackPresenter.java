@@ -48,7 +48,7 @@ import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 
 public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvider.Listener, OnMapReadyCallback {
