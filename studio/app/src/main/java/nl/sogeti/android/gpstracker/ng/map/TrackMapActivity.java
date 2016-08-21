@@ -32,10 +32,9 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.drawable.Drawable;
+import android.databinding.Observable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
@@ -54,8 +53,6 @@ import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 public class TrackMapActivity extends AppCompatActivity {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
-    private static final int ITEM_ID_LIST_TRACKS = 3;
-    private static final int ITEM_ID_EDIT_TRACK = 4;
     private static final int REQUEST_CODE_TRACK_SELECTION = 234;
 
     private TrackViewModel selectedTrack;
@@ -64,30 +61,33 @@ public class TrackMapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
-        TrackMapFragment mapFragment = (TrackMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
-        selectedTrack = mapFragment.getTrackViewModel();
-        binding.setTrack(selectedTrack);
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
+
+        TrackMapFragment mapFragment = (TrackMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+        selectedTrack = mapFragment.getTrackViewModel();
+        selectedTrack.uri.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable observable, int i) {
+                supportInvalidateOptionsMenu();
+            }
+        });
+        binding.setTrack(selectedTrack);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(Menu.NONE, ITEM_ID_LIST_TRACKS, Menu.NONE, "List tracks");
-        menu.add(Menu.NONE, ITEM_ID_EDIT_TRACK, Menu.NONE, R.string.activity_track_map_edit);
-        MenuItem menuItem = menu.findItem(ITEM_ID_EDIT_TRACK);
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_mode_edit_black_24dp, null);
-        drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.primary_light));
-        menuItem.setIcon(drawable);
+        getMenuInflater().inflate(R.menu.menu_map, menu);
+        DrawableCompat.setTint(menu.findItem(R.id.action_edit).getIcon(), ContextCompat.getColor(this, R.color.primary_light));
+        DrawableCompat.setTint(menu.findItem(R.id.action_list).getIcon(), ContextCompat.getColor(this, R.color.primary_light));
+
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(ITEM_ID_EDIT_TRACK).setEnabled(selectedTrack.uri.get() != null);
+        menu.findItem(R.id.action_edit).setEnabled(selectedTrack.uri.get() != null);
 
         return true;
     }
@@ -95,10 +95,10 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean consumed;
-        if (item.getItemId() == ITEM_ID_EDIT_TRACK) {
+        if (item.getItemId() == R.id.action_edit) {
             showTrackTitleDialog();
             consumed = true;
-        } else if (item.getItemId() == ITEM_ID_LIST_TRACKS) {
+        } else if (item.getItemId() == R.id.action_list) {
             Intent intent = new Intent(this, TracksActivity.class);
             startActivityForResult(intent, REQUEST_CODE_TRACK_SELECTION);
             consumed = true;
