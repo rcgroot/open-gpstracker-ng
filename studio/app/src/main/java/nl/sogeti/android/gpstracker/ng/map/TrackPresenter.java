@@ -47,12 +47,12 @@ import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 
-public class TrackPresenter extends BaseTrackPresentor implements TrackTileProvider.Listener, OnMapReadyCallback {
+public class TrackPresenter extends ConnectedServicePresenter implements TrackTileProvider.Listener, OnMapReadyCallback {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 

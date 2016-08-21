@@ -46,12 +46,12 @@ import kotlin.Pair;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
 import nl.sogeti.android.gpstracker.v2.R;
 
-public class RecordingPresenter extends BaseTrackPresentor {
+public class RecordingPresenter extends ConnectedServicePresenter {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 

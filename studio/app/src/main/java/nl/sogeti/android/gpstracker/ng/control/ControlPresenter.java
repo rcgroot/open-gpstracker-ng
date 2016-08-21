@@ -31,11 +31,11 @@ package nl.sogeti.android.gpstracker.ng.control;
 import android.content.Context;
 import android.content.Intent;
 
-import nl.sogeti.android.gpstracker.ng.common.BaseTrackPresentor;
+import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public class ControlPresenter extends BaseTrackPresentor implements ControlHandler.Listener {
+public class ControlPresenter extends ConnectedServicePresenter implements ControlHandler.Listener {
     private final LoggerViewModel viewModel;
 
     public ControlPresenter(LoggerViewModel viewModel) {

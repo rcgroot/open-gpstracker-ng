@@ -36,13 +36,17 @@ import android.content.IntentFilter;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
-public abstract class BaseTrackPresentor {
+/**
+ * Base class for presenters that source data from the IPC with
+ * the original Open GPS Tracker app.
+ */
+public abstract class ConnectedServicePresenter {
 
     private Context context;
     private BroadcastReceiver receiver;
     private final ServiceManager serviceManager;
 
-    public BaseTrackPresentor() {
+    public ConnectedServicePresenter() {
         serviceManager = new ServiceManager();
     }
 
@@ -53,8 +57,8 @@ public abstract class BaseTrackPresentor {
                 serviceManager.startup(context, new Runnable() {
                     @Override
                     public void run() {
-                        synchronized (BaseTrackPresentor.this) {
-                            if (BaseTrackPresentor.this.context != null) {
+                        synchronized (ConnectedServicePresenter.this) {
+                            if (ConnectedServicePresenter.this.context != null) {
                                 didConnectService(serviceManager);
                             }
                         }
