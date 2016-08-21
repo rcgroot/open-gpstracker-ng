@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.binders
+package nl.sogeti.android.gpstracker.ng.common
 
 import android.databinding.DataBindingComponent
 import nl.sogeti.android.gpstracker.ng.recording.RecordingBindingAdapters

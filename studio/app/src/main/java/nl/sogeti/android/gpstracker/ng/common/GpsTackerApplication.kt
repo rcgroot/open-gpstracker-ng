@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.common
 import android.app.Application
 import android.databinding.DataBindingUtil
 import android.os.StrictMode
-import nl.sogeti.android.gpstracker.ng.binders.CommonBindingComponent
+import nl.sogeti.android.gpstracker.ng.common.CommonBindingComponent
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber
 

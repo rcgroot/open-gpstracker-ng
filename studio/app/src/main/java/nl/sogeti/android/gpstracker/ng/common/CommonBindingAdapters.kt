@@ -26,10 +26,11 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.binders
+package nl.sogeti.android.gpstracker.ng.common
 
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
+import android.webkit.WebView
 import android.widget.ImageView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -50,6 +51,11 @@ open class CommonBindingAdapters {
         if (resource != null) {
             view.setImageResource(resource)
         }
+    }
+
+    @BindingAdapter("bind:url")
+    fun setUrl(webView: WebView, url: String) {
+        webView.loadUrl(url)
     }
 
     @BindingAdapter("mapFocus")

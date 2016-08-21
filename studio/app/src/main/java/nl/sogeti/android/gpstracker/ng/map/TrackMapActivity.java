@@ -45,6 +45,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
+import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
@@ -98,6 +99,9 @@ public class TrackMapActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_edit) {
             showTrackTitleDialog();
             consumed = true;
+        } else if (item.getItemId() == R.id.action_about) {
+            showAboutDialog();
+            consumed = true;
         } else if (item.getItemId() == R.id.action_list) {
             Intent intent = new Intent(this, TracksActivity.class);
             startActivityForResult(intent, REQUEST_CODE_TRACK_SELECTION);
@@ -122,6 +126,10 @@ public class TrackMapActivity extends AppCompatActivity {
             Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TRACKS);
             selectedTrack.uri.set(trackUri);
         }
+    }
+
+    private void showAboutDialog() {
+        new AboutFragment().show(getSupportFragmentManager(), "ABOUT");
     }
 
     private void showTrackTitleDialog() {
