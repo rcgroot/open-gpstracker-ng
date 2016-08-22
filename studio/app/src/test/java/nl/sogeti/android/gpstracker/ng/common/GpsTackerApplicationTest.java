@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng;
+package nl.sogeti.android.gpstracker.ng.common;
 
 import junit.framework.Assert;
 

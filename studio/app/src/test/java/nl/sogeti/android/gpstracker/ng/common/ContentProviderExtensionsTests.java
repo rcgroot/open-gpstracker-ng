@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils;
+package nl.sogeti.android.gpstracker.ng.common;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -42,6 +42,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import kotlin.jvm.functions.Function1;
+import nl.sogeti.android.gpstracker.ng.utils.ContentProviderExtensionsKt;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

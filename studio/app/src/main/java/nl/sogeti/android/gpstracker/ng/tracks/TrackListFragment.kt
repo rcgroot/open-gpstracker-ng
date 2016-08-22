@@ -63,12 +63,12 @@ class TrackListFragment : Fragment(), TracksPresenter.Listener {
 
     override fun onResume() {
         super.onResume()
-        tracksPresenter?.start(activity)
+        tracksPresenter.start(activity)
     }
 
     override fun onPause() {
         super.onPause()
-        tracksPresenter?.stop()
+        tracksPresenter.stop()
     }
 
     override fun onTrackSelected(uri: Uri) {
