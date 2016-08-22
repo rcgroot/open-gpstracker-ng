@@ -164,13 +164,16 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         private final TrackViewModel viewModel;
         private LatLng latLngFirst;
         private LatLng latLngLast;
+        private LatLngBounds.Builder completeBoundsBuilder;
         private LatLngBounds.Builder headBoundsBuilder;
         private final long headTime;
 
         TrackReader(final Uri trackUri, final TrackViewModel viewModel) {
             this.trackUri = trackUri;
             this.viewModel = viewModel;
-            this.headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS;
+            headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS;
+            completeBoundsBuilder = new LatLngBounds.Builder();
+            headBoundsBuilder = new LatLngBounds.Builder();
         }
 
         @Override
@@ -185,19 +188,20 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
 
         @Override
         public void addWaypoint(LatLng latLng, long millisecondsTime) {
-            // First and Last make the bounds of the whole track
+            // Keep references to the first and last waypoint
             if (latLngFirst == null) {
                 latLngFirst = latLng;
             }
             latLngLast = latLng;
             // Last 5 minutes worth of waypoints make the head
             if (millisecondsTime > headTime) {
-                if (headBoundsBuilder == null) {
-                    headBoundsBuilder = new LatLngBounds.Builder();
-                }
+                headBoundsBuilder = new LatLngBounds.Builder();
                 headBoundsBuilder.include(latLng);
             }
+            // Add each waypoint to the end of the last list of points (the current segment)
             collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
+            // Build a bounds for the whole track
+            completeBoundsBuilder.include(latLng);
         }
 
         @Override
@@ -220,10 +224,15 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         @Override
         protected void onPostExecute(LatLng[][] segmentedWaypoints) {
             if (latLngFirst != null && latLngLast != null) {
-                viewModel.startStopBounds.set(new LatLngBounds(latLngFirst, latLngFirst).including(latLngLast));
+                viewModel.startStopBounds.set(new LatLngBounds.Builder()
+                        .include(latLngFirst)
+                        .include(latLngLast).build());
             }
             if (headBoundsBuilder != null) {
                 viewModel.trackHeadBounds.set(headBoundsBuilder.build());
+            }
+            if (completeBoundsBuilder != null) {
+                viewModel.completeBounds.set(completeBoundsBuilder.build());
             }
             viewModel.waypoints.set(segmentedWaypoints);
             isReading = false;

@@ -40,6 +40,7 @@ public class TrackViewModel {
     public final ObservableField<String> name = new ObservableField<>();
     public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
     public final ObservableField<LatLngBounds> startStopBounds = new ObservableField<>();
+    public final ObservableField<LatLngBounds> completeBounds = new ObservableField<>();
     public final ObservableField<LatLngBounds> trackHeadBounds = new ObservableField<>();
     private final String defaultName;
 

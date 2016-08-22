@@ -6,11 +6,15 @@
         <variable
             name="viewModel"
             type="nl.sogeti.android.gpstracker.ng.map.TrackViewModel" />
+
+        <variable
+            name="recorder"
+            type="nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel" />
     </data>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/fragment_map_mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:mapFocus="@{viewModel.trackHeadBounds ?? viewModel.startStopBounds}" />
+        app:mapFocus="@{recorder.isRecording? viewModel.trackHeadBounds : viewModel.completeBounds}" />
 </layout>

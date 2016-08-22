@@ -40,7 +40,6 @@ import com.google.android.gms.maps.model.LatLngBounds
 
 
 open class CommonBindingAdapters {
-
     @BindingAdapter("bitmap")
     fun setBitmap(view: ImageView, bitmap: Bitmap?) {
         view.setImageBitmap(bitmap)
@@ -67,22 +66,18 @@ open class CommonBindingAdapters {
 
     class MapUpdate(val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
         val DEFAULT_ZOOM_LEVEL = 12.0f
-        var isAnimating = false
 
         override fun onMapReady(googleMap: GoogleMap?) {
-            if (googleMap != null && !isAnimating) {
+            if (googleMap != null) {
                 val update = CameraUpdateFactory.newLatLngZoom(bounds.center, DEFAULT_ZOOM_LEVEL)
-                isAnimating = true
                 googleMap.animateCamera(update, this)
             }
         }
 
         override fun onFinish() {
-            isAnimating = false
         }
 
         override fun onCancel() {
-            isAnimating = false
         }
     }
 }

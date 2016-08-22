@@ -65,6 +65,7 @@ public class TrackMapFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false);
         binding.fragmentMapMapview.onCreate(savedInstanceState);
         binding.setViewModel(trackViewModel);
+
         binding.fragmentMapMapview.getMapAsync(trackPresenter);
 
         return binding.getRoot();

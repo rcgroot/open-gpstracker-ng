@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="presenter"
-            type="nl.sogeti.android.gpstracker.ng.tracks.TracksPresenter"/>
+            type="nl.sogeti.android.gpstracker.ng.tracks.TracksPresenter" />
 
         <variable
             name="viewModel"
@@ -26,14 +27,15 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/checkered_background"
             android:contentDescription="@string/row_track_map"
+            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
             android:scaleType="center"
+            app:bitmap="@{viewModel.overviewMap}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
-            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
-            app:bitmap="@{viewModel.overviewMap}" />
+            app:layout_constraintTop_toBottomOf="@+id/row_track_icon" />
 
         <TextView
+
             android:id="@+id/row_track_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -41,6 +43,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
+            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
             android:text="@{viewModel.name}"
             android:textColor="@color/primary_light"
             app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
