@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="handler"
-            type="nl.sogeti.android.gpstracker.ng.control.ControlHandler" />
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.ng.control.ControlPresenter" />
 
         <variable
             name="logger"
@@ -28,7 +28,7 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:clickable="true"
-            android:onClick="@{(view) -> handler.onClickLeft()}"
+            android:onClick="@{(view) -> presenter.onClickLeft()}"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_pause_black_24dp" />
 
@@ -41,7 +41,7 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:clickable="true"
-            android:onClick="@{(view) -> handler.onClickRight()}"
+            android:onClick="@{(view) -> presenter.onClickRight()}"
             app:srcCompat="@drawable/ic_navigation_black_24dp" />
     </LinearLayout>
 </layout>

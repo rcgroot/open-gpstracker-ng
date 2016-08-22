@@ -56,7 +56,7 @@ public class PermissionRequester implements DialogInterface.OnClickListener {
         this.activity = _activity;
         this.runnable = _runnable;
 
-        if (ServiceManager.isPackageInstalled(activity)) {
+        if (new ServiceManager().isPackageInstalled(activity)) {
             if (ContextCompat.checkSelfPermission(activity, ServiceConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ServiceConstants.permission.TRACKING_CONTROL)) {
                     permissionDialog = new AlertDialog.Builder(activity)

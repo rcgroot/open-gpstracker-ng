@@ -48,13 +48,13 @@ public class TrackViewModelTest {
 
     @Before
     public void setup() {
-        sut = new TrackViewModel(null, "TestCase");
+        sut = new TrackViewModel(null);
     }
 
     @Test
     public void testInit() {
         // Verify
-        Assert.assertEquals("TestCase", sut.name.get());
+        Assert.assertEquals("", sut.name.get());
     }
 
     @Test

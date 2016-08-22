@@ -52,7 +52,7 @@ open class CommonBindingAdapters {
         }
     }
 
-    @BindingAdapter("bind:url")
+    @BindingAdapter("url")
     fun setUrl(webView: WebView, url: String) {
         webView.loadUrl(url)
     }
@@ -65,11 +65,11 @@ open class CommonBindingAdapters {
     }
 
     class MapUpdate(val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
-        val DEFAULT_ZOOM_LEVEL = 12.0f
+        val PADDING = 12
 
         override fun onMapReady(googleMap: GoogleMap?) {
             if (googleMap != null) {
-                val update = CameraUpdateFactory.newLatLngZoom(bounds.center, DEFAULT_ZOOM_LEVEL)
+                val update = CameraUpdateFactory.newLatLngBounds(bounds, PADDING);
                 googleMap.animateCamera(update, this)
             }
         }

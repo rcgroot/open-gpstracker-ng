@@ -62,14 +62,14 @@ public class ServiceManager {
         mBound = false;
     }
 
-    public static boolean isPackageInstalled(Context context) {
+    public boolean isPackageInstalled(Context context) {
         Intent intent = createServiceIntent();
         ResolveInfo info = context.getPackageManager().resolveService(intent, 0);
 
         return info != null;
     }
 
-    public static void startGPSLogging(Context context, String trackName) {
+    public void startGPSLogging(Context context, String trackName) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_START);
         intent.putExtra(ServiceConstants.EXTRA_TRACK_NAME, trackName);
@@ -77,68 +77,68 @@ public class ServiceManager {
     }
 
     @NonNull
-    private static Intent createServiceIntent() {
+    private Intent createServiceIntent() {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("nl.sogeti.android.gpstracker", "nl.sogeti.android.gpstracker.service.logger.GPSLoggerService"));
         return intent;
     }
 
-    public static void startGPSLogging(Context context, int precision, int customInterval, float customDistance, String trackName) {
+    public void startGPSLogging(Context context, int precision, int customInterval, float customDistance, String trackName) {
         setCustomLoggingPrecision(context, customInterval, customDistance);
         setLoggingPrecision(context, precision);
         startGPSLogging(context, trackName);
     }
 
-    public static void pauseGPSLogging(Context context) {
+    public  void pauseGPSLogging(Context context) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_PAUSE);
         context.startService(intent);
     }
 
-    public static void resumeGPSLogging(Context context) {
+    public  void resumeGPSLogging(Context context) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESUME);
         context.startService(intent);
     }
 
-    public static void resumeGPSLogging(Context context, int precision, int customInterval, float customDistance) {
+    public void resumeGPSLogging(Context context, int precision, int customInterval, float customDistance) {
         setCustomLoggingPrecision(context, customInterval, customDistance);
         setLoggingPrecision(context, precision);
         resumeGPSLogging(context);
     }
 
-    public static void stopGPSLogging(Context context) {
+    public void stopGPSLogging(Context context) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_STOP);
         context.startService(intent);
     }
 
-    public static void setLoggingPrecision(Context context, int mode) {
+    public void setLoggingPrecision(Context context, int mode) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, mode);
         context.startService(intent);
     }
 
-    public static void setCustomLoggingPrecision(Context context, long seconds, float meters) {
+    public  void setCustomLoggingPrecision(Context context, long seconds, float meters) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, seconds);
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, meters);
         context.startService(intent);
     }
 
-    public static void setSanityFilter(Context context, boolean filter) {
+    public void setSanityFilter(Context context, boolean filter) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, filter);
         context.startService(intent);
     }
 
-    public static void setStatusMonitor(Context context, boolean monitor) {
+    public void setStatusMonitor(Context context, boolean monitor) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_STATUS_MONITOR, monitor);
         context.startService(intent);
     }
 
-    public static void setAutomaticLogging(Context context, boolean atBoot, boolean atDocking, boolean atUnDocking, boolean atPowerConnect, boolean atPowerDisconnect) {
+    public void setAutomaticLogging(Context context, boolean atBoot, boolean atDocking, boolean atUnDocking, boolean atPowerConnect, boolean atPowerDisconnect) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_START_AT_BOOT, atBoot);
         intent.putExtra(ServiceConstants.Commands.CONFIG_START_AT_DOCK, atDocking);
@@ -148,7 +148,7 @@ public class ServiceManager {
         context.startService(intent);
     }
 
-    public static void setStreaming(Context context, boolean isStreaming, float distance, long time) {
+    public void setStreaming(Context context, boolean isStreaming, float distance, long time) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_STREAM_BROADCAST, isStreaming);
         intent.putExtra(ServiceConstants.Commands.CONFIG_STREAM_INTERVAL_DISTANCE, distance);

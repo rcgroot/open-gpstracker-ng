@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,56 +26,53 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks
+package nl.sogeti.android.gpstracker.ng.control
 
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
+import nl.sogeti.android.gpstracker.integration.PermissionRequester
 import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding
 
 /**
- * Sets up display and selection of tracks in a list style
+ * On screen controls for the logging state
  */
-class TrackListFragment : Fragment(), TracksPresenter.Listener {
-    val viewModel: TracksViewModel = TracksViewModel()
-    val tracksPresenter: TracksPresenter = TracksPresenter(viewModel)
-    var listener: Listener? = null
+class ControlFragment : Fragment() {
+
+    private val viewModel = LoggerViewModel()
+    private val controlPresenter = ControlPresenter(viewModel)
+    private val permissionRequester = PermissionRequester()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tracksPresenter.listener = this
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.listview.adapter = tracksPresenter
-        binding.listview.layoutManager = LinearLayoutManager(activity)
-        binding.viewModel = viewModel
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val binding = DataBindingUtil.inflate<FragmentControlBinding>(inflater, R.layout.fragment_control, container, false)
+        binding.logger = viewModel
+        binding.presenter = controlPresenter;
 
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        tracksPresenter?.start(activity)
+        permissionRequester.checkTrackingPermission(activity) { controlPresenter.start(activity) }
     }
 
     override fun onPause() {
         super.onPause()
-        tracksPresenter?.stop()
+        permissionRequester.stop()
+        controlPresenter.stop()
     }
 
-    override fun onTrackSelected(uri: Uri) {
-        listener?.onTrackSelected(uri)
-    }
-
-    interface Listener {
-        fun onTrackSelected(uri: Uri)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

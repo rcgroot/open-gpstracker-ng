@@ -37,20 +37,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 public class TrackViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
-    public final ObservableField<String> name = new ObservableField<>();
+    public final ObservableField<String> name = new ObservableField<>("");
     public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
     public final ObservableField<LatLngBounds> startStopBounds = new ObservableField<>();
     public final ObservableField<LatLngBounds> completeBounds = new ObservableField<>();
     public final ObservableField<LatLngBounds> trackHeadBounds = new ObservableField<>();
-    private final String defaultName;
 
-    public TrackViewModel(Uri uri, String defaultName) {
-        this.defaultName = defaultName;
-        setDefaultName();
+    public TrackViewModel(Uri uri) {
         this.uri.set(uri);
-    }
-
-    public void setDefaultName() {
-        this.name.set(defaultName);
     }
 }

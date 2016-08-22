@@ -26,56 +26,80 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks
+package nl.sogeti.android.gpstracker.ng.map
 
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 
-/**
- * Sets up display and selection of tracks in a list style
- */
-class TrackListFragment : Fragment(), TracksPresenter.Listener {
-    val viewModel: TracksViewModel = TracksViewModel()
-    val tracksPresenter: TracksPresenter = TracksPresenter(viewModel)
-    var listener: Listener? = null
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel
+import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
+
+class TrackMapFragment : Fragment() {
+
+    val KEY_TRACK_URI = "KEY_TRACK_URI"
+    val trackViewModel: TrackViewModel = TrackViewModel(null)
+    var recordingViewModel: RecordingViewModel? = null
+        set(value) {
+            field = value
+            binding?.recorder = value
+        }
+    private val trackPresenter = TrackPresenter(trackViewModel)
+    private var binding: FragmentMapBinding? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tracksPresenter.listener = this
+        if (savedInstanceState != null) {
+            val uri = savedInstanceState.getParcelable<Uri>(KEY_TRACK_URI)
+            trackViewModel.uri.set(uri)
+        }
+        else {
+            trackViewModel.name.set(getString(R.string.app_name))
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.listview.adapter = tracksPresenter
-        binding.listview.layoutManager = LinearLayoutManager(activity)
-        binding.viewModel = viewModel
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater!!, R.layout.fragment_map, container, false)
+        binding.fragmentMapMapview.onCreate(savedInstanceState)
+        binding.viewModel = trackViewModel
+        binding.recorder = recordingViewModel
+        binding.fragmentMapMapview.getMapAsync(trackPresenter)
+        this.binding = binding
 
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        tracksPresenter?.start(activity)
+        binding?.fragmentMapMapview?.onResume()
+        trackPresenter.start(activity)
     }
 
     override fun onPause() {
         super.onPause()
-        tracksPresenter?.stop()
+        binding?.fragmentMapMapview?.onPause()
+        trackPresenter.stop()
     }
 
-    override fun onTrackSelected(uri: Uri) {
-        listener?.onTrackSelected(uri)
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putParcelable(KEY_TRACK_URI, trackViewModel.uri.get())
+        binding?.fragmentMapMapview?.onSaveInstanceState(outState)
     }
 
-    interface Listener {
-        fun onTrackSelected(uri: Uri)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding?.fragmentMapMapview?.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding?.fragmentMapMapview?.onLowMemory()
     }
 }

@@ -26,49 +26,37 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording;
+package nl.sogeti.android.gpstracker.ng.recording
 
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.databinding.DataBindingUtil
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 
-import nl.sogeti.android.gpstracker.v2.R;
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding;
+import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
 
-public class RecordingFragment extends Fragment {
+class RecordingFragment : Fragment() {
 
-    private RecordingViewModel recordingViewModel;
-    private RecordingPresenter recordingPresenter;
+    val recordingViewModel: RecordingViewModel = RecordingViewModel()
+    val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        recordingViewModel = new RecordingViewModel();
-        recordingPresenter = new RecordingPresenter(recordingViewModel);
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater!!, R.layout.fragment_recording, container, false)
+        binding.track = recordingViewModel
+
+        return binding.root
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentRecordingBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recording, container, false);
-        binding.setTrack(recordingViewModel);
-
-        return binding.getRoot();
+    override fun onResume() {
+        super.onResume()
+        recordingPresenter.start(activity)
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        recordingPresenter.start(getActivity());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        recordingPresenter.stop();
+    override fun onPause() {
+        super.onPause()
+        recordingPresenter.stop()
     }
 }

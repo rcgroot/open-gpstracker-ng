@@ -46,6 +46,7 @@ import android.widget.EditText;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
+import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
@@ -55,7 +56,6 @@ public class TrackMapActivity extends AppCompatActivity {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final int REQUEST_CODE_TRACK_SELECTION = 234;
-
     private TrackViewModel selectedTrack;
 
     @Override
@@ -74,6 +74,9 @@ public class TrackMapActivity extends AppCompatActivity {
             }
         });
         binding.setTrack(selectedTrack);
+
+        RecordingFragment recordingFragment = (RecordingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_recording);
+        mapFragment.setRecordingViewModel(recordingFragment.getRecordingViewModel());
     }
 
     @Override

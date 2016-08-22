@@ -149,7 +149,6 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
             Uri trackUri = viewModel.uri.get();
             if (trackUri == null) {
                 startObserver();
-                viewModel.setDefaultName();
                 viewModel.waypoints.set(null);
             } else {
                 readUri();
@@ -172,8 +171,6 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
             this.trackUri = trackUri;
             this.viewModel = viewModel;
             headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS;
-            completeBoundsBuilder = new LatLngBounds.Builder();
-            headBoundsBuilder = new LatLngBounds.Builder();
         }
 
         @Override
@@ -195,12 +192,17 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
             latLngLast = latLng;
             // Last 5 minutes worth of waypoints make the head
             if (millisecondsTime > headTime) {
-                headBoundsBuilder = new LatLngBounds.Builder();
+                if (headBoundsBuilder == null) {
+                    headBoundsBuilder = new LatLngBounds.Builder();
+                }
                 headBoundsBuilder.include(latLng);
             }
             // Add each waypoint to the end of the last list of points (the current segment)
             collectedWaypoints.get(collectedWaypoints.size() - 1).add(latLng);
             // Build a bounds for the whole track
+            if (completeBoundsBuilder == null) {
+                completeBoundsBuilder = new LatLngBounds.Builder();
+            }
             completeBoundsBuilder.include(latLng);
         }
 

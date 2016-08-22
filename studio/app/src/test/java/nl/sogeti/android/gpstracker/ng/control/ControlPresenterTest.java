@@ -28,99 +28,36 @@
  */
 package nl.sogeti.android.gpstracker.ng.control;
 
-import android.support.design.widget.FloatingActionButton;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
-
-import com.android.annotations.NonNull;
-
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+
+import nl.sogeti.android.gpstracker.integration.ServiceManager;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyFloat;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.validateMockitoUsage;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ControlHandlerTest {
+public class ControlPresenterTest {
 
+    private ControlPresenter sut;
     @Mock
     LoggerViewModel mockLogger;
     @Mock
-    ControlHandler.Listener mockListener;
-    private ControlHandler sut;
-    @Mock
-    ViewGroup mockContainer;
-    @Mock
-    FloatingActionButton mockLeftButton;
-    @Mock
-    FloatingActionButton mockRightButton;
+    ServiceManager mockServiceManager;
+
 
     @Before
     public void setup() {
-        sut = new ControlHandler(mockListener, mockLogger);
-        setupButtonViewGroup();
-    }
-
-    @After
-    public void validate() {
-        validateMockitoUsage();
-    }
-
-    @Test
-    public void setStateUnknown() {
-        // Execute
-        ControlHandler.setState(mockContainer, STATE_UNKNOWN);
-
-        // Verify
-        verify(mockLeftButton).setVisibility(View.GONE);
-        verify(mockRightButton).setEnabled(false);
-    }
-
-    @Test
-    public void setStateStopped() {
-        // Execute
-        ControlHandler.setState(mockContainer, STATE_STOPPED);
-
-        // Verify
-        verify(mockLeftButton).setVisibility(View.GONE);
-        verify(mockRightButton).setEnabled(true);
-    }
-
-    @Test
-    public void setStatePause() {
-        // Execute
-        ControlHandler.setState(mockContainer, STATE_PAUSED);
-
-        // Verify
-        verify(mockLeftButton).setVisibility(View.VISIBLE);
-        verify(mockRightButton).setEnabled(true);
-    }
-
-    @Test
-    public void setStateLogging() {
-        // Execute
-        ControlHandler.setState(mockContainer, STATE_LOGGING);
-
-        // Verify
-        verify(mockLeftButton).setVisibility(View.VISIBLE);
-        verify(mockRightButton).setEnabled(true);
+        sut = new ControlPresenter(mockLogger);
+        sut.serviceManager = mockServiceManager;
     }
 
     @Test
@@ -132,7 +69,7 @@ public class ControlHandlerTest {
         sut.onClickLeft();
 
         // Verify
-        verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockServiceManager);
     }
 
     @Test
@@ -144,7 +81,7 @@ public class ControlHandlerTest {
         sut.onClickLeft();
 
         // Verify
-        verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockServiceManager);
     }
 
     @Test
@@ -156,7 +93,7 @@ public class ControlHandlerTest {
         sut.onClickLeft();
 
         // Verify
-        verify(mockListener).stopLogging();
+        verify(mockServiceManager).stopGPSLogging(null);
     }
 
     @Test
@@ -168,7 +105,7 @@ public class ControlHandlerTest {
         sut.onClickLeft();
 
         // Verify
-        verify(mockListener).stopLogging();
+        verify(mockServiceManager).stopGPSLogging(null);
     }
 
     @Test
@@ -180,7 +117,7 @@ public class ControlHandlerTest {
         sut.onClickRight();
 
         // Verify
-        verifyZeroInteractions(mockListener);
+        verifyZeroInteractions(mockServiceManager);
     }
 
     @Test
@@ -192,7 +129,7 @@ public class ControlHandlerTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockListener).startLogging();
+        verify(mockServiceManager).startGPSLogging(null, "New NG track!");
     }
 
     @Test
@@ -204,7 +141,7 @@ public class ControlHandlerTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockListener).pauseLogging();
+        verify(mockServiceManager).pauseGPSLogging(null);
     }
 
     @Test
@@ -216,33 +153,6 @@ public class ControlHandlerTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockListener).resumeLogging();
-    }
-
-    /* Helpers */
-
-    @NonNull
-    private void setupButtonViewGroup() {
-        final ViewPropertyAnimator mockAnimator = mock(ViewPropertyAnimator.class);
-        when(mockAnimator.translationX(anyFloat())).thenReturn(mockAnimator);
-        when(mockLeftButton.animate()).thenReturn(mockAnimator);
-
-        final Runnable[] runnable = new Runnable[1];
-        when(mockAnimator.withEndAction(any(Runnable.class))).thenAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                runnable[0] = (Runnable) invocation.getArguments()[0];
-                return mockAnimator;
-            }
-        });
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                runnable[0].run();
-                return null;
-            }
-        }).when(mockAnimator).start();
-
-        when(mockContainer.getChildAt(0)).thenReturn(mockLeftButton);
-        when(mockContainer.getChildAt(1)).thenReturn(mockRightButton);
+        verify(mockServiceManager).resumeGPSLogging(null);
     }
 }

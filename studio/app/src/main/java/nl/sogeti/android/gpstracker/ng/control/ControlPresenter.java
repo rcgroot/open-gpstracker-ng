@@ -31,12 +31,17 @@ package nl.sogeti.android.gpstracker.ng.control;
 import android.content.Context;
 import android.content.Intent;
 
-import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 
-public class ControlPresenter extends ConnectedServicePresenter implements ControlHandler.Listener {
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED;
+
+public class ControlPresenter extends ConnectedServicePresenter {
     private final LoggerViewModel viewModel;
+    ServiceManager serviceManager = new ServiceManager();
 
     public ControlPresenter(LoggerViewModel viewModel) {
         this.viewModel = viewModel;
@@ -57,24 +62,38 @@ public class ControlPresenter extends ConnectedServicePresenter implements Contr
         viewModel.setState(serviceManager.getLoggingState());
     }
 
-    @Override
+    public void onClickLeft() {
+        if (viewModel.getState() == STATE_LOGGING) {
+            stopLogging();
+        } else if (viewModel.getState() == STATE_PAUSED) {
+            stopLogging();
+        }
+    }
+
+    public void onClickRight() {
+        if (viewModel.getState() == STATE_STOPPED) {
+            startLogging();
+        } else if (viewModel.getState() == STATE_LOGGING) {
+            pauseLogging();
+        } else if (viewModel.getState() == STATE_PAUSED) {
+            resumeLogging();
+        }
+    }
+
     public void startLogging() {
-        ServiceManager.startGPSLogging(getContext(), "New NG track!");
+        serviceManager.startGPSLogging(getContext(), "New NG track!");
     }
 
-    @Override
     public void stopLogging() {
-        ServiceManager.stopGPSLogging(getContext());
+        serviceManager.stopGPSLogging(getContext());
     }
 
-    @Override
     public void pauseLogging() {
-        ServiceManager.pauseGPSLogging(getContext());
+        serviceManager.pauseGPSLogging(getContext());
     }
 
-    @Override
     public void resumeLogging() {
-        ServiceManager.resumeGPSLogging(getContext());
+        serviceManager.resumeGPSLogging(getContext());
     }
 
 
