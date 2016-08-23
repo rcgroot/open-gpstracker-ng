@@ -30,13 +30,11 @@ package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.net.Uri;
 
 public class RecordingViewModel {
-    public final ObservableBoolean isRecording = new ObservableBoolean();
+    public final ObservableBoolean isRecording = new ObservableBoolean(false);
     public final ObservableField<String> summary = new ObservableField<>();
     public final ObservableField<String> name = new ObservableField<>();
-
-    RecordingViewModel() {
-        isRecording.set(false);
-    }
+    public final ObservableField<Uri> uri = new ObservableField<>();
 }

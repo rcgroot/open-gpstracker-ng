@@ -28,9 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.map;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.databinding.Observable;
 import android.net.Uri;
@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
@@ -60,7 +61,6 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     private ContentObserver observer;
     private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
-    private GoogleMap googleMap;
     private TileOverlay titleOverLay;
 
     public TrackPresenter(TrackViewModel track) {
@@ -68,7 +68,7 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     }
 
     public void start(Context context) {
-        super.start(context, false);
+        super.start(context);
         isReading = false;
         readUri();
         viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
@@ -95,7 +95,6 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
         TileOverlayOptions options = new TileOverlayOptions();
         TrackTileProvider tileProvider = new TrackTileProvider(getContext(), viewModel, this);
         options.tileProvider(tileProvider);
@@ -118,10 +117,20 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
 
     @Override
     protected void didConnectService(ServiceManager serviceManager) {
+        int loggingState = serviceManager.getLoggingState();
+        Uri uri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, serviceManager.getTrackId());
+        updateRecording(uri, loggingState);
     }
 
     @Override
-    public void didChangeLoggingState(Intent intent) {
+    public void didChangeLoggingState(Uri trackUri, int loggingState) {
+        updateRecording(trackUri, loggingState);
+    }
+
+    private void updateRecording(Uri trackUri, int loggingState) {
+        if (trackUri != null && trackUri.equals(viewModel.uri.get())) {
+            viewModel.isRecording.set(loggingState == ServiceConstants.STATE_LOGGING);
+        }
     }
 
     public static void updateName(Context context, Uri trackUri, String name) {

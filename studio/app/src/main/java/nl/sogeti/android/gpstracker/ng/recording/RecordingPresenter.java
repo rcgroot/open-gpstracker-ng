@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.location.Location;
 import android.net.Uri;
@@ -64,7 +63,7 @@ public class RecordingPresenter extends ConnectedServicePresenter {
     }
 
     public void start(Context context) {
-        super.start(context, true);
+        super.start(context);
     }
 
     public void stop() {
@@ -93,19 +92,18 @@ public class RecordingPresenter extends ConnectedServicePresenter {
         if (trackId != -1) {
             trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId);
         }
-        updateRecording(loggingState, trackUri);
+        updateRecording(trackUri, loggingState);
     }
 
     @Override
-    public void didChangeLoggingState(Intent intent) {
-        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
-        Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
-        updateRecording(loggingState, trackUri);
+    public void didChangeLoggingState(Uri trackUri, int loggingState) {
+        updateRecording(trackUri, loggingState);
     }
 
-    private void updateRecording(int loggingState, Uri trackUri) {
+    private void updateRecording(Uri trackUri, int loggingState) {
         Boolean isRecording = loggingState == ServiceConstants.STATE_LOGGING;
         viewModel.isRecording.set(isRecording);
+        viewModel.uri.set(trackUri);
         if (trackUri != null) {
             startObserver(trackUri);
             if (!isReading) {
@@ -146,6 +144,7 @@ public class RecordingPresenter extends ConnectedServicePresenter {
         @Override
         public void addTrack(String name) {
             recordingViewModel.name.set(name);
+            recordingViewModel.uri.set(trackUri);
         }
 
         @Override

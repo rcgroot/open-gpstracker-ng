@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.control;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
@@ -48,12 +49,11 @@ public class ControlPresenter extends ConnectedServicePresenter {
     }
 
     public void start(Context context) {
-        super.start(context, true);
+        super.start(context);
     }
 
     @Override
-    public void didChangeLoggingState(Intent intent) {
-        int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
+    public void didChangeLoggingState(Uri trackUri, int loggingState) {
         viewModel.setState(loggingState);
     }
 

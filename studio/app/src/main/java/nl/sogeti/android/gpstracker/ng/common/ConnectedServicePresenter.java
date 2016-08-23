@@ -32,6 +32,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
@@ -50,22 +51,20 @@ public abstract class ConnectedServicePresenter {
         serviceManager = new ServiceManager();
     }
 
-    public synchronized void start(Context context, boolean withService) {
+    public synchronized void start(Context context) {
         if (this.context == null) {
             this.context = context;
-            if (withService) {
-                serviceManager.startup(context, new Runnable() {
-                    @Override
-                    public void run() {
-                        synchronized (ConnectedServicePresenter.this) {
-                            if (ConnectedServicePresenter.this.context != null) {
-                                didConnectService(serviceManager);
-                            }
+            serviceManager.startup(context, new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (ConnectedServicePresenter.this) {
+                        if (ConnectedServicePresenter.this.context != null) {
+                            didConnectService(serviceManager);
                         }
                     }
-                });
-                registerReceiver();
-            }
+                }
+            });
+            registerReceiver();
         }
     }
 
@@ -101,12 +100,14 @@ public abstract class ConnectedServicePresenter {
 
     protected abstract void didConnectService(ServiceManager serviceManager);
 
-    public abstract void didChangeLoggingState(Intent intent);
+    public abstract void didChangeLoggingState(Uri trackUri, int loggingState);
 
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            didChangeLoggingState(intent);
+            int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
+            Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
+            didChangeLoggingState(trackUri, loggingState);
         }
     }
 }

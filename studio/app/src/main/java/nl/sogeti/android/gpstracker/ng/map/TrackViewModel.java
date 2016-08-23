@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.map;
 
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableParcelable;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 public class TrackViewModel {
     public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
     public final ObservableField<String> name = new ObservableField<>("");
+    public final ObservableBoolean isRecording = new ObservableBoolean(false);
     public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
     public final ObservableField<LatLngBounds> startStopBounds = new ObservableField<>();
     public final ObservableField<LatLngBounds> completeBounds = new ObservableField<>();
