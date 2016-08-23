@@ -59,7 +59,7 @@ public final class ContentConstants {
      * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId, long waypointId) {
-        Builder builder = Tracks.CONTENT_URI.buildUpon();
+        Builder builder = Tracks.TRACKS_URI.buildUpon();
         ContentUris.appendId(builder, trackId);
         builder.appendPath(Segments.SEGMENTS);
         ContentUris.appendId(builder, segmentId);
@@ -79,7 +79,7 @@ public final class ContentConstants {
      * @return the whole uri
      */
     public static Uri buildUri(long trackId, long segmentId) {
-        Builder builder = Tracks.CONTENT_URI.buildUpon();
+        Builder builder = Tracks.TRACKS_URI.buildUpon();
         ContentUris.appendId(builder, trackId);
         builder.appendPath(Segments.SEGMENTS);
         ContentUris.appendId(builder, segmentId);
@@ -93,11 +93,11 @@ public final class ContentConstants {
      */
     public static class Tracks extends TracksColumns implements android.provider.BaseColumns {
         /**
-         * The MIME type of a CONTENT_URI subdirectory of a single track.
+         * The MIME type of a TRACKS_URI subdirectory of a single track.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.nl.sogeti.android.track";
         /**
-         * The MIME type of CONTENT_URI providing a directory of tracks.
+         * The MIME type of TRACKS_URI providing a directory of tracks.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.nl.sogeti.android.track";
         /**
@@ -107,7 +107,7 @@ public final class ContentConstants {
         /**
          * The content:// style URL for this provider, content://nl.sogeti.android.gpstracker/tracks
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Tracks.TRACKS);
+        public static final Uri TRACKS_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Tracks.TRACKS);
 
     }
 
@@ -117,11 +117,11 @@ public final class ContentConstants {
     public static class Segments extends SegmentsColumns implements android.provider.BaseColumns {
 
         /**
-         * The MIME type of a CONTENT_URI subdirectory of a single segment.
+         * The MIME type of a TRACKS_URI subdirectory of a single segment.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.nl.sogeti.android.segment";
         /**
-         * The MIME type of CONTENT_URI providing a directory of segments.
+         * The MIME type of TRACKS_URI providing a directory of segments.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.nl.sogeti.android.segment";
 
@@ -137,11 +137,11 @@ public final class ContentConstants {
     public static class Waypoints extends WaypointsColumns implements android.provider.BaseColumns {
 
         /**
-         * The MIME type of a CONTENT_URI subdirectory of a single waypoint.
+         * The MIME type of a TRACKS_URI subdirectory of a single waypoint.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.nl.sogeti.android.waypoint";
         /**
-         * The MIME type of CONTENT_URI providing a directory of waypoints.
+         * The MIME type of TRACKS_URI providing a directory of waypoints.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.nl.sogeti.android.waypoint";
 
@@ -149,8 +149,6 @@ public final class ContentConstants {
          * The name of this table, waypoints
          */
         public static final String WAYPOINTS = "waypoints";
-
-
     }
 
     /**
@@ -159,11 +157,11 @@ public final class ContentConstants {
     public static class Media extends MediaColumns implements android.provider.BaseColumns {
 
         /**
-         * The MIME type of a CONTENT_URI subdirectory of a single media entry.
+         * The MIME type of a TRACKS_URI subdirectory of a single media entry.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.nl.sogeti.android.media";
         /**
-         * The MIME type of CONTENT_URI providing a directory of media entry.
+         * The MIME type of TRACKS_URI providing a directory of media entry.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.nl.sogeti.android.media";
 
@@ -171,7 +169,7 @@ public final class ContentConstants {
          * The name of this table
          */
         public static final String MEDIA = "media";
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Media.MEDIA);
+        public static final Uri MEDIA_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + Media.MEDIA);
 
     }
 
@@ -181,11 +179,11 @@ public final class ContentConstants {
     public static class MetaData extends MetaDataColumns implements android.provider.BaseColumns {
 
         /**
-         * The MIME type of a CONTENT_URI subdirectory of a single metadata entry.
+         * The MIME type of a TRACKS_URI subdirectory of a single metadata entry.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.nl.sogeti.android.metadata";
         /**
-         * The MIME type of CONTENT_URI providing a directory of media entry.
+         * The MIME type of TRACKS_URI providing a directory of media entry.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.nl.sogeti.android.metadata";
 
@@ -196,7 +194,7 @@ public final class ContentConstants {
         /**
          * content://nl.sogeti.android.gpstracker/metadata
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + MetaData.METADATA);
+        public static final Uri METADATA_URI = Uri.parse("content://" + ContentConstants.AUTHORITY + "/" + MetaData.METADATA);
     }
 
     /**

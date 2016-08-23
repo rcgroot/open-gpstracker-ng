@@ -72,11 +72,11 @@ class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksP
         this.context = context
         val trackCreation: (Cursor) -> TrackViewModel = {
             val id = it.getLong(ContentConstants.Tracks._ID)
-            val uri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, id);
+            val uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, id)
             val name = it.getString(ContentConstants.Tracks.NAME)
             TrackViewModel(uri, name)
         }
-        val tracks = ContentConstants.Tracks.CONTENT_URI.map(context, trackCreation)
+        val tracks = ContentConstants.Tracks.TRACKS_URI.map(context, trackCreation)
         model.track.addAll(tracks)
     }
 

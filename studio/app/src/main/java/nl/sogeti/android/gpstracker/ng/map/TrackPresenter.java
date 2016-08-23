@@ -118,7 +118,7 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     @Override
     protected void didConnectService(ServiceManager serviceManager) {
         int loggingState = serviceManager.getLoggingState();
-        Uri uri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, serviceManager.getTrackId());
+        Uri uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, serviceManager.getTrackId());
         updateRecording(uri, loggingState);
     }
 

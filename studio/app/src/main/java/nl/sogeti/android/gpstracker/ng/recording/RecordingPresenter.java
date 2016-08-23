@@ -90,7 +90,7 @@ public class RecordingPresenter extends ConnectedServicePresenter {
         long trackId = service.getTrackId();
         Uri trackUri = null;
         if (trackId != -1) {
-            trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.CONTENT_URI, trackId);
+            trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId);
         }
         updateRecording(trackUri, loggingState);
     }
