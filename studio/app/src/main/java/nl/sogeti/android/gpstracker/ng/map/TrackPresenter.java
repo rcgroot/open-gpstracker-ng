@@ -73,7 +73,7 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         isReading = false;
         viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
         Uri trackUri = viewModel.uri.get();
-        startObserver(trackUri);
+        observerTrack(trackUri);
         readUri(trackUri);
     }
 
@@ -81,7 +81,7 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     public void willStop() {
         super.willStop();
         viewModel.uri.removeOnPropertyChangedCallback(uriChangeListener);
-        stopObserver();
+        observerTrack(null);
     }
 
     private void readUri(Uri trackUri) {
@@ -90,13 +90,11 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         }
     }
 
-    private void startObserver(Uri trackUri) {
-        startObserver(trackUri);
-        getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
-    }
-
-    private void stopObserver() {
+    private void observerTrack(Uri trackUri) {
         getContext().getContentResolver().unregisterContentObserver(observer);
+        if (trackUri != null) {
+            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+        }
     }
 
     @Override
@@ -153,10 +151,9 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     private class TrackUriChangeListener extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
-            stopObserver();
             Uri trackUri = viewModel.uri.get();
+            observerTrack(trackUri);
             if (trackUri != null) {
-                startObserver(trackUri);
                 readUri(trackUri);
             }
         }
