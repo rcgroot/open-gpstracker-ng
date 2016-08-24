@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.content.ContentUris;
-import android.content.Context;
 import android.database.ContentObserver;
 import android.location.Location;
 import android.net.Uri;
@@ -62,13 +61,16 @@ public class RecordingPresenter extends ConnectedServicePresenter {
         this.viewModel = viewModel;
     }
 
-    public void start(Context context) {
-        super.start(context);
+    @Override
+    public void didStart() {
+        super.didStart();
+        stopObserver();
     }
 
-    public void stop() {
+    @Override
+    public void willStop() {
+        super.willStop();
         stopObserver();
-        super.stop();
     }
 
     private void stopObserver() {

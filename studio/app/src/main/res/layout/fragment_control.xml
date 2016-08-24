@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:state="@{logger.state}"
-        tools:context="nl.sogeti.android.gpstracker.ng.control.ControlFragment">
+        tools:privateContext="nl.sogeti.android.gpstracker.ng.control.ControlFragment">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/widget_control_left"

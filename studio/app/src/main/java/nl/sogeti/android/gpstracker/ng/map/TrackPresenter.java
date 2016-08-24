@@ -58,7 +58,7 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
     private final TrackViewModel viewModel;
-    private ContentObserver observer;
+    private ContentObserver observer = new TrackObserver();
     private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
     private TileOverlay titleOverLay;
@@ -67,30 +67,36 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         this.viewModel = track;
     }
 
-    public void start(Context context) {
-        super.start(context);
+    @Override
+    public void didStart() {
+        super.didStart();
         isReading = false;
-        readUri();
         viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
+        Uri trackUri = viewModel.uri.get();
+        startObserver(trackUri);
+        readUri(trackUri);
     }
 
-    public void stop() {
+    @Override
+    public void willStop() {
+        super.willStop();
         viewModel.uri.removeOnPropertyChangedCallback(uriChangeListener);
-        startObserver();
-        super.stop();
+        stopObserver();
     }
 
-    private void startObserver() {
-        if (observer != null) {
-            getContext().getContentResolver().unregisterContentObserver(observer);
-            observer = null;
+    private void readUri(Uri trackUri) {
+        if (trackUri != null) {
+            new TrackReader(trackUri, viewModel).execute();
         }
     }
 
-    private void stopObserver(Uri trackUri) {
-        startObserver();
-        observer = new TrackObserver();
+    private void startObserver(Uri trackUri) {
+        startObserver(trackUri);
         getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
+    }
+
+    private void stopObserver() {
+        getContext().getContentResolver().unregisterContentObserver(observer);
     }
 
     @Override
@@ -105,14 +111,6 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     @Override
     public void tilesDidBecomeOutdated(TrackTileProvider provider) {
         titleOverLay.clearTileCache();
-    }
-
-    private void readUri() {
-        Uri trackUri = viewModel.uri.get();
-        if (trackUri != null) {
-            stopObserver(trackUri);
-            new TrackReader(trackUri, viewModel).execute();
-        }
     }
 
     @Override
@@ -155,12 +153,11 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
     private class TrackUriChangeListener extends Observable.OnPropertyChangedCallback {
         @Override
         public void onPropertyChanged(Observable sender, int propertyId) {
+            stopObserver();
             Uri trackUri = viewModel.uri.get();
-            if (trackUri == null) {
-                startObserver();
-                viewModel.waypoints.set(null);
-            } else {
-                readUri();
+            if (trackUri != null) {
+                startObserver(trackUri);
+                readUri(trackUri);
             }
         }
     }

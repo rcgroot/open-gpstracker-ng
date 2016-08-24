@@ -41,44 +41,44 @@ import nl.sogeti.android.gpstracker.integration.ServiceManager;
  * Base class for presenters that source data from the IPC with
  * the original Open GPS Tracker app.
  */
-public abstract class ConnectedServicePresenter {
+public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    private Context context;
     private BroadcastReceiver receiver;
     private final ServiceManager serviceManager;
 
-    public ConnectedServicePresenter() {
-        serviceManager = new ServiceManager();
+    public ConnectedServicePresenter(ServiceManager serviceManager) {
+        this.serviceManager = serviceManager;
     }
 
-    public synchronized void start(Context context) {
-        if (this.context == null) {
-            this.context = context;
-            serviceManager.startup(context, new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (ConnectedServicePresenter.this) {
-                        if (ConnectedServicePresenter.this.context != null) {
-                            didConnectService(serviceManager);
-                        }
+    public ConnectedServicePresenter() {
+        this(new ServiceManager());
+    }
+
+    @Override
+    public void didStart() {
+        serviceManager.startup(getContext(), new Runnable() {
+            @Override
+            public void run() {
+                synchronized (ConnectedServicePresenter.this) {
+                    Context context = ConnectedServicePresenter.this.getContext();
+                    if (context != null) {
+                        didConnectService(serviceManager);
                     }
                 }
-            });
-            registerReceiver();
-        }
+            }
+        });
+        registerReceiver();
     }
 
-    public synchronized void stop() {
-        if (context != null) {
-            unregisterReceiver();
-            serviceManager.shutdown(context);
-            context = null;
-        }
+    @Override
+    public void willStop() {
+        unregisterReceiver();
+        serviceManager.shutdown(getContext());
     }
 
     private void unregisterReceiver() {
         if (receiver != null) {
-            context.unregisterReceiver(receiver);
+            getContext().unregisterReceiver(receiver);
             receiver = null;
         }
     }
@@ -87,11 +87,7 @@ public abstract class ConnectedServicePresenter {
         unregisterReceiver();
         receiver = new LoggerStateReceiver();
         IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-        context.registerReceiver(receiver, filter);
-    }
-
-    public Context getContext() {
-        return context;
+        getContext().registerReceiver(receiver, filter);
     }
 
     public ServiceManager getServiceManager() {

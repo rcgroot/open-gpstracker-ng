@@ -48,10 +48,6 @@ public class ControlPresenter extends ConnectedServicePresenter {
         this.viewModel = viewModel;
     }
 
-    public void start(Context context) {
-        super.start(context);
-    }
-
     @Override
     public void didChangeLoggingState(Uri trackUri, int loggingState) {
         viewModel.setState(loggingState);

@@ -28,9 +28,11 @@
 package nl.sogeti.android.gpstracker.ng.about
 
 import android.app.Dialog
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
+import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentAboutBinding
 
 /**
@@ -41,8 +43,7 @@ class AboutFragment : DialogFragment() {
     val model = AboutModel()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // Passing in the DataBindingComponent because the Kotlin variant does go in automatically
-        var binding = FragmentAboutBinding.inflate(activity.layoutInflater, null, false)
+        var binding = DataBindingUtil.inflate<FragmentAboutBinding>(activity.layoutInflater, R.layout.fragment_about, null, false)
         binding.model = model
 
         val builder = AlertDialog.Builder(activity)
