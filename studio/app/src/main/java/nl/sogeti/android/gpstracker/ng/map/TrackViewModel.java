@@ -37,7 +37,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 public class TrackViewModel {
-    public final ObservableParcelable<Uri> uri = new ObservableParcelable<>();
+    public final ObservableField<Uri> uri = new ObservableField<>();
     public final ObservableField<String> name = new ObservableField<>("");
     public final ObservableBoolean isRecording = new ObservableBoolean(false);
     public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();

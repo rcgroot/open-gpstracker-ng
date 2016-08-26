@@ -28,8 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.common
 
+import android.content.Context
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
+import android.util.TypedValue
 import android.webkit.WebView
 import android.widget.ImageView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -60,16 +62,21 @@ open class CommonBindingAdapters {
     @BindingAdapter("mapFocus")
     fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
         if (bounds != null) {
-            map.getMapAsync(MapUpdate(bounds))
+            map.getMapAsync(MapUpdate(map, bounds))
         }
     }
 
-    class MapUpdate(val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
-        val PADDING = 12
+    class MapUpdate(val map: MapView, val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
+        val DPI_PADDING = 32.0F
 
         override fun onMapReady(googleMap: GoogleMap?) {
             if (googleMap != null) {
-                val update = CameraUpdateFactory.newLatLngBounds(bounds, PADDING);
+                val pixelPadding = convertDpiToPixel(map.context, DPI_PADDING)
+                var padding = 0
+                if (map.width > 3 * pixelPadding && map.height > 3 * pixelPadding) {
+                    padding = ((pixelPadding+0.5).toInt())
+                }
+                val update = CameraUpdateFactory.newLatLngBounds(bounds, padding)
                 googleMap.animateCamera(update, this)
             }
         }
@@ -78,6 +85,10 @@ open class CommonBindingAdapters {
         }
 
         override fun onCancel() {
+        }
+
+        fun convertDpiToPixel(context: Context, dp: Float): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics);
         }
     }
 }

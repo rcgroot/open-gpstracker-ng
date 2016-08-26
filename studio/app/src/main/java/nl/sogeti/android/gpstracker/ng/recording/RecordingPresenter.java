@@ -29,12 +29,15 @@
 package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.content.ContentUris;
-import android.database.ContentObserver;
+import android.databinding.ObservableField;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,56 +47,28 @@ import kotlin.Pair;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
+import nl.sogeti.android.gpstracker.ng.common.TrackObservingPresenter;
 import nl.sogeti.android.gpstracker.v2.R;
 
-public class RecordingPresenter extends ConnectedServicePresenter {
+public class RecordingPresenter extends TrackObservingPresenter {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
     private final RecordingViewModel viewModel;
-    private ContentObserver observer;
     private boolean isReading;
 
     RecordingPresenter(RecordingViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
-    @Override
-    public void didStart() {
-        super.didStart();
-        stopObserver();
-    }
-
-    @Override
-    public void willStop() {
-        super.willStop();
-        stopObserver();
-    }
-
-    private void stopObserver() {
-        if (observer != null) {
-            getContext().getContentResolver().unregisterContentObserver(observer);
-            observer = null;
-        }
-    }
-
-    private void startObserver(Uri trackUri) {
-        stopObserver();
-        observer = new TrackObserver();
-        getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
-    }
-
+    /* Service connecting */
 
     public void didConnectService(ServiceManager service) {
         int loggingState = service.getLoggingState();
         long trackId = service.getTrackId();
-        Uri trackUri = null;
-        if (trackId != -1) {
-            trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId);
-        }
+        Uri trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId);
         updateRecording(trackUri, loggingState);
     }
 
@@ -102,33 +77,27 @@ public class RecordingPresenter extends ConnectedServicePresenter {
         updateRecording(trackUri, loggingState);
     }
 
+    /* Content watching */
+
+    @Nullable
+    @Override
+    public ObservableField<Uri> getTrackUriField() {
+        return viewModel.uri;
+    }
+
+    @Override
+    public void didChangeUriContent(@NotNull Uri uri, boolean includingUri) {
+        if (!isReading || includingUri) {
+            new TrackReader(uri, viewModel).execute();
+        }
+    }
+
+    /* Private */
+
     private void updateRecording(Uri trackUri, int loggingState) {
         Boolean isRecording = loggingState == ServiceConstants.STATE_LOGGING;
         viewModel.isRecording.set(isRecording);
         viewModel.uri.set(trackUri);
-        if (trackUri != null) {
-            startObserver(trackUri);
-            if (!isReading) {
-                readTrack(trackUri, viewModel);
-            }
-        }
-    }
-
-    public void readTrack(final Uri trackUri, final RecordingViewModel recordingViewModel) {
-        new TrackReader(trackUri, recordingViewModel).execute();
-    }
-
-    private class TrackObserver extends ContentObserver {
-        public TrackObserver() {
-            super(null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (!isReading) {
-                didConnectService(getServiceManager());
-            }
-        }
     }
 
     private class TrackReader extends AsyncTask<Void, Void, LatLng[]> implements ResultHandler {

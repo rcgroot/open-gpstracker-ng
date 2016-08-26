@@ -33,7 +33,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import nl.sogeti.android.gpstracker.ng.common.GpsTackerApplication;
 import timber.log.Timber;
 
 public class GpsTackerApplicationTest {

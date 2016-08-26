@@ -69,9 +69,9 @@ fun <T> Uri.map(context: Context,
 fun <T> Uri.apply(context: Context,
                   operation: (Cursor) -> T,
                   projection: List<String>? = null,
-                  selection: Pair <String, List<String>>? = null): T? {
-    val selectionArgs = selection?.second?.toTypedArray()
-    val selection = selection?.first
+                  selectionPair: Pair <String, List<String>>? = null): T? {
+    val selectionArgs = selectionPair?.second?.toTypedArray()
+    val selection = selectionPair?.first
     var result: T? = null
     var cursor: Cursor? = null
     try {

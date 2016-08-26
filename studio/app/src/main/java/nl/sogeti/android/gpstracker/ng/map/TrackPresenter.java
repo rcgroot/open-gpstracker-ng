@@ -31,8 +31,7 @@ package nl.sogeti.android.gpstracker.ng.map;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.ContentObserver;
-import android.databinding.Observable;
+import android.databinding.ObservableField;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -43,23 +42,24 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
 import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
+import nl.sogeti.android.gpstracker.ng.common.TrackObservingPresenter;
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider;
 
-public class TrackPresenter extends ConnectedServicePresenter implements TrackTileProvider.Listener, OnMapReadyCallback {
+public class TrackPresenter extends TrackObservingPresenter implements TrackTileProvider.Listener, OnMapReadyCallback {
 
     public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
     private final TrackViewModel viewModel;
-    private ContentObserver observer = new TrackObserver();
-    private final TrackUriChangeListener uriChangeListener = new TrackUriChangeListener();
     private boolean isReading;
     private TileOverlay titleOverLay;
 
@@ -67,35 +67,37 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         this.viewModel = track;
     }
 
+    /* Service connecting */
+
     @Override
-    public void didStart() {
-        super.didStart();
-        isReading = false;
-        viewModel.uri.addOnPropertyChangedCallback(uriChangeListener);
-        Uri trackUri = viewModel.uri.get();
-        observerTrack(trackUri);
-        readUri(trackUri);
+    protected void didConnectService(ServiceManager serviceManager) {
+        int loggingState = serviceManager.getLoggingState();
+        long trackId = serviceManager.getTrackId();
+        Uri uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId);
+        updateRecording(uri, loggingState);
     }
 
     @Override
-    public void willStop() {
-        super.willStop();
-        viewModel.uri.removeOnPropertyChangedCallback(uriChangeListener);
-        observerTrack(null);
+    public void didChangeLoggingState(Uri trackUri, int loggingState) {
+        updateRecording(trackUri, loggingState);
     }
 
-    private void readUri(Uri trackUri) {
-        if (trackUri != null) {
-            new TrackReader(trackUri, viewModel).execute();
+    /* Content watching */
+
+    @Nullable
+    @Override
+    public ObservableField<Uri> getTrackUriField() {
+        return viewModel.uri;
+    }
+
+    @Override
+    public void didChangeUriContent(@NotNull Uri uri, boolean includingUri) {
+        if (!isReading || includingUri) {
+            new TrackReader(uri, viewModel).execute();
         }
     }
 
-    private void observerTrack(Uri trackUri) {
-        getContext().getContentResolver().unregisterContentObserver(observer);
-        if (trackUri != null) {
-            getContext().getContentResolver().registerContentObserver(trackUri, true, observer);
-        }
-    }
+    /* Google Map Tiles */
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -111,51 +113,19 @@ public class TrackPresenter extends ConnectedServicePresenter implements TrackTi
         titleOverLay.clearTileCache();
     }
 
-    @Override
-    protected void didConnectService(ServiceManager serviceManager) {
-        int loggingState = serviceManager.getLoggingState();
-        Uri uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, serviceManager.getTrackId());
-        updateRecording(uri, loggingState);
-    }
+    /* Helpers */
 
-    @Override
-    public void didChangeLoggingState(Uri trackUri, int loggingState) {
-        updateRecording(trackUri, loggingState);
-    }
-
-    private void updateRecording(Uri trackUri, int loggingState) {
-        if (trackUri != null && trackUri.equals(viewModel.uri.get())) {
-            viewModel.isRecording.set(loggingState == ServiceConstants.STATE_LOGGING);
-        }
-    }
-
-    public static void updateName(Context context, Uri trackUri, String name) {
+    static void updateName(Context context, Uri trackUri, String name) {
         ContentValues values = new ContentValues();
         values.put(ContentConstants.TracksColumns.NAME, name);
         context.getContentResolver().update(trackUri, values, null, null);
     }
 
-    private class TrackObserver extends ContentObserver {
-        public TrackObserver() {
-            super(null);
-        }
+    /* Private */
 
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (!isReading) {
-                new TrackReader(viewModel.uri.get(), viewModel).execute();
-            }
-        }
-    }
-
-    private class TrackUriChangeListener extends Observable.OnPropertyChangedCallback {
-        @Override
-        public void onPropertyChanged(Observable sender, int propertyId) {
-            Uri trackUri = viewModel.uri.get();
-            observerTrack(trackUri);
-            if (trackUri != null) {
-                readUri(trackUri);
-            }
+    private void updateRecording(Uri trackUri, int loggingState) {
+        if (trackUri != null && trackUri.equals(viewModel.uri.get())) {
+            viewModel.isRecording.set(loggingState == ServiceConstants.STATE_LOGGING);
         }
     }
 
