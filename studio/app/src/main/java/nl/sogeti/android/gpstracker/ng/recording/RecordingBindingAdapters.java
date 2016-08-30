@@ -32,7 +32,7 @@ import android.databinding.BindingAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import nl.sogeti.android.gpstracker.ng.common.CommonBindingAdapters;
+import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingAdapters;
 
 public class RecordingBindingAdapters extends CommonBindingAdapters {
 

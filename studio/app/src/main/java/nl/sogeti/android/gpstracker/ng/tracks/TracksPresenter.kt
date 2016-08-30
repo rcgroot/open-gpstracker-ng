@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.tracks
 
 import android.content.ContentUris
-import android.content.Context
 import android.database.Cursor
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -37,60 +36,62 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
-class TracksPresenter(val model: TracksViewModel) : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
-
-    private var context: Context? = null
+class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
     var listener: Listener? = null
+    val viewAdapter = ViewAdapter()
 
-    override fun getItemCount(): Int {
-        return model.track.size
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        val trackViewModel = model.track[position]
-        if (holder != null) {
-            val binding = holder.binding
-            binding.viewModel = trackViewModel
-            binding.presenter = this
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
-        val viewHolder = ViewHolder(binding)
-
-        return viewHolder
-    }
-
-    fun start(context: Context) {
-        this.context = context
+    override fun didStart() {
         val trackCreation: (Cursor) -> TrackViewModel = {
             val id = it.getLong(ContentConstants.Tracks._ID)
             val uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, id)
             val name = it.getString(ContentConstants.Tracks.NAME)
             TrackViewModel(uri, name)
         }
-        val tracks = ContentConstants.Tracks.TRACKS_URI.map(context, trackCreation)
+        val tracks = ContentConstants.Tracks.TRACKS_URI.map(context!!, trackCreation)
         model.track.addAll(tracks)
     }
 
-    fun stop() {
-        context = null
+    override fun willStop() {
     }
 
     fun onTrackClick(viewModel: TrackViewModel) {
         listener?.onTrackSelected(viewModel.uri.get())
     }
 
-    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}
+    inner class ViewAdapter : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
+
+        override fun getItemCount(): Int {
+            return model.track.size
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+            val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
+            val viewHolder = ViewHolder(binding)
+
+            return viewHolder
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+            val trackViewModel = model.track[position]
+            if (holder != null) {
+                val binding = holder.binding
+                binding.viewModel = trackViewModel
+                binding.presenter = this@TracksPresenter
+            }
+        }
+
+    }
 
     interface Listener {
         fun onTrackSelected(uri: Uri)
     }
+
+    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}
 }

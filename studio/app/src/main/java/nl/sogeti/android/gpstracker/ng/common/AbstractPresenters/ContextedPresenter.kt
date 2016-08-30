@@ -1,17 +1,15 @@
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
 import timber.log.Timber
 
 
 abstract class ContextedPresenter {
-    private var privateContext: Context? = null
-    val context: Context?
-        get() = privateContext
+    var context: Context? = null
 
     fun start(context: Context) {
-        if (privateContext == null) {
-            this.privateContext = context
+        if (this.context == null) {
+            this.context = context
             didStart()
         } else {
             Timber.e("Starting already running presenter, ignoring call")
@@ -19,9 +17,9 @@ abstract class ContextedPresenter {
     }
 
     fun stop() {
-        if (privateContext != null) {
+        if (context != null) {
             willStop()
-            privateContext = null
+            context = null
         } else {
             Timber.e("Stopping not running running presenter, ignoring call")
         }

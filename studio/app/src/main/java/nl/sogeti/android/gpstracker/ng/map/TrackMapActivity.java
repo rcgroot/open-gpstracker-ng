@@ -48,6 +48,7 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
+import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
@@ -67,7 +68,7 @@ public class TrackMapActivity extends AppCompatActivity {
 
         TrackMapFragment mapFragment = (TrackMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
         selectedTrack = mapFragment.getTrackViewModel();
-        selectedTrack.uri.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+        selectedTrack.getUri().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable observable, int i) {
                 supportInvalidateOptionsMenu();
@@ -91,7 +92,7 @@ public class TrackMapActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_edit).setEnabled(selectedTrack.uri.get() != null);
+        menu.findItem(R.id.action_edit).setEnabled(selectedTrack.getUri().get() != null);
 
         return true;
     }
@@ -119,7 +120,7 @@ public class TrackMapActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.uri.get());
+        outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.getUri().get());
     }
 
     @Override
@@ -127,7 +128,7 @@ public class TrackMapActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_TRACK_SELECTION && resultCode == RESULT_OK) {
             Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TRACKS);
-            selectedTrack.uri.set(trackUri);
+            selectedTrack.getUri().set(trackUri);
         }
     }
 
@@ -136,11 +137,11 @@ public class TrackMapActivity extends AppCompatActivity {
     }
 
     private void showTrackTitleDialog() {
-        final Uri trackUri = selectedTrack.uri.get();
+        final Uri trackUri = selectedTrack.getUri().get();
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.dialog_edittext, null, false);
         final EditText nameField = (EditText) view.findViewById(R.id.dialog_rename_edittext);
-        nameField.setText(selectedTrack.name.get());
+        nameField.setText(selectedTrack.getName().get());
         nameField.setSelection(0, nameField.getText().length());
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.activity_track_map_rename_title))
@@ -148,7 +149,7 @@ public class TrackMapActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userInput = nameField.getText().toString();
-                        TrackPresenter.updateName(TrackMapActivity.this, trackUri, userInput);
+                        TrackUriExtensionKt.updateName(trackUri, TrackMapActivity.this, userInput);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)

@@ -26,21 +26,19 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns._ID
 import com.google.android.gms.maps.model.LatLng
+import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ContentConstants.AUTHORITY
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Segments.SEGMENTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
-import nl.sogeti.android.gpstracker.ng.utils.append
-import nl.sogeti.android.gpstracker.ng.utils.apply
-import nl.sogeti.android.gpstracker.ng.utils.getString
-import nl.sogeti.android.gpstracker.ng.utils.map
 
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
     if (!AUTHORITY.equals(this.authority)) {
@@ -60,6 +58,12 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
         }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
 
     }, listOf(_ID))
+}
+
+fun Uri.updateName(context: Context, name: String) {
+    val values = ContentValues()
+    values.put(ContentConstants.TracksColumns.NAME, name)
+    context.contentResolver.update(this, values, null, null)
 }
 
 interface ResultHandler {

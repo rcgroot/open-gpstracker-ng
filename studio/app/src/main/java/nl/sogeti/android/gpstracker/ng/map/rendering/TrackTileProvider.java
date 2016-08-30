@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import nl.sogeti.android.gpstracker.ng.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -67,8 +68,8 @@ public class TrackTileProvider implements TileProvider {
         this.track = track;
         this.listener = listener;
 
-        track.waypoints.addOnPropertyChangedCallback(modelCallback);
-        LatLng[][] wayPoints = track.waypoints.get();
+        track.getWaypoints().addOnPropertyChangedCallback(modelCallback);
+        List<List<LatLng>> wayPoints = track.getWaypoints().get();
         VectorDrawableCompat startDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_start_24dp, null);
         VectorDrawableCompat endDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_end_24dp, null);
         startBitmap = renderVectorDrawable(startDrawable);
@@ -104,12 +105,12 @@ public class TrackTileProvider implements TileProvider {
 
     public void setTrack(TrackViewModel track) {
         this.track = track;
-        track.waypoints.addOnPropertyChangedCallback(modelCallback);
+        track.getWaypoints().addOnPropertyChangedCallback(modelCallback);
         trackDidChange();
     }
 
     private void trackDidChange() {
-        pathRenderer = new PathRenderer(tileSize, strokeWidth, track.waypoints.get(), startBitmap, endBitmap);
+        pathRenderer = new PathRenderer(tileSize, strokeWidth, track.getWaypoints().get(), startBitmap, endBitmap);
         listener.tilesDidBecomeOutdated(TrackTileProvider.this);
     }
 

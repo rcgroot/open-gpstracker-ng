@@ -4,7 +4,7 @@ import android.databinding.BindingAdapter
 import android.support.design.widget.FloatingActionButton
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.ng.common.CommonBindingAdapters
+import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingAdapters
 import nl.sogeti.android.gpstracker.v2.R
 
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING

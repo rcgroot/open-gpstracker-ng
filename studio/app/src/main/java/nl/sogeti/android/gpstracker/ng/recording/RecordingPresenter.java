@@ -47,9 +47,9 @@ import kotlin.Pair;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.ResultHandler;
-import nl.sogeti.android.gpstracker.ng.common.TrackContentReaderKt;
-import nl.sogeti.android.gpstracker.ng.common.TrackObservingPresenter;
+import nl.sogeti.android.gpstracker.ng.utils.ResultHandler;
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter;
+import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingPresenter extends TrackObservingPresenter {
@@ -138,7 +138,7 @@ public class RecordingPresenter extends TrackObservingPresenter {
             final String sel = ContentConstants.WaypointsColumns.TIME + " > ?";
             final List<String> args = Arrays.asList(Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS));
             Pair selection = new Pair<>(sel, args);
-            TrackContentReaderKt.readTrack(trackUri, getContext(), this, selection);
+            TrackUriExtensionKt.readTrack(trackUri, getContext(), this, selection);
             LatLng[] waypoints = new LatLng[collectedWaypoints.size()];
             double seconds = 0.0;
             double meters = 0.0;

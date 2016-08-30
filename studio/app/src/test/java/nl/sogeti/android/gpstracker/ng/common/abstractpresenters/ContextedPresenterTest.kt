@@ -1,6 +1,7 @@
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -8,7 +9,7 @@ import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-public class ContextedPresenterTest {
+class ContextedPresenterTest {
 
     @Mock
     var mockContext: Context? = null

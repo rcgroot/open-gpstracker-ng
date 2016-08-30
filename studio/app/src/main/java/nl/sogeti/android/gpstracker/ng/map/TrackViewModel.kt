@@ -26,26 +26,19 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.map;
+package nl.sogeti.android.gpstracker.ng.map
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableParcelable;
-import android.net.Uri;
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableField
+import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-
-public class TrackViewModel {
-    public final ObservableField<Uri> uri = new ObservableField<>();
-    public final ObservableField<String> name = new ObservableField<>("");
-    public final ObservableBoolean isRecording = new ObservableBoolean(false);
-    public final ObservableField<LatLng[][]> waypoints = new ObservableField<>();
-    public final ObservableField<LatLngBounds> startStopBounds = new ObservableField<>();
-    public final ObservableField<LatLngBounds> completeBounds = new ObservableField<>();
-    public final ObservableField<LatLngBounds> trackHeadBounds = new ObservableField<>();
-
-    public TrackViewModel(Uri uri) {
-        this.uri.set(uri);
-    }
+class TrackViewModel(uri: Uri?) {
+    val uri = ObservableField(uri)
+    val name: ObservableField<String> = ObservableField("")
+    val isRecording = ObservableBoolean(false)
+    val waypoints = ObservableField<List<List<LatLng>>>()
+    val completeBounds = ObservableField<LatLngBounds>()
+    val trackHeadBounds = ObservableField<LatLngBounds>()
 }

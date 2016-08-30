@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.database.ContentObserver
 import android.databinding.Observable
@@ -50,23 +50,25 @@ abstract class TrackObservingPresenter : ConnectedServicePresenter() {
         observer.registerOn(null)
     }
 
-    abstract fun getTrackUriField(): ObservableField<Uri>?
+    abstract fun getTrackUriField(): ObservableField<Uri?>
 
     abstract fun didChangeUriContent(uri: Uri, includingUri: Boolean)
 
     private inner class TrackUriChangeListener : Observable.OnPropertyChangedCallback() {
-        var uriField = ObservableField<Uri>()
+        var uriField = ObservableField<Uri?>()
 
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
             val newUri = uriField.get()
             observer.registerOn(newUri)
-            didChangeUriContent(newUri, true)
+            if (newUri != null) {
+                didChangeUriContent(newUri, true)
+            }
         }
 
-        fun listenTo(uri: ObservableField<Uri>?) {
+        fun listenTo(uri: ObservableField<Uri?>?) {
             uriField.removeOnPropertyChangedCallback(this)
             uri?.addOnPropertyChangedCallback(this)
-            uriField = uri ?: ObservableField<Uri>()
+            uriField = uri ?: ObservableField<Uri?>()
         }
 
     }

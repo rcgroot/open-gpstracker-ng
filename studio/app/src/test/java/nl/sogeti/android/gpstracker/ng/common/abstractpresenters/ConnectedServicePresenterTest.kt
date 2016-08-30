@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
 import android.net.Uri
@@ -7,7 +7,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Matchers.any
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
 import org.mockito.runners.MockitoJUnitRunner

@@ -43,6 +43,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
@@ -71,8 +74,10 @@ public class PathRendererTest {
         // Prepare
         Bitmap start = mock(Bitmap.class);
         Bitmap stop = mock(Bitmap.class);
-        LatLng[][] latLng = new LatLng[1][1];
-        latLng[0][0] = new LatLng(52.0, 5.0);
+        List<List<LatLng>> latLng = new ArrayList<>();
+        List<LatLng> segment = new ArrayList<>();
+        latLng.add(segment);
+        segment.add(new LatLng(52.0, 5.0));
         sut = new PathRenderer(32.0F, 2.0F, latLng, start, stop);
         Paint paint = mock(Paint.class);
         Path path = mock(Path.class);

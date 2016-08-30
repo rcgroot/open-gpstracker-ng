@@ -54,15 +54,15 @@ public class TrackViewModelTest {
     @Test
     public void testInit() {
         // Verify
-        Assert.assertEquals("", sut.name.get());
+        Assert.assertEquals("", sut.getName().get());
     }
 
     @Test
     public void testName() {
         // Execute
-        sut.name.set("Test");
+        sut.getName().set("Test");
 
         // Verify
-        Assert.assertEquals("Test", sut.name.get());
+        Assert.assertEquals("Test", sut.getName().get());
     }
 }

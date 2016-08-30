@@ -38,6 +38,9 @@ import android.support.annotation.VisibleForTesting;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PathRenderer {
     private final float strokeWidth;
     private final TileProjection projection;
@@ -47,23 +50,23 @@ public class PathRenderer {
     private final int NORMAL_PATH_SIZE = 250;
     private boolean isLongTrack;
 
-    public PathRenderer(float tileSize, float strokeWidth, LatLng[][] wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
+    public PathRenderer(float tileSize, float strokeWidth, List<List<LatLng>> wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
         this.strokeWidth = strokeWidth;
         this.startBitmap = startBitmap;
         this.endBitmap = endBitmap;
         if (wayPoints == null) {
-            wayPoints = new LatLng[0][0];
+            wayPoints = new ArrayList<>();
         }
         projection = new TileProjection(tileSize);
-        worldPoints = new Point[wayPoints.length][];
+        worldPoints = new Point[wayPoints.size()][];
         int pathLength = 0;
-        for (int i = 0; i < wayPoints.length; i++) {
-            final LatLng[] segmentWayPoint = wayPoints[i];
-            pathLength += segmentWayPoint.length;
-            worldPoints[i] = new Point[segmentWayPoint.length];
-            for (int j = 0; j < segmentWayPoint.length; j++) {
+        for (int i = 0; i < wayPoints.size(); i++) {
+            final List<LatLng> segmentWayPoint = wayPoints.get(i);
+            pathLength += segmentWayPoint.size();
+            worldPoints[i] = new Point[segmentWayPoint.size()];
+            for (int j = 0; j < segmentWayPoint.size(); j++) {
                 worldPoints[i][j] = new Point();
-                projection.latLngToWorldCoordinates(segmentWayPoint[j], worldPoints[i][j]);
+                projection.latLngToWorldCoordinates(segmentWayPoint.get(j), worldPoints[i][j]);
             }
         }
         isLongTrack = pathLength > NORMAL_PATH_SIZE;

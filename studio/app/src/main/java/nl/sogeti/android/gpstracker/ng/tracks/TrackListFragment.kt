@@ -54,7 +54,7 @@ class TrackListFragment : Fragment(), TracksPresenter.Listener {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.listview.adapter = tracksPresenter
+        binding.listview.adapter = tracksPresenter.viewAdapter
         binding.listview.layoutManager = LinearLayoutManager(activity)
         binding.viewModel = viewModel
 

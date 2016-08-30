@@ -28,13 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.control;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.common.ConnectedServicePresenter;
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;

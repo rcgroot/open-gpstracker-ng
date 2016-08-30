@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.ContentResolver
 import android.content.Context
@@ -7,6 +7,7 @@ import android.databinding.Observable
 import android.databinding.ObservableField
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
