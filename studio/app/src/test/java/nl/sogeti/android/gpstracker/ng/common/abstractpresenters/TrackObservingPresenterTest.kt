@@ -27,7 +27,7 @@ class TrackObservingPresenterTest {
     @Mock
     var mockResolver: ContentResolver? = null
     @Mock
-    var mockField: ObservableField<Uri>? = null
+    var mockField: ObservableField<Uri?>? = null
     @Mock
     var mockUri: Uri? = null
     private var sut: TrackObservingPresenter? = null
@@ -66,8 +66,8 @@ class TrackObservingPresenterTest {
         verify(mockField)!!.removeOnPropertyChangedCallback(notNull(Observable.OnPropertyChangedCallback::class.java))
     }
 
-    class MyTrackObservingPresenter(val field: ObservableField<Uri>) : TrackObservingPresenter() {
-        override fun getTrackUriField(): ObservableField<Uri> {
+    class MyTrackObservingPresenter(val field: ObservableField<Uri?>) : TrackObservingPresenter() {
+        override fun getTrackUriField(): ObservableField<Uri?> {
             return field
         }
 
