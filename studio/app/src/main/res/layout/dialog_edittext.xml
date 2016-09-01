@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/activity_track_map_rename_message"
-        android:labelFor="@+id/dialog_rename_edittext"/>
+        android:labelFor="@+id/dialog_rename_edittext"
+        android:text="@string/activity_track_map_rename_message" />
+
     <EditText
-        android:inputType="text"
-        android:hint="@string/activity_track_map_rename_title"
         android:id="@+id/dialog_rename_edittext"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:hint="@string/activity_track_map_rename_title"
+        android:inputType="text"
         android:paddingEnd="@dimen/activity_horizontal_margin"
         android:paddingStart="@dimen/activity_horizontal_margin">
 

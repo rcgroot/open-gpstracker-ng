@@ -47,12 +47,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ControlPresenterTest {
 
-    private ControlPresenter sut;
     @Mock
     LoggerViewModel mockLogger;
     @Mock
     ServiceManager mockServiceManager;
-
+    private ControlPresenter sut;
 
     @Before
     public void setup() {

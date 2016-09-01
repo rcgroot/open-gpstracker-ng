@@ -74,7 +74,7 @@ open class CommonBindingAdapters {
                 val pixelPadding = convertDpiToPixel(map.context, DPI_PADDING)
                 var padding = 0
                 if (map.width > 3 * pixelPadding && map.height > 3 * pixelPadding) {
-                    padding = ((pixelPadding+0.5).toInt())
+                    padding = ((pixelPadding + 0.5).toInt())
                 }
                 val update = CameraUpdateFactory.newLatLngBounds(bounds, padding)
                 googleMap.animateCamera(update, this)

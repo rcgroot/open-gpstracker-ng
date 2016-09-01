@@ -58,8 +58,7 @@ class TrackMapFragment : Fragment() {
         if (savedInstanceState != null) {
             val uri = savedInstanceState.getParcelable<Uri>(KEY_TRACK_URI)
             trackViewModel.uri.set(uri)
-        }
-        else {
+        } else {
             trackViewModel.name.set(getString(R.string.app_name))
         }
     }

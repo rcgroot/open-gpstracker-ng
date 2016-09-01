@@ -73,19 +73,19 @@ public class ControlPresenter extends ConnectedServicePresenter {
         }
     }
 
-    public void startLogging() {
+    private void startLogging() {
         serviceManager.startGPSLogging(getContext(), "New NG track!");
     }
 
-    public void stopLogging() {
+    private void stopLogging() {
         serviceManager.stopGPSLogging(getContext());
     }
 
-    public void pauseLogging() {
+    private void pauseLogging() {
         serviceManager.pauseGPSLogging(getContext());
     }
 
-    public void resumeLogging() {
+    private void resumeLogging() {
         serviceManager.resumeGPSLogging(getContext());
     }
 

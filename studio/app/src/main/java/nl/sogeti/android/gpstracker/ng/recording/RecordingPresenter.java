@@ -29,15 +29,15 @@
 package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.databinding.ObservableField;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,14 +47,14 @@ import kotlin.Pair;
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.utils.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter;
+import nl.sogeti.android.gpstracker.ng.utils.ResultHandler;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingPresenter extends TrackObservingPresenter {
 
-    public static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
+    private static final long FIVE_MINUTES_IN_MS = 5L * 60L * 1000L;
 
     private final RecordingViewModel viewModel;
     private boolean isReading;
@@ -86,7 +86,7 @@ public class RecordingPresenter extends TrackObservingPresenter {
     }
 
     @Override
-    public void didChangeUriContent(@NotNull Uri uri, boolean includingUri) {
+    public void didChangeUriContent(@NonNull Uri uri, boolean includingUri) {
         if (!isReading || includingUri) {
             new TrackReader(uri, viewModel).execute();
         }
@@ -100,6 +100,7 @@ public class RecordingPresenter extends TrackObservingPresenter {
         viewModel.uri.set(trackUri);
     }
 
+    @SuppressWarnings("EmptyMethod")
     private class TrackReader extends AsyncTask<Void, Void, LatLng[]> implements ResultHandler {
         final Uri trackUri;
         final RecordingViewModel recordingViewModel;
@@ -118,8 +119,10 @@ public class RecordingPresenter extends TrackObservingPresenter {
             recordingViewModel.uri.set(trackUri);
         }
 
+        @SuppressWarnings("EmptyMethod")
         @Override
         public void addSegment() {
+            /* NO-OP */
         }
 
         @Override
@@ -137,8 +140,11 @@ public class RecordingPresenter extends TrackObservingPresenter {
         protected LatLng[] doInBackground(Void[] params) {
             final String sel = ContentConstants.WaypointsColumns.TIME + " > ?";
             final List<String> args = Arrays.asList(Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS));
-            Pair selection = new Pair<>(sel, args);
-            TrackUriExtensionKt.readTrack(trackUri, getContext(), this, selection);
+            Pair<String, List<String>> selection = new Pair<>(sel, args);
+            Context context = getContext();
+            if (context != null) {
+                TrackUriExtensionKt.readTrack(trackUri, context, this, selection);
+            }
             LatLng[] waypoints = new LatLng[collectedWaypoints.size()];
             double seconds = 0.0;
             double meters = 0.0;

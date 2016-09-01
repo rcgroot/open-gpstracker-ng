@@ -40,10 +40,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
  * @see <a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">openstreetmap</a>
  * @see <a href="https://stackoverflow.com/questions/20382823/google-maps-api-v2-draw-part-of-circle-on-mapfragment">stackoverflow</a>
  */
-public class TileProjection {
+class TileProjection {
 
-    public static final double MAX_PIXEL_COORDINATE = 0.9999;
-    public static final double MIN_PIXEL_COORDINATE = -0.9999;
+    private static final double MAX_PIXEL_COORDINATE = 0.9999;
+    private static final double MIN_PIXEL_COORDINATE = -0.9999;
     private final float tileSize;
 
     private final Point origin;
@@ -60,12 +60,12 @@ public class TileProjection {
     /**
      * Based on work from: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
      *
-     * @param y
-     * @param z
-     * @return
+     * @param y tile coordinate system Y
+     * @param z tile coordinate system zoom
+     * @return latitude
      * @license Creative Commons Attribution-ShareAlike 2.0 license
      */
-    static double tileToLatitude(int y, int z) {
+    private static double tileToLatitude(int y, int z) {
         double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, z);
         return Math.toDegrees(Math.atan(Math.sinh(n)));
     }
@@ -73,12 +73,12 @@ public class TileProjection {
     /**
      * Based on work from: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
      *
-     * @param x
-     * @param z
-     * @return
+     * @param x tile coordinate system X
+     * @param z tile coordinate system zoom
+     * @return longitude
      * @license Creative Commons Attribution-ShareAlike 2.0 license
      */
-    static double tileToLongitude(int x, int z) {
+    private static double tileToLongitude(int x, int z) {
         return x / Math.pow(2.0, z) * 360.0 - 180;
     }
 
@@ -87,9 +87,9 @@ public class TileProjection {
      * <p/>
      * Based on work from: https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
      *
-     * @param x
-     * @param y
-     * @param zoom
+     * @param x    tile coordinate system X
+     * @param y    tile coordinate system Y
+     * @param zoom tile coordinate system zoom
      * @return
      * @license Creative Commons Attribution-ShareAlike 2.0 license
      */

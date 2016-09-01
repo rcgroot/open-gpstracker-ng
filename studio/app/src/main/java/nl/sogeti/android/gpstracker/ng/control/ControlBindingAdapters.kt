@@ -4,13 +4,9 @@ import android.databinding.BindingAdapter
 import android.support.design.widget.FloatingActionButton
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingAdapters
 import nl.sogeti.android.gpstracker.v2.R
-
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN
 
 class ControlBindingAdapters : CommonBindingAdapters() {
 

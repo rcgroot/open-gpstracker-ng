@@ -1,7 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

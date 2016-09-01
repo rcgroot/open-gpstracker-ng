@@ -12,7 +12,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.stubbing.Answer
 
 @RunWith(MockitoJUnitRunner::class)
 class ControlBindingAdaptersTest {

@@ -46,7 +46,7 @@ public class GpsTackerApplicationTest {
     }
 
     @Test
-    public void onCreateDebug() throws Exception {
+    public void onCreateDebug() {
         // Prepare
         sut.setDebug(true);
 
@@ -58,7 +58,7 @@ public class GpsTackerApplicationTest {
     }
 
     @Test
-    public void onCreateRelease() throws Exception {
+    public void onCreateRelease() {
         // Prepare
         sut.setDebug(false);
 

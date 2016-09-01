@@ -41,16 +41,16 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathRenderer {
+class PathRenderer {
+    private final static int NORMAL_PATH_SIZE = 250;
     private final float strokeWidth;
     private final TileProjection projection;
     private final Point[][] worldPoints;
     private final Bitmap startBitmap;
     private final Bitmap endBitmap;
-    private final int NORMAL_PATH_SIZE = 250;
-    private boolean isLongTrack;
+    private final boolean isLongTrack;
 
-    public PathRenderer(float tileSize, float strokeWidth, List<List<LatLng>> wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
+    PathRenderer(float tileSize, float strokeWidth, List<List<LatLng>> wayPoints, Bitmap startBitmap, Bitmap endBitmap) {
         this.strokeWidth = strokeWidth;
         this.startBitmap = startBitmap;
         this.endBitmap = endBitmap;

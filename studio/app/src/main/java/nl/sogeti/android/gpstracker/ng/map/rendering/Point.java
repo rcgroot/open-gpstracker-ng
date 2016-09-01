@@ -28,22 +28,22 @@
  */
 package nl.sogeti.android.gpstracker.ng.map.rendering;
 
-public class Point {
-    public double x, y;
+class Point {
+    double x, y;
 
-    public Point() {
+    Point() {
     }
 
-    public Point(double x, double y) {
+    Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public Point(Point previous) {
+    Point(Point previous) {
         this(previous.x, previous.y);
     }
 
-    public double squaredDistanceTo(Point other) {
+    double squaredDistanceTo(Point other) {
         return Math.abs(x - other.x) + Math.abs(y - other.y);
     }
 }

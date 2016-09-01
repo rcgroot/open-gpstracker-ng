@@ -43,8 +43,8 @@ import nl.sogeti.android.gpstracker.integration.ServiceManager;
  */
 public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    private BroadcastReceiver receiver;
     private final ServiceManager serviceManager;
+    private BroadcastReceiver receiver;
 
     public ConnectedServicePresenter(ServiceManager serviceManager) {
         this.serviceManager = serviceManager;
@@ -77,8 +77,9 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     }
 
     private void unregisterReceiver() {
-        if (receiver != null) {
-            getContext().unregisterReceiver(receiver);
+        Context context = getContext();
+        if (context != null && receiver != null) {
+            context.unregisterReceiver(receiver);
             receiver = null;
         }
     }
@@ -87,7 +88,10 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         unregisterReceiver();
         receiver = new LoggerStateReceiver();
         IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
-        getContext().registerReceiver(receiver, filter);
+        Context context = getContext();
+        if (context != null) {
+            context.registerReceiver(receiver, filter);
+        }
     }
 
     public ServiceManager getServiceManager() {
