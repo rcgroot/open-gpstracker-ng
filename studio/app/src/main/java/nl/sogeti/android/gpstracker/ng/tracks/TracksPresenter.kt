@@ -37,6 +37,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
@@ -48,17 +49,21 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
     val viewAdapter = ViewAdapter()
 
     override fun didStart() {
+        summaryManager.start()
         val trackCreation: (Cursor) -> TrackViewModel = {
-            val id = it.getLong(ContentConstants.Tracks._ID)
+            val id = it.getLong(ContentConstants.Tracks._ID)!!
             val uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, id)
-            val name = it.getString(ContentConstants.Tracks.NAME)
+            val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
             TrackViewModel(uri, name)
         }
-        val tracks = ContentConstants.Tracks.TRACKS_URI.map(context!!, trackCreation)
-        model.track.addAll(tracks)
+        context?.let {
+            val tracks = ContentConstants.Tracks.TRACKS_URI.map(it, trackCreation)
+            model.track.addAll(tracks)
+        }
     }
 
     override fun willStop() {
+        summaryManager.stop()
     }
 
     fun onTrackClick(viewModel: TrackViewModel) {
@@ -84,6 +89,17 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
                 val binding = holder.binding
                 binding.viewModel = trackViewModel
                 binding.presenter = this@TracksPresenter
+                context?.let {
+                    summaryManager.collectSummaryInfo(it, trackViewModel.uri.get(), {
+                        if (it.track.equals(trackViewModel.uri.get())) {
+                            trackViewModel.name.set(it.name)
+                            trackViewModel.distance.set(it.distance)
+                            trackViewModel.duration.set(it.duration)
+                            trackViewModel.iconType.set(it.type)
+                            trackViewModel.startDay.set(it.start)
+                        }
+                    })
+                }
             }
         }
 

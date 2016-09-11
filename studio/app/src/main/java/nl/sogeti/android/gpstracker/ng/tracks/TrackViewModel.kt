@@ -40,8 +40,8 @@ class TrackViewModel(uri: Uri) {
         this.name.set(name)
     }
 
-    val name = ObservableField<String>()
     val uri = ObservableField<Uri>(uri)
+    val name = ObservableField<String>()
     val iconType = ObservableInt(R.drawable.ic_track_type_default_24dp);
     val startDay = ObservableField<String>("--")
     val duration = ObservableField<String>("--")

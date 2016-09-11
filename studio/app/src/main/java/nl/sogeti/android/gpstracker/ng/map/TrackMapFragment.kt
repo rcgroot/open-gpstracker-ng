@@ -63,8 +63,8 @@ class TrackMapFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater!!, R.layout.fragment_map, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
         binding.viewModel = trackViewModel
         binding.recorder = recordingViewModel

@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.map;
+package nl.sogeti.android.gpstracker.ng;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -46,8 +46,9 @@ import android.widget.EditText;
 
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
+import nl.sogeti.android.gpstracker.ng.map.TrackMapFragment;
+import nl.sogeti.android.gpstracker.ng.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
-import nl.sogeti.android.gpstracker.ng.tracks.TracksActivity;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;

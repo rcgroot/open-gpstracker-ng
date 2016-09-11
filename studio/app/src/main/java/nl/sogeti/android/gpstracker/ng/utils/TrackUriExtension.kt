@@ -40,6 +40,13 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
 
+/**
+ * Loop through the complete track, its segments, its waypoints and callback the results
+ *
+ * @param context context through which to access the resources
+ * @param handler callback for results
+ * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
+ */
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
     if (!AUTHORITY.equals(this.authority)) {
         return

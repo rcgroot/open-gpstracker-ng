@@ -32,21 +32,53 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import timber.log.Timber
 
 /* **
  * Extensions for dealing with the data in content providers
  * **/
 
-fun Cursor.getString(columnName: String): String {
-    val index = this.getColumnIndex(columnName)
-    val value = this.getString(index)
-
-    return value ?: ""
+/**
+ * Read a single String value from a cursor using the columns name
+ *
+ * @param columnName name of the column
+ *
+ * @return null if the column doesn't exist or stores a null value
+ */
+fun Cursor.getString(columnName: String): String? {
+    return this.applyGetter(columnName, { cursor, index -> cursor.getString(index) })
 }
 
-fun Cursor.getLong(columnName: String): Long {
+/**
+ * Read a single Long value from a cursor using the columns name
+ *
+ * @param columnName name of the column
+ *
+ * @return null if the column doesn't exist or stores a null value
+ */
+fun Cursor.getLong(columnName: String): Long? {
+    return this.applyGetter(columnName, { cursor, index -> cursor.getLong(index) })
+}
+
+/**
+ * Read a single Int value from a cursor using the columns name
+ *
+ * @param columnName name of the column
+ *
+ * @return null if the column doesn't exist or stores a null value
+ */
+fun Cursor.getInt(columnName: String): Int? {
+    return this.applyGetter(columnName, { cursor, index -> cursor.getInt(index) })
+}
+
+private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> T): T? {
     val index = this.getColumnIndex(columnName)
-    val value = this.getLong(index)
+    val value: T?
+    if (index >= 0) {
+        value = getter(this, index)
+    } else {
+        value = null
+    }
 
     return value
 }
@@ -66,22 +98,34 @@ fun <T> Uri.map(context: Context,
     return result
 }
 
+/**
+ * Apply a single operation to a cursor on the first row of a Uri
+ *
+ * @param context context through which to access the resources
+ * @param operation the operation to execute
+ * @param projection optional projection
+ * @param selectionPair optional selection
+ */
 fun <T> Uri.apply(context: Context,
                   operation: (Cursor) -> T,
                   projection: List<String>? = null,
                   selectionPair: Pair <String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
+    Timber.w("$this with selection $selection on $selectionArgs")
     var result: T? = null
     var cursor: Cursor? = null
     try {
         cursor = context.contentResolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
+        } else {
+            Timber.w("Uri $this apply operation didn't have results")
         }
     } finally {
         cursor?.close()
     }
+    Timber.d("Uri $this apply operation final result $result")
 
     return result
 }

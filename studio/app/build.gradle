@@ -25,6 +25,8 @@ android {
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
         archivesBaseName = "opengpstracker-ng-$versionName"
         vectorDrawables.useSupportLibrary = true
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     if (System.getenv().containsKey("storeFile")) {
@@ -65,6 +67,12 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':integration')
@@ -79,4 +87,8 @@ dependencies {
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
+    androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
+    androidTestCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
 }

@@ -43,6 +43,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import java.util.*
@@ -59,7 +60,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
         }
     }
 
-/* Service connecting */
+    /* Service connecting */
 
     override fun didConnectService(serviceManager: ServiceManager) {
         val loggingState = serviceManager.loggingState
@@ -72,7 +73,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
         updateRecording(uri, loggingState)
     }
 
-/* Content watching */
+    /* Content watching */
 
     override fun getTrackUriField(): ObservableField<Uri?> {
         return viewModel.uri
@@ -88,7 +89,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 
     override fun onMapReady(googleMap: GoogleMap) {
         val options = TileOverlayOptions()
-        val tileProvider = TrackTileProvider(context, viewModel, this)
+        val tileProvider = TrackTileProvider(context, viewModel.waypoints, this)
         options.tileProvider(tileProvider)
         options.fadeIn(true)
         titleOverLay = googleMap.addTileOverlay(options)
@@ -132,13 +133,13 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
             // Last 5 minutes worth of waypoints make the head
             if (millisecondsTime > headTime) {
                 headBoundsBuilder = headBoundsBuilder ?: LatLngBounds.Builder()
-                headBoundsBuilder!!.include(latLng)
+                headBoundsBuilder?.include(latLng)
             }
             // Add each waypoint to the end of the last list of points (the current segment)
             collectedWaypoints[collectedWaypoints.size - 1].add(latLng)
             // Build a bounds for the whole track
             completeBoundsBuilder = completeBoundsBuilder ?: LatLngBounds.Builder()
-            completeBoundsBuilder!!.include(latLng)
+            completeBoundsBuilder?.include(latLng)
         }
 
         override fun onPreExecute() {
@@ -146,7 +147,9 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
         }
 
         override fun doInBackground(vararg p: Void): Void? {
-            trackUri.readTrack(context!!, this, null)
+            context?.let {
+                trackUri.readTrack(it, this, null)
+            }
             return null
         }
 

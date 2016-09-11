@@ -1,21 +1,30 @@
 <resources>
     <string name="app_name">Open GPS Tracker NG</string>
 
-    <string name="activity_track_map_edit">Edit track</string>
-
+    <!--Map list screen -->
+    <string name="action_list">List tracks</string>
+    <string name="action_about">About</string>
+    <string name="action_edit">Edit details</string>
+    <!--Map list screen / Recording fragment-->
     <string name="fragment_recording_summary">Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s</string>
-    <string name="activity_track_map_rename_title">Rename track</string>
-    <string name="activity_track_map_rename_message">Enter track name</string>
     <string name="fragment_tracks_empty">No tracks found, record or import some</string>
     <plurals name="fragment_recording_waypoints">
         <item quantity="one">%d waypoint</item>
         <item quantity="other">%d waypoints</item>
     </plurals>
+    <!--Map list screen / Edit fragment-->
+    <string name="activity_track_map_rename_title">Rename track</string>
+    <string name="activity_track_map_rename_message">Enter track name</string>
+    <string name="activity_track_map_edit">Edit track</string>
+
+    <!--About screen-->
+    <string name="about_version">Version %1$s (%2$s, build %3$d)</string>
+
+    <!--Track list screen -->
     <string name="title_activity_tracks">Track list</string>
+    <string name="row_start_default">--</string>
+    <string name="row_duraction_default">--</string>
+    <string name="row_distance_default">--</string>
     <string name="row_track_icon_default">Default activity</string>
     <string name="row_track_map">Overview map</string>
-    <string name="action_edit">Edit details</string>
-    <string name="action_list">List tracks</string>
-    <string name="action_about">About</string>
-    <string name="about_version">Version %1$s (%2$s, build %3$d)</string>
 </resources>
