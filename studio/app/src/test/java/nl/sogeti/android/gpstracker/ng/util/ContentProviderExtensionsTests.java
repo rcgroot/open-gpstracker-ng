@@ -45,6 +45,8 @@ import kotlin.jvm.functions.Function1;
 import nl.sogeti.android.gpstracker.ng.utils.ContentProviderExtensionsKt;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class ContentProviderExtensionsTests {
@@ -64,6 +66,7 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.getColumnIndex("A_NAME")).willReturn(0);
         given(mockCursor.getColumnIndex("AN_OTHER_NAME")).willReturn(1);
         given(mockCursor.getColumnIndex("NULL_VALUE")).willReturn(2);
+        given(mockCursor.getColumnIndex("NOT_EXIST")).willReturn(-1);
         given(mockCursor.getString(0)).willReturn("FirstValue");
         given(mockCursor.getString(1)).willReturn("SecondValue");
         given(mockCursor.getString(2)).willReturn(null);
@@ -100,7 +103,7 @@ public class ContentProviderExtensionsTests {
         // Verify
         verify(mockCursor).getColumnIndex("NULL_VALUE");
         verify(mockCursor).getString(2);
-        Assert.assertEquals(value, "");
+        Assert.assertEquals(value, null);
     }
 
     @Test
@@ -166,5 +169,16 @@ public class ContentProviderExtensionsTests {
         Assert.assertEquals(invoke[0], 1);
         Assert.assertEquals(list.get(0), "invoke_1");
         verify(mockCursor).close();
+    }
+
+    @Test
+    public void getAStringFromNonExistingCursor() {
+        // Execute
+        String value = ContentProviderExtensionsKt.getString(mockCursor, "NOT_EXIST");
+
+        // Verify
+        verify(mockCursor).getColumnIndex("NOT_EXIST");
+        verify(mockCursor, times(0)).getString(anyInt());
+        Assert.assertEquals(value, null);
     }
 }
