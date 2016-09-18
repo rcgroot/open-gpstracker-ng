@@ -9,7 +9,7 @@ ext {
     kotlinVersion = '1.0.3'
     playServicesVersion = '9.4.0'
     wearableVersion = '1.4.0'
-    constraintsLibraryVersion = '1.0.0-alpha7'
+    constraintsLibraryVersion = '1.0.0-alpha8'
 
     // Testing
     junitVersion = '4.12'

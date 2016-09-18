@@ -61,6 +61,17 @@ fun Cursor.getLong(columnName: String): Long? {
 }
 
 /**
+ * Read a single Double value from a cursor using the columns name
+ *
+ * @param columnName name of the column
+ *
+ * @return null if the column doesn't exist or stores a null value
+ */
+fun Cursor.getDouble(columnName: String): Double? {
+    return this.applyGetter(columnName, { cursor, index -> cursor.getDouble(index) })
+}
+
+/**
  * Read a single Int value from a cursor using the columns name
  *
  * @param columnName name of the column
@@ -83,6 +94,15 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
     return value
 }
 
+/**
+ * Apply a single operation to a cursor on the all items in a Uri
+ * to build a list
+ *
+ * @param context context through which to access the resources
+ * @param operation the operation to execute
+ * @param projection optional projection
+ * @param selection optional selection, query string with parameter arguments listed
+ */
 fun <T> Uri.map(context: Context,
                 operation: (Cursor) -> T,
                 projection: List<String>? = null,
@@ -112,7 +132,7 @@ fun <T> Uri.apply(context: Context,
                   selectionPair: Pair <String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
-    Timber.w("$this with selection $selection on $selectionArgs")
+    Timber.v("$this with selection $selection on $selectionArgs")
     var result: T? = null
     var cursor: Cursor? = null
     try {
@@ -120,12 +140,12 @@ fun <T> Uri.apply(context: Context,
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
         } else {
-            Timber.w("Uri $this apply operation didn't have results")
+            Timber.v("Uri $this apply operation didn't have results")
         }
     } finally {
         cursor?.close()
     }
-    Timber.d("Uri $this apply operation final result $result")
+    Timber.v("Uri $this apply operation final result $result")
 
     return result
 }

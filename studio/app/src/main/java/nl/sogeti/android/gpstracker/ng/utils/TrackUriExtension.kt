@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.utils
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns._ID
 import com.google.android.gms.maps.model.LatLng
@@ -39,6 +40,7 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.Segments.SEGMEN
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
+import timber.log.Timber
 
 /**
  * Loop through the complete track, its segments, its waypoints and callback the results
@@ -67,6 +69,56 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
     }, listOf(_ID))
 }
 
+/**
+ * Build up a total of type T by applying a operation to
+ * each waypoint pair along the track.
+ *
+ * @param context context through which to access the resources
+ * @param operation increase the total T with each waypoint pair
+ * @param selectionPair waypoint selection query split in text with ?-placeholders and the parameters
+ */
+fun <T> Uri.traverseTrack(context: Context,
+                          operation: (T?, Waypoint, Waypoint) -> T,
+                          selectionPair: Pair <String, List<String>>? = null) : T? {
+    val selectionArgs = selectionPair?.second?.toTypedArray()
+    val selection = selectionPair?.first
+    Timber.v("$this with selection $selection on $selectionArgs")
+    val segmentsUri = this.append(SEGMENTS)
+    val segments = segmentsUri.map(context, { it.getLong(ContentConstants.Segments._ID)!! })
+    var result : T? = null
+    for (segmentId in segments) {
+        val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
+        var cursor: Cursor? = null
+        try {
+            cursor = context.contentResolver.query(waypointsUri, null, selection, selectionArgs, null)
+            if (cursor != null && cursor.moveToFirst()) {
+                var first = buildWaypoint(cursor)
+                var second: Waypoint
+                while (cursor.moveToNext()) {
+                    second = buildWaypoint(cursor)
+                    result = operation(result, first, second)
+                    first = second
+                }
+            } else {
+                Timber.v("Uri $waypointsUri apply operation didn't have results")
+            }
+        } finally {
+            cursor?.close()
+        }
+    }
+
+    return result
+}
+
+private fun buildWaypoint(cursor: Cursor): Waypoint {
+    return Waypoint(id = cursor.getLong(_ID) ?: -1,
+            latitude = cursor.getDouble(LATITUDE) ?: 0.0,
+            longitude = cursor.getDouble(LONGITUDE) ?: 0.0,
+            time = cursor.getLong(TIME) ?: 0,
+            speed = cursor.getDouble(SPEED) ?: 0.0,
+            altitude = cursor.getDouble(ALTITUDE) ?: 0.0)
+}
+
 fun Uri.updateName(context: Context, name: String) {
     val values = ContentValues()
     values.put(ContentConstants.TracksColumns.NAME, name)
@@ -80,4 +132,13 @@ interface ResultHandler {
     fun addSegment()
 
     fun addWaypoint(latLng: LatLng, millisecondsTime: Long)
+}
+
+data class Waypoint(val id: Long,
+                    val latitude: Double,
+                    val longitude: Double,
+                    val time: Long,
+                    val speed: Double,
+                    val altitude: Double) {
+
 }
