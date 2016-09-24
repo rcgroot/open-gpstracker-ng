@@ -1,69 +1,86 @@
 package nl.sogeti.android.gpstracker.ng.tracks.summary
 
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import nl.sogeti.android.gpstracker.integration.ContentConstants.MetaData.*
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.TIME
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
-import nl.sogeti.android.gpstracker.ng.utils.*
-import nl.sogeti.android.gpstracker.v2.R
-import java.text.DateFormat
-import java.util.*
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Helps in the retrieval, create and keeping up to date of summary data
  */
 object summaryManager {
-    private val executor = Executors.newFixedThreadPool(numberOfThreads(), BackgroundThreadFactory())
-    private val summaryCache = mutableMapOf<Uri, Summary>()
-    private var isRunning = AtomicInteger()
-    private val calculator = SummaryCalculator()
+    var executor: ExecutorService? = null
+    val calculator = SummaryCalculator()
+    val summaryCache = mutableMapOf<Uri, Summary>()
+    var activeCount = 0
 
     fun start() {
-        isRunning.incrementAndGet()
+        synchronized(this, {
+            activeCount++
+            if (executor == null) {
+                executor = Executors.newFixedThreadPool(numberOfThreads(), BackgroundThreadFactory())
+            }
+        })
     }
 
     fun stop() {
-        isRunning.decrementAndGet()
+        synchronized(this, {
+            activeCount--
+            if (!isRunning()) {
+                executor?.shutdown()
+                executor = null
+            }
+            if (activeCount < 0) {
+                activeCount++
+                throw IllegalStateException("Received more stops then starts")
+            }
+        })
     }
 
-    fun isRunning() = isRunning.get() > 0
+    fun isRunning(): Boolean = synchronized(this, { activeCount > 0 })
 
     /**
      * Collects summary data from the meta table.
      */
-    fun collectSummaryInfo(context: Context, trackUri: Uri, callbackSummary: (Summary) -> Unit) {
+    fun collectSummaryInfo(context: Context, trackUri: Uri,
+                           callbackSummary: (Summary) -> Unit) {
+        if (!isRunning()) {
+            return
+        }
         val cacheHit = summaryCache[trackUri]
         if (cacheHit != null) {
             callbackSummary(cacheHit)
         } else {
-            executor.submit({
-                if (isRunning()) {
-                    val summary = calculator.calculateSummary(context, trackUri)
-                    if (isRunning()) {
-                        summaryCache.put(trackUri, summary)
-                        callbackSummary(summary)
-                    }
-                }
+            executor?.submit({
+                executeTrackCalculation(context, trackUri, callbackSummary)
             })
         }
     }
 
-    private fun numberOfThreads(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return Runtime.getRuntime().availableProcessors()
-        } else {
-            return 2
+    fun executeTrackCalculation(context: Context, trackUri: Uri, callbackSummary: (Summary) -> Unit) {
+        if (isRunning()) {
+            val summary = calculator.calculateSummary(context, trackUri)
+            if (isRunning()) {
+                summaryCache.put(trackUri, summary)
+                callbackSummary(summary)
+            }
         }
     }
 
-    class BackgroundThreadFactory : ThreadFactory {
+    fun numberOfThreads(): Int {
+        val threads: Int
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            threads = Runtime.getRuntime().availableProcessors()
+        } else {
+            threads = 2
+        }
+
+        return threads
+    }
+
+    internal class BackgroundThreadFactory : ThreadFactory {
         val group = ThreadGroup("SummaryManager")
 
         init {
@@ -73,6 +90,7 @@ object summaryManager {
 
         override fun newThread(task: Runnable?): Thread {
             val thread = Thread(group, task)
+
             return thread
         }
     }

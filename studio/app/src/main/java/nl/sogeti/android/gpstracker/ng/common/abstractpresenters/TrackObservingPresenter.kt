@@ -41,7 +41,7 @@ abstract class TrackObservingPresenter : ConnectedServicePresenter() {
         super.didStart()
         val field = getTrackUriField()
         uriChangeListener.listenTo(field)
-        observer.registerOn(field?.get())
+        observer.registerOn(field.get())
     }
 
     override fun willStop() {

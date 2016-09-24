@@ -41,6 +41,8 @@ import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
@@ -52,12 +54,12 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
         summaryManager.start()
         val trackCreation: (Cursor) -> TrackViewModel = {
             val id = it.getLong(ContentConstants.Tracks._ID)!!
-            val uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, id)
+            val uri = trackUri(id)
             val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
             TrackViewModel(uri, name)
         }
         context?.let {
-            val tracks = ContentConstants.Tracks.TRACKS_URI.map(it, trackCreation)
+            val tracks = trackUri().map(it, trackCreation)
             model.track.addAll(tracks)
         }
     }

@@ -35,12 +35,41 @@ import android.net.Uri
 import android.provider.BaseColumns._ID
 import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
-import nl.sogeti.android.gpstracker.integration.ContentConstants.AUTHORITY
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Segments.SEGMENTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
+import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber
+
+fun trackUri(): Uri {
+    val trackUri = Uri.Builder()
+            .scheme("content")
+            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .build()
+    return trackUri
+}
+
+fun trackUri(id:Long): Uri {
+    val trackUri = Uri.Builder()
+            .scheme("content")
+            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(id.toString())
+            .build()
+    return trackUri
+}
+
+
+fun  metaDataUri(): Uri {
+    val trackUri = Uri.Builder()
+            .scheme("content")
+            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .appendPath(ContentConstants.MetaData.METADATA)
+            .build()
+    return trackUri
+}
 
 /**
  * Loop through the complete track, its segments, its waypoints and callback the results
@@ -50,7 +79,7 @@ import timber.log.Timber
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
-    if (!AUTHORITY.equals(this.authority)) {
+    if (!BuildConfig.TRACKS_AUTHORITY.equals(this.authority)) {
         return
     }
 
@@ -79,13 +108,13 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
  */
 fun <T> Uri.traverseTrack(context: Context,
                           operation: (T?, Waypoint, Waypoint) -> T,
-                          selectionPair: Pair <String, List<String>>? = null) : T? {
+                          selectionPair: Pair <String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     Timber.v("$this with selection $selection on $selectionArgs")
     val segmentsUri = this.append(SEGMENTS)
     val segments = segmentsUri.map(context, { it.getLong(ContentConstants.Segments._ID)!! })
-    var result : T? = null
+    var result: T? = null
     for (segmentId in segments) {
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
         var cursor: Cursor? = null

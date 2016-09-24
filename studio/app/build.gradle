@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
+apply plugin: 'kotlin-android'
 
 junitJacoco {
     jacocoVersion = '0.7.7.201606060606'
@@ -25,7 +25,6 @@ android {
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
         archivesBaseName = "opengpstracker-ng-$versionName"
         vectorDrawables.useSupportLibrary = true
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,6 +40,23 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        mock {
+            buildConfigField "String", "TRACKS_AUTHORITY", "\"nl.sogeti.android.gpstracker.ng.mock\""
+        }
+        prod {
+            buildConfigField "String", "TRACKS_AUTHORITY", "nl.sogeti.android.gpstracker.integration.ContentConstants.GPS_TRACKS_AUTHORITY"
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+
+        if (names.contains("mock") && variant.buildType.name == "release") {
+            variant.ignore = true
         }
     }
 
@@ -77,6 +93,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':integration')
 //    wearApp project(':wear')
+
     compile 'com.jakewharton.timber:timber:4.1.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
@@ -85,10 +102,14 @@ dependencies {
     compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    testCompile "org.robolectric:robolectric:3.1.2"
+
+    kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
     androidTestCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
 }

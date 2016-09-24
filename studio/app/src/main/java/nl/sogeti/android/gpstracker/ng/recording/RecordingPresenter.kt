@@ -40,6 +40,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.v2.R
 
 class RecordingPresenter internal constructor(private val viewModel: RecordingViewModel) : TrackObservingPresenter() {
@@ -51,7 +52,7 @@ class RecordingPresenter internal constructor(private val viewModel: RecordingVi
     public override fun didConnectService(service: ServiceManager) {
         val loggingState = service.loggingState
         val trackId = service.trackId
-        val trackUri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId)
+        val trackUri = trackUri(trackId)
         updateRecording(trackUri, loggingState)
     }
 

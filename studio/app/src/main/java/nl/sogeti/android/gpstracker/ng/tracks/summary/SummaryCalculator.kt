@@ -10,7 +10,7 @@ import nl.sogeti.android.gpstracker.v2.R
 import java.text.DateFormat
 import java.util.*
 
-class SummaryCalculator {
+open class SummaryCalculator {
 
     private val META_FIELD_TRACK_TYPE = "SUMMARY_TYPE"
 
@@ -34,7 +34,7 @@ class SummaryCalculator {
             }
         }
         val trackId = trackUri.lastPathSegment
-        ContentConstants.MetaData.METADATA_URI.map(context, metadataReadOperation, listOf(ContentConstants.MetaData.KEY, ContentConstants.MetaData.VALUE), Pair("${ContentConstants.MetaData.TRACK} = ?", listOf(trackId.toString())))
+        metaDataUri().map(context, metadataReadOperation, listOf(ContentConstants.MetaData.KEY, ContentConstants.MetaData.VALUE), Pair("${ContentConstants.MetaData.TRACK} = ?", listOf(trackId.toString())))
 
         // Calculate
         val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })
@@ -117,5 +117,4 @@ class SummaryCalculator {
     }
 
     //endregion
-
 }

@@ -4,6 +4,9 @@ buildscript {
 
     repositories {
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap'
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$rootProject.gradlePluginVersion"
@@ -15,6 +18,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap'
+        }
     }
 }
 

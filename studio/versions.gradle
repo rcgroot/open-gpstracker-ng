@@ -1,20 +1,20 @@
 ext {
     // Building
     buildToolsVersion = '24.0.2'
-    gradlePluginVersion = '2.2.0-rc2'
-    dataBindingVersion = '2.2.0-rc2'
+    gradlePluginVersion = '2.2.0'
+    dataBindingVersion = '2.2.0'
 
     // App support
-    supportLibraryVersion = '24.2.0'
-    kotlinVersion = '1.0.3'
-    playServicesVersion = '9.4.0'
+    supportLibraryVersion = '24.2.1'
+    kotlinVersion = '1.0.4'
+    playServicesVersion = '9.6.1'
     wearableVersion = '1.4.0'
     constraintsLibraryVersion = '1.0.0-alpha8'
 
     // Testing
     junitVersion = '4.12'
-    mockitoVersion = '2.0.71-beta'
+    mockitoVersion = '2.1.0-RC.1'
     testRunnerVersion = '0.5'
     robolectricVersion = '3.1.2'
-
+    espressoVersion = '2.2.2'
 }

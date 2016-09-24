@@ -46,6 +46,7 @@ import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import java.util.*
 
 class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPresenter(), TrackTileProvider.Listener, OnMapReadyCallback {
@@ -65,7 +66,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     override fun didConnectService(serviceManager: ServiceManager) {
         val loggingState = serviceManager.loggingState
         val trackId = serviceManager.trackId
-        val uri = ContentUris.withAppendedId(ContentConstants.Tracks.TRACKS_URI, trackId)
+        val uri = trackUri(trackId)
         updateRecording(uri, loggingState)
     }
 
