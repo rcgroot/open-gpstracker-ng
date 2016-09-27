@@ -86,6 +86,8 @@ android {
 configurations.all {
     resolutionStrategy {
         force "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+        force "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+        force "com.android.support:design:$rootProject.supportLibraryVersion"
     }
 }
 
@@ -112,4 +114,6 @@ dependencies {
     androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
     androidTestCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
+    androidTestCompile "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
+
 }

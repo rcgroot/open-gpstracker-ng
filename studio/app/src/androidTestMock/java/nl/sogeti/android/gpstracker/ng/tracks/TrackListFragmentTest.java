@@ -1,6 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.tracks;
 
 import android.net.Uri;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
@@ -30,7 +31,7 @@ public class TrackListFragmentTest {
     @Test
     public void testResumeStartsPresenter() {
         // Execute
-        wrapperFragment.launchActivity(null);
+        wrapperFragment.launchFragment(null);
 
         // Verify
         Assert.assertNotNull(sut.getTracksPresenter().getContext());
@@ -39,8 +40,8 @@ public class TrackListFragmentTest {
     @Test
     public void testPauseStopsPresenter() {
         // Execute
-        wrapperFragment.launchActivity(null);
-        wrapperFragment.stopActivity();
+        wrapperFragment.launchFragment(null);
+        wrapperFragment.finishFragment();
 
         // Verify
         Assert.assertNull(sut.getTracksPresenter().getContext());
