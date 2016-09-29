@@ -37,19 +37,20 @@ import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.v2.R
 
-class RecordingPresenter internal constructor(private val viewModel: RecordingViewModel) : TrackObservingPresenter() {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : TrackObservingPresenter() {
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
     private var isReading: Boolean = false
 
     /* Service connecting */
 
-    public override fun didConnectService(service: ServiceManager) {
+    public override fun didConnectService(service: ServiceManagerInterface) {
         val loggingState = service.loggingState
         val trackId = service.trackId
         val trackUri = trackUri(trackId)

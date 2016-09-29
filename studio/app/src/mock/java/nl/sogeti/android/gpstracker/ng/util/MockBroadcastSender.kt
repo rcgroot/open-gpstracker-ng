@@ -28,17 +28,35 @@
  */
 package nl.sogeti.android.gpstracker.ng.util
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.widget.FrameLayout
-import nl.sogeti.android.gpstracker.v2.R
+import android.content.Context
+import android.content.Intent
+import nl.sogeti.android.gpstracker.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.v2.BuildConfig
 
-class TestActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val frameLayout = FrameLayout(this)
-        frameLayout.id = R.id.title
-        setContentView(frameLayout)
+class MockBroadcastSender {
+
+    val ACTION = BuildConfig.CONFIG_BROADCAST
+
+    fun sendStartedRecording(context: Context) {
+        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING)
+    }
+
+    fun  sendStoppedRecording(context: Context) {
+        broadcastLoggingState(context, ServiceConstants.STATE_STOPPED)
+    }
+
+    fun  sendPausedRecording(context: Context) {
+        broadcastLoggingState(context, ServiceConstants.STATE_PAUSED)
+    }
+
+    fun  sendResumedRecording(context: Context) {
+        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING)
+    }
+
+    private fun broadcastLoggingState(context: Context, state: Int) {
+        val intent = Intent(ACTION)
+        intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
+        context.sendBroadcast(intent)
     }
 }

@@ -46,7 +46,7 @@ import timber.log.Timber;
 /**
  * Class to interact with the service that tracks and logs the locations
  */
-public class ServiceManager {
+public class ServiceManager implements ServiceManagerInterface {
 
     private static final String REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
     private final Object mStartLock = new Object();

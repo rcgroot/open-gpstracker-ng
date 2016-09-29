@@ -41,6 +41,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
@@ -63,7 +64,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 
     /* Service connecting */
 
-    override fun didConnectService(serviceManager: ServiceManager) {
+    override fun didConnectService(serviceManager: ServiceManagerInterface) {
         val loggingState = serviceManager.loggingState
         val trackId = serviceManager.trackId
         val uri = trackUri(trackId)

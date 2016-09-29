@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.control;
 
 import android.net.Uri;
 
-import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
@@ -39,7 +39,6 @@ import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_ST
 
 public class ControlPresenter extends ConnectedServicePresenter {
     private final LoggerViewModel viewModel;
-    ServiceManager serviceManager = new ServiceManager();
 
     public ControlPresenter(LoggerViewModel viewModel) {
         this.viewModel = viewModel;
@@ -51,7 +50,7 @@ public class ControlPresenter extends ConnectedServicePresenter {
     }
 
     @Override
-    protected void didConnectService(ServiceManager serviceManager) {
+    protected void didConnectService(ServiceManagerInterface serviceManager) {
         viewModel.setState(serviceManager.getLoggingState());
     }
 
@@ -74,19 +73,19 @@ public class ControlPresenter extends ConnectedServicePresenter {
     }
 
     private void startLogging() {
-        serviceManager.startGPSLogging(getContext(), "New NG track!");
+        getServiceManager().startGPSLogging(getContext(), "New NG track!");
     }
 
     private void stopLogging() {
-        serviceManager.stopGPSLogging(getContext());
+        getServiceManager().stopGPSLogging(getContext());
     }
 
     private void pauseLogging() {
-        serviceManager.pauseGPSLogging(getContext());
+        getServiceManager().pauseGPSLogging(getContext());
     }
 
     private void resumeLogging() {
-        serviceManager.resumeGPSLogging(getContext());
+        getServiceManager().resumeGPSLogging(getContext());
     }
 
 

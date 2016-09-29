@@ -36,22 +36,29 @@ import android.net.Uri;
 
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
+import nl.sogeti.android.gpstracker.v2.BuildConfig;
 
 /**
- * Base class for presenters that source data from the IPC with
+ * Base class for presenters that source data from the IPC / Intent with
  * the original Open GPS Tracker app.
  */
 public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    private final ServiceManager serviceManager;
+    private static final String CONFIG_BROADCAST = BuildConfig.CONFIG_BROADCAST;
+    private static final Class serviceManagerClass = BuildConfig.CONFIG_SERVICE;
+
+    private final ServiceManagerInterface serviceManager;
+
     private BroadcastReceiver receiver;
-
-    public ConnectedServicePresenter(ServiceManager serviceManager) {
-        this.serviceManager = serviceManager;
-    }
-
     public ConnectedServicePresenter() {
-        this(new ServiceManager());
+        try {
+            serviceManager = (ServiceManagerInterface) serviceManagerClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalStateException("Cannot start ControlPresenter without correct ServiceManagerInterface class ",e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Cannot start ControlPresenter without correct ServiceManagerInterface class",e);
+        }
     }
 
     @Override
@@ -84,21 +91,21 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         }
     }
 
+    public ServiceManagerInterface getServiceManager() {
+        return serviceManager;
+    }
+
     private void registerReceiver() {
         unregisterReceiver();
         receiver = new LoggerStateReceiver();
-        IntentFilter filter = new IntentFilter(ServiceConstants.LOGGING_STATE_CHANGED_ACTION);
+        IntentFilter filter = new IntentFilter(CONFIG_BROADCAST);
         Context context = getContext();
         if (context != null) {
             context.registerReceiver(receiver, filter);
         }
     }
 
-    public ServiceManager getServiceManager() {
-        return serviceManager;
-    }
-
-    protected abstract void didConnectService(ServiceManager serviceManager);
+    protected abstract void didConnectService(ServiceManagerInterface serviceManager);
 
     public abstract void didChangeLoggingState(Uri trackUri, int loggingState);
 

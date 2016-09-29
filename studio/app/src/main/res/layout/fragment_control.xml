@@ -14,6 +14,7 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/widget_control_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:state="@{logger.state}"

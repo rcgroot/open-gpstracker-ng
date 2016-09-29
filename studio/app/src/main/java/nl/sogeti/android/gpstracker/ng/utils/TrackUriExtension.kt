@@ -45,7 +45,7 @@ import timber.log.Timber
 fun trackUri(): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .authority(BuildConfig.CONFIG_AUTHORITY)
             .appendPath(ContentConstants.Tracks.TRACKS)
             .build()
     return trackUri
@@ -54,7 +54,7 @@ fun trackUri(): Uri {
 fun trackUri(id:Long): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .authority(BuildConfig.CONFIG_AUTHORITY)
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(id.toString())
             .build()
@@ -65,7 +65,7 @@ fun trackUri(id:Long): Uri {
 fun  metaDataUri(): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(BuildConfig.TRACKS_AUTHORITY)
+            .authority(BuildConfig.CONFIG_AUTHORITY)
             .appendPath(ContentConstants.MetaData.METADATA)
             .build()
     return trackUri
@@ -79,7 +79,7 @@ fun  metaDataUri(): Uri {
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
-    if (!BuildConfig.TRACKS_AUTHORITY.equals(this.authority)) {
+    if (!BuildConfig.CONFIG_AUTHORITY.equals(this.authority)) {
         return
     }
 
