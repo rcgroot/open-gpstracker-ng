@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.control;
+package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -36,6 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
@@ -48,7 +49,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
-public class ControlFragmentTest {
+public class ControlFragmentEspressoTest {
+
     @Rule
     public FragmentTestRule<ControlFragment> wrapperFragment = new FragmentTestRule<>(ControlFragment.class);
     private ControlFragment sut;

@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.about;
+package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
@@ -38,6 +38,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.WebViewIdlingResource;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -48,7 +49,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
-public class AboutFragmentTest {
+public class AboutFragmentEspressoTest {
 
     @Rule
     public FragmentTestRule<AboutFragment> wrapperFragment = new FragmentTestRule<>(AboutFragment.class);
