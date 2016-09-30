@@ -3,6 +3,7 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Matchers.any
@@ -28,7 +29,7 @@ class ConnectedServicePresenterTest {
         sut.start(mockContext!!)
 
         // Verify
-        verify(mockServiceManager)!!.startup(eq(mockContext), any())
+        verify(mockServiceManager)!!.startup(eq(mockContext!!), any())
         verify(mockContext)!!.registerReceiver(any(), any())
     }
 
@@ -42,22 +43,22 @@ class ConnectedServicePresenterTest {
         sut.willStop()
 
         // Verify
-        verify(mockServiceManager)!!.shutdown(mockContext)
+        verify(mockServiceManager)!!.shutdown(mockContext!!)
         verify(mockContext)!!.unregisterReceiver(any())
     }
 
-    class MyConnectedServicePresenter(mockServiceManager: ServiceManager) : ConnectedServicePresenter(mockServiceManager) {
+    class MyConnectedServicePresenter(mockServiceManager: ServiceManagerInterface) : ConnectedServicePresenter() {
 
         var state = -1
         var uri: Uri? = null
-        var manager: ServiceManager? = null
+        var manager: ServiceManagerInterface? = null
 
         override fun didChangeLoggingState(trackUri: Uri?, loggingState: Int) {
             this.uri = trackUri
             this.state = loggingState
         }
 
-        override fun didConnectService(serviceManager: ServiceManager?) {
+        override fun didConnectService(serviceManager: ServiceManagerInterface?) {
             this.manager = serviceManager
         }
     }

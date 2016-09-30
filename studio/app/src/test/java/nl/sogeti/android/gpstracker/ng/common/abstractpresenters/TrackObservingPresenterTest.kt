@@ -7,6 +7,7 @@ import android.databinding.Observable
 import android.databinding.ObservableField
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -73,7 +74,7 @@ class TrackObservingPresenterTest {
         override fun didChangeUriContent(uri: Uri, includingUri: Boolean) {
         }
 
-        override fun didConnectService(serviceManager: ServiceManager?) {
+        override fun didConnectService(serviceManager: ServiceManagerInterface?) {
         }
 
         override fun didChangeLoggingState(trackUri: Uri?, loggingState: Int) {
