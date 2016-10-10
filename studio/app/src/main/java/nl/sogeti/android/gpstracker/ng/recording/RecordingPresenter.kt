@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.recording
 
-import android.content.ContentUris
 import android.databinding.ObservableField
 import android.location.Location
 import android.net.Uri
@@ -36,7 +35,6 @@ import android.os.AsyncTask
 import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
@@ -76,7 +74,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     /* Private */
 
     private fun updateRecording(trackUri: Uri, loggingState: Int) {
-        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
+        val isRecording = (loggingState == ServiceConstants.STATE_LOGGING) || (loggingState == ServiceConstants.STATE_PAUSED)
         viewModel.isRecording.set(isRecording)
         viewModel.uri.set(trackUri)
     }

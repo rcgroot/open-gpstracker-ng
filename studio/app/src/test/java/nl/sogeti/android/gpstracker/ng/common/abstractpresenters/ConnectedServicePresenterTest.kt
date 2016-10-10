@@ -6,7 +6,8 @@ import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
@@ -23,7 +24,7 @@ class ConnectedServicePresenterTest {
     @Test
     fun didStart() {
         // Prepare
-        val sut = MyConnectedServicePresenter(mockServiceManager!!)
+        val sut = MyConnectedServicePresenter()
 
         // Execute
         sut.start(mockContext!!)
@@ -36,7 +37,7 @@ class ConnectedServicePresenterTest {
     @Test
     fun willStop() {
         // Prepare
-        val sut = MyConnectedServicePresenter(mockServiceManager!!)
+        val sut = MyConnectedServicePresenter()
         sut.start(mockContext!!)
 
         // Execute
@@ -44,22 +45,20 @@ class ConnectedServicePresenterTest {
 
         // Verify
         verify(mockServiceManager)!!.shutdown(mockContext!!)
-        verify(mockContext)!!.unregisterReceiver(any())
+        verify(mockContext)!!.unregisterReceiver(ArgumentMatchers.any())
     }
 
-    class MyConnectedServicePresenter(mockServiceManager: ServiceManagerInterface) : ConnectedServicePresenter() {
+    class MyConnectedServicePresenter() : ConnectedServicePresenter() {
 
         var state = -1
         var uri: Uri? = null
-        var manager: ServiceManagerInterface? = null
 
-        override fun didChangeLoggingState(trackUri: Uri?, loggingState: Int) {
+        override fun didChangeLoggingState(trackUri: Uri, loggingState: Int) {
             this.uri = trackUri
             this.state = loggingState
         }
 
         override fun didConnectService(serviceManager: ServiceManagerInterface?) {
-            this.manager = serviceManager
         }
     }
 }

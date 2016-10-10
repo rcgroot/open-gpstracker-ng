@@ -56,7 +56,7 @@ public class ControlPresenterTest {
     @Before
     public void setup() {
         sut = new ControlPresenter(mockLogger);
-        sut.serviceManager = mockServiceManager;
+        sut.setServiceManager(mockServiceManager);
     }
 
     @Test

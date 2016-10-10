@@ -31,12 +31,13 @@ package nl.sogeti.android.gpstracker.ng.util
 import android.content.Context
 import android.content.Intent
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.ng.injection.Injection
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 
 
 class MockBroadcastSender {
 
-    val ACTION = BuildConfig.CONFIG_BROADCAST
+    val ACTION = Injection.CONFIG_BROADCAST
 
     fun sendStartedRecording(context: Context) {
         broadcastLoggingState(context, ServiceConstants.STATE_LOGGING)

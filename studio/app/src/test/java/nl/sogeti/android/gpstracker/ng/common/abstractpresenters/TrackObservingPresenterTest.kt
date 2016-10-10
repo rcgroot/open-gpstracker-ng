@@ -2,17 +2,14 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.ContentResolver
 import android.content.Context
-import android.database.ContentObserver
-import android.databinding.Observable
 import android.databinding.ObservableField
 import android.net.Uri
-import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Matchers.eq
-import org.mockito.Matchers.notNull
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.ArgumentMatchers.notNull
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -47,8 +44,8 @@ class TrackObservingPresenterTest {
         sut?.start(mockContext!!)
 
         // Verify
-        verify(mockResolver)!!.registerContentObserver(eq(mockUri), eq(true), notNull(ContentObserver::class.java))
-        verify(mockField)!!.addOnPropertyChangedCallback(notNull(Observable.OnPropertyChangedCallback::class.java))
+        verify(mockResolver)!!.registerContentObserver(eq(mockUri), eq(true), notNull())
+        verify(mockField)!!.addOnPropertyChangedCallback(notNull())
     }
 
     @Test
@@ -62,11 +59,12 @@ class TrackObservingPresenterTest {
         sut?.stop()
 
         // Verify
-        verify(mockResolver)!!.unregisterContentObserver(notNull(ContentObserver::class.java))
-        verify(mockField)!!.removeOnPropertyChangedCallback(notNull(Observable.OnPropertyChangedCallback::class.java))
+        verify(mockResolver)!!.unregisterContentObserver(notNull())
+        verify(mockField)!!.removeOnPropertyChangedCallback(notNull())
     }
 
     class MyTrackObservingPresenter(val field: ObservableField<Uri?>) : TrackObservingPresenter() {
+
         override fun getTrackUriField(): ObservableField<Uri?> {
             return field
         }
@@ -77,7 +75,7 @@ class TrackObservingPresenterTest {
         override fun didConnectService(serviceManager: ServiceManagerInterface?) {
         }
 
-        override fun didChangeLoggingState(trackUri: Uri?, loggingState: Int) {
+        override fun didChangeLoggingState(trackUri: Uri, loggingState: Int) {
         }
 
     }

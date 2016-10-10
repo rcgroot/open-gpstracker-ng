@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracks
 
-import android.content.ContentUris
 import android.database.Cursor
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -42,7 +41,6 @@ import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
-import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 

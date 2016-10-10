@@ -33,11 +33,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.integration.ServiceManager;
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
-import nl.sogeti.android.gpstracker.v2.BuildConfig;
+import nl.sogeti.android.gpstracker.ng.injection.Injection;
+import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 /**
  * Base class for presenters that source data from the IPC / Intent with
@@ -45,10 +46,10 @@ import nl.sogeti.android.gpstracker.v2.BuildConfig;
  */
 public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    private static final String CONFIG_BROADCAST = BuildConfig.CONFIG_BROADCAST;
-    private static final Class serviceManagerClass = BuildConfig.CONFIG_SERVICE;
+    private static final String CONFIG_BROADCAST = Injection.CONFIG_BROADCAST;
+    private static final Class serviceManagerClass = Injection.CONFIG_SERVICE;
 
-    private final ServiceManagerInterface serviceManager;
+    private ServiceManagerInterface serviceManager;
 
     private BroadcastReceiver receiver;
     public ConnectedServicePresenter() {
@@ -95,6 +96,14 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         return serviceManager;
     }
 
+    public void setServiceManager(ServiceManagerInterface serviceManager) {
+        this.serviceManager = serviceManager;
+    }
+
+    public void setReceiver(BroadcastReceiver receiver) {
+        this.receiver = receiver;
+    }
+
     private void registerReceiver() {
         unregisterReceiver();
         receiver = new LoggerStateReceiver();
@@ -107,13 +116,16 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
     protected abstract void didConnectService(ServiceManagerInterface serviceManager);
 
-    public abstract void didChangeLoggingState(Uri trackUri, int loggingState);
+    public abstract void didChangeLoggingState(@NonNull Uri trackUri, int loggingState);
 
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
             Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
+            if (trackUri == null) {
+                trackUri = TrackUriExtensionKt.trackUri(-1L);
+            }
             didChangeLoggingState(trackUri, loggingState);
         }
     }
