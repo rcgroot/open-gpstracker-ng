@@ -1,7 +1,7 @@
 ext {
     // Building
-    buildToolsVersion = '24.0.2'
-    gradlePluginVersion = '2.2.0'
+    buildToolsVersion = '24.0.3'
+    gradlePluginVersion = '2.2.1'
     dataBindingVersion = '2.2.0'
 
     // App support
@@ -9,7 +9,7 @@ ext {
     kotlinVersion = '1.0.4'
     playServicesVersion = '9.6.1'
     wearableVersion = '1.4.0'
-    constraintsLibraryVersion = '1.0.0-alpha8'
+    constraintsLibraryVersion = '1.0.0-alpha9'
 
     // Testing
     junitVersion = '4.12'

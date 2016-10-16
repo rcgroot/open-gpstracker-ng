@@ -41,8 +41,10 @@ public class ServiceConstants {
     /**
      * Broadcast intent action indicating that the logger service state has changed. Includes the logging state and
      * its precision.
+     * Required extra's: EXTRA_LOGGING_PRECISION and EXTRA_LOGGING_STATE
+     * Option extra's: EXTRA_TRACK ony when a track is in state PAUSED or LOGGING
      */
-    public static final String LOGGING_STATE_CHANGED_ACTION = "nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED";
+    public static final String ACTION_BROADCAST_LOGGING_STATE = "nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED";
     /**
      * Broadcast intent action indicating that the logger has a location to transmit
      */

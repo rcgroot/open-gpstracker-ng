@@ -32,32 +32,33 @@ import android.content.Context
 import android.content.Intent
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.injection.Injection
-import nl.sogeti.android.gpstracker.v2.BuildConfig
 
 
 class MockBroadcastSender {
 
     val ACTION = Injection.CONFIG_BROADCAST
 
-    fun sendStartedRecording(context: Context) {
-        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING)
+    fun sendStartedRecording(context: Context, trackId: Long) {
+        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)
     }
 
-    fun  sendStoppedRecording(context: Context) {
-        broadcastLoggingState(context, ServiceConstants.STATE_STOPPED)
+    fun sendStoppedRecording(context: Context) {
+        broadcastLoggingState(context, ServiceConstants.STATE_STOPPED, null)
     }
 
-    fun  sendPausedRecording(context: Context) {
-        broadcastLoggingState(context, ServiceConstants.STATE_PAUSED)
+    fun sendPausedRecording(context: Context, trackId: Long) {
+        broadcastLoggingState(context, ServiceConstants.STATE_PAUSED, trackId)
     }
 
-    fun  sendResumedRecording(context: Context) {
-        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING)
+    fun sendResumedRecording(context: Context, trackId: Long) {
+        broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)
     }
 
-    private fun broadcastLoggingState(context: Context, state: Int) {
+    private fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL ) {
         val intent = Intent(ACTION)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
+        intent.putExtra(ServiceConstants.EXTRA_LOGGING_PRECISION, precision)
+        trackId?.let { intent.putExtra(ServiceConstants.EXTRA_TRACK, it) }
         context.sendBroadcast(intent)
     }
 }

@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.map
 
-import android.content.ContentUris
 import android.databinding.ObservableField
 import android.net.Uri
 import android.os.AsyncTask
@@ -38,13 +37,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
-import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
-import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
@@ -81,8 +77,12 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
         return viewModel.uri
     }
 
-    override fun didChangeUriContent(uri: Uri, includingUri: Boolean) {
-        if (!isReading || includingUri) {
+    override fun onChangeUriField(uri: Uri) {
+        TrackReader(uri, viewModel).execute()
+    }
+
+    override fun onChangeUriContent(uri: Uri){
+        if (!isReading) {
             TrackReader(uri, viewModel).execute()
         }
     }

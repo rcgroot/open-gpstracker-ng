@@ -1,6 +1,5 @@
 package nl.sogeti.android.gpstracker.ng.tracks.summary;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.net.Uri;
 
@@ -21,7 +20,6 @@ import java.util.concurrent.ThreadFactory;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 import static junit.framework.Assert.assertNotNull;

@@ -42,7 +42,10 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumn
 import nl.sogeti.android.gpstracker.ng.injection.Injection
 import timber.log.Timber
 
-fun trackUri(): Uri {
+/**
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
+ */
+fun tracksUri(): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
             .authority(Injection.CONFIG_AUTHORITY)
@@ -51,6 +54,11 @@ fun trackUri(): Uri {
     return trackUri
 }
 
+/**
+ *
+ * @param trackId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
+ */
 fun trackUri(id: Long): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
@@ -60,8 +68,59 @@ fun trackUri(id: Long): Uri {
             .build()
     return trackUri
 }
+/**
+ * @param trackId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
+ */
+fun segmentsUri(trackId: Long): Uri {
+    val segmentUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .build()
+    return segmentUri
+}
 
+/**
+ * @param trackId
+ * @param segmentId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
+ */
+fun segmentUri(trackId: Long, segmentId: Long): Uri {
+    val segmentUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendEncodedPath(segmentId.toString())
+            .build()
+    return segmentUri
+}
 
+/**
+ * @param trackId
+ * @param segmentId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
+ */
+fun waypointsUri(trackId: Long, segmentId: Long): Uri {
+    val segmentUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendEncodedPath(segmentId.toString())
+            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .build()
+    return segmentUri
+}
+
+/**
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/metadata
+ */
 fun metaDataUri(): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
@@ -91,8 +150,13 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
         handler.addSegment()
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
         waypointsUri.map(context, {
-            val latLng = LatLng(it.getDouble(0), it.getDouble(1))
-            handler.addWaypoint(latLng, it.getLong(2))
+            val lat = it.getDouble(LATITUDE)
+            val lon = it.getDouble(LONGITUDE)
+            val time = it.getLong(TIME)
+            if (lat != null && lon != null && time != null) {
+                val latLng = LatLng(lat, lon)
+                handler.addWaypoint(latLng, time)
+            }
         }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
 
     }, listOf(_ID))

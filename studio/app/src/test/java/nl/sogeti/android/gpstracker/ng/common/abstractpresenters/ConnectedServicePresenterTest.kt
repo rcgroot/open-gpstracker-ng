@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -21,13 +22,17 @@ class ConnectedServicePresenterTest {
     @Mock
     var mockContext: Context? = null
 
+    var sut: MyConnectedServicePresenter? = null
+
+    @Before
+    fun setUp() {
+        sut = MyConnectedServicePresenter()
+    }
+
     @Test
     fun didStart() {
-        // Prepare
-        val sut = MyConnectedServicePresenter()
-
         // Execute
-        sut.start(mockContext!!)
+        sut?.start(mockContext!!)
 
         // Verify
         verify(mockServiceManager)!!.startup(eq(mockContext!!), any())
@@ -37,11 +42,10 @@ class ConnectedServicePresenterTest {
     @Test
     fun willStop() {
         // Prepare
-        val sut = MyConnectedServicePresenter()
-        sut.start(mockContext!!)
+        sut?.start(mockContext!!)
 
         // Execute
-        sut.willStop()
+        sut?.willStop()
 
         // Verify
         verify(mockServiceManager)!!.shutdown(mockContext!!)

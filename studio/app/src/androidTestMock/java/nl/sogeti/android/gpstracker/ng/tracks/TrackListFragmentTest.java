@@ -1,7 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.tracks;
 
 import android.net.Uri;
-import android.support.test.espresso.IdlingResource;
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;

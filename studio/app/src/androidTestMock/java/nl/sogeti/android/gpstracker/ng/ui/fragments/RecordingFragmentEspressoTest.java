@@ -37,6 +37,7 @@ import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
+import nl.sogeti.android.gpstracker.ng.util.MockTracksProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -51,11 +52,14 @@ public class RecordingFragmentEspressoTest {
     public FragmentTestRule<RecordingFragment> wrapperFragment = new FragmentTestRule<>(RecordingFragment.class);
     private RecordingFragment sut;
     private MockServiceManager mockServiceManager;
+    private MockTracksProvider mockTracksProvider;
 
     @Before
     public void setUp() {
         mockServiceManager = new MockServiceManager();
         mockServiceManager.reset();
+        mockTracksProvider = new MockTracksProvider();
+        mockTracksProvider.reset();
         sut = wrapperFragment.getFragment();
     }
 
@@ -63,6 +67,8 @@ public class RecordingFragmentEspressoTest {
     public void tearDown() {
         mockServiceManager.reset();
         mockServiceManager = null;
+        mockTracksProvider.reset();
+        mockTracksProvider = null;
         sut = null;
     }
 
@@ -76,6 +82,7 @@ public class RecordingFragmentEspressoTest {
     public void testVisibleWhenStarted() {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
+        mockTracksProvider.loadFiveRecentWaypoints(mockServiceManager.getTrackId());
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));

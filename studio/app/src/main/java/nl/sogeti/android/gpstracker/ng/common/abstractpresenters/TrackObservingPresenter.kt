@@ -32,51 +32,55 @@ import android.database.ContentObserver
 import android.databinding.Observable
 import android.databinding.ObservableField
 import android.net.Uri
+import timber.log.Timber
 
-abstract class TrackObservingPresenter : ConnectedServicePresenter() {
-    private val observer = TrackObserver()
-    private val uriChangeListener = TrackUriChangeListener()
+abstract class TrackObservingPresenter() : ConnectedServicePresenter() {
+    private val contentObserver = TrackContentObserver()
+    private var fieldObserver : UriFieldObserver? = null
 
     override fun didStart() {
         super.didStart()
         val field = getTrackUriField()
-        uriChangeListener.listenTo(field)
-        observer.registerOn(field.get())
+        val fieldObserver = UriFieldObserver(field)
+        this.fieldObserver = fieldObserver
+        contentObserver.registerOn(field.get())
     }
 
     override fun willStop() {
         super.willStop()
-        uriChangeListener.listenTo(null)
-        observer.registerOn(null)
+        fieldObserver?.stop()
+        contentObserver.registerOn(null)
     }
 
     abstract fun getTrackUriField(): ObservableField<Uri?>
 
-    abstract fun didChangeUriContent(uri: Uri, includingUri: Boolean)
+    abstract fun onChangeUriField(uri: Uri)
+    abstract fun onChangeUriContent(uri: Uri)
 
-    private inner class TrackUriChangeListener : Observable.OnPropertyChangedCallback() {
-        var uriField = ObservableField<Uri?>()
+    private inner class UriFieldObserver(val field: ObservableField<Uri?>) : Observable.OnPropertyChangedCallback() {
+        init {
+            field.addOnPropertyChangedCallback(this)
+        }
 
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-            val newUri = uriField.get()
-            observer.registerOn(newUri)
-            if (newUri != null) {
-                didChangeUriContent(newUri, true)
+            Timber.d("uri field: fun onPropertyChanged($sender: Observable, $propertyId: Int)")
+            val uri = field.get()
+            if (uri != null) {
+                contentObserver.registerOn(uri)
+                onChangeUriField(uri)
             }
         }
 
-        fun listenTo(uri: ObservableField<Uri?>?) {
-            uriField.removeOnPropertyChangedCallback(this)
-            uri?.addOnPropertyChangedCallback(this)
-            uriField = uri ?: ObservableField<Uri?>()
+        fun stop() {
+            this.field.removeOnPropertyChangedCallback(this)
         }
-
     }
 
-    private inner class TrackObserver : ContentObserver(null) {
+    private inner class TrackContentObserver : ContentObserver(null) {
 
         override fun onChange(selfChange: Boolean, uri: Uri) {
-            didChangeUriContent(uri, false)
+            Timber.d("uri content: override fun onChange($selfChange: Boolean, $uri: Uri)")
+            onChangeUriContent(uri)
         }
 
         fun registerOn(uri: Uri?) {

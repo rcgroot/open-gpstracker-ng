@@ -40,6 +40,7 @@ import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
+import nl.sogeti.android.gpstracker.ng.util.MockTracksProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;

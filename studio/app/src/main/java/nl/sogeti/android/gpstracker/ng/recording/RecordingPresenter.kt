@@ -65,8 +65,12 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         return viewModel.uri
     }
 
-    override fun didChangeUriContent(uri: Uri, includingUri: Boolean) {
-        if (!isReading || includingUri) {
+    override fun onChangeUriField(uri: Uri) {
+        TrackReader(uri, viewModel).execute()
+    }
+
+    override fun onChangeUriContent(uri: Uri){
+        if (!isReading) {
             TrackReader(uri, viewModel).execute()
         }
     }
@@ -76,17 +80,22 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     private fun updateRecording(trackUri: Uri, loggingState: Int) {
         val isRecording = (loggingState == ServiceConstants.STATE_LOGGING) || (loggingState == ServiceConstants.STATE_PAUSED)
         viewModel.isRecording.set(isRecording)
-        viewModel.uri.set(trackUri)
+        if (trackUri.lastPathSegment.toLong() > 0) {
+            viewModel.uri.set(trackUri)
+        }
+        else {
+            viewModel.uri.set(null)
+        }
     }
 
-    private inner class TrackReader internal constructor(internal val trackUri: Uri, internal val recordingViewModel: RecordingViewModel) : AsyncTask<Void, Void, List<LatLng>>(), ResultHandler {
+    private inner class TrackReader internal constructor(internal val trackUri: Uri, internal val viewModel: RecordingViewModel) : AsyncTask<Void, Void, List<LatLng>>(), ResultHandler {
         internal val collectedWaypoints = mutableListOf<LatLng>()
         internal val collectedTimes = mutableListOf<Long>()
         internal var speed = 0.0
 
         override fun addTrack(name: String) {
-            recordingViewModel.name.set(name)
-            recordingViewModel.uri.set(trackUri)
+            viewModel.name.set(name)
+            viewModel.uri.set(trackUri)
         }
 
         @SuppressWarnings("EmptyMethod")
@@ -133,7 +142,8 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             val myContext = context
             if (myContext != null) {
                 val waypoints = myContext.resources.getQuantityString(R.plurals.fragment_recording_waypoints, segmentedWaypoints.size, segmentedWaypoints.size)
-                recordingViewModel.summary.set(myContext.getString(R.string.fragment_recording_summary, waypoints, speed, "km/h"))
+                val speed = myContext.getString(R.string.fragment_recording_summary, waypoints, speed, "km/h")
+                viewModel.summary.set(speed)
             }
             isReading = false
         }

@@ -69,7 +69,10 @@ class TrackObservingPresenterTest {
             return field
         }
 
-        override fun didChangeUriContent(uri: Uri, includingUri: Boolean) {
+        override fun onChangeUriField(uri: Uri) {
+        }
+
+        override fun onChangeUriContent(uri: Uri){
         }
 
         override fun didConnectService(serviceManager: ServiceManagerInterface?) {

@@ -40,27 +40,27 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun startup(context: Context, runnable: Runnable?) {
         globalState.started = true
-        Handler(Looper.getMainLooper()).post { runnable }
+        runnable?.run()
     }
 
     override fun shutdown(context: Context) {
         globalState.started = false
     }
 
-    override fun getLoggingState(): Int = loggingState
+    override fun getLoggingState(): Int = globalState.loggingState
 
-    override fun getTrackId(): Long = trackId
+    override fun getTrackId(): Long = globalState.trackId
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = ServiceConstants.STATE_LOGGING
         globalState.trackId = ++globalState.previousTrack
 
-        broadcaster.sendStartedRecording(context)
+        broadcaster.sendStartedRecording(context, trackId)
     }
 
     override fun stopGPSLogging(context: Context) {
         globalState.loggingState = ServiceConstants.STATE_STOPPED
-        globalState.trackId = -1
+        globalState.trackId = -1L
 
         broadcaster.sendStoppedRecording(context)
     }
@@ -68,27 +68,26 @@ class MockServiceManager : ServiceManagerInterface {
     override fun pauseGPSLogging(context: Context) {
         globalState.loggingState = ServiceConstants.STATE_PAUSED
 
-        broadcaster.sendPausedRecording(context)
+        broadcaster.sendPausedRecording(context, trackId)
     }
 
     override fun resumeGPSLogging(context: Context) {
         globalState.loggingState = ServiceConstants.STATE_LOGGING
 
-        broadcaster.sendResumedRecording(context)
+        broadcaster.sendResumedRecording(context, trackId)
     }
 
     fun reset() {
         started = false
         globalState.loggingState = ServiceConstants.STATE_UNKNOWN
-        globalState.trackId = -1
-        previousTrack = 0
+        globalState.trackId = -1L
+        previousTrack = 0L
     }
 
     companion object globalState {
         var started = false
         var loggingState = ServiceConstants.STATE_UNKNOWN
-        var trackId = -1
-        var previousTrack = 0
-
+        var trackId = -1L
+        var previousTrack = 0L
     }
 }
