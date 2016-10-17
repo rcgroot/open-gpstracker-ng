@@ -41,6 +41,8 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
 class RecordingFragment : Fragment() {
 
     val recordingViewModel: RecordingViewModel = RecordingViewModel()
+    private var binding: FragmentRecordingBinding? = null
+
     val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,5 +60,9 @@ class RecordingFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         recordingPresenter.stop()
+    }
+
+    fun executePendingBindings() {
+        binding?.executePendingBindings()
     }
 }

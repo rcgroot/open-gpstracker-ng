@@ -47,6 +47,7 @@ class ControlFragment : Fragment() {
     private val viewModel = LoggerViewModel()
     private val controlPresenter = ControlPresenter(viewModel)
     private val permissionRequester = PermissionRequester()
+    private var binding: FragmentControlBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +57,8 @@ class ControlFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentControlBinding>(inflater, R.layout.fragment_control, container, false)
         binding.logger = viewModel
-        binding.presenter = controlPresenter;
+        binding.presenter = controlPresenter
+        this.binding = binding
 
         return binding.root
     }
@@ -74,5 +76,9 @@ class ControlFragment : Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    fun executePendingBindings() {
+        binding?.executePendingBindings()
     }
 }

@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.content.Intent;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
@@ -36,11 +37,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
+import nl.sogeti.android.gpstracker.ng.injection.Injection;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
-import nl.sogeti.android.gpstracker.ng.util.MockTracksProvider;
+import nl.sogeti.android.gpstracker.ng.util.TestActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -69,6 +72,21 @@ public class ControlFragmentEspressoTest {
         mockServiceManager.reset();
         mockServiceManager = null;
         sut = null;
+    }
+
+    @Test
+    public void testUnknownState() throws InterruptedException {
+        // Prepare
+        TestActivity context = wrapperFragment.getActivity();
+        MockServiceManager.globalState.setLoggingState(-123);
+        Intent intent = new Intent(Injection.CONFIG_BROADCAST);
+        intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, -123);
+        context.sendBroadcast(intent);
+        wrapperFragment.getFragment().executePendingBindings();
+
+        // Verify
+        onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.widget_control_right)).check(matches(not(isDisplayed())));
     }
 
     @Test

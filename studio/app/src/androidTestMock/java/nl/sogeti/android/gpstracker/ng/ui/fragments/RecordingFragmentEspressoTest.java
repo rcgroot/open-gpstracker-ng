@@ -74,6 +74,9 @@ public class RecordingFragmentEspressoTest {
 
     @Test
     public void testStartUp() {
+        // Prepare
+        wrapperFragment.getFragment().executePendingBindings();
+
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
