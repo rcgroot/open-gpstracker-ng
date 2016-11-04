@@ -10,3 +10,5 @@
 keystore.properties
 *.iml
 .idea
+
+spoon-output/
