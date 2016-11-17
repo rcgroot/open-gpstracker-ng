@@ -18,22 +18,18 @@ class ControlBindingAdapters : CommonBindingAdapters() {
         if (state == STATE_STOPPED) {
             hideLeftButton(left, right)
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
-            right.isEnabled = true
         } else if (state == STATE_LOGGING) {
             showAllButtons(left, right)
             left.setImageResource(R.drawable.ic_stop_black_24dp)
             right.setImageResource(R.drawable.ic_pause_black_24dp)
-            right.isEnabled = true
         } else if (state == STATE_PAUSED) {
             showAllButtons(left, right)
             left.setImageResource(R.drawable.ic_stop_black_24dp)
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
-            right.isEnabled = true
         } else {
             // state == STATE_UNKNOWN and illegal states
             hideAllButtons(left, right)
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
-            right.isEnabled = false
         }
     }
 

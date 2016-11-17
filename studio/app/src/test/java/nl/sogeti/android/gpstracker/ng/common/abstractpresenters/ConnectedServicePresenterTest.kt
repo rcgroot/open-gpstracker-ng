@@ -27,6 +27,7 @@ class ConnectedServicePresenterTest {
     @Before
     fun setUp() {
         sut = MyConnectedServicePresenter()
+        sut!!.serviceManager = mockServiceManager
     }
 
     @Test

@@ -8,7 +8,7 @@ junitJacoco {
 
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "$rootProject.buildToolsVersion"
 
     dataBinding {
