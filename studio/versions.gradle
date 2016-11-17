@@ -5,16 +5,16 @@ ext {
     dataBindingVersion = '2.2.2'
 
     // App support
-    supportLibraryVersion = '25.0.0'
+    supportLibraryVersion = '25.0.1'
     kotlinVersion = '1.0.4'
     playServicesVersion = '9.8.0'
     wearableVersion = '1.4.0'
-    constraintsLibraryVersion = '1.0.0-beta3'
+    constraintsLibraryVersion = '1.0.0-beta4'
 
     // Testing
     junitVersion = '4.12'
-    mockitoVersion = '2.1.0-RC.1'
+    mockitoVersion = '2.2.20'
     testRunnerVersion = '0.5'
-    robolectricVersion = '3.1.2'
+    robolectricVersion = '3.1.4'
     espressoVersion = '2.2.2'
 }
