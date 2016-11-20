@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.content.Intent;
+import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
@@ -37,11 +37,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
-import nl.sogeti.android.gpstracker.ng.injection.Injection;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
+import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
 import nl.sogeti.android.gpstracker.ng.util.TestActivity;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -50,6 +49,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static nl.sogeti.android.gpstracker.ng.util.BindingUtilKt.executePendingBindings;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
@@ -62,8 +62,8 @@ public class ControlFragmentEspressoTest {
 
     @Before
     public void setUp() {
+        Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
-        mockServiceManager.reset();
         sut = wrapperFragment.getFragment();
     }
 
@@ -72,6 +72,7 @@ public class ControlFragmentEspressoTest {
         mockServiceManager.reset();
         mockServiceManager = null;
         sut = null;
+        Espresso.unregisterIdlingResources(MockBroadcastSender.Espresso.getResource());
     }
 
     @Test
@@ -79,12 +80,10 @@ public class ControlFragmentEspressoTest {
         // Prepare
         TestActivity context = wrapperFragment.getActivity();
         MockServiceManager.globalState.setLoggingState(-123);
-        Intent intent = new Intent(Injection.CONFIG_BROADCAST);
-        intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, -123);
-        context.sendBroadcast(intent);
-        wrapperFragment.getFragment().executePendingBindings();
-
+        // Execute
+        mockServiceManager.getBroadcaster().broadcastLoggingState(context, -123, null, 0);
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(not(isDisplayed())));
     }
@@ -101,8 +100,8 @@ public class ControlFragmentEspressoTest {
     public void testVisibleWhenStarted() {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
-
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -113,8 +112,8 @@ public class ControlFragmentEspressoTest {
     public void testVisibleWhenPaused() {
         // Execute
         mockServiceManager.pauseGPSLogging(sut.getActivity());
-
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -125,8 +124,8 @@ public class ControlFragmentEspressoTest {
     public void testVisibleWhenResumed() {
         // Execute
         mockServiceManager.resumeGPSLogging(sut.getActivity());
-
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -137,10 +136,11 @@ public class ControlFragmentEspressoTest {
     public void testVisibleWhenStopped() {
         // Execute
         mockServiceManager.stopGPSLogging(sut.getActivity());
-
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
     }
+
 }

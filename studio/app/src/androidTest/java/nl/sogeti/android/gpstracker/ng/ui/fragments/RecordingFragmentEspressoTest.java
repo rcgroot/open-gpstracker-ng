@@ -28,6 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.support.test.espresso.Espresso;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,6 +38,7 @@ import org.junit.Test;
 import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
+import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
 import nl.sogeti.android.gpstracker.ng.util.MockTracksProvider;
 import nl.sogeti.android.gpstracker.v2.R;
@@ -44,6 +47,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static nl.sogeti.android.gpstracker.ng.util.BindingUtilKt.executePendingBindings;
 import static org.hamcrest.Matchers.not;
 
 public class RecordingFragmentEspressoTest {
@@ -56,20 +60,20 @@ public class RecordingFragmentEspressoTest {
 
     @Before
     public void setUp() {
+        Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
-        mockServiceManager.reset();
         mockTracksProvider = new MockTracksProvider();
-        mockTracksProvider.reset();
         sut = wrapperFragment.getFragment();
     }
 
     @After
     public void tearDown() {
         mockServiceManager.reset();
-        mockServiceManager = null;
         mockTracksProvider.reset();
+        mockServiceManager = null;
         mockTracksProvider = null;
         sut = null;
+        Espresso.unregisterIdlingResources(MockBroadcastSender.Espresso.getResource());
     }
 
     @Test
@@ -78,6 +82,7 @@ public class RecordingFragmentEspressoTest {
         wrapperFragment.getFragment().executePendingBindings();
 
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 
@@ -88,6 +93,7 @@ public class RecordingFragmentEspressoTest {
         mockTracksProvider.loadFiveRecentWaypoints(mockServiceManager.getTrackId());
 
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -97,6 +103,7 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.pauseGPSLogging(sut.getActivity());
 
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -106,6 +113,7 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.resumeGPSLogging(sut.getActivity());
 
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -115,6 +123,7 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.stopGPSLogging(sut.getActivity());
 
         // Verify
+        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 }

@@ -30,6 +30,9 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -44,10 +47,11 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding
  */
 class ControlFragment : Fragment() {
 
-    private val viewModel = LoggerViewModel()
+    val viewModel = LoggerViewModel()
     private val controlPresenter = ControlPresenter(viewModel)
     private val permissionRequester = PermissionRequester()
-    private var binding: FragmentControlBinding? = null
+    @VisibleForTesting
+    var binding: FragmentControlBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,9 +80,5 @@ class ControlFragment : Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    fun executePendingBindings() {
-        binding?.executePendingBindings()
     }
 }

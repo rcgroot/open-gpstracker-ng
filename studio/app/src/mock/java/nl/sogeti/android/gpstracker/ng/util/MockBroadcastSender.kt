@@ -28,11 +28,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.util
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.support.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.injection.Injection
-
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
 
 class MockBroadcastSender {
 
@@ -54,11 +57,25 @@ class MockBroadcastSender {
         broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)
     }
 
-    private fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL ) {
+    fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL) {
+        resource.increment()
+        val filter = IntentFilter(Injection.CONFIG_BROADCAST)
+        filter.priority = -2000;
+        context.registerReceiver(receiver, filter)
         val intent = Intent(ACTION)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_PRECISION, precision)
-        trackId?.let { intent.putExtra(ServiceConstants.EXTRA_TRACK, it) }
-        context.sendBroadcast(intent)
+        trackId?.let { intent.putExtra(ServiceConstants.EXTRA_TRACK, trackUri(trackId)) }
+        context.sendOrderedBroadcast(intent, null)
+    }
+
+    companion object Espresso {
+        val resource = CountingIdlingResource("MockBroadcastSender", true)
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                resource.decrement()
+                context?.unregisterReceiver(this)
+            }
+        }
     }
 }

@@ -34,7 +34,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 
 class MockServiceManager : ServiceManagerInterface {
 
-    private val broadcaster = MockBroadcastSender()
+    val broadcaster = MockBroadcastSender()
 
     override fun startup(context: Context, runnable: Runnable?) {
         globalState.started = true
@@ -60,14 +60,14 @@ class MockServiceManager : ServiceManagerInterface {
     }
 
     override fun stopGPSLogging(context: Context) {
-        globalState.loggingState =  STATE_STOPPED
+        globalState.loggingState = STATE_STOPPED
         globalState.trackId = -1L
 
         broadcaster.sendStoppedRecording(context)
     }
 
     override fun pauseGPSLogging(context: Context) {
-        globalState.loggingState =  STATE_PAUSED
+        globalState.loggingState = STATE_PAUSED
 
         broadcaster.sendPausedRecording(context, trackId)
     }
@@ -87,7 +87,7 @@ class MockServiceManager : ServiceManagerInterface {
 
     companion object globalState {
         var started = false
-        var loggingState =  STATE_UNKNOWN
+        var loggingState = STATE_UNKNOWN
         var trackId = -1L
         var previousTrack = 0L
     }

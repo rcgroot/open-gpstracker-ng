@@ -119,4 +119,5 @@ dependencies {
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
 
+    mockCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
 }

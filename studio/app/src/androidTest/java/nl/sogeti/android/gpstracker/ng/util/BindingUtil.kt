@@ -26,46 +26,28 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.recording
+package nl.sogeti.android.gpstracker.ng.util
 
-import android.databinding.DataBindingUtil
-import android.os.Bundle
-import android.support.annotation.VisibleForTesting
-import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.databinding.ViewDataBinding
+import android.os.Handler
+import android.os.Looper
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.idling.CountingIdlingResource
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withId
 
-import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
-
-class RecordingFragment : Fragment() {
-
-    val recordingViewModel: RecordingViewModel = RecordingViewModel()
-    @VisibleForTesting
-    var binding: FragmentRecordingBinding? = null
-
-    val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
-        binding.track = recordingViewModel
-        this.binding = binding;
-
-        return binding.root
+fun executePendingBindings(binding: ViewDataBinding, resource: CountingIdlingResource) {
+    onView(withId(android.R.id.content)).check(matches(isDisplayed()))
+    resource.increment()
+    Handler(Looper.getMainLooper()).post {
+        binding.executePendingBindings()
+        resource.decrement()
+    }
+    try {
+        Thread.sleep(100)
+    } catch (e: InterruptedException) {
+        // Ignored
     }
 
-    override fun onResume() {
-        super.onResume()
-        recordingPresenter.start(activity)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        recordingPresenter.stop()
-    }
-
-    fun executePendingBindings() {
-        binding?.executePendingBindings()
-    }
 }
