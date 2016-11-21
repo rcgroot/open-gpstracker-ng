@@ -1,3 +1,31 @@
+/*------------------------------------------------------------------------------
+ **     Ident: Sogeti Smart Mobile Solutions
+ **    Author: rene
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ **------------------------------------------------------------------------------
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
+ ** The Netherlands                  |  permission of the copyright holder.
+ *------------------------------------------------------------------------------
+ *
+ *   This file is part of OpenGPSTracker.
+ *
+ *   OpenGPSTracker is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   OpenGPSTracker is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package nl.sogeti.android.gpstracker.ng.tracks.summary
 
 import android.content.Context
@@ -49,7 +77,7 @@ open class SummaryCalculator {
         }
         val calculated = trackUri.traverseTrack(context, operation)
         if (calculated != null && calculated > 1) {
-            distance = convertMetersToDistance(calculated)
+            distance = convertMetersToDistance(context, calculated)
         }
 
         // Return value
@@ -67,13 +95,15 @@ open class SummaryCalculator {
 
     //region Converter methods
 
-    private fun convertMetersToDistance(meters: Float): String {
+    internal fun convertMetersToDistance(context: Context, meters: Float): String {
         //TODO use string resources and single/multi
         val distance: String
         if (meters > 1000) {
-            distance = "%s KM".format(meters.toInt() / 1000)
+            distance = context.getString(R.string.format_kilometer).format(meters / 1000F)
+        } else if (meters >= 100) {
+            distance = context.getString(R.string.format_hunderdsmeters).format(meters)
         } else {
-            distance = "$meters M"
+            distance = context.getString(R.string.format_meters).format(meters)
         }
         return distance
     }
