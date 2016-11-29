@@ -14,17 +14,6 @@ import nl.sogeti.android.gpstracker.v2.R
 
 class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : ContextedPresenter() {
 
-    override fun didStart() {
-        val trackUri = model.trackUri.get()
-        val trackId: Long = trackUri.lastPathSegment.toLong()
-
-        model.name.set(trackUri?.apply(context!!, { it.getString(ContentConstants.TracksColumns.NAME) ?: "" }))
-        val typeSelection = Pair("${ContentConstants.MetaDataColumns.VALUE} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
-        val trackType = trackMetaDataUri(trackId).apply(context!!, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
-        val trackTypeDrawable = TrackTypeDescriptions.convertTypeDescriptionToDrawable(trackType)
-        model.selectedPosition.set(model.trackTypes.indexOfFirst { it.drawableId == trackTypeDrawable })
-    }
-
     val spinnerAdapter: SpinnerAdapter by lazy {
         object : BaseAdapter() {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -55,12 +44,23 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
         }
     }
 
-    fun ok() {
+    override fun didStart() {
         val trackUri = model.trackUri.get()
         val trackId: Long = trackUri.lastPathSegment.toLong()
-        val typeDescription = TrackTypeDescriptions.convertDrawableToTypeDescription(model.trackTypes.get(model.selectedPosition.get()).drawableId)
-        trackMetaDataUri(trackId).updateMetaData(context!!, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, typeDescription)
 
+        model.name.set(trackUri?.apply(context!!, { it.getString(ContentConstants.TracksColumns.NAME) ?: "" }))
+        val typeSelection = Pair("${ContentConstants.MetaDataColumns.VALUE} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
+        val trackType = trackMetaDataUri(trackId).apply(context!!, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
+        val trackTypeDrawable = TrackTypeDescriptions.convertTypeDescriptionToDrawable(trackType)
+        model.selectedPosition.set(model.trackTypes.indexOfFirst { it.drawableId == trackTypeDrawable })
+    }
+
+    override fun willStop() {
+    }
+
+    fun ok() {
+        saveTrackName()
+        saveTrackType()
         listener.dismiss()
     }
 
@@ -68,13 +68,21 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
         listener.dismiss()
     }
 
+    private fun saveTrackType() {
+        val trackUri = model.trackUri.get()
+        val trackId: Long = trackUri.lastPathSegment.toLong()
+        val typeDescription = TrackTypeDescriptions.convertDrawableToTypeDescription(model.trackTypes.get(model.selectedPosition.get()).drawableId)
+        trackMetaDataUri(trackId).updateMetaData(context!!, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, typeDescription)
+    }
+
+    private fun saveTrackName() {
+        model.trackUri.get()?.updateName(context!!, model.name.get())
+    }
+
     interface Listener {
         fun dismiss()
+
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)
-
-    override fun willStop() {
-        model.trackUri.get()?.updateName(context!!, model.name.get());
-    }
 }
