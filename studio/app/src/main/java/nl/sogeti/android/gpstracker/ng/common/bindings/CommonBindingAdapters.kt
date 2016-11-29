@@ -30,9 +30,14 @@ package nl.sogeti.android.gpstracker.ng.common.bindings
 
 import android.content.Context
 import android.databinding.BindingAdapter
+import android.databinding.InverseBindingAdapter
+import android.databinding.InverseBindingListener
 import android.graphics.Bitmap
+import android.support.v7.widget.AppCompatSpinner
 import android.util.TypedValue
+import android.view.View
 import android.webkit.WebView
+import android.widget.AdapterView
 import android.widget.ImageView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -90,5 +95,26 @@ open class CommonBindingAdapters {
         fun convertDpiToPixel(context: Context, dp: Float): Float {
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics);
         }
+    }
+
+    @BindingAdapter("bind:selection", "bind:selectionAttrChanged", requireAll = false)
+    fun setSelected(spinner: AppCompatSpinner, selection: Int, selectionAttrChanged: InverseBindingListener) {
+        if (spinner.selectedItemPosition != selection) {
+            spinner.setSelection(selection)
+        }
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                selectionAttrChanged.onChange()
+            }
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                selectionAttrChanged.onChange()
+            }
+        }
+    }
+
+    @InverseBindingAdapter(attribute = "bind:selection", event = "bind:selectionAttrChanged")
+    fun getSelectedValue(spinner: AppCompatSpinner): Int {
+        return spinner.selectedItemPosition
     }
 }

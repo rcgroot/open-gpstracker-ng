@@ -55,6 +55,20 @@ fun tracksUri(): Uri {
 }
 
 /**
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
+ */
+fun trackMetaDataUri(id: Long): Uri {
+    val trackUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(id.toString())
+            .appendPath(ContentConstants.MetaData.METADATA)
+            .build()
+    return trackUri
+}
+
+/**
  *
  * @param trackId
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
@@ -122,12 +136,12 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/metadata
  */
 fun metaDataUri(): Uri {
-    val trackUri = Uri.Builder()
+    val metaDataUri = Uri.Builder()
             .scheme("content")
             .authority(Injection.CONFIG_AUTHORITY)
             .appendPath(ContentConstants.MetaData.METADATA)
             .build()
-    return trackUri
+    return metaDataUri
 }
 
 /**
@@ -216,6 +230,13 @@ fun Uri.updateName(context: Context, name: String) {
     val values = ContentValues()
     values.put(ContentConstants.TracksColumns.NAME, name)
     context.contentResolver.update(this, values, null, null)
+}
+
+fun Uri.updateMetaData(context: Context, key: String, value: String) {
+    val values = ContentValues()
+    values.put(ContentConstants.MetaDataColumns.KEY, key)
+    values.put(ContentConstants.MetaDataColumns.VALUE, value)
+    context.contentResolver.update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
 }
 
 interface ResultHandler {

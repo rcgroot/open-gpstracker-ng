@@ -50,7 +50,7 @@ class RecordingFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
         binding.track = recordingViewModel
-        this.binding = binding;
+        this.binding = binding
 
         return binding.root
     }

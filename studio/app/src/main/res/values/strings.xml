@@ -44,7 +44,7 @@
         <item quantity="other">%d waypoints</item>
     </plurals>
     <!--Map list screen / Edit fragment-->
-    <string name="activity_track_map_rename_title">Rename track</string>
+    <string name="activity_track_map_rename_hint">Track name</string>
     <string name="activity_track_map_rename_message">Enter track name</string>
     <string name="activity_track_map_edit">Edit track</string>
 
@@ -61,4 +61,11 @@
     <string name="format_kilometer">%.1f KM</string>
     <string name="format_hunderdsmeters">%.0f M</string>
     <string name="format_meters">%.1f M</string>
+    <string name="track_type_default">tracking</string>
+    <string name="track_type_run">running</string>
+    <string name="track_type_walk">walking</string>
+    <string name="track_type_bike">biking</string>
+    <string name="track_type_boat">on a boat</string>
+    <string name="track_type_car">in a car</string>
+    <string name="track_type_train">in a train</string>
 </resources>

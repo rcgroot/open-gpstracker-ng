@@ -33,14 +33,13 @@ import android.database.Cursor
 import android.location.Location
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 import java.text.DateFormat
 import java.util.*
 
 open class SummaryCalculator {
-
-    private val META_FIELD_TRACK_TYPE = "SUMMARY_TYPE"
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
         val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
@@ -51,14 +50,13 @@ open class SummaryCalculator {
         var duration = context.getString(R.string.row_duraction_default)
         var distance = context.getString(R.string.row_distance_default)
         val timestamp = 0L
-        val type = R.drawable.ic_track_type_default_24dp
+        val type = R.drawable.ic_track_type_default
 
         // Meta-data fields
         val metadataReadOperation: (cursor: Cursor) -> Unit = {
             when (it.getString(ContentConstants.MetaData.KEY)) {
-                META_FIELD_TRACK_TYPE -> convertTypeDescriptionToIcon(it.getString(ContentConstants.MetaData.VALUE))
-                else -> {
-                }
+                TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE -> TrackTypeDescriptions.convertTypeDescriptionToDrawable(it.getString(ContentConstants.MetaData.VALUE))
+                else -> { }
             }
         }
         val trackId = trackUri.lastPathSegment
@@ -96,7 +94,6 @@ open class SummaryCalculator {
     //region Converter methods
 
     internal fun convertMetersToDistance(context: Context, meters: Float): String {
-        //TODO use string resources and single/multi
         val distance: String
         if (meters > 1000) {
             distance = context.getString(R.string.format_kilometer).format(meters / 1000F)
@@ -109,6 +106,7 @@ open class SummaryCalculator {
     }
 
     private fun convertTimestampToStart(timestamp: Long?, default: String): String {
+        //TODO Human like text
         val start: String
         if (timestamp != null) {
             start = DateFormat.getDateInstance().format(Date(timestamp))
@@ -120,7 +118,6 @@ open class SummaryCalculator {
     }
 
     private fun convertStartEndToDuration(startTimestamp: Long, endTimestamp: Long): String {
-        //TODO use string resources and single/multi
         val msPerMinute = 1000 * 60
         val msPerHour = msPerMinute * 60
         val msPerDay = msPerHour * 24
@@ -138,13 +135,5 @@ open class SummaryCalculator {
 
         return duration
     }
-
-    private fun convertTypeDescriptionToIcon(description: String?) {
-        when (description) {
-        //TODO convert more track types to icons
-            else -> R.drawable.ic_track_type_default_24dp
-        }
-    }
-
     //endregion
 }

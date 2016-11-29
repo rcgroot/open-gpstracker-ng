@@ -57,7 +57,7 @@ class TrackMapFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
             val uri = savedInstanceState.getParcelable<Uri>(KEY_TRACK_URI)
-            trackViewModel.uri.set(uri)
+            trackViewModel.trackUri.set(uri)
         } else {
             trackViewModel.name.set(getString(R.string.app_name))
         }
@@ -88,7 +88,7 @@ class TrackMapFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putParcelable(KEY_TRACK_URI, trackViewModel.uri.get())
+        outState?.putParcelable(KEY_TRACK_URI, trackViewModel.trackUri.get())
         binding?.fragmentMapMapview?.onSaveInstanceState(outState)
     }
 

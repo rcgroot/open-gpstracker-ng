@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracks
 
-import android.database.Cursor
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
@@ -47,16 +46,13 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
 
     override fun didStart() {
         summaryManager.start()
-        val trackCreation: (Cursor) -> TrackViewModel = {
+        val tracks = tracksUri().map(context!!, {
             val id = it.getLong(ContentConstants.Tracks._ID)!!
             val uri = trackUri(id)
             val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
             TrackViewModel(uri, name)
-        }
-        context?.let {
-            val tracks = tracksUri().map(it, trackCreation)
-            model.track.addAll(tracks)
-        }
+        })
+        model.track.addAll(tracks)
     }
 
     override fun willStop() {

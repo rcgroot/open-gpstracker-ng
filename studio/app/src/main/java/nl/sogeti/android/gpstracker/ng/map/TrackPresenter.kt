@@ -52,7 +52,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 
     override fun didStart() {
         super.didStart()
-        val trackUri = viewModel.uri.get()
+        val trackUri = viewModel.trackUri.get()
         if (trackUri != null) {
             TrackReader(trackUri, viewModel).execute()
         }
@@ -74,7 +74,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     /* Content watching */
 
     override fun getTrackUriField(): ObservableField<Uri?> {
-        return viewModel.uri
+        return viewModel.trackUri
     }
 
     override fun onChangeUriField(uri: Uri) {
@@ -82,12 +82,13 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     }
 
     override fun onChangeUriContent(uri: Uri){
-        if (!isReading) {
+        val isCurrentTrack = uri.equals(viewModel.trackUri.get())
+        if (!isReading && isCurrentTrack) {
             TrackReader(uri, viewModel).execute()
         }
     }
 
-/* Google Map Tiles */
+    /* Google Map Tiles */
 
     override fun onMapReady(googleMap: GoogleMap) {
         val options = TileOverlayOptions()
@@ -104,7 +105,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 /* Private */
 
     private fun updateRecording(trackUri: Uri?, loggingState: Int) {
-        if (trackUri != null && trackUri == viewModel.uri.get()) {
+        if (trackUri != null && trackUri == viewModel.trackUri.get()) {
             viewModel.isRecording.set(loggingState == ServiceConstants.STATE_LOGGING)
         }
     }
@@ -156,7 +157,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
         }
 
         override fun onPostExecute(result: Void?) {
-            var builder = headBoundsBuilder;
+            var builder = headBoundsBuilder
             if (builder != null) {
                 viewModel.trackHeadBounds.set(builder.build())
             }

@@ -50,7 +50,7 @@ class AboutFragment : DialogFragment() {
         builder.setView(binding.root)
         builder.setPositiveButton(android.R.string.ok) { dialog, which -> removeAbout() }
 
-        return builder.create();
+        return builder.create()
     }
 
     fun removeAbout() {
