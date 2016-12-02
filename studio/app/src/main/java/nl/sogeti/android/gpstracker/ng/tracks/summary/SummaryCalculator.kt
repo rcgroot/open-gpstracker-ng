@@ -53,14 +53,15 @@ open class SummaryCalculator {
         val type = R.drawable.ic_track_type_default
 
         // Meta-data fields
-        val metadataReadOperation: (cursor: Cursor) -> Unit = {
-            when (it.getString(ContentConstants.MetaData.KEY)) {
-                TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE -> TrackTypeDescriptions.convertTypeDescriptionToDrawable(it.getString(ContentConstants.MetaData.VALUE))
-                else -> { }
-            }
-        }
-        val trackId = trackUri.lastPathSegment
-        metaDataUri().map(context, metadataReadOperation, listOf(ContentConstants.MetaData.KEY, ContentConstants.MetaData.VALUE), Pair("${ContentConstants.MetaData.TRACK} = ?", listOf(trackId.toString())))
+        //TODO read and apply fields
+//        val metadataReadOperation: (cursor: Cursor) -> Unit = {
+//            when (it.getString(ContentConstants.MetaData.KEY)) {
+//                TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE -> TrackTypeDescriptions.trackTypeForContentType(it.getString(ContentConstants.MetaData.VALUE))
+//                else -> { }
+//            }
+//        }
+//        val trackId = trackUri.lastPathSegment.toLong()
+//        metaDataTrackUri(trackId).map(context, metadataReadOperation, listOf(ContentConstants.MetaData.KEY, ContentConstants.MetaData.VALUE), Pair("${ContentConstants.MetaData.TRACK} = ?", listOf(trackId.toString())))
 
         // Calculate
         val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })

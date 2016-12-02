@@ -55,20 +55,6 @@ fun tracksUri(): Uri {
 }
 
 /**
- * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
- */
-fun trackMetaDataUri(id: Long): Uri {
-    val trackUri = Uri.Builder()
-            .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
-            .appendPath(ContentConstants.Tracks.TRACKS)
-            .appendEncodedPath(id.toString())
-            .appendPath(ContentConstants.MetaData.METADATA)
-            .build()
-    return trackUri
-}
-
-/**
  *
  * @param trackId
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
@@ -143,6 +129,22 @@ fun metaDataUri(): Uri {
             .build()
     return metaDataUri
 }
+
+
+/**
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/ID/metadata
+ */
+fun metaDataTrackUri(id: Long): Uri {
+    val trackUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(id.toString())
+            .appendPath(ContentConstants.MetaData.METADATA)
+            .build()
+    return trackUri
+}
+
 
 /**
  * Loop through the complete track, its segments, its waypoints and callback the results
@@ -232,11 +234,14 @@ fun Uri.updateName(context: Context, name: String) {
     context.contentResolver.update(this, values, null, null)
 }
 
-fun Uri.updateMetaData(context: Context, key: String, value: String) {
+fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
     val values = ContentValues()
     values.put(ContentConstants.MetaDataColumns.KEY, key)
     values.put(ContentConstants.MetaDataColumns.VALUE, value)
-    context.contentResolver.update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
+    val changed = context.contentResolver.update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
+    if( changed == 0) {
+        context.contentResolver.insert(this, values)
+    }
 }
 
 interface ResultHandler {

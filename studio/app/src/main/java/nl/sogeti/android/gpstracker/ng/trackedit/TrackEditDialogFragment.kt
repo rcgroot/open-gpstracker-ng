@@ -39,7 +39,7 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditPresenter.Listener {
         val binding = DataBindingUtil.inflate<FragmentEditDialogBinding>(inflater, R.layout.fragment_edit_dialog, container, false)
         binding.model = model
         binding.presenter = presenter
-        binding.spinner.adapter = presenter.spinnerAdapter // TODO Consider binding
+        binding.spinner.onItemSelectedListener = presenter.onItemSelectedListener
         this.binding = binding
 
         return binding.root

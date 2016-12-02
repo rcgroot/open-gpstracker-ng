@@ -1,3 +1,31 @@
+/*------------------------------------------------------------------------------
+ **     Ident: Sogeti Smart Mobile Solutions
+ **    Author: rene
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ **------------------------------------------------------------------------------
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
+ ** The Netherlands                  |  permission of the copyright holder.
+ *------------------------------------------------------------------------------
+ *
+ *   This file is part of OpenGPSTracker.
+ *
+ *   OpenGPSTracker is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   OpenGPSTracker is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package nl.sogeti.android.gpstracker.ng.trackedit
 
 import android.content.Context
@@ -14,46 +42,26 @@ class TrackTypeDescriptions(val context: Context) {
         val VALUE_TYPE_RUN = "TYPE_RUN"
         val VALUE_TYPE_WALK = "TYPE_WALK"
         val VALUE_TYPE_TRAIN = "TYPE_TRAIN"
+        private val defaultType = TrackType(R.drawable.ic_track_type_default, R.string.track_type_default, VALUE_TYPE_DEFAULT)
 
         val allTrackTypes by lazy {
             listOf(
-                    TrackType(R.drawable.ic_track_type_default, R.string.track_type_default),
-                    TrackType(R.drawable.ic_track_type_walk, R.string.track_type_walk),
-                    TrackType(R.drawable.ic_track_type_run, R.string.track_type_run),
-                    TrackType(R.drawable.ic_track_type_bike, R.string.track_type_bike),
-                    TrackType(R.drawable.ic_track_type_car, R.string.track_type_car),
-                    TrackType(R.drawable.ic_track_type_train, R.string.track_type_train),
-                    TrackType(R.drawable.ic_track_type_boat, R.string.track_type_boat)
+                    defaultType,
+                    TrackType(R.drawable.ic_track_type_walk, R.string.track_type_walk, VALUE_TYPE_WALK),
+                    TrackType(R.drawable.ic_track_type_run, R.string.track_type_run, VALUE_TYPE_RUN),
+                    TrackType(R.drawable.ic_track_type_bike, R.string.track_type_bike, VALUE_TYPE_BIKE),
+                    TrackType(R.drawable.ic_track_type_car, R.string.track_type_car, VALUE_TYPE_CAR),
+                    TrackType(R.drawable.ic_track_type_train, R.string.track_type_train, VALUE_TYPE_TRAIN),
+                    TrackType(R.drawable.ic_track_type_boat, R.string.track_type_boat, VALUE_TYPE_BOAT)
             )
         }
 
-        fun convertTypeDescriptionToDrawable(description: String?): Int =
-                when (description) {
-                    KEY_META_FIELD_TRACK_TYPE -> R.drawable.ic_track_type_default
-                    VALUE_TYPE_BIKE -> R.drawable.ic_track_type_bike
-                    VALUE_TYPE_BOAT -> R.drawable.ic_track_type_boat
-                    VALUE_TYPE_CAR -> R.drawable.ic_track_type_car
-                    VALUE_TYPE_RUN -> R.drawable.ic_track_type_run
-                    VALUE_TYPE_WALK -> R.drawable.ic_track_type_walk
-                    VALUE_TYPE_TRAIN -> R.drawable.ic_track_type_train
-                    else -> R.drawable.ic_track_type_default
-                }
+        fun trackTypeForContentType(contentType: String?): TrackType {
+            val trackType = allTrackTypes.find { it.contentValue == contentType }
 
-
-        fun convertDrawableToTypeDescription(drawable: Int?): String =
-                when (drawable) {
-                    R.drawable.ic_track_type_default -> VALUE_TYPE_DEFAULT
-                    R.drawable.ic_track_type_bike -> VALUE_TYPE_BIKE
-                    R.drawable.ic_track_type_boat -> VALUE_TYPE_BOAT
-                    R.drawable.ic_track_type_car -> VALUE_TYPE_CAR
-                    R.drawable.ic_track_type_run -> VALUE_TYPE_RUN
-                    R.drawable.ic_track_type_walk -> VALUE_TYPE_WALK
-                    R.drawable.ic_track_type_train -> VALUE_TYPE_TRAIN
-                    else -> VALUE_TYPE_DEFAULT
-                }
-
-
+            return trackType ?: defaultType
+        }
     }
 }
 
-data class TrackType(val drawableId: Int, val stringId: Int)
+data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String)

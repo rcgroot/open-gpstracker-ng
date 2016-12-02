@@ -53,11 +53,13 @@
                 android:inputType="text"
                 android:paddingEnd="@dimen/activity_horizontal_margin"
                 android:paddingStart="@dimen/activity_horizontal_margin"
-                tools:text="@{model.name}">
+                android:text="@={model.name}">
 
             </EditText>
         </android.support.design.widget.TextInputLayout>
 
+        <!-- Order of binding attributes result in calling order:
+                And the adapters should be set first so the selection set will be valid2-->
         <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/spinner"
             android:layout_width="0dp"
@@ -65,11 +67,12 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            app:adapter="@{presenter.spinnerAdapter}"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@+id/text_input_layout"
             app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
-            app:selection="@={model.selectedPosition}" />
+            app:selection="@{model.selectedPosition}" />
 
         <Button
             android:id="@+id/fragment_trackEdit_ok"
@@ -77,8 +80,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@android:string/ok"
             android:onClick="@{() -> presenter.ok()}"
+            android:text="@android:string/ok"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner" />
@@ -90,9 +93,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center_vertical|end"
+            android:onClick="@{() -> presenter.cancel()}"
             android:text="@android:string/cancel"
             android:textAlignment="textEnd"
-            android:onClick="@{() -> presenter.cancel()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
