@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.trackedit
 
+import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,7 @@ import android.widget.*
 import android.widget.AdapterView.INVALID_POSITION
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions.Companion.loadTrackTypeFromContext
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 
@@ -105,11 +107,11 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
     }
 
     private fun loadTrackType(trackId: Long) {
-        val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
-        val contentType = metaDataTrackUri(trackId).apply(context!!, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
-        val trackType = TrackTypeDescriptions.trackTypeForContentType(contentType)
-        val position = model.trackTypes.indexOfFirst { it == trackType }
-        model.selectedPosition.set(position)
+        context?.let {
+            val trackType = loadTrackTypeFromContext(trackId, it)
+            val position = model.trackTypes.indexOfFirst { it == trackType }
+            model.selectedPosition.set(position)
+        }
     }
 
     private fun saveTrackType() {

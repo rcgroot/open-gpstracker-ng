@@ -48,9 +48,10 @@ class SummaryCalculatorTest {
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        `when`(context!!.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
-        `when`(context!!.getString(R.string.format_hunderdsmeters)).thenReturn("%.0f M")
         `when`(context!!.getString(R.string.format_meters)).thenReturn("%.1f M")
+        `when`(context!!.getString(R.string.format_100_meters)).thenReturn("%.0f M")
+        `when`(context!!.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
+        `when`(context!!.getString(R.string.format_100_kilometer)).thenReturn("%.0f KM")
         sut = SummaryCalculator()
     }
 
@@ -70,12 +71,19 @@ class SummaryCalculatorTest {
         assertThat(distance, `is`("123 M"))
     }
 
-
     @Test
     fun testConvertMetersToDistanceManyMeters() {
         // Act
         val distance = sut!!.convertMetersToDistance(context!!, 12345.123456F)
         // Assert
         assertThat(distance, `is`("12.3 KM"))
+    }
+
+    @Test
+    fun testConvertMetersToDistanceLotsAnLotsOfMeters() {
+        // Act
+        val distance = sut!!.convertMetersToDistance(context!!, 123452.123456F)
+        // Assert
+        assertThat(distance, `is`("123 KM"))
     }
 }

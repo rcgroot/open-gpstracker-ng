@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.tracks.summary
 
 import android.content.Context
-import android.database.Cursor
 import android.location.Location
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
@@ -43,6 +42,7 @@ open class SummaryCalculator {
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
         val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
+        val trackId: Long = trackUri.lastPathSegment.toLong()
 
         // Defaults
         val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
@@ -50,18 +50,7 @@ open class SummaryCalculator {
         var duration = context.getString(R.string.row_duraction_default)
         var distance = context.getString(R.string.row_distance_default)
         val timestamp = 0L
-        val type = R.drawable.ic_track_type_default
-
-        // Meta-data fields
-        //TODO read and apply fields
-//        val metadataReadOperation: (cursor: Cursor) -> Unit = {
-//            when (it.getString(ContentConstants.MetaData.KEY)) {
-//                TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE -> TrackTypeDescriptions.trackTypeForContentType(it.getString(ContentConstants.MetaData.VALUE))
-//                else -> { }
-//            }
-//        }
-//        val trackId = trackUri.lastPathSegment.toLong()
-//        metaDataTrackUri(trackId).map(context, metadataReadOperation, listOf(ContentConstants.MetaData.KEY, ContentConstants.MetaData.VALUE), Pair("${ContentConstants.MetaData.TRACK} = ?", listOf(trackId.toString())))
+        val trackType = TrackTypeDescriptions.loadTrackTypeFromContext(trackId, context)
 
         // Calculate
         val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })
@@ -80,7 +69,7 @@ open class SummaryCalculator {
         }
 
         // Return value
-        val summary = Summary(trackUri, name, type, start, duration, distance, timestamp)
+        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp)
 
         return summary
     }
@@ -96,10 +85,12 @@ open class SummaryCalculator {
 
     internal fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
-        if (meters > 1000) {
+        if (meters >= 100000) {
+            distance = context.getString(R.string.format_100_kilometer).format(meters / 1000F)
+        } else if (meters >= 1000) {
             distance = context.getString(R.string.format_kilometer).format(meters / 1000F)
         } else if (meters >= 100) {
-            distance = context.getString(R.string.format_hunderdsmeters).format(meters)
+            distance = context.getString(R.string.format_100_meters).format(meters)
         } else {
             distance = context.getString(R.string.format_meters).format(meters)
         }

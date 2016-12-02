@@ -58,9 +58,10 @@
     <string name="row_distance_default">--</string>
     <string name="row_track_icon_default">Default activity</string>
     <string name="row_track_map">Overview map</string>
-    <string name="format_kilometer">%.1f KM</string>
-    <string name="format_hunderdsmeters">%.0f M</string>
     <string name="format_meters">%.1f M</string>
+    <string name="format_100_meters">%.0f M</string>
+    <string name="format_kilometer">%.1f KM</string>
+    <string name="format_100_kilometer">%.0f KM</string>
     <string name="track_type_default">tracking</string>
     <string name="track_type_run">running</string>
     <string name="track_type_walk">walking</string>

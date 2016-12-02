@@ -29,6 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.trackedit
 
 import android.content.Context
+import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.utils.apply
+import nl.sogeti.android.gpstracker.ng.utils.getString
+import nl.sogeti.android.gpstracker.ng.utils.metaDataTrackUri
 import nl.sogeti.android.gpstracker.v2.R
 
 class TrackTypeDescriptions(val context: Context) {
@@ -60,6 +64,13 @@ class TrackTypeDescriptions(val context: Context) {
             val trackType = allTrackTypes.find { it.contentValue == contentType }
 
             return trackType ?: defaultType
+        }
+
+        fun loadTrackTypeFromContext(trackId: Long, context: Context): TrackType {
+            val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
+            val contentType = metaDataTrackUri(trackId).apply(context, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
+            val trackType = TrackTypeDescriptions.trackTypeForContentType(contentType)
+            return trackType
         }
     }
 }
