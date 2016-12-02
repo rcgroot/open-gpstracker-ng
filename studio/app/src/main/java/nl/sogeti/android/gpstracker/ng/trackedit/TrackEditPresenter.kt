@@ -122,7 +122,7 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
     }
 
     private fun loadTrackName(trackUri: Uri) {
-        model.name.set(trackUri?.apply(context!!, { it.getString(ContentConstants.TracksColumns.NAME) ?: "" }))
+        model.name.set(trackUri.apply(context!!, { it.getString(ContentConstants.TracksColumns.NAME) ?: "" }))
     }
 
     private fun saveTrackName() {

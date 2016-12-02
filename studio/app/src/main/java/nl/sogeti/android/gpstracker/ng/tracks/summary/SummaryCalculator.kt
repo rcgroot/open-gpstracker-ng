@@ -57,7 +57,7 @@ open class SummaryCalculator {
         start = convertTimestampToStart(startTimestamp, start)
         val endTimestamp = waypointsUri.apply(context, { it.moveToLast();it.getLong(ContentConstants.Waypoints.TIME) })
         if (startTimestamp != null && endTimestamp != null && startTimestamp < endTimestamp) {
-            duration = convertStartEndToDuration(startTimestamp, endTimestamp)
+            duration = convertStartEndToDuration(context, startTimestamp, endTimestamp)
         }
         val operation = { distance: Float?, first: Waypoint, second: Waypoint
             ->
@@ -109,20 +109,28 @@ open class SummaryCalculator {
         return start
     }
 
-    private fun convertStartEndToDuration(startTimestamp: Long, endTimestamp: Long): String {
+    internal fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
         val msPerMinute = 1000 * 60
         val msPerHour = msPerMinute * 60
         val msPerDay = msPerHour * 24
-        val days = (endTimestamp - startTimestamp) / msPerDay
-        val hours = ((endTimestamp - startTimestamp) - (days * msPerDay)) / msPerHour
-        val minutes = ((endTimestamp - startTimestamp) - (days * msPerDay) - (hours * msPerHour)) / msPerMinute
-        val duration: String
+        val days = ((endTimestamp - startTimestamp) / msPerDay).toInt()
+        val hours = (((endTimestamp - startTimestamp) - (days * msPerDay)) / msPerHour).toInt()
+        val minutes = (((endTimestamp - startTimestamp) - (days * msPerDay) - (hours * msPerHour)) / msPerMinute).toInt()
+        var duration: String
         if (days > 0) {
-            duration = "$days days, $hours hours\n$minutes minutes"
+            duration = context.resources.getQuantityString(R.plurals.track_duration_days, days, days)
+            if (hours > 0) {
+                duration += "\n"
+                duration += context.resources.getQuantityString(R.plurals.track_duration_hours, hours, hours)
+            }
         } else if (hours > 0) {
-            duration = "$hours hours\n$minutes minutes"
+            duration = context.resources.getQuantityString(R.plurals.track_duration_hours, hours, hours)
+            if (minutes > 0) {
+                duration += "\n"
+                duration += context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
+            }
         } else {
-            duration = "$minutes minutes"
+            duration = context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
         }
 
         return duration

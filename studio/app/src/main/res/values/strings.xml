@@ -69,4 +69,16 @@
     <string name="track_type_boat">on a boat</string>
     <string name="track_type_car">in a car</string>
     <string name="track_type_train">in a train</string>
+    <plurals name="track_duration_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="track_duration_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="track_duration_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
 </resources>
