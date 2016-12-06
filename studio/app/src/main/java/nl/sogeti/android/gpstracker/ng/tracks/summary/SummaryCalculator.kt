@@ -31,14 +31,20 @@ package nl.sogeti.android.gpstracker.ng.tracks.summary
 import android.content.Context
 import android.location.Location
 import android.net.Uri
+import android.text.format.DateUtils
+import android.text.format.DateUtils.MINUTE_IN_MILLIS
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 import java.text.DateFormat
+import java.text.DateFormat.SHORT
+import java.text.SimpleDateFormat
 import java.util.*
 
 open class SummaryCalculator {
+
+    internal var referenceTime = Calendar.getInstance()
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
         val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
@@ -46,7 +52,6 @@ open class SummaryCalculator {
 
         // Defaults
         val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
-        var start = context.getString(R.string.row_start_default)
         var duration = context.getString(R.string.row_duraction_default)
         var distance = context.getString(R.string.row_distance_default)
         val timestamp = 0L
@@ -54,7 +59,7 @@ open class SummaryCalculator {
 
         // Calculate
         val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })
-        start = convertTimestampToStart(startTimestamp, start)
+        val start = convertTimestampToStart(context, startTimestamp)
         val endTimestamp = waypointsUri.apply(context, { it.moveToLast();it.getLong(ContentConstants.Waypoints.TIME) })
         if (startTimestamp != null && endTimestamp != null && startTimestamp < endTimestamp) {
             duration = convertStartEndToDuration(context, startTimestamp, endTimestamp)
@@ -97,16 +102,15 @@ open class SummaryCalculator {
         return distance
     }
 
-    private fun convertTimestampToStart(timestamp: Long?, default: String): String {
-        //TODO Human like text
-        val start: String
-        if (timestamp != null) {
-            start = DateFormat.getDateInstance().format(Date(timestamp))
+    internal fun convertTimestampToStart(context: Context, timestamp: Long?): String {
+        val start: CharSequence
+        if (timestamp == null) {
+            start = context.getString(R.string.row_start_default)
         } else {
-            start = default
+            start = DateUtils.getRelativeTimeSpanString(timestamp, referenceTime.timeInMillis, MINUTE_IN_MILLIS)
         }
 
-        return start
+        return start.toString()
     }
 
     internal fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
