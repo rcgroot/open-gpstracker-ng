@@ -35,20 +35,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.TileOverlay
-import com.google.android.gms.maps.model.TileOverlayOptions
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import java.util.*
 
-class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPresenter(), TrackTileProvider.Listener, OnMapReadyCallback {
+class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPresenter(), OnMapReadyCallback {
     private var isReading: Boolean = false
-    private var titleOverLay: TileOverlay? = null
 
     override fun didStart() {
         super.didStart()
@@ -82,7 +80,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     }
 
     override fun onChangeUriContent(uri: Uri){
-        val isCurrentTrack = uri.equals(viewModel.trackUri.get())
+        val isCurrentTrack = uri == viewModel.trackUri.get()
         if (!isReading && isCurrentTrack) {
             TrackReader(uri, viewModel).execute()
         }
@@ -91,18 +89,11 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     /* Google Map Tiles */
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val options = TileOverlayOptions()
-        val tileProvider = TrackTileProvider(context, viewModel.waypoints, this)
-        options.tileProvider(tileProvider)
-        options.fadeIn(true)
-        titleOverLay = googleMap.addTileOverlay(options)
+        val tileProvider = TrackTileProvider(context, viewModel.waypoints)
+        tileProvider.provideFor(googleMap)
     }
 
-    override fun tilesDidBecomeOutdated(provider: TrackTileProvider) {
-        titleOverLay?.clearTileCache()
-    }
-
-/* Private */
+    /* Private */
 
     private fun updateRecording(trackUri: Uri?, loggingState: Int) {
         if (trackUri != null && trackUri == viewModel.trackUri.get()) {
@@ -111,39 +102,9 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     }
 
     inner class TrackReader internal constructor(private val trackUri: Uri, private val viewModel: TrackViewModel)
-    : AsyncTask<Void, Void, Void>(), ResultHandler {
+    : AsyncTask<Void, Void, Void>() {
 
-        val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
-        private val collectedWaypoints = mutableListOf<MutableList<LatLng>>()
-        private var completeBoundsBuilder: LatLngBounds.Builder? = null
-        private var headBoundsBuilder: LatLngBounds.Builder? = null
-
-        private val headTime: Long
-
-        init {
-            headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS
-        }
-
-        override fun addTrack(name: String) {
-            viewModel.name.set(name)
-        }
-
-        override fun addSegment() {
-            collectedWaypoints.add(ArrayList<LatLng>())
-        }
-
-        override fun addWaypoint(latLng: LatLng, millisecondsTime: Long) {
-            // Last 5 minutes worth of waypoints make the head
-            if (millisecondsTime > headTime) {
-                headBoundsBuilder = headBoundsBuilder ?: LatLngBounds.Builder()
-                headBoundsBuilder?.include(latLng)
-            }
-            // Add each waypoint to the end of the last list of points (the current segment)
-            collectedWaypoints[collectedWaypoints.size - 1].add(latLng)
-            // Build a bounds for the whole track
-            completeBoundsBuilder = completeBoundsBuilder ?: LatLngBounds.Builder()
-            completeBoundsBuilder?.include(latLng)
-        }
+        val handler = DefaultResultHandler()
 
         override fun onPreExecute() {
             isReading = true
@@ -151,24 +112,24 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 
         override fun doInBackground(vararg p: Void): Void? {
             context?.let {
-                trackUri.readTrack(it, this, null)
+                trackUri.readTrack(it, handler, null)
             }
             return null
         }
 
         override fun onPostExecute(result: Void?) {
-            var builder = headBoundsBuilder
+            viewModel.name.set(handler.name)
+
+            var builder = handler.headBuilder
             if (builder != null) {
                 viewModel.trackHeadBounds.set(builder.build())
             }
-            builder = completeBoundsBuilder
+            builder = handler.boundsBuilder
             if (builder != null) {
                 viewModel.completeBounds.set(builder.build())
             }
-            viewModel.waypoints.set(collectedWaypoints)
+            viewModel.waypoints.set(handler.waypoints)
             isReading = false
         }
-
-
     }
 }

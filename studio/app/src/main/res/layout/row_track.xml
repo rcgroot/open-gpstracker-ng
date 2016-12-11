@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="presenter"
             type="nl.sogeti.android.gpstracker.ng.tracks.TracksPresenter" />
@@ -14,106 +16,118 @@
             type="nl.sogeti.android.gpstracker.ng.tracks.TrackViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/row_track_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
+        card_view:cardBackgroundColor="@color/primary_light"
+        card_view:cardCornerRadius="4dp">
 
-        <View
-            android:id="@+id/row_track_header_bg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/primary_light"
-            android:paddingBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/row_track_map"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/row_track_map"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/checkered_background"
-            android:contentDescription="@string/row_track_map"
-            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
-            android:scaleType="center"
-            app:bitmap="@{viewModel.overviewMap}"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/row_track_icon" />
-
-        <TextView
-            android:id="@+id/row_track_name"
-            android:layout_width="0dp"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
-            android:text="@{viewModel.name}"
-            android:textColor="@color/primary_dark"
-            app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
-            app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/row_track_icon"
-            tools:text="Route to work" />
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/row_track_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/row_track_icon_default"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@{viewModel.iconType}" />
+            <View
+                android:id="@+id/row_track_header_bg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/row_track_map"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/row_track_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@{viewModel.startDay}"
-            android:textColor="@color/primary_light"
-            app:layout_constraintLeft_toLeftOf="@+id/row_track_name"
-            app:layout_constraintTop_toBottomOf="@+id/row_track_map"
-            tools:text="5 jan" />
 
-        <TextView
-            android:id="@+id/row_track_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@{viewModel.distance}"
-            android:textColor="@color/primary_light"
-            app:layout_constraintRight_toRightOf="@+id/row_track_map"
-            app:layout_constraintTop_toBottomOf="@+id/row_track_map"
-            tools:text="12km" />
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/row_track_map"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_marginTop="8dp"
+                android:clickable="false"
+                android:contentDescription="@string/row_track_map"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
+                app:liteMode="true"
+                app:mapFocus="@{viewModel.completeBounds}"
+                app:mapType="normal" />
+            <!--android:background="@drawable/checkered_background"-->
+            <!--app:bitmap="@{viewModel.overviewMap}"-->
 
-        <TextView
-            android:id="@+id/row_track_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@{viewModel.duration}"
-            android:textColor="@color/primary_light"
-            app:layout_constraintLeft_toRightOf="@+id/row_track_date"
-            app:layout_constraintRight_toLeftOf="@+id/row_track_distance"
-            app:layout_constraintTop_toBottomOf="@+id/row_track_map"
-            tools:text="1h30m" />
+            <TextView
+                android:id="@+id/row_track_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@{viewModel.name}"
+                android:textColor="@color/primary_dark"
+                app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
+                app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/row_track_icon"
+                tools:text="Route to work" />
 
-    </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/row_track_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/row_track_icon_default"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@{viewModel.iconType}" />
+
+            <TextView
+                android:id="@+id/row_track_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.startDay}"
+                android:textColor="@color/primary_dark"
+                app:layout_constraintLeft_toLeftOf="@+id/row_track_name"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="5 jan" />
+
+            <TextView
+                android:id="@+id/row_track_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.distance}"
+                android:textColor="@color/primary_dark"
+                app:layout_constraintRight_toRightOf="@+id/row_track_map"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="12km" />
+
+            <TextView
+                android:id="@+id/row_track_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.duration}"
+                android:textColor="@color/primary_dark"
+                app:layout_constraintLeft_toRightOf="@+id/row_track_date"
+                app:layout_constraintRight_toLeftOf="@+id/row_track_distance"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="1h30m" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
 </layout>

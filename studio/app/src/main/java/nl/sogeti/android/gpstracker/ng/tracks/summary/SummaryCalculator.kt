@@ -33,13 +33,12 @@ import android.location.Location
 import android.net.Uri
 import android.text.format.DateUtils
 import android.text.format.DateUtils.MINUTE_IN_MILLIS
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
-import java.text.DateFormat
-import java.text.DateFormat.SHORT
-import java.text.SimpleDateFormat
 import java.util.*
 
 open class SummaryCalculator {
@@ -72,9 +71,11 @@ open class SummaryCalculator {
         if (calculated != null && calculated > 1) {
             distance = convertMetersToDistance(context, calculated)
         }
+        val handler = DefaultResultHandler()
+        trackUri.readTrack(context, handler)
 
         // Return value
-        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp)
+        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bound, handler.waypoints)
 
         return summary
     }
@@ -124,13 +125,13 @@ open class SummaryCalculator {
         if (days > 0) {
             duration = context.resources.getQuantityString(R.plurals.track_duration_days, days, days)
             if (hours > 0) {
-                duration += "\n"
+                duration += " "
                 duration += context.resources.getQuantityString(R.plurals.track_duration_hours, hours, hours)
             }
         } else if (hours > 0) {
             duration = context.resources.getQuantityString(R.plurals.track_duration_hours, hours, hours)
             if (minutes > 0) {
-                duration += "\n"
+                duration += " "
                 duration += context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
             }
         } else {

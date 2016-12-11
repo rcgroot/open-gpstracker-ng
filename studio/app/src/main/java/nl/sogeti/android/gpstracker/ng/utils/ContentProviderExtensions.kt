@@ -132,7 +132,6 @@ fun <T> Uri.apply(context: Context,
                   selectionPair: Pair <String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
-    Timber.v("$this with selection $selection on $selectionArgs")
     var result: T? = null
     var cursor: Cursor? = null
     try {
@@ -140,12 +139,11 @@ fun <T> Uri.apply(context: Context,
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
         } else {
-            Timber.v("Uri $this apply operation didn't have results")
+            Timber.w("Uri $this apply operation didn't have results")
         }
     } finally {
         cursor?.close()
     }
-    Timber.v("Uri $this apply operation final result $result")
 
     return result
 }

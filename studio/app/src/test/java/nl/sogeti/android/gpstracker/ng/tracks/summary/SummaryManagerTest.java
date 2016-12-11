@@ -2,6 +2,10 @@ package nl.sogeti.android.gpstracker.ng.tracks.summary;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.SystemClock;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -115,46 +119,6 @@ public class SummaryManagerTest {
 
         // Verify
         assertThat(thread.getPriority(), Matchers.lessThanOrEqualTo(android.os.Process.THREAD_PRIORITY_BACKGROUND));
-    }
-
-    @Test
-    public void testCacheMiss() {
-        // Prepare
-        sut.start();
-
-        // Execute
-        sut.collectSummaryInfo(mockContext, uri, new Function1<Summary, Unit>() {
-            @Override
-            public Unit invoke(Summary summary) {
-                return null;
-            }
-        });
-
-        // Verify
-        verify(mockExecutor).submit(org.mockito.Matchers.any(Runnable.class));
-    }
-
-    @Test
-    public void testCacheHit() {
-        // Prepare
-        Summary summary = new Summary(uri, "", 1, "", "", "", 1);
-        sut.getSummaryCache().put(uri, summary);
-        final List<Summary> callback = new LinkedList<>();
-        sut.start();
-
-        // Execute
-        sut.collectSummaryInfo(mockContext, uri, new Function1<Summary, Unit>() {
-            @Override
-            public Unit invoke(Summary summary) {
-                callback.add(summary);
-                return null;
-            }
-        });
-
-        // Verify
-        assertThat(callback.size(), is(1));
-        assertThat(callback.get(0), Matchers.equalTo(summary));
-        verify(mockExecutor, times(0)).submit(org.mockito.Matchers.any(Runnable.class));
     }
 
     @Test

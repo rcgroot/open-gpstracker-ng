@@ -36,14 +36,18 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Tile;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import nl.sogeti.android.gpstracker.ng.map.TrackViewModel;
 import nl.sogeti.android.gpstracker.v2.R;
 import timber.log.Timber;
 
@@ -51,27 +55,28 @@ public class TrackTileProvider implements TileProvider {
     private static final int STROKE_WIDTH_DP = 2;
     private static final float SPEEDUP_FACTOR = 1f;
     private static final int TILE_SIZE_DP = 256;
-    private final Callback modelCallback = new Callback();
+
     private final float tileSize;
-    private final Listener listener;
     private final float strokeWidth;
     private final Bitmap endBitmap;
     private final Bitmap startBitmap;
     private PathRenderer pathRenderer;
+    private TileOverlay titleOverLay;
     private ObservableField<List<List<LatLng>>> waypoints;
+    private Observable.OnPropertyChangedCallback modelCallback = new Callback();
 
-    public TrackTileProvider(Context context, ObservableField<List<List<LatLng>>> waypoints, Listener listener) {
+    public TrackTileProvider(Context context, ObservableField<List<List<LatLng>>> waypoints) {
+        setWaypoints(waypoints);
         float density = context.getResources().getDisplayMetrics().density;
         float scaleFactor = density * SPEEDUP_FACTOR;
         this.tileSize = TILE_SIZE_DP * scaleFactor;
         this.strokeWidth = STROKE_WIDTH_DP * density;
-        this.listener = listener;
 
         VectorDrawableCompat startDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_start_24dp, null);
         VectorDrawableCompat endDrawable = VectorDrawableCompat.create(context.getResources(), R.drawable.ic_pin_end_24dp, null);
         startBitmap = renderVectorDrawable(startDrawable);
         endBitmap = renderVectorDrawable(endDrawable);
-        setWaypoints(waypoints);
+
     }
 
     private Bitmap renderVectorDrawable(Drawable vectorDrawable) {
@@ -110,11 +115,16 @@ public class TrackTileProvider implements TileProvider {
 
     private void waypointsDidChange() {
         pathRenderer = new PathRenderer(tileSize, strokeWidth, waypoints.get(), startBitmap, endBitmap);
-        listener.tilesDidBecomeOutdated(TrackTileProvider.this);
+        if (titleOverLay != null) {
+            titleOverLay.clearTileCache();
+        }
     }
 
-    public interface Listener {
-        void tilesDidBecomeOutdated(TrackTileProvider provider);
+    public void provideFor(@NotNull GoogleMap googleMap) {
+        TileOverlayOptions options = new TileOverlayOptions();
+        options.tileProvider(this);
+        options.fadeIn(true);
+        titleOverLay = googleMap.addTileOverlay(options);
     }
 
     private class Callback extends Observable.OnPropertyChangedCallback {

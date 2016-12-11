@@ -136,7 +136,7 @@ class SummaryCalculatorTest {
         // Act
         val duration = sut.convertStartEndToDuration(context!!, 0, TWO_HOURS + FIVE_MINUTES)
         //
-        assertThat(duration, `is`("2 hours\n5 minutes"))
+        assertThat(duration, `is`("2 hours 5 minutes"))
     }
 
     @Test
@@ -161,7 +161,7 @@ class SummaryCalculatorTest {
         // Act
         val duration = sut.convertStartEndToDuration(context!!, 0, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
         //
-        assertThat(duration, `is`("3 days\n2 hours"))
+        assertThat(duration, `is`("3 days 2 hours"))
     }
 
     @Test

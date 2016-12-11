@@ -103,6 +103,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
     compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
@@ -110,7 +111,7 @@ dependencies {
 
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    testCompile "org.robolectric:robolectric:3.1.2"
+    testCompile "org.robolectric:robolectric:$rootProject.robolectricVersion"
 
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"

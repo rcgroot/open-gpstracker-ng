@@ -26,18 +26,57 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks.summary
+package nl.sogeti.android.gpstracker.ng.utils
 
-import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import java.util.*
 
-data class Summary(val track: Uri,
-                   val name: String,
-                   val type: Int,
-                   val start: String,
-                   val duration: String,
-                   val distance: String,
-                   val timestamp: Long,
-                   val bounds: LatLngBounds,
-                   val waypoints: List<List<LatLng>>)
+class DefaultResultHandler : ResultHandler {
+    var name: String? = null
+    val waypoints = mutableListOf<MutableList<LatLng>>()
+    var boundsBuilder: LatLngBounds.Builder? = null
+    var headBuilder: LatLngBounds.Builder? = null
+    val bound: LatLngBounds
+        get() {
+            val builder = boundsBuilder
+            val bounds: LatLngBounds
+            if (builder != null) {
+                bounds = builder.build()
+            } else {
+                bounds = LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0))
+            }
+            return bounds
+        }
+
+    val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
+    private val headTime: Long
+
+    init {
+        headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS
+    }
+
+    override fun addTrack(name: String) {
+        this.name = name
+
+    }
+
+    override fun addSegment() {
+        waypoints.add(ArrayList<LatLng>())
+    }
+
+    override fun addWaypoint(latLng: LatLng, millisecondsTime: Long) {
+        // Last 5 minutes worth of waypoints make the head
+        if (millisecondsTime > headTime) {
+            headBuilder = headBuilder ?: LatLngBounds.Builder()
+            headBuilder?.include(latLng)
+        }
+        // Add each waypoint to the end of the last list of points (the current segment)
+        waypoints[waypoints.size - 1].add(latLng)
+        // Build a bounds for the whole track
+        boundsBuilder = boundsBuilder ?: LatLngBounds.Builder()
+        boundsBuilder?.include(latLng)
+    }
+
+
+}

@@ -30,11 +30,15 @@ package nl.sogeti.android.gpstracker.ng.tracks
 
 import android.databinding.DataBindingUtil
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
@@ -71,36 +75,61 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
             val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
-            val viewHolder = ViewHolder(binding)
-
-            return viewHolder
+            val holder = ViewHolder(binding)
+            // Weirdly enough the 'clickable="false"' in the XML resource doesn't work
+            holder.binding.rowTrackMap.isClickable = false
+            holder.binding.rowTrackMap.onCreate(null)
+            return holder
         }
 
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
             val trackViewModel = model.track[position]
             if (holder != null) {
-                val binding = holder.binding
-                binding.viewModel = trackViewModel
-                binding.presenter = this@TracksPresenter
+                holder.binding.presenter = this@TracksPresenter
+                holder.binding.viewModel = trackViewModel
+                if (holder.googleMap == null) {
+                    holder.binding.rowTrackMap.getMapAsync {
+                        it.uiSettings.isMapToolbarEnabled = false
+                        holder.googleMap = it
+                        holder.addLinesToMap()
+                    }
+                } else {
+                    holder.addLinesToMap()
+                }
                 context?.let {
                     summaryManager.collectSummaryInfo(it, trackViewModel.uri.get(), {
-                        if (it.track.equals(trackViewModel.uri.get())) {
+                        if (it.track == trackViewModel.uri.get()) {
                             trackViewModel.name.set(it.name)
                             trackViewModel.distance.set(it.distance)
                             trackViewModel.duration.set(it.duration)
                             trackViewModel.iconType.set(it.type)
                             trackViewModel.startDay.set(it.start)
+                            trackViewModel.completeBounds.set(it.bounds)
+                            trackViewModel.waypoints.set(it.waypoints)
+                            val trackPolylineProvider = TrackPolylineProvider(trackViewModel.waypoints.get())
+                            trackPolylineProvider.drawPolylines()
+                            trackViewModel.polylines = trackPolylineProvider.lineOptions
+                            Handler(Looper.getMainLooper()).post { holder.addLinesToMap() }
                         }
                     })
                 }
             }
         }
-
     }
 
     interface Listener {
         fun onTrackSelected(uri: Uri)
     }
 
-    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {}
+    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {
+        var googleMap: GoogleMap? = null
+
+        fun addLinesToMap() {
+            googleMap?.clear()
+            binding.viewModel.polylines.map {
+                googleMap?.addPolyline(it)
+            }
+        }
+    }
 }
+

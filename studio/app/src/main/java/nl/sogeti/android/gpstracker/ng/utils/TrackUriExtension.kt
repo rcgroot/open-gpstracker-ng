@@ -174,7 +174,6 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
                 handler.addWaypoint(latLng, time)
             }
         }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
-
     }, listOf(_ID))
 }
 
@@ -258,6 +257,4 @@ data class Waypoint(val id: Long,
                     val longitude: Double,
                     val time: Long,
                     val speed: Double,
-                    val altitude: Double) {
-
-}
+                    val altitude: Double)
