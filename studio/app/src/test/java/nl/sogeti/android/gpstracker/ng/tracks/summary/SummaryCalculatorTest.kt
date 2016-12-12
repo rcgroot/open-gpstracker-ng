@@ -49,7 +49,7 @@ import java.util.Calendar.*
 @Config(manifest = Config.NONE)
 class SummaryCalculatorTest {
 
-    private val SIZE_SECONDS = 6 * 1000L
+    private val SIX_SECONDS = 6 * 1000L
     private val FIVE_MINUTES = ((5 * 60) + 4) * 1000L
     private val TWO_HOURS = 2 * 60 * 60 * 1000L
     private val THREE_DAYS = 3 * 24 * 60 * 60 * 1000L
@@ -72,12 +72,13 @@ class SummaryCalculatorTest {
 
         `when`(context!!.resources).thenReturn(resources)
 
-
+        `when`(resources!!.getQuantityString(R.plurals.track_duration_seconds, 1, 1)).thenReturn("1 second")
+        `when`(resources!!.getQuantityString(R.plurals.track_duration_seconds, 6, 6)).thenReturn("6 seconds")
         `when`(resources!!.getQuantityString(R.plurals.track_duration_minutes, 1, 1)).thenReturn("1 minute")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_hours, 1, 1)).thenReturn("1 hour")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
         `when`(resources!!.getQuantityString(R.plurals.track_duration_minutes, 5, 5)).thenReturn("5 minutes")
         `when`(resources!!.getQuantityString(R.plurals.track_duration_hours, 2, 2)).thenReturn("2 hours")
+        `when`(resources!!.getQuantityString(R.plurals.track_duration_hours, 1, 1)).thenReturn("1 hour")
+        `when`(resources!!.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
         `when`(resources!!.getQuantityString(R.plurals.track_duration_days, 3, 3)).thenReturn("3 days")
 
         val sut = SummaryCalculator()
@@ -124,9 +125,33 @@ class SummaryCalculatorTest {
     }
 
     @Test
+    fun testConvertOneSecond() {
+        // Act
+        val duration = sut.convertStartEndToDuration(context!!, 0, SIX_SECONDS / 6L)
+        //
+        assertThat(duration, `is`("1 second"))
+    }
+
+    @Test
+    fun testConvertSeconds() {
+        // Act
+        val duration = sut.convertStartEndToDuration(context!!, 0, SIX_SECONDS)
+        //
+        assertThat(duration, `is`("6 seconds"))
+    }
+
+    @Test
+    fun testConvertOneMinute() {
+        // Act
+        val duration = sut.convertStartEndToDuration(context!!, 0, FIVE_MINUTES / 5L + SIX_SECONDS)
+        //
+        assertThat(duration, `is`("1 minute"))
+    }
+
+    @Test
     fun testConvertMinutes() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, FIVE_MINUTES + SIZE_SECONDS)
+        val duration = sut.convertStartEndToDuration(context!!, 0, FIVE_MINUTES + SIX_SECONDS)
         //
         assertThat(duration, `is`("5 minutes"))
     }

@@ -115,12 +115,15 @@ open class SummaryCalculator {
     }
 
     internal fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
-        val msPerMinute = 1000 * 60
-        val msPerHour = msPerMinute * 60
-        val msPerDay = msPerHour * 24
-        val days = ((endTimestamp - startTimestamp) / msPerDay).toInt()
-        val hours = (((endTimestamp - startTimestamp) - (days * msPerDay)) / msPerHour).toInt()
-        val minutes = (((endTimestamp - startTimestamp) - (days * msPerDay) - (hours * msPerHour)) / msPerMinute).toInt()
+        val msPerMinute = 1000L * 60L
+        val msPerHour = msPerMinute * 60L
+        val msPerDay = msPerHour * 24L
+        val msPerSecond = 1000L
+        val msDuration = endTimestamp - startTimestamp
+        val days = (msDuration / msPerDay).toInt()
+        val hours = ((msDuration - (days * msPerDay)) / msPerHour).toInt()
+        val minutes = ((msDuration - (days * msPerDay) - (hours * msPerHour)) / msPerMinute).toInt()
+        val seconds = ((msDuration - (days * msPerDay) - (hours * msPerHour) - (minutes * msPerMinute)) / msPerSecond).toInt()
         var duration: String
         if (days > 0) {
             duration = context.resources.getQuantityString(R.plurals.track_duration_days, days, days)
@@ -134,8 +137,11 @@ open class SummaryCalculator {
                 duration += " "
                 duration += context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
             }
-        } else {
+        } else if (minutes > 0) {
             duration = context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
+        }
+        else {
+            duration = context.resources.getQuantityString(R.plurals.track_duration_seconds, seconds, seconds)
         }
 
         return duration
