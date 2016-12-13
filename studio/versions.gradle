@@ -10,6 +10,7 @@ ext {
     playServicesVersion = '10.0.1'
     wearableVersion = '1.4.0'
     constraintsLibraryVersion = '1.0.0-beta4'
+    timberVersion = '4.1.2'
 
     // Testing
     junitVersion = '4.12'

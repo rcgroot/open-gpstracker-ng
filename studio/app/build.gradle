@@ -99,7 +99,6 @@ dependencies {
     compile project(':integration')
 //    wearApp project(':wear')
 
-    compile 'com.jakewharton.timber:timber:4.1.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
@@ -107,7 +106,11 @@ dependencies {
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
     compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
+    compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    compile 'com.google.firebase:firebase-crash:10.0.1'
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+
+    mockCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
 
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
@@ -119,6 +122,6 @@ dependencies {
     androidTestCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
-
-    mockCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
 }
+
+apply plugin: 'com.google.gms.google-services'
