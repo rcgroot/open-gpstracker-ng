@@ -61,13 +61,13 @@ class TrackListFragment : Fragment(), TracksPresenter.Listener {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         tracksPresenter.start(activity)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         tracksPresenter.stop()
     }
 

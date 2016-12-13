@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.tracks
 
 import android.databinding.DataBindingUtil
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 import android.support.v7.widget.RecyclerView
@@ -50,21 +51,31 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
 
     override fun didStart() {
         summaryManager.start()
-        val tracks = tracksUri().map(context!!, {
-            val id = it.getLong(ContentConstants.Tracks._ID)!!
-            val uri = trackUri(id)
-            val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
-            TrackViewModel(uri, name)
-        })
-        model.track.addAll(tracks)
+        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+            addTracksToModel()
+        }
     }
 
     override fun willStop() {
         summaryManager.stop()
     }
 
+    private fun addTracksToModel() {
+        val trackList = tracksUri().map(context!!, {
+            val id = it.getLong(ContentConstants.Tracks._ID)!!
+            val uri = trackUri(id)
+            val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
+            TrackViewModel(uri, name)
+        })
+        model.track.addAll(trackList)
+    }
+
     fun onTrackClick(viewModel: TrackViewModel) {
         listener?.onTrackSelected(viewModel.uri.get())
+    }
+
+    interface Listener {
+        fun onTrackSelected(uri: Uri)
     }
 
     inner class ViewAdapter : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
@@ -115,10 +126,6 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
                 }
             }
         }
-    }
-
-    interface Listener {
-        fun onTrackSelected(uri: Uri)
     }
 
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {

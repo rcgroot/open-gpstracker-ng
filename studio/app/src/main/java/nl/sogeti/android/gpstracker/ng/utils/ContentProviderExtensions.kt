@@ -102,6 +102,8 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
  * @param operation the operation to execute
  * @param projection optional projection
  * @param selection optional selection, query string with parameter arguments listed
+ *
+ * @return List of T consisting of operation results
  */
 fun <T> Uri.map(context: Context,
                 operation: (Cursor) -> T,
