@@ -69,6 +69,7 @@
     <string name="track_type_boat">on a boat</string>
     <string name="track_type_car">in a car</string>
     <string name="track_type_train">in a train</string>
+    <string name="initial_track_name">Unnamed track</string>
     <plurals name="track_duration_seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
