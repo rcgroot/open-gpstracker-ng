@@ -8,7 +8,6 @@ import android.view.ViewPropertyAnimator
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingAdapters
 import nl.sogeti.android.gpstracker.v2.R
-import timber.log.Timber
 
 class ControlBindingAdapters : CommonBindingAdapters() {
 
@@ -16,6 +15,7 @@ class ControlBindingAdapters : CommonBindingAdapters() {
     fun setState(container: ViewGroup, state: Int) {
         val left = container.getChildAt(0) as FloatingActionButton
         val right = container.getChildAt(1) as FloatingActionButton
+        cancelAnimations(left, right)
         if (state == STATE_STOPPED) {
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
             showOnlyRightButton(left, right)
@@ -34,54 +34,39 @@ class ControlBindingAdapters : CommonBindingAdapters() {
     }
 
     private fun showNoButtons(left: FloatingActionButton, right: FloatingActionButton) {
-        cancelAnimations(left, right)
-        if (left.isVisible) {
+        if (left.visible) {
             val leftAnimation = moveLeftUnderRight(left, right)
-            moveRightOutView(left, right).setDuration(leftAnimation.duration)
+            moveRightOutView(right).setDuration(leftAnimation.duration)
         }
         else {
-            moveRightOutView(left, right)
+            moveRightOutView(right)
         }
     }
 
     private fun showAllButtons(left: FloatingActionButton, right: FloatingActionButton) {
-        cancelAnimations(left, right)
-        if (right.isVisible && left.isInvisible) {
-            moveLeftToOriginalLocation(left, right)
+        if (right.visible && left.invisible) {
+            moveLeftToOriginalLocation(left)
         }
-        else if (right.isInvisible && left.isInvisible) {
+        else if (right.invisible && left.invisible) {
             val rightAnimation = moveRightInView(right)
-            moveLeftToOriginalLocation(left, right).setStartDelay(rightAnimation.duration)
-        }
-        else {
-            Timber.e("Unanticipated state left:${left.isVisible} right:${right.isVisible}")
+            moveLeftToOriginalLocation(left).setStartDelay(rightAnimation.duration)
         }
     }
 
     private fun showOnlyRightButton(left: FloatingActionButton, right: FloatingActionButton) {
-        cancelAnimations(left, right)
-        if (left.isVisible && right.isVisible) {
+        if (left.visible && right.visible) {
             moveLeftUnderRight(left, right)
         }
-        else if(left.isInvisible && right.isInvisible) {
+        else if(left.invisible) {
             moveRightInView(right)
         }
-        else {
-            Timber.e("Unanticipated state left:${left.isVisible} right:${right.isVisible}")
-        }
     }
-
-    private fun cancelAnimations(left: FloatingActionButton, right: FloatingActionButton) {
-        left.animation?.cancel()
-        right.animation?.cancel()
-    }
-
 
     /**
      * Pre-condition: Invisible Right
      * Post-condition: Visible Right
      */
-    private fun moveRightOutView(left: FloatingActionButton, right: FloatingActionButton): ViewPropertyAnimator {
+    private fun moveRightOutView(right: FloatingActionButton): ViewPropertyAnimator {
         right.pivotX = right.width / 2.0F
         right.pivotY = right.height / 2.0F
         val animation = right.animate().scaleX(0.000001F).scaleY(0.000001F).withEndAction { right.visibility = View.GONE }
@@ -108,7 +93,7 @@ class ControlBindingAdapters : CommonBindingAdapters() {
      * Pre-condition: Visible right over left
      * Post-condition: Visible left
      */
-    private fun moveLeftToOriginalLocation(left: FloatingActionButton, right: FloatingActionButton): ViewPropertyAnimator {
+    private fun moveLeftToOriginalLocation(left: FloatingActionButton): ViewPropertyAnimator {
         left.visibility = View.VISIBLE
         val animation = left.animate().translationX(0f)
 
@@ -126,14 +111,19 @@ class ControlBindingAdapters : CommonBindingAdapters() {
 
         return animation
     }
+
+    private fun cancelAnimations(left: FloatingActionButton, right: FloatingActionButton) {
+        left.clearAnimation()
+        right.clearAnimation()
+    }
 }
 
-private val View.isVisible: Boolean
+private val View.visible: Boolean
     get() {
         return this.visibility == View.VISIBLE
     }
 
-private val View.isInvisible: Boolean
+private val View.invisible: Boolean
     get() {
         return this.visibility != View.VISIBLE
     }
