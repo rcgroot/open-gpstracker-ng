@@ -35,13 +35,14 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
 
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
 
 class RecordingFragment : Fragment() {
 
-    val recordingViewModel: RecordingViewModel = RecordingViewModel()
+    val recordingViewModel: RecordingViewModel = RecordingViewModel(trackUri(-1))
     @VisibleForTesting
     var binding: FragmentRecordingBinding? = null
 

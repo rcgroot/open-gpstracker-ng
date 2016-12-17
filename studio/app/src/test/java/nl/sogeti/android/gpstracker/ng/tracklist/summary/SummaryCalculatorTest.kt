@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks.summary
+package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
 import android.content.Context
 import android.content.res.Resources
@@ -43,7 +43,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.util.*
 import java.util.Calendar.*
-
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -63,6 +62,7 @@ class SummaryCalculatorTest {
 
     @Before
     fun setup() {
+        // TODO Force the Locale so Date and Number format are always the same
         MockitoAnnotations.initMocks(this)
         `when`(context!!.getString(R.string.format_meters)).thenReturn("%.1f M")
         `when`(context!!.getString(R.string.format_100_meters)).thenReturn("%.0f M")

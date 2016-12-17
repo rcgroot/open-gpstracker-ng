@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks.summary
+package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng

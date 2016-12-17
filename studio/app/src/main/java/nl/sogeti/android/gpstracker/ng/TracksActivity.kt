@@ -37,7 +37,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import nl.sogeti.android.gpstracker.integration.ContentConstants
-import nl.sogeti.android.gpstracker.ng.tracks.TrackListFragment
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment
 import nl.sogeti.android.gpstracker.v2.R
 
 class TracksActivity : AppCompatActivity(), TrackListFragment.Listener {

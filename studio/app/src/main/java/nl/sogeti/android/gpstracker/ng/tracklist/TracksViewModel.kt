@@ -26,29 +26,11 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks
+package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.databinding.ObservableField
-import android.databinding.ObservableInt
-import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.PolylineOptions
-import nl.sogeti.android.gpstracker.v2.R
+import android.databinding.ObservableArrayList
 
-class TrackViewModel(uri: Uri) {
 
-    constructor(uri: Uri, name: String) : this(uri) {
-        this.name.set(name)
-    }
-
-    val uri = ObservableField<Uri>(uri)
-    val name = ObservableField<String>()
-    val iconType = ObservableInt(R.drawable.ic_track_type_default)
-    val startDay = ObservableField<String>("--")
-    val duration = ObservableField<String>("--")
-    val distance = ObservableField<String>("--")
-    val completeBounds = ObservableField<LatLngBounds?>()
-    val waypoints = ObservableField<List<List<LatLng>>>(listOf())
-    var polylines = listOf<PolylineOptions>()
+class TracksViewModel {
+    val track = ObservableArrayList<TrackViewModel>()
 }

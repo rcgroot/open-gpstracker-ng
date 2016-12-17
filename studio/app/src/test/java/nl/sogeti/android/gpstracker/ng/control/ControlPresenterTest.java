@@ -28,6 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.control;
 
+import android.content.Context;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,11 +53,14 @@ public class ControlPresenterTest {
     LoggerViewModel mockLogger;
     @Mock
     ServiceManager mockServiceManager;
+    @Mock
+    Context mockContext;
     private ControlPresenter sut;
 
     @Before
     public void setup() {
         sut = new ControlPresenter(mockLogger);
+        sut.setContext(mockContext);
         sut.setServiceManager(mockServiceManager);
     }
 
@@ -92,7 +97,7 @@ public class ControlPresenterTest {
         sut.onClickLeft();
 
         // Verify
-        verify(mockServiceManager).stopGPSLogging(null);
+        verify(mockServiceManager).stopGPSLogging(mockContext);
     }
 
     @Test
@@ -104,7 +109,7 @@ public class ControlPresenterTest {
         sut.onClickLeft();
 
         // Verify
-        verify(mockServiceManager).stopGPSLogging(null);
+        verify(mockServiceManager).stopGPSLogging(mockContext);
     }
 
     @Test
@@ -128,7 +133,7 @@ public class ControlPresenterTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockServiceManager).startGPSLogging(null, "New NG track!");
+        verify(mockServiceManager).startGPSLogging(mockContext, null);
     }
 
     @Test
@@ -140,7 +145,7 @@ public class ControlPresenterTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockServiceManager).pauseGPSLogging(null);
+        verify(mockServiceManager).pauseGPSLogging(mockContext);
     }
 
     @Test
@@ -152,6 +157,6 @@ public class ControlPresenterTest {
         sut.onClickRight();
 
         // Verify
-        verify(mockServiceManager).resumeGPSLogging(null);
+        verify(mockServiceManager).resumeGPSLogging(mockContext);
     }
 }

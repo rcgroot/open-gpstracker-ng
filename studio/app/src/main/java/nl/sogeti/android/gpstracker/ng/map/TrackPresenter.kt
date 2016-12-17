@@ -28,32 +28,36 @@
  */
 package nl.sogeti.android.gpstracker.ng.map
 
-import android.databinding.ObservableField
 import android.net.Uri
 import android.os.AsyncTask
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
-import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
-import java.util.*
 
-class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPresenter(), OnMapReadyCallback {
+class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
+
     private var isReading: Boolean = false
+    private var contentController: ContentController? = null
 
     override fun didStart() {
         super.didStart()
+        contentController = ContentController(context!!, viewModel.trackUri, this)
         val trackUri = viewModel.trackUri.get()
         if (trackUri != null) {
             TrackReader(trackUri, viewModel).execute()
         }
+    }
+
+    override fun willStop() {
+        super.willStop()
+        contentController?.destroy()
     }
 
     /* Service connecting */
@@ -71,18 +75,13 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
 
     /* Content watching */
 
-    override fun getTrackUriField(): ObservableField<Uri?> {
-        return viewModel.trackUri
-    }
-
     override fun onChangeUriField(uri: Uri) {
         TrackReader(uri, viewModel).execute()
     }
 
-    override fun onChangeUriContent(uri: Uri){
-        val isCurrentTrack = uri == viewModel.trackUri.get()
-        if (!isReading && isCurrentTrack) {
-            TrackReader(uri, viewModel).execute()
+    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
+        if (!isReading) {
+            TrackReader(contentUri, viewModel).execute()
         }
     }
 
@@ -102,7 +101,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : TrackObservingPres
     }
 
     inner class TrackReader internal constructor(private val trackUri: Uri, private val viewModel: TrackViewModel)
-    : AsyncTask<Void, Void, Void>() {
+        : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()
 

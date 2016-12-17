@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,43 +26,15 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.map;
+package nl.sogeti.android.gpstracker.ng.recording
 
-import android.content.Context;
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableField
+import android.net.Uri
 
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
-public class TrackViewModelTest {
-
-    @Mock
-    Context context;
-
-    private TrackViewModel sut;
-
-    @Before
-    public void setup() {
-        sut = new TrackViewModel(null);
-    }
-
-    @Test
-    public void testInit() {
-        // Verify
-        Assert.assertEquals("", sut.getName().get());
-    }
-
-    @Test
-    public void testName() {
-        // Execute
-        sut.getName().set("Test");
-
-        // Verify
-        Assert.assertEquals("Test", sut.getName().get());
-    }
+class RecordingViewModel(uri: Uri) {
+    val isRecording = ObservableBoolean(false)
+    val summary = ObservableField<String>("")
+    val name = ObservableField<String>("")
+    val trackUri = ObservableField<Uri>(uri)
 }

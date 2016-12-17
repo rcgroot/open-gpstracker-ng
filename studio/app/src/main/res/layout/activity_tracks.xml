@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/fragment_tracklist"
-        android:name="nl.sogeti.android.gpstracker.ng.tracks.TrackListFragment"
+        android:name="nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

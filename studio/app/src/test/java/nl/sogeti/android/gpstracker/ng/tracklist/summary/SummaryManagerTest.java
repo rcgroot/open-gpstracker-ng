@@ -1,11 +1,7 @@
-package nl.sogeti.android.gpstracker.ng.tracks.summary;
+package nl.sogeti.android.gpstracker.ng.tracklist.summary;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.SystemClock;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.hamcrest.Matchers;
 import org.junit.After;

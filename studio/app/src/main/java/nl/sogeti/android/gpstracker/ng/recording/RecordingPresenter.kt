@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.recording
 
-import android.databinding.ObservableField
 import android.location.Location
 import android.net.Uri
 import android.os.AsyncTask
@@ -36,15 +35,27 @@ import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.TrackObservingPresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.v2.R
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : TrackObservingPresenter() {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.ContentListener {
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
+
     private var isReading: Boolean = false
+    private var contentController: ContentController? = null
+    override fun didStart() {
+        super.didStart()
+        contentController = ContentController(context!!, viewModel.trackUri, this)
+    }
+
+    override fun willStop() {
+        super.willStop()
+        contentController?.destroy()
+    }
 
     /* Service connecting */
 
@@ -61,17 +72,13 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     /* Content watching */
 
-    override fun getTrackUriField(): ObservableField<Uri?> {
-        return viewModel.uri
-    }
-
     override fun onChangeUriField(uri: Uri) {
         TrackReader(uri, viewModel).execute()
     }
 
-    override fun onChangeUriContent(uri: Uri){
+    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
         if (!isReading) {
-            TrackReader(uri, viewModel).execute()
+            TrackReader(contentUri, viewModel).execute()
         }
     }
 
@@ -80,12 +87,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     private fun updateRecording(trackUri: Uri, loggingState: Int) {
         val isRecording = (loggingState == ServiceConstants.STATE_LOGGING) || (loggingState == ServiceConstants.STATE_PAUSED)
         viewModel.isRecording.set(isRecording)
-        if (trackUri.lastPathSegment.toLong() > 0) {
-            viewModel.uri.set(trackUri)
-        }
-        else {
-            viewModel.uri.set(null)
-        }
+        viewModel.trackUri.set(trackUri)
     }
 
     private inner class TrackReader internal constructor(internal val trackUri: Uri, internal val viewModel: RecordingViewModel) : AsyncTask<Void, Void, List<LatLng>>(), ResultHandler {
@@ -95,7 +97,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
         override fun addTrack(name: String) {
             viewModel.name.set(name)
-            viewModel.uri.set(trackUri)
         }
 
         @SuppressWarnings("EmptyMethod")

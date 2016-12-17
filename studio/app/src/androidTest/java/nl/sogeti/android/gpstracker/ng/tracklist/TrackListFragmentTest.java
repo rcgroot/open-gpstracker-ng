@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.tracks;
+package nl.sogeti.android.gpstracker.ng.tracklist;
 
 import android.net.Uri;
 import android.support.test.runner.AndroidJUnit4;

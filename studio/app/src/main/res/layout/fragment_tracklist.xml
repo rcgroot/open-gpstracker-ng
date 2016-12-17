@@ -5,7 +5,7 @@
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.ng.tracks.TracksViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksViewModel" />
     </data>
 
     <android.support.v7.widget.RecyclerView

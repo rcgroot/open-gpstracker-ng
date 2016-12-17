@@ -26,9 +26,10 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracks
+package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.DataBindingUtil
+import android.databinding.ObservableField
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Handler
@@ -39,17 +40,21 @@ import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
-import nl.sogeti.android.gpstracker.ng.tracks.summary.summaryManager
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
-class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
+class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), ContentController.ContentListener {
+
     var listener: Listener? = null
     val viewAdapter = ViewAdapter()
+    private var contentController: ContentController? = null
 
     override fun didStart() {
+        contentController = ContentController(context!!, ObservableField(tracksUri()), this)
         summaryManager.start()
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
             addTracksToModel()
@@ -60,6 +65,18 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
         summaryManager.stop()
     }
 
+    /* Content watching */
+
+    override fun onChangeUriField(uri: Uri) {
+        addTracksToModel()
+    }
+
+    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
+        addTracksToModel()
+    }
+
+    /* Content retrieval */
+
     private fun addTracksToModel() {
         val trackList = tracksUri().map(context!!, {
             val id = it.getLong(ContentConstants.Tracks._ID)!!
@@ -67,6 +84,7 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter() {
             val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
             TrackViewModel(uri, name)
         })
+        model.track.clear()
         model.track.addAll(trackList)
     }
 
