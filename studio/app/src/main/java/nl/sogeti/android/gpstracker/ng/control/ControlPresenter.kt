@@ -30,15 +30,12 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.content.Context
 import android.net.Uri
-
+import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_STOPPED
+import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
-import nl.sogeti.android.gpstracker.ng.utils.traverseTrack
+import nl.sogeti.android.gpstracker.ng.utils.waypointsUri
 import nl.sogeti.android.gpstracker.v2.R
 
 class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServicePresenter() {
@@ -91,7 +88,14 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
     }
 
     private fun deleteEmptyTrack(context: Context, trackId: Long) {
-        val trackUri = trackUri(trackId)
-//TODO        trackUri.traverseTrack(context, {result, wp1, wp2 -> true})
+        if (trackId <= 0) {
+            return
+        }
+
+        val waypointsUri = waypointsUri(trackId)
+        val firstWaypointId = waypointsUri.apply(context, { it.getLong(0) }) ?: -1L
+        if (firstWaypointId != -1L) {
+            context.contentResolver.delete(trackUri(trackId), null, null)
+        }
     }
 }
