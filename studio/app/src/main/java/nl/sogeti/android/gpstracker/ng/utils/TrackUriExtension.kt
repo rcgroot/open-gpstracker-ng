@@ -119,6 +119,22 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
 }
 
 /**
+ * @param trackId
+ * @param segmentId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
+ */
+fun waypointsUri(trackId: Long): Uri {
+    val waypointsUri = Uri.Builder()
+            .scheme("content")
+            .authority(Injection.CONFIG_AUTHORITY)
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .build()
+    return waypointsUri
+}
+
+/**
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/metadata
  */
 fun metaDataUri(): Uri {
@@ -217,6 +233,7 @@ fun <T> Uri.traverseTrack(context: Context,
 
     return result
 }
+
 
 private fun buildWaypoint(cursor: Cursor): Waypoint {
     return Waypoint(id = cursor.getLong(_ID) ?: -1,

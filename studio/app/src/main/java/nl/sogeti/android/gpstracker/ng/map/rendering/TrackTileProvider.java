@@ -91,7 +91,6 @@ public class TrackTileProvider implements TileProvider {
 
     @Override
     public Tile getTile(int x, int y, int zoom) {
-        Timber.d("thread %d public Tile getTile(int %d, int %d, int %d) ", Thread.currentThread().getId(), x, y, zoom);
         Bitmap bitmap = Bitmap.createBitmap((int) tileSize,
                 (int) tileSize, android.graphics.Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

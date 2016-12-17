@@ -103,7 +103,7 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
  * @param projection optional projection
  * @param selection optional selection, query string with parameter arguments listed
  *
- * @return List of T consisting of operation results
+ * @return List of T consisting of operation results, empty when there are no rows
  */
 fun <T> Uri.map(context: Context,
                 operation: (Cursor) -> T,
@@ -127,9 +127,11 @@ fun <T> Uri.map(context: Context,
  * @param operation the operation to execute
  * @param projection optional projection
  * @param selectionPair optional selection
+ *
+ * @return Null or T when the operation was applied to the first row of the cursor
  */
 fun <T> Uri.apply(context: Context,
-                  operation: (Cursor) -> T,
+                  operation: (Cursor) -> T?,
                   projection: List<String>? = null,
                   selectionPair: Pair <String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
