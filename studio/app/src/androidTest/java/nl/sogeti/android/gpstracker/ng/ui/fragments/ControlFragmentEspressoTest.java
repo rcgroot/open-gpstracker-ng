@@ -91,6 +91,7 @@ public class ControlFragmentEspressoTest {
     @Test
     public void testStartUp() {
         // Verify
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
@@ -137,6 +138,7 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.stopGPSLogging(sut.getActivity());
         // Verify
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
