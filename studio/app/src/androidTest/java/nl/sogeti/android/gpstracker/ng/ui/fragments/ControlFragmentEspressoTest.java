@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -49,7 +50,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static nl.sogeti.android.gpstracker.ng.util.BindingUtilKt.executePendingBindings;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
@@ -83,7 +83,7 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.getBroadcaster().broadcastLoggingState(context, -123, null, 0);
         // Verify
-        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(not(isDisplayed())));
     }
@@ -101,7 +101,7 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
         // Verify
-        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -113,7 +113,7 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.pauseGPSLogging(sut.getActivity());
         // Verify
-        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -125,7 +125,7 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.resumeGPSLogging(sut.getActivity());
         // Verify
-        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
+        SystemClock.sleep(1000);
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_left)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_stop_black_24dp)));
@@ -137,7 +137,6 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.stopGPSLogging(sut.getActivity());
         // Verify
-        executePendingBindings(sut.getBinding(), MockBroadcastSender.Espresso.getResource());
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));

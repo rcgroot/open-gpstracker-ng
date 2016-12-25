@@ -32,5 +32,5 @@ import android.databinding.ObservableArrayList
 
 
 class TracksViewModel {
-    val track = ObservableArrayList<TrackViewModel>()
+    val tracks = ObservableArrayList<TrackViewModel>()
 }

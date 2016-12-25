@@ -65,8 +65,4 @@ class RecordingFragment : Fragment() {
         super.onPause()
         recordingPresenter.stop()
     }
-
-    fun executePendingBindings() {
-        binding?.executePendingBindings()
-    }
 }

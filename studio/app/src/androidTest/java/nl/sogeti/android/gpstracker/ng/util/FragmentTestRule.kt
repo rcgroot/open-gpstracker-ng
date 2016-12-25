@@ -21,8 +21,7 @@ class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean
         activity.runOnUiThread({
             if (fragment is DialogFragment) {
                 fragment.show(activity.supportFragmentManager, "DialogTAG")
-            }
-            else {
+            } else {
                 activity.supportFragmentManager
                         .beginTransaction()
                         .replace(android.R.id.content, fragment)

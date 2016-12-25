@@ -8,8 +8,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="presenter"
-            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksPresenter" />
+            name="adapter"
+            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksViewAdapter" />
 
         <variable
             name="viewModel"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="8dp"
-        android:onClick="@{() -> presenter.onTrackClick(viewModel)}"
+        android:onClick="@{() -> adapter.didSelectTrack(viewModel)}"
         card_view:cardBackgroundColor="@color/primary_light"
         card_view:cardCornerRadius="4dp">
 

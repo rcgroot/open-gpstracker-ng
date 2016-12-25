@@ -40,11 +40,13 @@ import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import java.lang.ref.WeakReference
 
 class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
 
     private var isReading: Boolean = false
     private var contentController: ContentController? = null
+    private var weakGoogleMap = WeakReference<GoogleMap?>(null)
 
     override fun didStart() {
         super.didStart()
@@ -53,6 +55,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePr
         if (trackUri != null) {
             TrackReader(trackUri, viewModel).execute()
         }
+        addTilesToMap()
     }
 
     override fun willStop() {
@@ -88,8 +91,17 @@ class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePr
     /* Google Map Tiles */
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val tileProvider = TrackTileProvider(context, viewModel.waypoints)
-        tileProvider.provideFor(googleMap)
+        weakGoogleMap = WeakReference(googleMap)
+        addTilesToMap()
+    }
+
+    private fun addTilesToMap() {
+        val googleMap = weakGoogleMap.get()
+        val context = this.context
+        if (googleMap != null && context != null) {
+            val tileProvider = TrackTileProvider(context, viewModel.waypoints)
+            tileProvider.provideFor(googleMap)
+        }
     }
 
     /* Private */

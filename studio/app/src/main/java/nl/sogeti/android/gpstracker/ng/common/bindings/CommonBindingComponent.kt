@@ -31,12 +31,14 @@ package nl.sogeti.android.gpstracker.ng.common.bindings
 import android.databinding.DataBindingComponent
 import nl.sogeti.android.gpstracker.ng.control.ControlBindingAdapters
 import nl.sogeti.android.gpstracker.ng.recording.RecordingBindingAdapters
+import nl.sogeti.android.gpstracker.ng.tracklist.TracksBindingAdapters
 
 class CommonBindingComponent : DataBindingComponent {
 
     private val trackAdapters = CommonBindingAdapters()
     private val recordingAdapters = RecordingBindingAdapters()
     private val controlAdapters = ControlBindingAdapters()
+    private val tracksAdapters = TracksBindingAdapters()
 
     override fun getRecordingBindingAdapters(): RecordingBindingAdapters {
         return recordingAdapters
@@ -48,5 +50,9 @@ class CommonBindingComponent : DataBindingComponent {
 
     override fun getControlBindingAdapters(): ControlBindingAdapters {
         return controlAdapters
+    }
+
+    override fun getTracksBindingAdapters(): TracksBindingAdapters {
+        return tracksAdapters
     }
 }

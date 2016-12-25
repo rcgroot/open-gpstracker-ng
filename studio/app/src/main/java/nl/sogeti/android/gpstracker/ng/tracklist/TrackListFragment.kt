@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -42,40 +41,43 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 /**
  * Sets up display and selection of tracks in a list style
  */
-class TrackListFragment : Fragment(), TracksPresenter.Listener {
-    val viewModel: TracksViewModel = TracksViewModel()
-    val tracksPresenter: TracksPresenter = TracksPresenter(viewModel)
-    var listener: Listener? = null
+class TrackListFragment : Fragment() {
+    var tracksPresenter: TracksPresenter? = null
+    var listener: TracksPresenter.Listener? = null
+        set(value) {
+            field = value
+            tracksPresenter?.listener = listener
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tracksPresenter.listener = this
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.listview.adapter = tracksPresenter.viewAdapter
+        val viewModel = TracksViewModel()
+        val tracksPresenter = TracksPresenter(viewModel)
+        tracksPresenter.listener = listener
+        this.tracksPresenter = tracksPresenter
         binding.listview.layoutManager = LinearLayoutManager(activity)
         binding.viewModel = viewModel
+        binding.presenter = tracksPresenter
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        tracksPresenter.start(activity)
+        tracksPresenter?.start(activity)
     }
 
     override fun onStop() {
         super.onStop()
-        tracksPresenter.stop()
+        tracksPresenter?.stop()
     }
 
-    override fun onTrackSelected(uri: Uri) {
-        listener?.onTrackSelected(uri)
-    }
-
-    interface Listener {
-        fun onTrackSelected(uri: Uri)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        this.tracksPresenter = null
     }
 }

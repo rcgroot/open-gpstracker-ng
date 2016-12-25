@@ -1,6 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.tracklist;
 
 import android.net.Uri;
+import android.os.SystemClock;
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
@@ -34,16 +35,6 @@ public class TrackListFragmentTest {
 
         // Verify
         Assert.assertNotNull(sut.getTracksPresenter().getContext());
-    }
-
-    @Test
-    public void testPauseStopsPresenter() {
-        // Execute
-        wrapperFragment.launchFragment(null);
-        wrapperFragment.finishFragment();
-
-        // Verify
-        Assert.assertNull(sut.getTracksPresenter().getContext());
     }
 
     @Test

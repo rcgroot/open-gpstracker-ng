@@ -38,9 +38,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment
+import nl.sogeti.android.gpstracker.ng.tracklist.TracksPresenter
 import nl.sogeti.android.gpstracker.v2.R
 
-class TracksActivity : AppCompatActivity(), TrackListFragment.Listener {
+class TracksActivity : AppCompatActivity(), TracksPresenter.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracks)

@@ -28,40 +28,29 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.databinding.DataBindingUtil
 import android.databinding.ObservableField
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Handler
-import android.os.Looper
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
-import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
+import timber.log.Timber
 
-class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), ContentController.ContentListener {
-
+class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), ContentController.ContentListener, TrackListListener {
     var listener: Listener? = null
-    val viewAdapter = ViewAdapter()
     private var contentController: ContentController? = null
 
     override fun didStart() {
         contentController = ContentController(context!!, ObservableField(tracksUri()), this)
         summaryManager.start()
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
-            addTracksToModel()
-        }
+        addTracksToModel()
     }
 
     override fun willStop() {
+        contentController?.destroy()
         summaryManager.stop()
     }
 
@@ -78,83 +67,51 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), Conten
     /* Content retrieval */
 
     private fun addTracksToModel() {
-        val trackList = tracksUri().map(context!!, {
-            val id = it.getLong(ContentConstants.Tracks._ID)!!
-            val uri = trackUri(id)
-            val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
-            TrackViewModel(uri, name)
-        })
-        model.track.clear()
-        model.track.addAll(trackList)
+        val context = this.context
+        if (context != null) {
+            AsyncTask.THREAD_POOL_EXECUTOR.execute {
+                val trackList = tracksUri().map(context, {
+                    val id = it.getLong(ContentConstants.Tracks._ID)!!
+                    val uri = trackUri(id)
+                    val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
+                    TrackViewModel(uri, name)
+                })
+                model.tracks.clear()
+                model.tracks.addAll(trackList)
+            }
+        } else {
+            Timber.w("Unexpected tracks update when context is gone")
+        }
     }
 
-    fun onTrackClick(viewModel: TrackViewModel) {
-        listener?.onTrackSelected(viewModel.uri.get())
+    /* Adapter callbacks */
+
+    override fun willDisplayTrack(track: TrackViewModel, completion: () -> Unit) {
+        context?.let {
+            summaryManager.collectSummaryInfo(it, track.uri.get(), {
+                if (it.track == track.uri.get()) {
+                    track.name.set(it.name)
+                    track.distance.set(it.distance)
+                    track.duration.set(it.duration)
+                    track.iconType.set(it.type)
+                    track.startDay.set(it.start)
+                    track.completeBounds.set(it.bounds)
+                    track.waypoints.set(it.waypoints)
+                    val trackPolylineProvider = TrackPolylineProvider(track.waypoints.get())
+                    trackPolylineProvider.drawPolylines()
+                    track.polylines = trackPolylineProvider.lineOptions
+                    executeOnUiThread(completion)
+                }
+            })
+        }
+    }
+
+    override fun didSelectTrack(track: TrackViewModel) {
+        listener?.onTrackSelected(track.uri.get())
     }
 
     interface Listener {
         fun onTrackSelected(uri: Uri)
-    }
-
-    inner class ViewAdapter : RecyclerView.Adapter<TracksPresenter.ViewHolder>() {
-
-        override fun getItemCount(): Int {
-            return model.track.size
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-            val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
-            val holder = ViewHolder(binding)
-            // Weirdly enough the 'clickable="false"' in the XML resource doesn't work
-            holder.binding.rowTrackMap.isClickable = false
-            holder.binding.rowTrackMap.onCreate(null)
-            return holder
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-            val trackViewModel = model.track[position]
-            if (holder != null) {
-                holder.binding.presenter = this@TracksPresenter
-                holder.binding.viewModel = trackViewModel
-                if (holder.googleMap == null) {
-                    holder.binding.rowTrackMap.getMapAsync {
-                        it.uiSettings.isMapToolbarEnabled = false
-                        holder.googleMap = it
-                        holder.addLinesToMap()
-                    }
-                } else {
-                    holder.addLinesToMap()
-                }
-                context?.let {
-                    summaryManager.collectSummaryInfo(it, trackViewModel.uri.get(), {
-                        if (it.track == trackViewModel.uri.get()) {
-                            trackViewModel.name.set(it.name)
-                            trackViewModel.distance.set(it.distance)
-                            trackViewModel.duration.set(it.duration)
-                            trackViewModel.iconType.set(it.type)
-                            trackViewModel.startDay.set(it.start)
-                            trackViewModel.completeBounds.set(it.bounds)
-                            trackViewModel.waypoints.set(it.waypoints)
-                            val trackPolylineProvider = TrackPolylineProvider(trackViewModel.waypoints.get())
-                            trackPolylineProvider.drawPolylines()
-                            trackViewModel.polylines = trackPolylineProvider.lineOptions
-                            Handler(Looper.getMainLooper()).post { holder.addLinesToMap() }
-                        }
-                    })
-                }
-            }
-        }
-    }
-
-    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {
-        var googleMap: GoogleMap? = null
-
-        fun addLinesToMap() {
-            googleMap?.clear()
-            binding.viewModel.polylines.map {
-                googleMap?.addPolyline(it)
-            }
-        }
     }
 }
 
