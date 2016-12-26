@@ -90,7 +90,8 @@ public class TrackMapActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_edit).setEnabled(selectedTrack.getTrackUri().get() != null);
+        final Uri track = selectedTrack.getTrackUri().get();
+        menu.findItem(R.id.action_edit).setEnabled(track != null && !track.getLastPathSegment().equals("-1"));
 
         return true;
     }

@@ -94,7 +94,7 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
 
         val waypointsUri = waypointsUri(trackId)
         val firstWaypointId = waypointsUri.apply(context, { it.getLong(0) }) ?: -1L
-        if (firstWaypointId != -1L) {
+        if (firstWaypointId == -1L) {
             context.contentResolver.delete(trackUri(trackId), null, null)
         }
     }

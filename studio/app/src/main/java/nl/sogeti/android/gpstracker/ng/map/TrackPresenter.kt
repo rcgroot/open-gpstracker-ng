@@ -52,7 +52,7 @@ class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePr
         super.didStart()
         contentController = ContentController(context!!, viewModel.trackUri, this)
         val trackUri = viewModel.trackUri.get()
-        if (trackUri != null) {
+        if (trackUri != null && trackUri.lastPathSegment != "-1") {
             TrackReader(trackUri, viewModel).execute()
         }
         addTilesToMap()

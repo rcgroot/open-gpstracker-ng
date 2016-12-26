@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.trackedit
 
-import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +37,7 @@ import android.widget.AdapterView.INVALID_POSITION
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions.Companion.loadTrackTypeFromContext
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 
@@ -99,6 +99,7 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
     fun ok() {
         saveTrackName()
         saveTrackType()
+        summaryManager.summaryCache.remove(model.trackUri.get())
         listener.dismiss()
     }
 
