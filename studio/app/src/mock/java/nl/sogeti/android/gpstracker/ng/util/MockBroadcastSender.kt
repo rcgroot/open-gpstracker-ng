@@ -34,12 +34,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.support.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.ng.injection.Injection
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import javax.inject.Inject
+import javax.inject.Named
 
 class MockBroadcastSender {
 
-    val ACTION = Injection.CONFIG_BROADCAST
+    @Inject @Named("loggingStateFilter")
+    lateinit var loggingStateIntentFilter: IntentFilter
 
     fun sendStartedRecording(context: Context, trackId: Long) {
         broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)
@@ -59,10 +61,9 @@ class MockBroadcastSender {
 
     fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL) {
         resource.increment()
-        val filter = IntentFilter(Injection.CONFIG_BROADCAST)
-        filter.priority = -2000;
-        context.registerReceiver(receiver, filter)
-        val intent = Intent(ACTION)
+        loggingStateIntentFilter.priority = -2000;
+        context.registerReceiver(receiver, loggingStateIntentFilter)
+        val intent = Intent(loggingStateIntentFilter.getAction(0))
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_PRECISION, precision)
         trackId?.let { intent.putExtra(ServiceConstants.EXTRA_TRACK, trackUri(trackId)) }

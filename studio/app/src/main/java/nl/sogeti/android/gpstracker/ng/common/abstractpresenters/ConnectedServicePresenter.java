@@ -35,9 +35,12 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
-import nl.sogeti.android.gpstracker.ng.injection.Injection;
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 /**
@@ -46,20 +49,16 @@ import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
  */
 public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    private static final String CONFIG_BROADCAST = Injection.CONFIG_BROADCAST;
-    private static final Class serviceManagerClass = Injection.CONFIG_SERVICE;
+    @Inject @Named("loggingStateFilter")
+    public IntentFilter loggingStateIntentFilter;
 
-    private ServiceManagerInterface serviceManager;
+    @Inject
+    public ServiceManagerInterface serviceManager;
 
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver loggingStateReceiver;
+
     public ConnectedServicePresenter() {
-        try {
-            serviceManager = (ServiceManagerInterface) serviceManagerClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalStateException("Cannot start ControlPresenter without correct ServiceManagerInterface class ",e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Cannot start ControlPresenter without correct ServiceManagerInterface class",e);
-        }
+        GpsTrackerApplication.appComponent.inject(this);
     }
 
     @Override
@@ -86,31 +85,22 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
     private void unregisterReceiver() {
         Context context = getContext();
-        if (context != null && receiver != null) {
-            context.unregisterReceiver(receiver);
-            receiver = null;
+        if (context != null && loggingStateReceiver != null) {
+            context.unregisterReceiver(loggingStateReceiver);
+            loggingStateReceiver = null;
         }
-    }
-
-    public ServiceManagerInterface getServiceManager() {
-        return serviceManager;
     }
 
     public void setServiceManager(ServiceManagerInterface serviceManager) {
         this.serviceManager = serviceManager;
     }
 
-    public void setReceiver(BroadcastReceiver receiver) {
-        this.receiver = receiver;
-    }
-
     private void registerReceiver() {
         unregisterReceiver();
-        receiver = new LoggerStateReceiver();
-        IntentFilter filter = new IntentFilter(CONFIG_BROADCAST);
+        loggingStateReceiver = new LoggerStateReceiver();
         Context context = getContext();
         if (context != null) {
-            context.registerReceiver(receiver, filter);
+            context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
         }
     }
 

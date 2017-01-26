@@ -5,17 +5,19 @@ import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.eq
 import org.mockito.Mockito.verify
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnit
 
-@RunWith(MockitoJUnitRunner::class)
 class ConnectedServicePresenterTest {
+
+    @Rule
+    var rule = MockitoJUnit.rule()
 
     @Mock
     var mockServiceManager: ServiceManager? = null

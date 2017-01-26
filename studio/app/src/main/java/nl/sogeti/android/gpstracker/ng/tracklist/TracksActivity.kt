@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng
+package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.app.Activity
 import android.content.Intent
@@ -37,8 +37,6 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import nl.sogeti.android.gpstracker.integration.ContentConstants
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment
-import nl.sogeti.android.gpstracker.ng.tracklist.TracksPresenter
 import nl.sogeti.android.gpstracker.v2.R
 
 class TracksActivity : AppCompatActivity(), TracksPresenter.Listener {

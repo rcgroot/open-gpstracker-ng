@@ -26,15 +26,10 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils
+package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.os.Handler
-import android.os.Looper
+import dagger.Component
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 
-fun executeOnUiThread(item: () -> Unit) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-        item()
-    } else {
-        Handler(Looper.getMainLooper()).post(item)
-    }
-}
+@Component(modules = arrayOf(MockIntegrationModule::class))
+interface MockAppComponent : AppComponent

@@ -43,7 +43,6 @@ import java.util.*
 
 class MockTracksProvider : ContentProvider() {
     override fun onCreate(): Boolean {
-        loadFiveRecentWaypoints(1)
         return true
     }
 
@@ -72,18 +71,22 @@ class MockTracksProvider : ContentProvider() {
         return 0
     }
 
-    fun loadFiveRecentWaypoints(trackId: Long) {
-        globalState.uriMap[tracksUri()] = createTracksCursor(listOf(trackId))
+    fun loadFiveRecentWaypoints(trackId: Long): MutableMap<Uri, MatrixCursor> {
+        val uriMap = mutableMapOf<Uri, MatrixCursor>();
+
+        uriMap[tracksUri()] = createTracksCursor(listOf(trackId))
         val trackUri = trackUri(trackId)
         val segmentsUri = segmentsUri(trackId)
-        globalState.uriMap[trackUri] = createTrackCursor(trackId)
+        uriMap[trackUri] = createTrackCursor(trackId)
         val segmentIds = listOf(trackId * 10 + 1L)
-        globalState.uriMap[segmentsUri] = createSegmentsCursor(trackId, segmentIds)
+        uriMap[segmentsUri] = createSegmentsCursor(trackId, segmentIds)
         for (segmentId in segmentIds) {
             val waypointsUri = waypointsUri(trackId, segmentId)
             val waypointIds = listOf(segmentId * 10 + 1L, segmentId * 10 + 2L, segmentId * 10 + 3L, segmentId * 10 + 4L)
-            globalState.uriMap[waypointsUri] = createWaypointsCursor(segmentId, waypointIds)
+            uriMap[waypointsUri] = createWaypointsCursor(segmentId, waypointIds)
         }
+
+        return uriMap
     }
 
     private fun createTracksCursor(trackIds: List<Long>): MatrixCursor {
@@ -126,7 +129,7 @@ class MockTracksProvider : ContentProvider() {
     }
 
     companion object globalState {
-        val uriMap = mutableMapOf<Uri, MatrixCursor>()
+        val uriMap by lazy { MockTracksProvider().loadFiveRecentWaypoints(1) }
         // Some random picked points in Amsterdam, NL
         val gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
     }

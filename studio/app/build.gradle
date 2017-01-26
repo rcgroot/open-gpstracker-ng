@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
 
 junitJacoco {
-    jacocoVersion = '0.7.7.201606060606'
+    jacocoVersion = jacocoVersion
 }
 
 android {
@@ -44,16 +44,10 @@ android {
     }
 
     productFlavors {
+        live {
+        }
         mock {
             applicationIdSuffix = ".mock"
-        }
-        prod {
-        }
-    }
-
-    android.variantFilter { variant ->
-        if (variant.buildType.name.equals('release') && variant.getFlavors().get(0).name.equals('mock')) {
-            variant.setIgnore(true);
         }
     }
 
@@ -108,7 +102,9 @@ dependencies {
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
     compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
     compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
 
     mockCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
 

@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="nl.sogeti.android.gpstracker.ng.common.GpsTackerApplication"
+        android:name="nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_scheme"
         android:icon="@mipmap/ic_launcher"
@@ -20,7 +20,7 @@
             android:value="AIzaSyCFvI2hkcQYtbOkbN-C3WxN76UZPT_r49M" />
 
         <activity
-            android:name="nl.sogeti.android.gpstracker.ng.TrackMapActivity"
+            android:name="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -30,13 +30,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="nl.sogeti.android.gpstracker.ng.TracksActivity"
+            android:name="nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity"
             android:label="@string/title_activity_tracks"
-            android:parentActivityName="nl.sogeti.android.gpstracker.ng.TrackMapActivity"
+            android:parentActivityName="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nl.sogeti.android.gpstracker.ng.TrackMapActivity" />
+                android:value="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity" />
         </activity>
     </application>
 

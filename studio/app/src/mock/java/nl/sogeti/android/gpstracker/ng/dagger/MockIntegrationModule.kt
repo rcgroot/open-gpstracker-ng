@@ -26,15 +26,30 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils
+package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.os.Handler
-import android.os.Looper
+import android.content.IntentFilter
+import dagger.Module
+import dagger.Provides
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
+import javax.inject.Named
 
-fun executeOnUiThread(item: () -> Unit) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-        item()
-    } else {
-        Handler(Looper.getMainLooper()).post(item)
+@Module
+class MockIntegrationModule {
+
+    @Provides @Named("loggingStateFilter")
+    fun loggingStateIntentFilter(): IntentFilter {
+        return IntentFilter("nl.sogeti.android.gpstracker.ng.mock.broadcast")
+    }
+
+    @Provides
+    fun serviceManagerInterface(): ServiceManagerInterface {
+        return MockServiceManager()
+    }
+
+    @Provides @Named("providerAuthority")
+    fun providerAuthority() : String {
+        return "nl.sogeti.android.gpstracker.ng.mock.authority"
     }
 }

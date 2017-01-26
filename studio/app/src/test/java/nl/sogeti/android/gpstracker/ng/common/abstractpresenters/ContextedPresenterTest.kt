@@ -2,13 +2,15 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnit
 
-@RunWith(MockitoJUnitRunner::class)
 class ContextedPresenterTest {
+
+    @Rule
+    var rule = MockitoJUnit.rule()
 
     @Mock
     var mockContext: Context? = null

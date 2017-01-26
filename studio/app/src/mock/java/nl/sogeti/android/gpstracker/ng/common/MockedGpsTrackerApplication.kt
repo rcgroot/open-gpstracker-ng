@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
- ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ **    Author: René de Groot
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,15 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils
+package nl.sogeti.android.gpstracker.ng.common
 
-import android.os.Handler
-import android.os.Looper
+import nl.sogeti.android.gpstracker.ng.dagger.DaggerMockAppComponent
 
-fun executeOnUiThread(item: () -> Unit) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-        item()
-    } else {
-        Handler(Looper.getMainLooper()).post(item)
+class MockedGpsTrackerApplication : GpsTrackerApplication() {
+
+    override fun buildAppComponent() {
+        appComponent = DaggerMockAppComponent.builder().build()
     }
 }

@@ -11,8 +11,8 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$rootProject.gradlePluginVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.kotlinVersion"
-        classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.5.0'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath "com.vanniktech:gradle-android-junit-jacoco-plugin:$rootProject.jacocoPluginVersion"
+        classpath "com.google.gms:google-services:$rootProject.googleServicesVersion"
     }
 }
 

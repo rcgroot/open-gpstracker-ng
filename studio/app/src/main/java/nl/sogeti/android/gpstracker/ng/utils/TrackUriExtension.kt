@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.Segments.SEGMEN
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.integration.ContentConstants.WaypointsColumns.*
-import nl.sogeti.android.gpstracker.ng.injection.Injection
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import timber.log.Timber
 
 /**
@@ -48,7 +48,7 @@ import timber.log.Timber
 fun tracksUri(): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .build()
     return trackUri
@@ -62,7 +62,7 @@ fun tracksUri(): Uri {
 fun trackUri(id: Long): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(id.toString())
             .build()
@@ -75,7 +75,7 @@ fun trackUri(id: Long): Uri {
 fun segmentsUri(trackId: Long): Uri {
     val segmentUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .appendPath(ContentConstants.Segments.SEGMENTS)
@@ -91,7 +91,7 @@ fun segmentsUri(trackId: Long): Uri {
 fun segmentUri(trackId: Long, segmentId: Long): Uri {
     val segmentUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .appendPath(ContentConstants.Segments.SEGMENTS)
@@ -108,7 +108,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
     val segmentUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .appendPath(ContentConstants.Segments.SEGMENTS)
@@ -126,7 +126,7 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
 fun waypointsUri(trackId: Long): Uri {
     val waypointsUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .appendPath(ContentConstants.Waypoints.WAYPOINTS)
@@ -140,7 +140,7 @@ fun waypointsUri(trackId: Long): Uri {
 fun metaDataUri(): Uri {
     val metaDataUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.MetaData.METADATA)
             .build()
     return metaDataUri
@@ -153,7 +153,7 @@ fun metaDataUri(): Uri {
 fun metaDataTrackUri(id: Long): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
-            .authority(Injection.CONFIG_AUTHORITY)
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(id.toString())
             .appendPath(ContentConstants.MetaData.METADATA)
@@ -170,7 +170,7 @@ fun metaDataTrackUri(id: Long): Uri {
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
-    if (!Injection.CONFIG_AUTHORITY.equals(this.authority)) {
+    if (!GpsTrackerApplication.appComponent.providerAuthority().equals(this.authority)) {
         return
     }
 

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,15 +26,46 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils
+package nl.sogeti.android.gpstracker.ng.common;
 
-import android.os.Handler
-import android.os.Looper
+import junit.framework.Assert;
 
-fun executeOnUiThread(item: () -> Unit) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
-        item()
-    } else {
-        Handler(Looper.getMainLooper()).post(item)
+import org.junit.Before;
+import org.junit.Test;
+
+import timber.log.Timber;
+
+public class GpsTrackerApplicationTest {
+
+    private GpsTrackerApplication sut;
+
+    @Before
+    public void setup() {
+        sut = new GpsTrackerApplication();
+        Timber.uprootAll();
+    }
+
+    @Test
+    public void onCreateDebug() {
+        // Prepare
+        sut.setDebug(true);
+
+        // Execute
+        sut.onCreate();
+
+        // Verify
+        Assert.assertEquals(Timber.treeCount(), 1);
+    }
+
+    @Test
+    public void onCreateRelease() {
+        // Prepare
+        sut.setDebug(false);
+
+        // Execute
+        sut.onCreate();
+
+        // Verify
+        Assert.assertEquals(Timber.treeCount(), 0);
     }
 }

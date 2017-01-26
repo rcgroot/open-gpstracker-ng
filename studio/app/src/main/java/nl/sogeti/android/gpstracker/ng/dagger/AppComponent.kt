@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,46 +26,16 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.common;
+package nl.sogeti.android.gpstracker.ng.dagger
 
-import junit.framework.Assert;
+import dagger.Component
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import javax.inject.Named
 
-import org.junit.Before;
-import org.junit.Test;
+@Component(modules = arrayOf(IntegrationModule::class))
+interface AppComponent {
+    fun inject(injectable: ConnectedServicePresenter)
 
-import timber.log.Timber;
-
-public class GpsTackerApplicationTest {
-
-    private GpsTackerApplication sut;
-
-    @Before
-    public void setup() {
-        sut = new GpsTackerApplication();
-        Timber.uprootAll();
-    }
-
-    @Test
-    public void onCreateDebug() {
-        // Prepare
-        sut.setDebug(true);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 1);
-    }
-
-    @Test
-    public void onCreateRelease() {
-        // Prepare
-        sut.setDebug(false);
-
-        // Execute
-        sut.onCreate();
-
-        // Verify
-        Assert.assertEquals(Timber.treeCount(), 0);
-    }
+    @Named("providerAuthority")
+    fun providerAuthority() : String
 }

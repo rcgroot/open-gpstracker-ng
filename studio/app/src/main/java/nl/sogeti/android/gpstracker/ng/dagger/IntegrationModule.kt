@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ **    Author: rene
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,37 +26,30 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.app.Application
-import android.databinding.DataBindingUtil
-import android.os.StrictMode
-import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
-import nl.sogeti.android.gpstracker.v2.BuildConfig
-import timber.log.Timber
+import android.content.IntentFilter
+import dagger.Module
+import dagger.Provides
+import nl.sogeti.android.gpstracker.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import javax.inject.Named
 
-/**
- * Start app generic services
- */
-class GpsTackerApplication : Application() {
+@Module
+class IntegrationModule {
+    @Provides @Named("loggingStateFilter")
+    fun loggingStateIntentFilter(): IntentFilter {
+        return IntentFilter(ServiceConstants.ACTION_BROADCAST_LOGGING_STATE)
+    }
 
-    var debug = BuildConfig.DEBUG
+    @Provides
+    fun serviceManagerInterface(): ServiceManagerInterface {
+        return ServiceManager()
+    }
 
-    override fun onCreate() {
-        super.onCreate()
-
-        val bindingComponent = CommonBindingComponent()
-        DataBindingUtil.setDefaultComponent(bindingComponent)
-
-        if (debug) {
-            Timber.plant(Timber.DebugTree())
-            if (StrictMode.ThreadPolicy.Builder().build() != null) {
-                StrictMode.setThreadPolicy(
-                        StrictMode.ThreadPolicy.Builder()
-                                .detectAll()
-                                .penaltyLog()
-                                .build())
-            }
-        }
+    @Provides @Named("providerAuthority")
+    fun providerAuthority(): String {
+        return nl.sogeti.android.gpstracker.integration.ContentConstants.GPS_TRACKS_AUTHORITY
     }
 }
