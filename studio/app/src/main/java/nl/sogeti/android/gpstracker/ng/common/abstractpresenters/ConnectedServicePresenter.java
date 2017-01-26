@@ -69,7 +69,8 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
                 synchronized (ConnectedServicePresenter.this) {
                     Context context = ConnectedServicePresenter.this.getContext();
                     if (context != null) {
-                        didConnectService(serviceManager);
+                        Uri trackUri = TrackUriExtensionKt.trackUri(serviceManager.getTrackId());
+                        didChangeLoggingState(trackUri, serviceManager.getLoggingState());
                     }
                 }
             }
@@ -83,6 +84,15 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         serviceManager.shutdown(getContext());
     }
 
+    private void registerReceiver() {
+        unregisterReceiver();
+        loggingStateReceiver = new LoggerStateReceiver();
+        Context context = getContext();
+        if (context != null) {
+            context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
+        }
+    }
+
     private void unregisterReceiver() {
         Context context = getContext();
         if (context != null && loggingStateReceiver != null) {
@@ -94,17 +104,6 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     public void setServiceManager(ServiceManagerInterface serviceManager) {
         this.serviceManager = serviceManager;
     }
-
-    private void registerReceiver() {
-        unregisterReceiver();
-        loggingStateReceiver = new LoggerStateReceiver();
-        Context context = getContext();
-        if (context != null) {
-            context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
-        }
-    }
-
-    protected abstract void didConnectService(ServiceManagerInterface serviceManager);
 
     public abstract void didChangeLoggingState(@NonNull Uri trackUri, int loggingState);
 

@@ -64,8 +64,5 @@ class ConnectedServicePresenterTest {
             this.uri = trackUri
             this.state = loggingState
         }
-
-        override fun didConnectService(serviceManager: ServiceManagerInterface?) {
-        }
     }
 }

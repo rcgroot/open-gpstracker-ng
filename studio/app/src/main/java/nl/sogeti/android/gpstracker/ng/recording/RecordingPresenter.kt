@@ -59,13 +59,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     /* Service connecting */
 
-    public override fun didConnectService(service: ServiceManagerInterface) {
-        val loggingState = service.loggingState
-        val trackId = service.trackId
-        val trackUri = trackUri(trackId)
-        updateRecording(trackUri, loggingState)
-    }
-
     override fun didChangeLoggingState(trackUri: Uri, loggingState: Int) {
         updateRecording(trackUri, loggingState)
     }

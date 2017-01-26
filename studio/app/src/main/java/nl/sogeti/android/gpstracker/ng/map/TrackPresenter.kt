@@ -65,13 +65,6 @@ class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePr
 
     /* Service connecting */
 
-    override fun didConnectService(serviceManager: ServiceManagerInterface) {
-        val loggingState = serviceManager.loggingState
-        val trackId = serviceManager.trackId
-        val uri = trackUri(trackId)
-        updateRecording(uri, loggingState)
-    }
-
     override fun didChangeLoggingState(uri: Uri, loggingState: Int) {
         updateRecording(uri, loggingState)
     }

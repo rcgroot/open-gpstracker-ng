@@ -44,10 +44,6 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
         viewModel.state = loggingState
     }
 
-    override fun didConnectService(serviceManager: ServiceManagerInterface) {
-        viewModel.state = serviceManager.loggingState
-    }
-
     fun onClickLeft() {
         context?.let {
             if (viewModel.state == STATE_LOGGING) {
