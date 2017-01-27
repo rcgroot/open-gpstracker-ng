@@ -49,7 +49,7 @@ class MockIntegrationModule {
     }
 
     @Provides @Named("providerAuthority")
-    fun providerAuthority() : String {
+    fun providerAuthority(): String {
         return "nl.sogeti.android.gpstracker.ng.mock.authority"
     }
 }

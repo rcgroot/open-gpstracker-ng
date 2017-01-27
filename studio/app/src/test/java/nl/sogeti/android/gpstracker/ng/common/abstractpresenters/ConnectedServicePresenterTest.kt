@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
-import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule
+import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +19,7 @@ class ConnectedServicePresenterTest {
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
     @get:Rule
-    var appComponentRule = AppComponentTestRule()
+    var appComponentRule = MockAppComponentTestRule()
     @Mock
     lateinit var mockServiceManager: ServiceManager
     @Mock

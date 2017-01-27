@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 
-
 @RunWith(AndroidJUnit4.class)
 public class TrackListFragmentTest {
 

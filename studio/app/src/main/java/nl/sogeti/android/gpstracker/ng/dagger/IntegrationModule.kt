@@ -38,6 +38,7 @@ import javax.inject.Named
 
 @Module
 class IntegrationModule {
+
     @Provides @Named("loggingStateFilter")
     fun loggingStateIntentFilter(): IntentFilter {
         return IntentFilter(ServiceConstants.ACTION_BROADCAST_LOGGING_STATE)

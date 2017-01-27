@@ -34,14 +34,20 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.support.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.common.MockedGpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import javax.inject.Inject
 import javax.inject.Named
 
 class MockBroadcastSender {
 
-    @Inject @Named("loggingStateFilter")
+    @field:[Inject Named("loggingStateFilter")]
     lateinit var loggingStateIntentFilter: IntentFilter
+
+    init {
+        MockedGpsTrackerApplication.mockAppComponent.inject(this)
+    }
 
     fun sendStartedRecording(context: Context, trackId: Long) {
         broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)

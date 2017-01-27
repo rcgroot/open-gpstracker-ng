@@ -37,5 +37,5 @@ interface AppComponent {
     fun inject(injectable: ConnectedServicePresenter)
 
     @Named("providerAuthority")
-    fun providerAuthority() : String
+    fun providerAuthority(): String
 }

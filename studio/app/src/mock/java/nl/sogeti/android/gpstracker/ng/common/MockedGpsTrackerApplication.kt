@@ -29,10 +29,16 @@
 package nl.sogeti.android.gpstracker.ng.common
 
 import nl.sogeti.android.gpstracker.ng.dagger.DaggerMockAppComponent
+import nl.sogeti.android.gpstracker.ng.dagger.MockAppComponent
 
 class MockedGpsTrackerApplication : GpsTrackerApplication() {
 
+    companion object {
+        lateinit var mockAppComponent: MockAppComponent
+    }
+
     override fun buildAppComponent() {
-        appComponent = DaggerMockAppComponent.builder().build()
+        mockAppComponent = DaggerMockAppComponent.builder().build()
+        appComponent = mockAppComponent
     }
 }

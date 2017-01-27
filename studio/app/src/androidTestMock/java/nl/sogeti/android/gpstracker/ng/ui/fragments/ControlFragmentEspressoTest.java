@@ -30,17 +30,14 @@ package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
 import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;

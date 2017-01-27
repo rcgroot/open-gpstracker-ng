@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadFactory;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule;
+import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 import static junit.framework.Assert.assertNotNull;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 public class SummaryManagerTest {
 
     @Rule
-    public AppComponentTestRule appComponentRule = new AppComponentTestRule();
+    public MockAppComponentTestRule appComponentRule = new MockAppComponentTestRule();
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock

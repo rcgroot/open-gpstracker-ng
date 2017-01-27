@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 import android.content.Context
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
-import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule
+import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -16,7 +16,7 @@ class ContextedPresenterTest {
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
     @get:Rule
-    var appComponentRule = AppComponentTestRule()
+    var appComponentRule = MockAppComponentTestRule()
     @Mock
     var mockContext: Context? = null
     @Mock

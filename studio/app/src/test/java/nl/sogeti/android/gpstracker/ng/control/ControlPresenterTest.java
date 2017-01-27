@@ -38,7 +38,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule;
+import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 public class ControlPresenterTest {
 
     @Rule
-    public AppComponentTestRule appComponentRule = new AppComponentTestRule();
+    public MockAppComponentTestRule appComponentRule = new MockAppComponentTestRule();
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock

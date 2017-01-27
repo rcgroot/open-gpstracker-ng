@@ -29,7 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Component
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
 
 @Component(modules = arrayOf(MockIntegrationModule::class))
-interface MockAppComponent : AppComponent
+interface MockAppComponent : AppComponent {
+
+    fun inject(injectable: MockBroadcastSender)
+}

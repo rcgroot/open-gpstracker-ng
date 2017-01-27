@@ -7,7 +7,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.mockito.Mockito
 
-class AppComponentTestRule : TestRule {
+class MockAppComponentTestRule : TestRule {
 
     lateinit var mockAppComponent: AppComponent
 
