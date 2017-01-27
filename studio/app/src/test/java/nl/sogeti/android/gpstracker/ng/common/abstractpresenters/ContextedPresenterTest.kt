@@ -1,7 +1,11 @@
 package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
+import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
@@ -9,11 +13,14 @@ import org.mockito.junit.MockitoJUnit
 
 class ContextedPresenterTest {
 
-    @Rule
-    var rule = MockitoJUnit.rule()
-
+    @get:Rule
+    var mockitoRule = MockitoJUnit.rule()
+    @get:Rule
+    var appComponentRule = AppComponentTestRule()
     @Mock
     var mockContext: Context? = null
+    @Mock
+    lateinit var mockAppComponent: AppComponent
 
     @Test
     fun start() {
@@ -41,17 +48,18 @@ class ContextedPresenterTest {
         assertTrue(sut.willStop)
         assertNull(sut.context)
     }
-}
 
-class MyContextedPresenter : ContextedPresenter() {
-    var willStop = false
-    var didStart = false
+    class MyContextedPresenter : ContextedPresenter() {
+        var willStop = false
+        var didStart = false
 
-    override fun willStop() {
-        willStop = true
+        override fun willStop() {
+            willStop = true
+        }
+
+        override fun didStart() {
+            didStart = true
+        }
     }
 
-    override fun didStart() {
-        didStart = true
-    }
 }

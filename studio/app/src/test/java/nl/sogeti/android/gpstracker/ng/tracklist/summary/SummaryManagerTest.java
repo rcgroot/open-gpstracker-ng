@@ -6,10 +6,12 @@ import android.net.Uri;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -20,6 +22,7 @@ import java.util.concurrent.ThreadFactory;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 import static junit.framework.Assert.assertNotNull;
@@ -34,16 +37,20 @@ import static org.mockito.Mockito.verify;
 @Config(manifest = Config.NONE)
 public class SummaryManagerTest {
 
-    Uri uri = TrackUriExtensionKt.trackUri(5);
+    @Rule
+    public AppComponentTestRule appComponentRule = new AppComponentTestRule();
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
     ExecutorService mockExecutor = null;
     @Mock
     Context mockContext = null;
-    summaryManager sut = summaryManager.INSTANCE;
+    private summaryManager sut = summaryManager.INSTANCE;
+    private Uri uri;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        uri = TrackUriExtensionKt.trackUri(5);
         sut.setExecutor(mockExecutor);
     }
 

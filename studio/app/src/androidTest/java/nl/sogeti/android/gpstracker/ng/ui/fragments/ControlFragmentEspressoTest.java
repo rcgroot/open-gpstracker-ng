@@ -37,7 +37,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
 import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
@@ -52,11 +55,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.not;
 
-@RunWith(AndroidJUnit4.class)
 public class ControlFragmentEspressoTest {
 
     @Rule
     public FragmentTestRule<ControlFragment> wrapperFragment = new FragmentTestRule<>(ControlFragment.class);
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
     private ControlFragment sut;
     private MockServiceManager mockServiceManager;
 

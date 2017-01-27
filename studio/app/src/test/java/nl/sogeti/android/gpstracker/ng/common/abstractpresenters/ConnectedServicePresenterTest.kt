@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceManager
-import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,46 +16,48 @@ import org.mockito.junit.MockitoJUnit
 
 class ConnectedServicePresenterTest {
 
-    @Rule
-    var rule = MockitoJUnit.rule()
-
+    @get:Rule
+    var mockitoRule = MockitoJUnit.rule()
+    @get:Rule
+    var appComponentRule = AppComponentTestRule()
     @Mock
-    var mockServiceManager: ServiceManager? = null
+    lateinit var mockServiceManager: ServiceManager
     @Mock
-    var mockContext: Context? = null
+    lateinit var mockContext: Context
 
-    var sut: MyConnectedServicePresenter? = null
+    lateinit var sut: MyConnectedServicePresenter
 
     @Before
     fun setUp() {
+
         sut = MyConnectedServicePresenter()
-        sut!!.serviceManager = mockServiceManager
+        sut.serviceManager = mockServiceManager
     }
 
     @Test
     fun didStart() {
         // Execute
-        sut?.start(mockContext!!)
+        sut.start(mockContext)
 
         // Verify
-        verify(mockServiceManager)!!.startup(eq(mockContext!!), any())
-        verify(mockContext)!!.registerReceiver(any(), any())
+        verify(mockServiceManager).startup(eq(mockContext), any())
+        verify(mockContext).registerReceiver(any(), any())
     }
 
     @Test
     fun willStop() {
         // Prepare
-        sut?.start(mockContext!!)
+        sut.start(mockContext)
 
         // Execute
-        sut?.willStop()
+        sut.willStop()
 
         // Verify
-        verify(mockServiceManager)!!.shutdown(mockContext!!)
-        verify(mockContext)!!.unregisterReceiver(ArgumentMatchers.any())
+        verify(mockServiceManager).shutdown(mockContext)
+        verify(mockContext).unregisterReceiver(ArgumentMatchers.any())
     }
 
-    class MyConnectedServicePresenter() : ConnectedServicePresenter() {
+    class MyConnectedServicePresenter : ConnectedServicePresenter() {
 
         var state = -1
         var uri: Uri? = null

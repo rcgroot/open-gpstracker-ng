@@ -35,9 +35,11 @@ import android.net.Uri;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoRule;
 
 import java.util.List;
 

@@ -31,12 +31,14 @@ package nl.sogeti.android.gpstracker.ng.control;
 import android.content.Context;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import nl.sogeti.android.gpstracker.integration.ServiceManager;
+import nl.sogeti.android.gpstracker.ng.rules.AppComponentTestRule;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING;
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_PAUSED;
@@ -46,9 +48,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ControlPresenterTest {
 
+    @Rule
+    public AppComponentTestRule appComponentRule = new AppComponentTestRule();
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
     LoggerViewModel mockLogger;
     @Mock

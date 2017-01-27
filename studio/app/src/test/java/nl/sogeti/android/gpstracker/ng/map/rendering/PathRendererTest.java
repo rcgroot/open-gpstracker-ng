@@ -38,9 +38,12 @@ import com.google.android.gms.maps.model.LatLng;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -52,9 +55,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PathRendererTest {
 
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
     Canvas canvas;
     private PathRenderer sut;
