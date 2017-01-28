@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.content.Context
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableList
@@ -35,9 +36,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
+import timber.log.Timber
 
 
 class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
@@ -61,29 +65,40 @@ class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : Recycl
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
         val holder = ViewHolder(binding)
-        holder.binding.adapter = this
         // Weirdly enough the 'clickable="false"' in the XML resource doesn't work
         holder.binding.rowTrackMap.isClickable = false
+        holder.binding.adapter = this
         holder.binding.rowTrackMap.onCreate(null)
 
         return holder
     }
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        val trackViewModel = model[position]
-        if (holder != null) {
-            holder.binding.viewModel = trackViewModel
-            if (holder.googleMap == null) {
-                holder.binding.rowTrackMap.getMapAsync {
-                    it.uiSettings.isMapToolbarEnabled = false
-                    holder.googleMap = it
-                    holder.addLinesToMap()
-                }
-            } else {
-                holder.addLinesToMap()
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.viewModel = model[position]
+        if (!holder.didGetMaps) {
+            holder.didGetMaps = true
+            holder.binding.rowTrackMap.getMapAsync {
+                holder.googleMap = it
             }
-            listener?.willDisplayTrack(trackViewModel, { holder.addLinesToMap() })
         }
+        willDisplayTrack(holder.itemView.context, model[position])
+    }4
+
+    fun willDisplayTrack(context: Context, track: TrackViewModel) {
+        summaryManager.collectSummaryInfo(context, track.uri.get(), {
+            if (it.track == track.uri.get()) {
+                track.name.set(it.name)
+                track.distance.set(it.distance)
+                track.duration.set(it.duration)
+                track.iconType.set(it.type)
+                track.startDay.set(it.start)
+                track.completeBounds.set(it.bounds)
+                track.waypoints.set(it.waypoints)
+                val trackPolylineProvider = TrackPolylineProvider(track.waypoints.get())
+                trackPolylineProvider.drawPolylines()
+                track.polylines.set(trackPolylineProvider.lineOptions)
+            }
+        })
     }
 
     fun didSelectTrack(track: TrackViewModel) {
@@ -91,14 +106,14 @@ class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : Recycl
     }
 
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {
+        var didGetMaps = false
         var googleMap: GoogleMap? = null
-
-        fun addLinesToMap() {
-            googleMap?.clear()
-            binding.viewModel.polylines.map {
-                googleMap?.addPolyline(it)
+            set(map) {
+                field = map
+                binding.rowTrackMap.tag = field
+                map?.uiSettings?.isMapToolbarEnabled = false
+                binding.viewModel.polylines.notifyChange()
             }
-        }
     }
 
     inner class ListObserver : ObservableList.OnListChangedCallback<ObservableList<TracksViewModel>>() {

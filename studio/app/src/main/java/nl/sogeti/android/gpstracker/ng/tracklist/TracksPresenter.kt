@@ -86,26 +86,6 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), Conten
 
     /* Adapter callbacks */
 
-    override fun willDisplayTrack(track: TrackViewModel, completion: () -> Unit) {
-        context?.let {
-            summaryManager.collectSummaryInfo(it, track.uri.get(), {
-                if (it.track == track.uri.get()) {
-                    track.name.set(it.name)
-                    track.distance.set(it.distance)
-                    track.duration.set(it.duration)
-                    track.iconType.set(it.type)
-                    track.startDay.set(it.start)
-                    track.completeBounds.set(it.bounds)
-                    track.waypoints.set(it.waypoints)
-                    val trackPolylineProvider = TrackPolylineProvider(track.waypoints.get())
-                    trackPolylineProvider.drawPolylines()
-                    track.polylines = trackPolylineProvider.lineOptions
-                    executeOnUiThread(completion)
-                }
-            })
-        }
-    }
-
     override fun didSelectTrack(track: TrackViewModel) {
         listener?.onTrackSelected(track.uri.get())
     }

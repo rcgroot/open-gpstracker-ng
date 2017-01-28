@@ -56,6 +56,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
                 app:liteMode="true"
                 app:mapFocus="@{viewModel.completeBounds}"
+                app:polylines="@{viewModel.polylines}"
                 app:mapType="normal" />
             <!--android:background="@drawable/checkered_background"-->
             <!--app:bitmap="@{viewModel.overviewMap}"-->

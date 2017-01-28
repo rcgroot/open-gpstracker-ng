@@ -41,6 +41,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
 
 
 open class CommonBindingAdapters {
@@ -65,6 +66,18 @@ open class CommonBindingAdapters {
     fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
         if (bounds != null) {
             map.getMapAsync(MapUpdate(map, bounds))
+        }
+    }
+
+    @BindingAdapter("polylines")
+    fun setPolylines(map: MapView, polylines: List<PolylineOptions>?) {
+        val tag = map.tag
+        if (tag is GoogleMap) {
+            val googleMap = tag
+            googleMap.clear()
+            polylines?.map {
+                googleMap.addPolyline(it)
+            }
         }
     }
 

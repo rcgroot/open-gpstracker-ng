@@ -50,5 +50,5 @@ class TrackViewModel(uri: Uri) {
     val distance = ObservableField<String>("--")
     val completeBounds = ObservableField<LatLngBounds?>()
     val waypoints = ObservableField<List<List<LatLng>>>(listOf())
-    var polylines = listOf<PolylineOptions>()
+    var polylines = ObservableField<List<PolylineOptions>>()
 }
