@@ -30,33 +30,25 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.content.Context
 import android.databinding.DataBindingUtil
-import android.databinding.ObservableArrayList
-import android.databinding.ObservableList
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
-import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
-import timber.log.Timber
 
-
-class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
+class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
 
     var listener: TrackListListener? = null
-    private val changeListener: ObservableList.OnListChangedCallback<out ObservableList<TracksViewModel>> = ListObserver()
-
-    init {
-        //TODO listen to changes by means of data binding libs
-        model.addOnListChangedCallback(changeListener)
-    }
-
-    fun destroy() {
-        model.removeOnListChangedCallback(changeListener)
-    }
+    var model: List<TrackViewModel> = listOf()
+        set(value) {
+            val diffResult = DiffUtil.calculateDiff(TrackDiffer(field, value))
+            field = value.toList()
+            diffResult.dispatchUpdatesTo(this)
+        }
 
     override fun getItemCount(): Int {
         return model.size
@@ -82,7 +74,7 @@ class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : Recycl
             }
         }
         willDisplayTrack(holder.itemView.context, model[position])
-    }4
+    }
 
     fun willDisplayTrack(context: Context, track: TrackViewModel) {
         summaryManager.collectSummaryInfo(context, track.uri.get(), {
@@ -116,26 +108,19 @@ class TracksViewAdapter(val model: ObservableArrayList<TrackViewModel>) : Recycl
             }
     }
 
-    inner class ListObserver : ObservableList.OnListChangedCallback<ObservableList<TracksViewModel>>() {
-        override fun onItemRangeInserted(sender: ObservableList<TracksViewModel>?, p1: Int, p2: Int) {
-            onChanged(sender)
+    class TrackDiffer(val oldList: List<TrackViewModel>, val newList: List<TrackViewModel>) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].uri.get() == oldList[newItemPosition].uri.get()
         }
 
-        override fun onItemRangeChanged(sender: ObservableList<TracksViewModel>?, p1: Int, p2: Int) {
-            onChanged(sender)
-        }
+        override fun getOldListSize(): Int = oldList.size
 
-        override fun onItemRangeMoved(sender: ObservableList<TracksViewModel>?, p1: Int, p2: Int, p3: Int) {
-            onChanged(sender)
-        }
+        override fun getNewListSize(): Int = newList.size
 
-        override fun onItemRangeRemoved(sender: ObservableList<TracksViewModel>?, p1: Int, p2: Int) {
-            onChanged(sender)
-        }
-
-        override fun onChanged(sender: ObservableList<TracksViewModel>?) {
-            executeOnUiThread { this@TracksViewAdapter.notifyDataSetChanged() }
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].uri.get() == oldList[newItemPosition].uri.get()
         }
     }
+
 }
 

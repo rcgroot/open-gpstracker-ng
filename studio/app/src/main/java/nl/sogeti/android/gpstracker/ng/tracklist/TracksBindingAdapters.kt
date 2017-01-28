@@ -9,7 +9,13 @@ open class TracksBindingAdapters {
 
     @BindingAdapter("tracks")
     fun setTracks(recyclerView: RecyclerView, tracks: ObservableArrayList<TrackViewModel>) {
-        val viewAdapter = TracksViewAdapter(tracks)
+        val viewAdapter: TracksViewAdapter
+        if (recyclerView.adapter is TracksViewAdapter) {
+            viewAdapter = recyclerView.adapter as TracksViewAdapter
+        } else {
+            viewAdapter = TracksViewAdapter()
+        }
+        viewAdapter.model = tracks
         recyclerView.adapter = viewAdapter
     }
 
