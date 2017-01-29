@@ -26,13 +26,16 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.dagger
+package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
-import dagger.Component
-import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
+import android.text.format.DateUtils
+import java.util.*
 
-@Component(modules = arrayOf(MockIntegrationModule::class, AppModule::class))
-interface MockAppComponent : AppComponent {
+class TimeSpanCalculator {
 
-    fun inject(injectable: MockBroadcastSender)
+    internal var referenceTime = Calendar.getInstance()
+
+    fun getRelativeTimeSpanString(timestamp: Long): CharSequence {
+        return DateUtils.getRelativeTimeSpanString(timestamp, referenceTime.timeInMillis, DateUtils.MINUTE_IN_MILLIS)
+    }
 }

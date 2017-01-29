@@ -41,7 +41,7 @@ import java.util.concurrent.ThreadFactory
  */
 object summaryManager {
     var executor: ExecutorService? = null
-    val calculator = SummaryCalculator()
+    val calculator by lazy { SummaryCalculator() }
     val summaryCache = ConcurrentHashMap<Uri, Summary>()
     var activeCount = 0
 

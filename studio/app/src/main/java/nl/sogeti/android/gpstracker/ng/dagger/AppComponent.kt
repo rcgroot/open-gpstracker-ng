@@ -30,11 +30,14 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import javax.inject.Named
 
-@Component(modules = arrayOf(IntegrationModule::class))
+@Component(modules = arrayOf(IntegrationModule::class, AppModule::class))
 interface AppComponent {
     fun inject(injectable: ConnectedServicePresenter)
+
+    fun inject(injectable: SummaryCalculator)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

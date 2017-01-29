@@ -1,3 +1,31 @@
+/*------------------------------------------------------------------------------
+ **     Ident: Sogeti Smart Mobile Solutions
+ **    Author: rene
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ **------------------------------------------------------------------------------
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
+ ** The Netherlands                  |  permission of the copyright holder.
+ *------------------------------------------------------------------------------
+ *
+ *   This file is part of OpenGPSTracker.
+ *
+ *   OpenGPSTracker is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   OpenGPSTracker is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package nl.sogeti.android.gpstracker.ng.tracklist.summary;
 
 import android.content.Context;
@@ -8,12 +36,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,18 +49,16 @@ import java.util.concurrent.ThreadFactory;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule;
-import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
 public class SummaryManagerTest {
 
     @Rule
@@ -42,15 +66,13 @@ public class SummaryManagerTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    ExecutorService mockExecutor = null;
-    @Mock
     Context mockContext = null;
+    @Mock
+    ExecutorService mockExecutor = null;
     private summaryManager sut = summaryManager.INSTANCE;
-    private Uri uri;
 
     @Before
     public void setUp() {
-        uri = TrackUriExtensionKt.trackUri(5);
         sut.setExecutor(mockExecutor);
     }
 
@@ -118,7 +140,11 @@ public class SummaryManagerTest {
         ThreadFactory factory = new summaryManager.BackgroundThreadFactory();
 
         // Execute
-        Thread thread = factory.newThread(null);
+        Thread thread = factory.newThread(new Runnable() {
+            @Override
+            public void run() {
+            }
+        });
 
         // Verify
         assertThat(thread.getPriority(), Matchers.lessThanOrEqualTo(android.os.Process.THREAD_PRIORITY_BACKGROUND));
@@ -128,6 +154,7 @@ public class SummaryManagerTest {
     public void testCallWhenStopped() {
         // Prepare
         final List<Summary> callback = new LinkedList<>();
+        Uri uri = mock(Uri.class);
 
         // Execute
         sut.collectSummaryInfo(mockContext, uri, new Function1<Summary, Unit>() {
@@ -140,13 +167,14 @@ public class SummaryManagerTest {
 
         // Verify
         assertThat(callback.size(), Matchers.is(0));
-        verify(mockExecutor, times(0)).submit(org.mockito.Matchers.any(Runnable.class));
+        verify(mockExecutor, times(0)).submit(ArgumentMatchers.any(Runnable.class));
     }
 
     @Test
     public void testExecutionWhenStopped() {
         // Prepare
         final List<Summary> callback = new LinkedList<>();
+        Uri uri = mock(Uri.class);
 
         // Execute
         sut.executeTrackCalculation(mockContext, uri, new Function1<Summary, Unit>() {

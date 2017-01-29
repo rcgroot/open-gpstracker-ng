@@ -31,19 +31,24 @@ package nl.sogeti.android.gpstracker.ng.tracklist.summary
 import android.content.Context
 import android.location.Location
 import android.net.Uri
-import android.text.format.DateUtils
-import android.text.format.DateUtils.MINUTE_IN_MILLIS
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.*
+import javax.inject.Inject
 
-open class SummaryCalculator {
+class SummaryCalculator {
 
-    internal var referenceTime = Calendar.getInstance()
+    @Inject
+    lateinit var timeSpanUtil: TimeSpanCalculator
+    @Inject
+    lateinit var locale: Locale
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
         val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
@@ -92,13 +97,13 @@ open class SummaryCalculator {
     internal fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
         if (meters >= 100000) {
-            distance = context.getString(R.string.format_100_kilometer).format(meters / 1000F)
+            distance = context.getString(R.string.format_100_kilometer).format(locale, meters / 1000F)
         } else if (meters >= 1000) {
-            distance = context.getString(R.string.format_kilometer).format(meters / 1000F)
+            distance = context.getString(R.string.format_kilometer).format(locale, meters / 1000F)
         } else if (meters >= 100) {
-            distance = context.getString(R.string.format_100_meters).format(meters)
+            distance = context.getString(R.string.format_100_meters).format(locale, meters)
         } else {
-            distance = context.getString(R.string.format_meters).format(meters)
+            distance = context.getString(R.string.format_meters).format(locale, meters)
         }
         return distance
     }
@@ -108,7 +113,7 @@ open class SummaryCalculator {
         if (timestamp == null) {
             start = context.getString(R.string.row_start_default)
         } else {
-            start = DateUtils.getRelativeTimeSpanString(timestamp, referenceTime.timeInMillis, MINUTE_IN_MILLIS)
+            start = timeSpanUtil.getRelativeTimeSpanString(timestamp)
         }
 
         return start.toString()
@@ -139,8 +144,7 @@ open class SummaryCalculator {
             }
         } else if (minutes > 0) {
             duration = context.resources.getQuantityString(R.plurals.track_duration_minutes, minutes, minutes)
-        }
-        else {
+        } else {
             duration = context.resources.getQuantityString(R.plurals.track_duration_seconds, seconds, seconds)
         }
 

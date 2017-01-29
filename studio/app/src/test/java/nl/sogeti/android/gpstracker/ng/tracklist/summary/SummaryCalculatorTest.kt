@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -30,22 +30,19 @@ package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
 import android.content.Context
 import android.content.res.Resources
+import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.v2.R
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.mockito.junit.MockitoJUnit
 import java.util.*
 import java.util.Calendar.*
 
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
 class SummaryCalculatorTest {
 
     private val SIX_SECONDS = 6 * 1000L
@@ -53,49 +50,57 @@ class SummaryCalculatorTest {
     private val TWO_HOURS = 2 * 60 * 60 * 1000L
     private val THREE_DAYS = 3 * 24 * 60 * 60 * 1000L
 
+    @get:Rule
+    var appComponentRule = MockAppComponentTestRule()
+    @get:Rule
+    var mockitoRule = MockitoJUnit.rule()
     @Mock
-    var context: Context? = null
+    lateinit var context: Context
     @Mock
-    var resources: Resources? = null
+    lateinit var resources: Resources
+    @Mock
+    lateinit var timeSpanCalculator: TimeSpanCalculator
+    val locale = Locale.US
+
     var referenceDate = Calendar.getInstance()!!
-    var sut = SummaryCalculator()
+    lateinit var sut: SummaryCalculator
 
     @Before
     fun setup() {
-        // TODO Force the Locale so Date and Number format are always the same
-        MockitoAnnotations.initMocks(this)
-        `when`(context!!.getString(R.string.format_meters)).thenReturn("%.1f M")
-        `when`(context!!.getString(R.string.format_100_meters)).thenReturn("%.0f M")
-        `when`(context!!.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
-        `when`(context!!.getString(R.string.format_100_kilometer)).thenReturn("%.0f KM")
-        `when`(context!!.getString(R.string.row_start_default)).thenReturn("--")
-
-        `when`(context!!.resources).thenReturn(resources)
-
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_seconds, 1, 1)).thenReturn("1 second")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_seconds, 6, 6)).thenReturn("6 seconds")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_minutes, 1, 1)).thenReturn("1 minute")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_minutes, 5, 5)).thenReturn("5 minutes")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_hours, 2, 2)).thenReturn("2 hours")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_hours, 1, 1)).thenReturn("1 hour")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
-        `when`(resources!!.getQuantityString(R.plurals.track_duration_days, 3, 3)).thenReturn("3 days")
-
         val sut = SummaryCalculator()
+        sut.timeSpanUtil = timeSpanCalculator
+        sut.locale = locale
+        this.sut = sut
+
+        `when`(context.getString(R.string.format_meters)).thenReturn("%.1f M")
+        `when`(context.getString(R.string.format_100_meters)).thenReturn("%.0f M")
+        `when`(context.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
+        `when`(context.getString(R.string.format_100_kilometer)).thenReturn("%.0f KM")
+        `when`(context.getString(R.string.row_start_default)).thenReturn("--")
+
+        `when`(context.resources).thenReturn(resources)
+
+        `when`(resources.getQuantityString(R.plurals.track_duration_seconds, 1, 1)).thenReturn("1 second")
+        `when`(resources.getQuantityString(R.plurals.track_duration_seconds, 6, 6)).thenReturn("6 seconds")
+        `when`(resources.getQuantityString(R.plurals.track_duration_minutes, 1, 1)).thenReturn("1 minute")
+        `when`(resources.getQuantityString(R.plurals.track_duration_minutes, 5, 5)).thenReturn("5 minutes")
+        `when`(resources.getQuantityString(R.plurals.track_duration_hours, 2, 2)).thenReturn("2 hours")
+        `when`(resources.getQuantityString(R.plurals.track_duration_hours, 1, 1)).thenReturn("1 hour")
+        `when`(resources.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
+        `when`(resources.getQuantityString(R.plurals.track_duration_days, 3, 3)).thenReturn("3 days")
+
         referenceDate = Calendar.getInstance()
         referenceDate.set(YEAR, 2016)
         referenceDate.set(MONTH, 11)
         referenceDate.set(DAY_OF_MONTH, 6)
         referenceDate.set(HOUR_OF_DAY, 11)
         referenceDate.set(MINUTE, 8)
-        sut.referenceTime = referenceDate
-        this.sut = sut
     }
 
     @Test
     fun testConvertMetersToDistanceFewMeters() {
         // Act
-        val distance = sut.convertMetersToDistance(context!!, 1.1234566F)
+        val distance = sut.convertMetersToDistance(context, 1.1234566F)
         // Assert
         assertThat(distance, `is`("1.1 M"))
     }
@@ -103,7 +108,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertMetersToDistanceBunchOfMeters() {
         // Act
-        val distance = sut.convertMetersToDistance(context!!, 123.123456F)
+        val distance = sut.convertMetersToDistance(context, 123.123456F)
         // Assert
         assertThat(distance, `is`("123 M"))
     }
@@ -111,7 +116,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertMetersToDistanceManyMeters() {
         // Act
-        val distance = sut.convertMetersToDistance(context!!, 12345.123456F)
+        val distance = sut.convertMetersToDistance(context, 12345.123456F)
         // Assert
         assertThat(distance, `is`("12.3 KM"))
     }
@@ -119,7 +124,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertMetersToDistanceLotsAnLotsOfMeters() {
         // Act
-        val distance = sut.convertMetersToDistance(context!!, 123452.123456F)
+        val distance = sut.convertMetersToDistance(context, 123452.123456F)
         // Assert
         assertThat(distance, `is`("123 KM"))
     }
@@ -127,7 +132,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertOneSecond() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, SIX_SECONDS / 6L)
+        val duration = sut.convertStartEndToDuration(context, 0, SIX_SECONDS / 6L)
         //
         assertThat(duration, `is`("1 second"))
     }
@@ -135,7 +140,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertSeconds() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, SIX_SECONDS)
+        val duration = sut.convertStartEndToDuration(context, 0, SIX_SECONDS)
         //
         assertThat(duration, `is`("6 seconds"))
     }
@@ -143,7 +148,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertOneMinute() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, FIVE_MINUTES / 5L + SIX_SECONDS)
+        val duration = sut.convertStartEndToDuration(context, 0, FIVE_MINUTES / 5L + SIX_SECONDS)
         //
         assertThat(duration, `is`("1 minute"))
     }
@@ -151,7 +156,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertMinutes() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, FIVE_MINUTES + SIX_SECONDS)
+        val duration = sut.convertStartEndToDuration(context, 0, FIVE_MINUTES + SIX_SECONDS)
         //
         assertThat(duration, `is`("5 minutes"))
     }
@@ -159,7 +164,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertHoursAndMinutes() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, TWO_HOURS + FIVE_MINUTES)
+        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS + FIVE_MINUTES)
         //
         assertThat(duration, `is`("2 hours 5 minutes"))
     }
@@ -167,7 +172,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertOneHour() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, TWO_HOURS / 2L)
+        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS / 2L)
         //
         assertThat(duration, `is`("1 hour"))
     }
@@ -175,7 +180,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertOnyHours() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, TWO_HOURS)
+        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS)
         //
         assertThat(duration, `is`("2 hours"))
     }
@@ -184,7 +189,7 @@ class SummaryCalculatorTest {
     @Test
     fun testConvertDaysAndHours() {
         // Act
-        val duration = sut.convertStartEndToDuration(context!!, 0, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
+        val duration = sut.convertStartEndToDuration(context, 0, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
         //
         assertThat(duration, `is`("3 days 2 hours"))
     }
@@ -194,7 +199,7 @@ class SummaryCalculatorTest {
         // Arrange
         val timestamp: Long? = null
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("--"))
     }
@@ -206,8 +211,9 @@ class SummaryCalculatorTest {
         calendar.set(Calendar.HOUR_OF_DAY, 9)
         calendar.set(Calendar.MINUTE, 45)
         val timestamp = calendar.timeInMillis
+        `when`(timeSpanCalculator.getRelativeTimeSpanString(timestamp)).thenReturn("1 hour ago")
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("1 hour ago"))
     }
@@ -221,8 +227,9 @@ class SummaryCalculatorTest {
         calendar.set(Calendar.MINUTE, 45)
         calendar.add(Calendar.DAY_OF_YEAR, -1)
         val timestamp = calendar.timeInMillis
+        `when`(timeSpanCalculator.getRelativeTimeSpanString(timestamp)).thenReturn("yesterday")
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("yesterday"))
     }
@@ -235,8 +242,9 @@ class SummaryCalculatorTest {
         calendar.set(Calendar.MINUTE, 45)
         calendar.add(Calendar.DAY_OF_YEAR, -7)
         val timestamp = calendar.timeInMillis
+        `when`(timeSpanCalculator.getRelativeTimeSpanString(timestamp)).thenReturn("Nov 29, 2016")
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("Nov 29, 2016"))
     }
@@ -249,8 +257,9 @@ class SummaryCalculatorTest {
         calendar.set(Calendar.MINUTE, 45)
         calendar.add(Calendar.DAY_OF_YEAR, -7)
         val timestamp = calendar.timeInMillis
+        `when`(timeSpanCalculator.getRelativeTimeSpanString(timestamp)).thenReturn("Nov 29, 2016")
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("Nov 29, 2016"))
     }
@@ -263,8 +272,9 @@ class SummaryCalculatorTest {
         calendar.set(Calendar.MINUTE, 45)
         calendar.add(Calendar.YEAR, -1)
         val timestamp = calendar.timeInMillis
+        `when`(timeSpanCalculator.getRelativeTimeSpanString(timestamp)).thenReturn("Dec 6, 2015")
         // Act
-        val timeName = sut.convertTimestampToStart(context!!, timestamp)
+        val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("Dec 6, 2015"))
     }

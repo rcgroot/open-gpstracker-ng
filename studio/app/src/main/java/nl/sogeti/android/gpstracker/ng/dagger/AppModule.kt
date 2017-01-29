@@ -28,11 +28,20 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
-import dagger.Component
-import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
+import dagger.Module
+import dagger.Provides
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
+import java.util.*
 
-@Component(modules = arrayOf(MockIntegrationModule::class, AppModule::class))
-interface MockAppComponent : AppComponent {
+@Module
+class AppModule {
+    @Provides
+    fun timeSpanCalculator(): TimeSpanCalculator {
+        return TimeSpanCalculator()
+    }
 
-    fun inject(injectable: MockBroadcastSender)
+    @Provides
+    fun locale(): Locale {
+        return Locale.getDefault()
+    }
 }
