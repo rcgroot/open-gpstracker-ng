@@ -86,7 +86,7 @@ public class RecordingFragmentEspressoTest {
     public void testVisibleWhenStarted() {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
-        mockTracksProvider.loadFiveRecentWaypoints(mockServiceManager.getTrackId());
+        MockTracksProvider.globalState.createTrack(1L, MockTracksProvider.globalState.getGpxAmsterdam());
 
         // Verify
         SystemClock.sleep(500);
