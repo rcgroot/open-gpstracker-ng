@@ -34,10 +34,7 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants.*
-import nl.sogeti.android.gpstracker.ng.utils.segmentsUri
-import nl.sogeti.android.gpstracker.ng.utils.trackUri
-import nl.sogeti.android.gpstracker.ng.utils.tracksUri
-import nl.sogeti.android.gpstracker.ng.utils.waypointsUri
+import nl.sogeti.android.gpstracker.ng.utils.*
 import timber.log.Timber
 import java.util.*
 
@@ -71,66 +68,102 @@ class MockTracksProvider : ContentProvider() {
         return 0
     }
 
-    fun loadFiveRecentWaypoints(trackId: Long): MutableMap<Uri, MatrixCursor> {
-        val uriMap = mutableMapOf<Uri, MatrixCursor>();
-
-        uriMap[tracksUri()] = createTracksCursor(listOf(trackId))
-        val trackUri = trackUri(trackId)
-        val segmentsUri = segmentsUri(trackId)
-        uriMap[trackUri] = createTrackCursor(trackId)
-        val segmentIds = listOf(trackId * 10 + 1L)
-        uriMap[segmentsUri] = createSegmentsCursor(trackId, segmentIds)
-        for (segmentId in segmentIds) {
-            val waypointsUri = waypointsUri(trackId, segmentId)
-            val waypointIds = listOf(segmentId * 10 + 1L, segmentId * 10 + 2L, segmentId * 10 + 3L, segmentId * 10 + 4L)
-            uriMap[waypointsUri] = createWaypointsCursor(segmentId, waypointIds)
-        }
-
-        return uriMap
-    }
-
-    private fun createTracksCursor(trackIds: List<Long>): MatrixCursor {
-        val cursor = MatrixCursor(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME))
-        for (trackId in trackIds) {
-            cursor.newRow().add(trackId).add("track $trackId").add(Date().time)
-        }
-
-        return cursor
-    }
-
-    private fun createTrackCursor(trackId: Long): MatrixCursor {
-        val cursor = MatrixCursor(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME))
-        cursor.newRow().add(trackId).add("track $trackId").add(Date().time)
-
-        return cursor
-    }
-
-    private fun createSegmentsCursor(trackId: Long, segmentIds: List<Long>): MatrixCursor {
-        val cursor = MatrixCursor(arrayOf(Segments._ID, Segments.TRACK))
-        for (segmentId in segmentIds) {
-            cursor.newRow().add(segmentId).add(trackId)
-        }
-
-        return cursor
-    }
-
-    private fun createWaypointsCursor(segmentId: Long, waypointIds: List<Long>): MatrixCursor {
-        val cursor = MatrixCursor(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME))
-        val now = Date().time
-        for (i in waypointIds.indices) {
-            cursor.newRow().add(waypointIds[i]).add(segmentId).add(gpxAmsterdam[i].first).add(gpxAmsterdam[i].second).add(now - (waypointIds.size - i) * 60000)
-        }
-
-        return cursor
-    }
-
     fun reset() {
         globalState.uriMap.clear()
     }
 
     companion object globalState {
-        val uriMap by lazy { MockTracksProvider().loadFiveRecentWaypoints(1) }
+        val uriMap = mutableMapOf<Uri, MatrixCursor>()
+            get() {
+                val preload = gpxAmsterdam
+                if (!preload.isEmpty()) {
+                    gpxAmsterdam = listOf()
+                    createTrack(1L, preload)
+                }
+                return field
+            }
         // Some random picked points in Amsterdam, NL
-        val gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
+        var gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
+
+        fun createTrack(trackId: Long, waypoints: List<Pair<Double, Double>>) {
+            addTrack(trackId)
+            val segmentId = trackId * 10 + 1L
+            addSegment(trackId, segmentId)
+            val now = Date().time
+            for (i in waypoints.indices) {
+                val waypointId = segmentId * 10L + i
+                val time = now - (waypoints.size - i) * 60000
+                addWaypoint(trackId, segmentId, waypointId, waypoints[i].first, waypoints[i].second, time)
+            }
+        }
+
+        fun addTrack(trackId: Long) {
+            // .../track
+            val tracksUri = tracksUri()
+            var cursor = uriMap[tracksUri]
+            if (cursor == null) {
+                cursor = createTracksCursor()
+                uriMap[tracksUri] = cursor
+            }
+            addTrackCursor(cursor, trackId)
+            // .../track/id
+            cursor = createTracksCursor()
+            val trackUri = trackUri(trackId)
+            uriMap[trackUri] = cursor
+            addTrackCursor(cursor, trackId)
+        }
+
+        private fun createTracksCursor() = MatrixCursor(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME))
+
+        private fun addTrackCursor(cursor: MatrixCursor, trackId: Long) {
+            cursor.newRow().add(trackId).add("track $trackId").add(Date().time)
+        }
+
+        fun addSegment(trackId: Long, segmentId: Long) {
+            // .../track/id/segments
+            val segmentsUri = segmentsUri(trackId)
+            var cursor = uriMap[segmentsUri]
+            if (cursor == null) {
+                cursor = createSegmentsCursor()
+                uriMap[segmentsUri] = cursor
+            }
+            addSegmentCursor(cursor, trackId, segmentId)
+            // .../track/id/segments/id
+            cursor = createSegmentsCursor()
+            val segmentUri = segmentUri(trackId, segmentId)
+            uriMap[segmentUri] = cursor
+            addSegmentCursor(cursor, trackId, segmentId)
+        }
+
+        private fun createSegmentsCursor(): MatrixCursor = MatrixCursor(arrayOf(Segments._ID, Segments.TRACK))
+
+        private fun addSegmentCursor(cursor: MatrixCursor, trackId: Long, segmentId: Long) {
+            cursor.newRow().add(segmentId).add(trackId)
+        }
+
+        fun addWaypoint(trackId: Long, segmentId: Long, waypointId: Long, latitude: Double, longitude: Double, time: Long = Date().time) {
+            // .../tracks/id/segments/id/waypoints
+            val waypointsUri = waypointsUri(trackId, segmentId)
+            var cursor = uriMap[waypointsUri]
+            if (cursor == null) {
+                cursor = createWaypointsCursor()
+                uriMap[waypointsUri] = cursor
+            }
+            addWaypointsCursor(cursor, segmentId, waypointId, latitude, longitude, time)
+            // .../tracks/id/waypoints
+            val waypointsTrackUri = waypointsUri(trackId)
+            cursor = uriMap[waypointsTrackUri]
+            if (cursor == null) {
+                cursor = createWaypointsCursor()
+                uriMap[waypointsTrackUri] = cursor
+            }
+            addWaypointsCursor(cursor, segmentId, waypointId, latitude, longitude, time)
+        }
+
+        private fun createWaypointsCursor() = MatrixCursor(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME))
+
+        private fun addWaypointsCursor(cursor: MatrixCursor, segmentId: Long, waypointId: Long, latitude: Double, longitude: Double, time: Long) {
+            cursor.newRow().add(waypointId).add(segmentId).add(latitude).add(longitude).add(time)
+        }
     }
 }

@@ -59,15 +59,16 @@ fun tracksUri(): Uri {
  * @param trackId
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
-fun trackUri(id: Long): Uri {
+fun trackUri(trackId: Long): Uri {
     val trackUri = Uri.Builder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
-            .appendEncodedPath(id.toString())
+            .appendEncodedPath(trackId.toString())
             .build()
     return trackUri
 }
+
 /**
  * @param trackId
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
@@ -103,7 +104,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
 /**
  * @param trackId
  * @param segmentId
- * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
     val segmentUri = Uri.Builder()
@@ -120,8 +121,7 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
 
 /**
  * @param trackId
- * @param segmentId
- * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
  */
 fun waypointsUri(trackId: Long): Uri {
     val waypointsUri = Uri.Builder()
@@ -170,7 +170,7 @@ fun metaDataTrackUri(id: Long): Uri {
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
 fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
-    if (!GpsTrackerApplication.appComponent.providerAuthority().equals(this.authority)) {
+    if (GpsTrackerApplication.appComponent.providerAuthority() != this.authority) {
         return
     }
 
@@ -255,7 +255,7 @@ fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
     values.put(ContentConstants.MetaDataColumns.KEY, key)
     values.put(ContentConstants.MetaDataColumns.VALUE, value)
     val changed = context.contentResolver.update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
-    if( changed == 0) {
+    if (changed == 0) {
         context.contentResolver.insert(this, values)
     }
 }

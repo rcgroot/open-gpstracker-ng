@@ -35,6 +35,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 class MockServiceManager : ServiceManagerInterface {
 
     val broadcaster = MockBroadcastSender()
+    val gpsProvider = Recorder()
 
     override fun startup(context: Context, runnable: Runnable?) {
         globalState.started = true
@@ -54,14 +55,14 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = STATE_LOGGING
-        globalState.trackId = ++globalState.previousTrack
+        globalState.trackId++
 
         broadcaster.sendStartedRecording(context, trackId)
+        gpsProvider.addTrack()
     }
 
     override fun stopGPSLogging(context: Context) {
         globalState.loggingState = STATE_STOPPED
-        globalState.trackId = -1L
 
         broadcaster.sendStoppedRecording(context)
     }
@@ -81,14 +82,37 @@ class MockServiceManager : ServiceManagerInterface {
     fun reset() {
         started = false
         globalState.loggingState = STATE_UNKNOWN
-        globalState.trackId = -1L
-        previousTrack = 0L
+        globalState.trackId = 5L
     }
 
     companion object globalState {
         var started = false
         var loggingState = STATE_UNKNOWN
-        var trackId = -1L
-        var previousTrack = 0L
+        var trackId = 5L
+        var segmentId = 10L
+        var waypointId = 100L
+    }
+
+    class Recorder {
+
+        fun addTrack() {
+            trackId++
+            MockTracksProvider.globalState.addTrack(trackId)
+            addSegment()
+        }
+
+        fun addSegment() {
+            segmentId++
+            MockTracksProvider.globalState.addSegment(trackId, segmentId)
+            addWaypoint()
+        }
+
+        fun addWaypoint() {
+            waypointId++
+            val amplitude = 1.0 + waypointId / 360.0
+            val latitude = 52.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble()))
+            val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble()))
+            MockTracksProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
+        }
     }
 }
