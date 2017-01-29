@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.util
 
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
@@ -40,6 +41,7 @@ import java.util.*
 
 class MockTracksProvider : ContentProvider() {
     override fun onCreate(): Boolean {
+        globalState.context = context.applicationContext
         return true
     }
 
@@ -73,6 +75,7 @@ class MockTracksProvider : ContentProvider() {
     }
 
     companion object globalState {
+        var context: Context? = null
         val uriMap = mutableMapOf<Uri, MatrixCursor>()
             get() {
                 val preload = gpxAmsterdam
@@ -106,11 +109,13 @@ class MockTracksProvider : ContentProvider() {
                 uriMap[tracksUri] = cursor
             }
             addTrackCursor(cursor, trackId)
+            context?.contentResolver?.notifyChange(tracksUri, null)
             // .../track/id
             cursor = createTracksCursor()
             val trackUri = trackUri(trackId)
             uriMap[trackUri] = cursor
             addTrackCursor(cursor, trackId)
+            context?.contentResolver?.notifyChange(trackUri, null)
         }
 
         private fun createTracksCursor() = MatrixCursor(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME))
@@ -128,11 +133,13 @@ class MockTracksProvider : ContentProvider() {
                 uriMap[segmentsUri] = cursor
             }
             addSegmentCursor(cursor, trackId, segmentId)
+            context?.contentResolver?.notifyChange(segmentsUri, null)
             // .../track/id/segments/id
             cursor = createSegmentsCursor()
             val segmentUri = segmentUri(trackId, segmentId)
             uriMap[segmentUri] = cursor
             addSegmentCursor(cursor, trackId, segmentId)
+            context?.contentResolver?.notifyChange(segmentUri, null)
         }
 
         private fun createSegmentsCursor(): MatrixCursor = MatrixCursor(arrayOf(Segments._ID, Segments.TRACK))
@@ -150,6 +157,7 @@ class MockTracksProvider : ContentProvider() {
                 uriMap[waypointsUri] = cursor
             }
             addWaypointsCursor(cursor, segmentId, waypointId, latitude, longitude, time)
+            context?.contentResolver?.notifyChange(waypointsUri, null)
             // .../tracks/id/waypoints
             val waypointsTrackUri = waypointsUri(trackId)
             cursor = uriMap[waypointsTrackUri]
@@ -158,6 +166,7 @@ class MockTracksProvider : ContentProvider() {
                 uriMap[waypointsTrackUri] = cursor
             }
             addWaypointsCursor(cursor, segmentId, waypointId, latitude, longitude, time)
+            context?.contentResolver?.notifyChange(waypointsTrackUri, null)
         }
 
         private fun createWaypointsCursor() = MatrixCursor(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME))

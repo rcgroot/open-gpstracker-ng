@@ -29,13 +29,14 @@
 package nl.sogeti.android.gpstracker.ng.util
 
 import android.content.Context
+import android.os.Handler
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 
 class MockServiceManager : ServiceManagerInterface {
 
     val broadcaster = MockBroadcastSender()
-    val gpsProvider = Recorder()
+    val gpsRecorder = Recorder()
 
     override fun startup(context: Context, runnable: Runnable?) {
         globalState.started = true
@@ -58,7 +59,7 @@ class MockServiceManager : ServiceManagerInterface {
         globalState.trackId++
 
         broadcaster.sendStartedRecording(context, trackId)
-        gpsProvider.addTrack()
+        gpsRecorder.startRecording()
     }
 
     override fun stopGPSLogging(context: Context) {
@@ -77,6 +78,7 @@ class MockServiceManager : ServiceManagerInterface {
         globalState.loggingState = STATE_LOGGING
 
         broadcaster.sendResumedRecording(context, trackId)
+        gpsRecorder.resumeRecording()
     }
 
     fun reset() {
@@ -95,23 +97,41 @@ class MockServiceManager : ServiceManagerInterface {
 
     class Recorder {
 
-        fun addTrack() {
+        fun startRecording() {
+            recordNewTrack()
+            postNextWaypoint()
+        }
+
+        fun resumeRecording() {
+            postNextWaypoint()
+        }
+
+        private fun postNextWaypoint() {
+            Handler().postDelayed({
+                if (loggingState == STATE_LOGGING) {
+                    recordNewWaypoint()
+                    postNextWaypoint()
+                }
+            }, 2500)
+        }
+
+        private fun recordNewTrack() {
             trackId++
             MockTracksProvider.globalState.addTrack(trackId)
-            addSegment()
+            recordNewSegment()
         }
 
-        fun addSegment() {
+        private fun recordNewSegment() {
             segmentId++
             MockTracksProvider.globalState.addSegment(trackId, segmentId)
-            addWaypoint()
+            recordNewWaypoint()
         }
 
-        fun addWaypoint() {
+        private fun recordNewWaypoint() {
             waypointId++
-            val amplitude = 1.0 + waypointId / 360.0
-            val latitude = 52.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble()))
-            val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble()))
+            val amplitude = 4
+            val latitude = 52.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble() * 10.0))
+            val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble() * 10.0))
             MockTracksProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
         }
     }
