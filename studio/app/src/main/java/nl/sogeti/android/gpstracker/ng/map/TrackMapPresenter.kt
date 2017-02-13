@@ -42,7 +42,7 @@ import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import java.lang.ref.WeakReference
 
-class TrackPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
+class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
 
     private var isReading: Boolean = false
     private var contentController: ContentController? = null

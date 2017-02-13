@@ -50,7 +50,7 @@ class TrackMapFragment : Fragment() {
             field = value
             binding?.recorder = value
         }
-    private val trackPresenter = TrackPresenter(trackViewModel)
+    private val trackPresenter = TrackMapPresenter(trackViewModel)
     private var binding: FragmentMapBinding? = null
 
 
