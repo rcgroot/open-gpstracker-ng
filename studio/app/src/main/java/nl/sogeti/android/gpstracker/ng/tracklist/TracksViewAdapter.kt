@@ -110,7 +110,7 @@ class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
 
     class TrackDiffer(val oldList: List<TrackViewModel>, val newList: List<TrackViewModel>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].uri.get() == oldList[newItemPosition].uri.get()
+            return oldList[oldItemPosition].uri.get() == newList[newItemPosition].uri.get()
         }
 
         override fun getOldListSize(): Int = oldList.size
@@ -118,7 +118,7 @@ class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
         override fun getNewListSize(): Int = newList.size
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].uri.get() == oldList[newItemPosition].uri.get()
+            return oldList[oldItemPosition].uri.get() == newList[newItemPosition].uri.get()
         }
     }
 
