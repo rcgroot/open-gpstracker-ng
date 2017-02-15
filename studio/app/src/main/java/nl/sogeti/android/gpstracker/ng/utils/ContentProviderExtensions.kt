@@ -46,7 +46,7 @@ import timber.log.Timber
  * @return null if the column doesn't exist or stores a null value
  */
 fun Cursor.getString(columnName: String): String? {
-    return this.applyGetter(columnName, { cursor, index -> cursor.getString(index) })
+    return this.applyGetter(columnName, Cursor::getString)
 }
 
 /**
@@ -57,7 +57,7 @@ fun Cursor.getString(columnName: String): String? {
  * @return null if the column doesn't exist or stores a null value
  */
 fun Cursor.getLong(columnName: String): Long? {
-    return this.applyGetter(columnName, { cursor, index -> cursor.getLong(index) })
+    return this.applyGetter(columnName, Cursor::getLong)
 }
 
 /**
@@ -68,7 +68,7 @@ fun Cursor.getLong(columnName: String): Long? {
  * @return null if the column doesn't exist or stores a null value
  */
 fun Cursor.getDouble(columnName: String): Double? {
-    return this.applyGetter(columnName, { cursor, index -> cursor.getDouble(index) })
+    return this.applyGetter(columnName, Cursor::getDouble)
 }
 
 /**
@@ -79,7 +79,7 @@ fun Cursor.getDouble(columnName: String): Double? {
  * @return null if the column doesn't exist or stores a null value
  */
 fun Cursor.getInt(columnName: String): Int? {
-    return this.applyGetter(columnName, { cursor, index -> cursor.getInt(index) })
+    return this.applyGetter(columnName, Cursor::getInt)
 }
 
 private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> T): T? {

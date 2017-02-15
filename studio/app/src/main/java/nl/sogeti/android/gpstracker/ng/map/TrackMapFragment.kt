@@ -44,7 +44,7 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
 class TrackMapFragment : Fragment() {
 
     val KEY_TRACK_URI = "KEY_TRACK_URI"
-    val trackViewModel: TrackViewModel = TrackViewModel(trackUri(-1))
+    val trackViewModel: TrackViewModel = TrackViewModel(null)
     var recordingViewModel: RecordingViewModel? = null
         set(value) {
             field = value

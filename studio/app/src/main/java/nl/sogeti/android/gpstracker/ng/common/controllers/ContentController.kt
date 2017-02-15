@@ -9,7 +9,7 @@ import android.net.Uri
  * Control the observing and monitoring for a observable uri value
  * and its content.
  */
-class ContentController(val context: Context, field: ObservableField<Uri>, val listener: ContentListener) {
+class ContentController(val context: Context, field: ObservableField<Uri?>, val listener: ContentListener) {
 
     private val fieldObserver = FieldObserver(field)
     private var contentObserver = ContentObserver(field.get())
@@ -25,7 +25,7 @@ class ContentController(val context: Context, field: ObservableField<Uri>, val l
         contentObserver.unregister()
     }
 
-    private inner class FieldObserver(val field: ObservableField<Uri>) : Observable.OnPropertyChangedCallback() {
+    private inner class FieldObserver(val field: ObservableField<Uri?>) : Observable.OnPropertyChangedCallback() {
 
         init {
             field.addOnPropertyChangedCallback(this)
@@ -37,22 +37,27 @@ class ContentController(val context: Context, field: ObservableField<Uri>, val l
 
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
             val newUri = field.get()
-            listener.onChangeUriField(newUri)
-            switchContentObserver(newUri)
+            if (newUri != null) {
+                listener.onChangeUriField(newUri)
+                switchContentObserver(newUri)
+            }
         }
     }
 
-    private inner class ContentObserver(val uri: Uri) : android.database.ContentObserver(null) {
+    private inner class ContentObserver(val uri: Uri?) : android.database.ContentObserver(null) {
         init {
-            context.contentResolver.registerContentObserver(uri, true, this)
+            if (uri != null) {
+                context.contentResolver.registerContentObserver(uri, true, this)
+            }
         }
 
         fun unregister() {
             context.contentResolver.unregisterContentObserver(contentObserver)
         }
 
-        override fun onChange(selfChange: Boolean, uri: Uri) {
-            listener.onChangeUriContent(this.uri, uri)
+        override fun onChange(selfChange: Boolean, changedUri: Uri) {
+            val registeredUri = this.uri
+            registeredUri?.apply { listener.onChangeUriContent(registeredUri, changedUri) }
         }
     }
 

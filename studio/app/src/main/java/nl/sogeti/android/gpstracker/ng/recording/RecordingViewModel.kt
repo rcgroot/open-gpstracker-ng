@@ -36,5 +36,5 @@ class RecordingViewModel(uri: Uri) {
     val isRecording = ObservableBoolean(false)
     val summary = ObservableField<String>("")
     val name = ObservableField<String>("")
-    val trackUri = ObservableField<Uri>(uri)
+    val trackUri = ObservableField<Uri?>(uri)
 }
