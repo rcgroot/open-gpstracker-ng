@@ -129,9 +129,10 @@ class MockServiceManager : ServiceManagerInterface {
 
         private fun recordNewWaypoint() {
             waypointId++
-            val amplitude = 4
-            val latitude = 52.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble() * 10.0))
-            val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble() * 10.0))
+            val amplitude = 0.01 + waypointId / 100.0
+            val angularSpeed = 10.0
+            val latitude = 50.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble() * angularSpeed))
+            val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble() * angularSpeed))
             MockTracksProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
         }
     }
