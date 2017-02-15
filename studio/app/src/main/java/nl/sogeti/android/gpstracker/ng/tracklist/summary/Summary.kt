@@ -40,4 +40,5 @@ data class Summary(val track: Uri,
                    val distance: String,
                    val timestamp: Long,
                    val bounds: LatLngBounds,
-                   val waypoints: List<List<LatLng>>)
+                   val waypoints: List<List<LatLng>>,
+                   val count: Int)

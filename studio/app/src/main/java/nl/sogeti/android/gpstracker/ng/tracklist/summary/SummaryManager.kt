@@ -31,6 +31,9 @@ package nl.sogeti.android.gpstracker.ng.tracklist.summary
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
+import nl.sogeti.android.gpstracker.ng.utils.append
+import nl.sogeti.android.gpstracker.ng.utils.count
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -80,7 +83,8 @@ object summaryManager {
         }
         executor?.submit({
             val cacheHit = summaryCache[trackUri]
-            if (cacheHit != null) {
+            val trackWaypointsUri = trackUri.append(WAYPOINTS)
+4            if (cacheHit != null && trackWaypointsUri.count(context) == cacheHit.count) {
                 callbackSummary(cacheHit)
             } else {
                 executeTrackCalculation(context, trackUri, callbackSummary)

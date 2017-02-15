@@ -37,6 +37,7 @@ class DefaultResultHandler : ResultHandler {
     val waypoints = mutableListOf<MutableList<LatLng>>()
     var boundsBuilder: LatLngBounds.Builder? = null
     var headBuilder: LatLngBounds.Builder? = null
+    var waypointCount = 0
     val bound: LatLngBounds
         get() {
             val builder = boundsBuilder
@@ -49,7 +50,7 @@ class DefaultResultHandler : ResultHandler {
             return bounds
         }
 
-    val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
+    private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
     private val headTime: Long
 
     init {
@@ -66,6 +67,7 @@ class DefaultResultHandler : ResultHandler {
     }
 
     override fun addWaypoint(latLng: LatLng, millisecondsTime: Long) {
+        waypointCount++
         // Last 5 minutes worth of waypoints make the head
         if (millisecondsTime > headTime) {
             headBuilder = headBuilder ?: LatLngBounds.Builder()
