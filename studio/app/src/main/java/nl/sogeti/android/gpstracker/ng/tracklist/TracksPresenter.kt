@@ -76,8 +76,10 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), Conten
                     val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
                     TrackViewModel(uri, name)
                 })
-                model.tracks.clear()
-                model.tracks.addAll(trackList.asReversed())
+                synchronized(model.tracks) {
+                    model.tracks.clear()
+                    model.tracks.addAll(trackList.asReversed())
+                }
             }
         } else {
             Timber.w("Unexpected tracks update when context is gone")
