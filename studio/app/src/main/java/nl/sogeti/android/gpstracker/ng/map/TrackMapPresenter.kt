@@ -30,16 +30,14 @@ package nl.sogeti.android.gpstracker.ng.map
 
 import android.net.Uri
 import android.os.AsyncTask
+import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
-import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
-import nl.sogeti.android.gpstracker.ng.utils.readTrack
-import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import nl.sogeti.android.gpstracker.ng.utils.*
 import java.lang.ref.WeakReference
 
 class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
@@ -54,6 +52,14 @@ class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServic
         val trackUri = viewModel.trackUri.get()
         if (trackUri != null && trackUri.lastPathSegment != "-1") {
             TrackReader(trackUri, viewModel).execute()
+        } else {
+            val context = context
+            if (context != null) {
+                val lastTrackId = tracksUri().apply(context, { it.moveToLast();it.getLong(BaseColumns._ID) });
+                if (lastTrackId != null) {
+                    viewModel.trackUri.set(trackUri(lastTrackId))
+                }
+            }
         }
         addTilesToMap()
     }
