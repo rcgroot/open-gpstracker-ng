@@ -38,10 +38,6 @@ import nl.sogeti.android.gpstracker.v2.R
 
 class TrackViewModel(uri: Uri) {
 
-    constructor(uri: Uri, name: String) : this(uri) {
-        this.name.set(name)
-    }
-
     val uri = ObservableField<Uri>(uri)
     val name = ObservableField<String>()
     val iconType = ObservableInt(R.drawable.ic_track_type_default)

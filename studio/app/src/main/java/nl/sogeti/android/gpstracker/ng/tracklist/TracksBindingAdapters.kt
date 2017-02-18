@@ -2,21 +2,23 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.BindingAdapter
 import android.databinding.ObservableArrayList
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import timber.log.Timber
 
 open class TracksBindingAdapters {
 
     @BindingAdapter("tracks")
-    fun setTracks(recyclerView: RecyclerView, tracks: ObservableArrayList<TrackViewModel>) {
+    fun setTracks(recyclerView: RecyclerView, tracks: ObservableArrayList<Uri>) {
         val viewAdapter: TracksViewAdapter
         if (recyclerView.adapter is TracksViewAdapter) {
             viewAdapter = recyclerView.adapter as TracksViewAdapter
+            viewAdapter.model = tracks
         } else {
-            viewAdapter = TracksViewAdapter()
+            viewAdapter = TracksViewAdapter(recyclerView.context)
+            viewAdapter.model = tracks
+            recyclerView.adapter = viewAdapter
         }
-        viewAdapter.model = tracks
-        recyclerView.adapter = viewAdapter
     }
 
     @BindingAdapter("tracksListener")

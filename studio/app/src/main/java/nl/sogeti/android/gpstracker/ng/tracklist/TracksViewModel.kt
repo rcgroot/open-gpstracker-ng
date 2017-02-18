@@ -29,8 +29,9 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.ObservableArrayList
+import android.net.Uri
 
 
 class TracksViewModel {
-    val tracks = ObservableArrayList<TrackViewModel>()
+    val tracks = ObservableArrayList<Uri>()
 }

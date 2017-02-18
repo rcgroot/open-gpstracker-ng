@@ -30,25 +30,30 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.content.Context
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
+import nl.sogeti.android.gpstracker.ng.utils.append
+import nl.sogeti.android.gpstracker.ng.utils.count
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
-class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
+class TracksViewAdapter(val context: Context) : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
 
     var listener: TrackListListener? = null
-    var model: List<TrackViewModel> = listOf()
+    var model = listOf<Uri>()
         set(value) {
             val diffResult = DiffUtil.calculateDiff(TrackDiffer(field, value))
-            field = value.toList()
+            field = value
             diffResult.dispatchUpdatesTo(this)
         }
+    private val rowModels = mutableMapOf<Uri, TrackViewModel>()
 
     override fun getItemCount(): Int {
         return model.size
@@ -66,35 +71,47 @@ class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.viewModel = model[position]
+        val modelForUri = rowViewModelForUri(model[position])
+        if (holder.binding.viewModel != modelForUri) {
+            holder.binding.viewModel = modelForUri
+        }
         if (!holder.didGetMaps) {
             holder.didGetMaps = true
             holder.binding.rowTrackMap.getMapAsync {
                 holder.googleMap = it
             }
         }
-        willDisplayTrack(holder.itemView.context, model[position])
-    }
-
-    fun willDisplayTrack(context: Context, track: TrackViewModel) {
-        summaryManager.collectSummaryInfo(context, track.uri.get(), {
-            if (it.track == track.uri.get()) {
-                track.name.set(it.name)
-                track.distance.set(it.distance)
-                track.duration.set(it.duration)
-                track.iconType.set(it.type)
-                track.startDay.set(it.start)
-                track.completeBounds.set(it.bounds)
-                track.waypoints.set(it.waypoints)
-                val trackPolylineProvider = TrackPolylineProvider(track.waypoints.get())
-                trackPolylineProvider.drawPolylines()
-                track.polylines.set(trackPolylineProvider.lineOptions)
-            }
-        })
+        willDisplayTrack(holder.itemView.context, holder.binding.viewModel)
     }
 
     fun didSelectTrack(track: TrackViewModel) {
         listener?.didSelectTrack(track)
+    }
+
+    private fun rowViewModelForUri(uri: Uri): TrackViewModel? {
+        var viewModel = rowModels[uri]
+        if (viewModel == null) {
+            viewModel = TrackViewModel(uri)
+            rowModels[uri] = viewModel
+        }
+
+        return viewModel
+    }
+
+    private fun willDisplayTrack(context: Context, viewModel: TrackViewModel) {
+        summaryManager.collectSummaryInfo(context, viewModel.uri.get(), {
+            if (it.trackUri == viewModel.uri.get()) {
+                viewModel.completeBounds.set(it.bounds)
+                viewModel.distance.set(it.distance)
+                viewModel.duration.set(it.duration)
+                viewModel.waypoints.set(it.waypoints)
+                val trackPolylineProvider = TrackPolylineProvider(viewModel.waypoints.get())
+                viewModel.polylines.set(trackPolylineProvider.lineOptions)
+                viewModel.name.set(it.name)
+                viewModel.iconType.set(it.type)
+                viewModel.startDay.set(it.start)
+            }
+        })
     }
 
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -108,9 +125,9 @@ class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
             }
     }
 
-    class TrackDiffer(val oldList: List<TrackViewModel>, val newList: List<TrackViewModel>) : DiffUtil.Callback() {
+    inner class TrackDiffer(val oldList: List<Uri>, val newList: List<Uri>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].uri.get() == newList[newItemPosition].uri.get()
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
 
         override fun getOldListSize(): Int = oldList.size
@@ -118,7 +135,11 @@ class TracksViewAdapter : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
         override fun getNewListSize(): Int = newList.size
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].uri.get() == newList[newItemPosition].uri.get()
+            val renderedWaypoints = rowViewModelForUri(oldList[oldItemPosition])?.waypoints?.get()
+            val oldCount = renderedWaypoints?.count() ?: -1
+            val newCount = newList[newItemPosition].append(WAYPOINTS).count(context)
+
+            return oldCount == newCount
         }
     }
 

@@ -32,7 +32,7 @@ import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 
-data class Summary(val track: Uri,
+data class Summary(val trackUri: Uri,
                    val name: String,
                    val type: Int,
                    val start: String,

@@ -72,9 +72,7 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), Conten
             AsyncTask.THREAD_POOL_EXECUTOR.execute {
                 val trackList = tracksUri().map(context, {
                     val id = it.getLong(ContentConstants.Tracks._ID)!!
-                    val uri = trackUri(id)
-                    val name = it.getString(ContentConstants.Tracks.NAME) ?: ""
-                    TrackViewModel(uri, name)
+                    trackUri(id)
                 })
                 synchronized(model.tracks) {
                     model.tracks.clear()

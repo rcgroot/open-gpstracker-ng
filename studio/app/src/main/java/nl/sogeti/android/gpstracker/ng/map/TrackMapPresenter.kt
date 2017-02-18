@@ -106,8 +106,10 @@ class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServic
     /* Private */
 
     private fun updateRecording(trackUri: Uri?, loggingState: Int) {
-        if (trackUri != null && trackUri == viewModel.trackUri.get()) {
-            viewModel.isRecording.set(loggingState == ServiceConstants.STATE_LOGGING)
+        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
+        viewModel.isRecording.set(isRecording)
+        if (trackUri != null && isRecording) {
+            viewModel.trackUri.set(trackUri)
         }
     }
 

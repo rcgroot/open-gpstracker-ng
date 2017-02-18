@@ -33,11 +33,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 
 class TrackPolylineProvider(val waypoints: List<List<LatLng>>) {
-    var lineOptions = listOf<PolylineOptions>()
-        private set
+
+    val lineOptions by lazy { drawPolylines() }
+
     private val LINE_SEGMENTS = 150
 
-    fun drawPolylines() {
+    private fun drawPolylines(): List<PolylineOptions> {
         val points = waypoints.filter { it.size >= 2 }
         val distribution = distribute(points)
         val lineOptions = mutableListOf<PolylineOptions>()
@@ -48,7 +49,8 @@ class TrackPolylineProvider(val waypoints: List<List<LatLng>>) {
             fillLine(points[i], options, distribution[i])
             lineOptions.add(options)
         }
-        this.lineOptions = lineOptions
+
+        return lineOptions
     }
 
     private fun distribute(points: List<List<LatLng>>): List<Int> {
