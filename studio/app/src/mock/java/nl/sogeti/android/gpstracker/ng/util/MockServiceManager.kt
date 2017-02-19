@@ -96,6 +96,7 @@ class MockServiceManager : ServiceManagerInterface {
     }
 
     class Recorder {
+        var shouldScheduleWaypoints = true
 
         fun startRecording() {
             recordNewTrack()
@@ -107,12 +108,14 @@ class MockServiceManager : ServiceManagerInterface {
         }
 
         private fun postNextWaypoint() {
-            Handler().postDelayed({
-                if (loggingState == STATE_LOGGING) {
-                    recordNewWaypoint()
-                    postNextWaypoint()
-                }
-            }, 2500)
+            if (shouldScheduleWaypoints) {
+                Handler().postDelayed({
+                    if (loggingState == STATE_LOGGING) {
+                        recordNewWaypoint()
+                        postNextWaypoint()
+                    }
+                }, 2500)
+            }
         }
 
         private fun recordNewTrack() {

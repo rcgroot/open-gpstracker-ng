@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 import android.webkit.WebView;
@@ -75,6 +76,7 @@ public class AboutFragmentEspressoTest {
     @Test
     public void showAboutInfo() {
         // Verify
+        SystemClock.sleep(500);
         onView(withId(R.id.fragment_about_version))
                 .check(matches(isDisplayed()));
         onView(withId(R.id.fragment_about_webview))

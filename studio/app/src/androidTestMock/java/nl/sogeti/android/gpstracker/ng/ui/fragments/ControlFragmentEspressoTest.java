@@ -65,6 +65,7 @@ public class ControlFragmentEspressoTest {
     public void setUp() {
         Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
+        mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         sut = wrapperFragment.getFragment();
     }
 

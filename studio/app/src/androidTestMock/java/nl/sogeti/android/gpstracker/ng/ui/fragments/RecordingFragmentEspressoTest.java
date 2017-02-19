@@ -61,6 +61,7 @@ public class RecordingFragmentEspressoTest {
     public void setUp() {
         Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
+        mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         mockTracksProvider = new MockTracksProvider();
         sut = wrapperFragment.getFragment();
     }
