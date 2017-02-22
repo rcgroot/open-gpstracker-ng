@@ -38,4 +38,10 @@ class TrackEditModel {
     val name = ObservableField<String>("")
     val selectedPosition = ObservableInt(INVALID_POSITION)
     val trackTypes = TrackTypeDescriptions.allTrackTypes
+
+
+    interface View {
+        fun dismiss()
+
+    }
 }

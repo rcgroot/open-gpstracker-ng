@@ -33,57 +33,89 @@ import android.os.AsyncTask
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import nl.sogeti.android.gpstracker.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.*
 import java.lang.ref.WeakReference
+import javax.inject.Inject
 
-class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener {
+class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener, TrackSelection.Listener {
+    private var executingReader: TrackReader? = null
 
-    private var isReading: Boolean = false
     private var contentController: ContentController? = null
     private var weakGoogleMap = WeakReference<GoogleMap?>(null)
+    @Inject
+    lateinit var trackSelection: TrackSelection
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     override fun didStart() {
         super.didStart()
-        contentController = ContentController(context!!, viewModel.trackUri, this)
-        val trackUri = viewModel.trackUri.get()
-        if (trackUri != null && trackUri.lastPathSegment != "-1") {
-            TrackReader(trackUri, viewModel).execute()
-        } else {
-            val context = context
-            if (context != null) {
-                val lastTrackId = tracksUri().apply(context, { it.moveToLast();it.getLong(BaseColumns._ID) });
-                if (lastTrackId != null) {
-                    viewModel.trackUri.set(trackUri(lastTrackId))
-                }
-            }
-        }
+        trackSelection.addListener(this)
+        makeTrackSelection()
+        contentController = ContentController(context!!, this)
+        contentController?.registerObserver(viewModel.trackUri.get())
         addTilesToMap()
     }
 
     override fun willStop() {
         super.willStop()
-        contentController?.destroy()
+        trackSelection.removeListener(this)
+        contentController?.unregisterObserver()
+        contentController = null
     }
 
-    /* Service connecting */
+    //region Track selection
 
-    override fun didChangeLoggingState(uri: Uri, loggingState: Int) {
-        updateRecording(uri, loggingState)
+    override fun didSelectTrack(trackUri: Uri, name: String) {
+        viewModel.trackUri.set(trackUri)
+        viewModel.name.set(name)
+        contentController?.registerObserver(trackUri)
+        startReadingTrack(trackUri)
     }
+
+    //endregion
+
+    //region Service connecting
+
+    override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
+        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
+        if (trackUri != null && isRecording && trackUri == viewModel.trackUri.get()) {
+            viewModel.isRecording.set(isRecording)
+        }
+    }
+
+    override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
+        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
+        if (trackUri != null && isRecording) {
+            val trackName = name ?: ""
+            trackSelection.selectTrack(trackUri, trackName)
+            viewModel.isRecording.set(isRecording)
+        }
+    }
+
+    //endregion
 
     /* Content watching */
 
-    override fun onChangeUriField(uri: Uri) {
-        TrackReader(uri, viewModel).execute()
+    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
+        startReadingTrack(contentUri)
     }
 
-    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        if (!isReading) {
-            TrackReader(contentUri, viewModel).execute()
+    private fun startReadingTrack(trackUri: Uri) {
+        var executingReader = this.executingReader;
+        if (executingReader == null || executingReader.trackUri != trackUri) {
+            executingReader?.cancel(true)
+            executingReader = TrackReader(trackUri, viewModel)
+            executingReader.execute()
+            this.executingReader = executingReader
         }
     }
 
@@ -105,22 +137,28 @@ class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServic
 
     /* Private */
 
-    private fun updateRecording(trackUri: Uri?, loggingState: Int) {
-        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
-        viewModel.isRecording.set(isRecording)
-        if (trackUri != null && isRecording) {
-            viewModel.trackUri.set(trackUri)
+    private fun makeTrackSelection() {
+        val trackUri = trackSelection.trackUri
+        if (trackUri != null && trackUri.lastPathSegment != "-1") {
+            didSelectTrack(trackUri, trackSelection.trackName)
+        } else {
+            val context = context
+            if (context != null) {
+                val lastTrack = tracksUri().apply(context, { it.moveToLast();Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) })
+                if (lastTrack != null && lastTrack.first != null) {
+                    val trackId = lastTrack.first as Long
+                    val lastTrackUri = trackUri(trackId)
+                    val name = lastTrack.second ?: ""
+                    trackSelection.selectTrack(lastTrackUri, name)
+                }
+            }
         }
     }
 
-    inner class TrackReader internal constructor(private val trackUri: Uri, private val viewModel: TrackViewModel)
+    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()
-
-        override fun onPreExecute() {
-            isReading = true
-        }
 
         override fun doInBackground(vararg p: Void): Void? {
             context?.let {
@@ -141,7 +179,9 @@ class TrackMapPresenter(private val viewModel: TrackViewModel) : ConnectedServic
                 viewModel.completeBounds.set(builder.build())
             }
             viewModel.waypoints.set(handler.waypoints)
-            isReading = false
+            if (executingReader == this) {
+                executingReader = null
+            }
         }
     }
 }

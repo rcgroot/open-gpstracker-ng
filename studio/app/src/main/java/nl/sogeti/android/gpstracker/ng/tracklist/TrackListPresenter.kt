@@ -28,37 +28,46 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.databinding.ObservableField
 import android.net.Uri
 import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
-import nl.sogeti.android.gpstracker.ng.utils.*
+import nl.sogeti.android.gpstracker.ng.utils.getLong
+import nl.sogeti.android.gpstracker.ng.utils.map
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import timber.log.Timber
+import javax.inject.Inject
 
-class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), ContentController.ContentListener, TrackListListener {
-    var listener: Listener? = null
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.ContentListener, TrackListListener {
+
     private var contentController: ContentController? = null
+    @Inject
+    lateinit var trackSelection: TrackSelection
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     override fun didStart() {
-        contentController = ContentController(context!!, ObservableField(tracksUri()), this)
+
+        contentController = ContentController(context!!, this)
+        contentController?.registerObserver(tracksUri())
         summaryManager.start()
         addTracksToModel()
     }
 
     override fun willStop() {
-        contentController?.destroy()
+        contentController?.unregisterObserver()
+        contentController = null
         summaryManager.stop()
     }
 
     /* Content watching */
-
-    override fun onChangeUriField(uri: Uri) {
-        addTracksToModel()
-    }
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
         addTracksToModel()
@@ -74,24 +83,18 @@ class TracksPresenter(val model: TracksViewModel) : ContextedPresenter(), Conten
                     val id = it.getLong(ContentConstants.Tracks._ID)!!
                     trackUri(id)
                 })
-                synchronized(model.tracks) {
-                    model.tracks.clear()
-                    model.tracks.addAll(trackList.asReversed())
-                }
+                viewModel.tracks.set(trackList.asReversed())
             }
         } else {
             Timber.w("Unexpected tracks update when context is gone")
         }
     }
 
-    /* Adapter callbacks */
+    /* RecycleView Adapter callbacks */
 
     override fun didSelectTrack(track: TrackViewModel) {
-        listener?.onTrackSelected(track.uri.get())
-    }
-
-    interface Listener {
-        fun onTrackSelected(uri: Uri)
+        trackSelection.selectTrack(track.uri.get(), track.name.get())
+        view.dismiss()
     }
 }
 

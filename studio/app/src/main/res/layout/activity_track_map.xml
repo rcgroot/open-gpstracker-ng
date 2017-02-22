@@ -7,7 +7,7 @@
         <import type="android.widget.Toolbar" />
 
         <variable
-            name="track"
+            name="viewModel"
             type="nl.sogeti.android.gpstracker.ng.map.TrackViewModel" />
     </data>
 
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:title="@{track.name}" />
+            android:title="@{viewModel.name}" />
 
         <fragment
             android:id="@+id/fragment_map"

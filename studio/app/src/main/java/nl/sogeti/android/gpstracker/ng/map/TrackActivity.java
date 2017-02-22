@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.map;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -39,43 +38,59 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.jetbrains.annotations.NotNull;
+
 import nl.sogeti.android.gpstracker.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity;
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
-import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
 
-public class TrackMapActivity extends AppCompatActivity {
+public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
-    private static final int REQUEST_CODE_TRACK_SELECTION = 234;
+    private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
     private static final String TAG_DIALOG = "DIALOG_TRACK_EDIT";
-    private TrackViewModel selectedTrack;
+    private TrackViewModel viewModel = new TrackViewModel();
+    private TrackPresenter presenter = new TrackPresenter(viewModel, this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityTrackMapBinding binding;
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
+        ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map);
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
-
-        TrackMapFragment mapFragment = (TrackMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
-        selectedTrack = mapFragment.getTrackViewModel();
-        selectedTrack.getTrackUri().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable observable, int i) {
-                supportInvalidateOptionsMenu();
-            }
-        });
-        binding.setTrack(selectedTrack);
-
-        RecordingFragment recordingFragment = (RecordingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_recording);
-        mapFragment.setRecordingViewModel(recordingFragment.getRecordingViewModel());
+        binding.setViewModel(viewModel);
+        if (savedInstanceState != null) {
+            Uri uri = savedInstanceState.getParcelable(KEY_SELECTED_TRACK_URI);
+            String name = savedInstanceState.getString(KEY_SELECTED_TRACK_NAME);
+            viewModel.getTrackUri().set(uri);
+            viewModel.getName().set(name);
+        }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        presenter.start(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        presenter.stop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_SELECTED_TRACK_URI, viewModel.getTrackUri().get());
+        outState.putString(KEY_SELECTED_TRACK_NAME, viewModel.getName().get());
+    }
+
+    //region Context menu
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,8 +104,7 @@ public class TrackMapActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        final Uri track = selectedTrack.getTrackUri().get();
-        menu.findItem(R.id.action_edit).setEnabled(track != null && !track.getLastPathSegment().equals("-1"));
+        menu.findItem(R.id.action_edit).setEnabled(viewModel.isEditable());
 
         return true;
     }
@@ -99,14 +113,13 @@ public class TrackMapActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         boolean consumed;
         if (item.getItemId() == R.id.action_edit) {
-            showTrackTitleDialog();
+            presenter.onEditOptionSelected();
             consumed = true;
         } else if (item.getItemId() == R.id.action_about) {
-            showAboutDialog();
+            presenter.onAboutOptionSelected();
             consumed = true;
         } else if (item.getItemId() == R.id.action_list) {
-            Intent intent = new Intent(this, TracksActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_TRACK_SELECTION);
+            presenter.onListOptionSelected();
             consumed = true;
         } else {
             consumed = super.onOptionsItemSelected(item);
@@ -115,27 +128,31 @@ public class TrackMapActivity extends AppCompatActivity {
         return consumed;
     }
 
+    //endregion
+
+    //region View contract
+
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_SELECTED_TRACK_URI, selectedTrack.getTrackUri().get());
+    public void setTrackName(@NotNull String name) {
+        invalidateOptionsMenu();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_TRACK_SELECTION && resultCode == RESULT_OK) {
-            Uri trackUri = data.getParcelableExtra(ContentConstants.Tracks.TRACKS);
-            selectedTrack.getTrackUri().set(trackUri);
-        }
-    }
-
-    private void showAboutDialog() {
+    public void showAboutDialog() {
         new AboutFragment().show(getSupportFragmentManager(), "ABOUT");
     }
 
-    private void showTrackTitleDialog() {
-        final Uri trackUri = selectedTrack.getTrackUri().get();
+    @Override
+    public void showTrackTitleDialog() {
+        final Uri trackUri = viewModel.getTrackUri().get();
         TrackEditDialogFragment.Companion.newInstance(trackUri).show(getSupportFragmentManager(), TAG_DIALOG);
     }
+
+    @Override
+    public void selectTrack() {
+        Intent intent = new Intent(this, TracksActivity.class);
+        startActivity(intent);
+    }
+
+    //endregion
 }

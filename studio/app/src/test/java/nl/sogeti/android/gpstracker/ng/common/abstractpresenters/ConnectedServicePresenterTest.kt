@@ -62,7 +62,11 @@ class ConnectedServicePresenterTest {
         var state = -1
         var uri: Uri? = null
 
-        override fun didChangeLoggingState(trackUri: Uri, loggingState: Int) {
+        override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
+            this.uri = trackUri
+            this.state = loggingState
+        }
+        override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
             this.uri = trackUri
             this.state = loggingState
         }

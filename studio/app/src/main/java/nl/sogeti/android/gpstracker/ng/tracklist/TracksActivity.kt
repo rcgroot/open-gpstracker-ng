@@ -39,25 +39,15 @@ import android.support.v7.widget.Toolbar
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.v2.R
 
-class TracksActivity : AppCompatActivity(), TracksPresenter.Listener {
+class TracksActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracks)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        val trackListFragment = supportFragmentManager.findFragmentById(R.id.fragment_tracklist) as TrackListFragment
-        trackListFragment.listener = this
-
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show() }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onTrackSelected(uri: Uri) {
-        val trackIntent = Intent(this, this.javaClass)
-        trackIntent.putExtra(ContentConstants.Tracks.TRACKS, uri)
-        setResult(Activity.RESULT_OK, trackIntent)
-        finish()
     }
 }

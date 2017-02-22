@@ -28,11 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.utils
 
+import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import java.util.*
 
 class DefaultResultHandler : ResultHandler {
+    var uri: Uri? = null
     var name: String? = null
     val waypoints = mutableListOf<MutableList<LatLng>>()
     var boundsBuilder: LatLngBounds.Builder? = null
@@ -57,7 +59,8 @@ class DefaultResultHandler : ResultHandler {
         headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS
     }
 
-    override fun addTrack(name: String) {
+    override fun addTrack(uri: Uri, name: String) {
+        this.uri = uri
         this.name = name
 
     }

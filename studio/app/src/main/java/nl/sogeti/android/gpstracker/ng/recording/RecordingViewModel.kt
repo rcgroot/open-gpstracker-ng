@@ -32,9 +32,9 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.net.Uri
 
-class RecordingViewModel(uri: Uri) {
+class RecordingViewModel(uri: Uri?) {
     val isRecording = ObservableBoolean(false)
     val summary = ObservableField<String>("")
     val name = ObservableField<String>("")
-    val trackUri = ObservableField<Uri?>(uri)
+    val trackUri = ObservableField(uri)
 }

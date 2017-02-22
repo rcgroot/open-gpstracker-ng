@@ -44,7 +44,7 @@ import nl.sogeti.android.gpstracker.ng.utils.count
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
 
-class TracksViewAdapter(val context: Context) : RecyclerView.Adapter<TracksViewAdapter.ViewHolder>() {
+class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackListViewAdapter.ViewHolder>() {
 
     var listener: TrackListListener? = null
     var model = listOf<Uri>()
@@ -135,9 +135,12 @@ class TracksViewAdapter(val context: Context) : RecyclerView.Adapter<TracksViewA
         override fun getNewListSize(): Int = newList.size
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val renderedWaypoints = rowViewModelForUri(oldList[oldItemPosition])?.waypoints?.get()
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            val renderedWaypoints = rowViewModelForUri(oldItem)?.waypoints?.get()
+
             val oldCount = renderedWaypoints?.count() ?: -1
-            val newCount = newList[newItemPosition].append(WAYPOINTS).count(context)
+            val newCount = newItem.append(WAYPOINTS).count(context)
 
             return oldCount == newCount
         }

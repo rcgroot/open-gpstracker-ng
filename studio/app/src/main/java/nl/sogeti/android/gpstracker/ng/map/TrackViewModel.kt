@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -28,17 +28,20 @@
  */
 package nl.sogeti.android.gpstracker.ng.map
 
-import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 
-class TrackViewModel(uri: Uri?) {
-    val trackUri: ObservableField<Uri?> = ObservableField(uri)
-    val name: ObservableField<String> = ObservableField("")
-    val isRecording = ObservableBoolean(false)
-    val waypoints = ObservableField<List<List<LatLng>>>()
-    val completeBounds = ObservableField<LatLngBounds>()
-    val trackHeadBounds = ObservableField<LatLngBounds>()
+class TrackViewModel {
+
+    val trackUri: ObservableField<Uri?> = ObservableField(null)
+    val isEditable: Boolean
+        get() = trackUri.get() != null
+    val name = ObservableField("")
+
+    interface View {
+        fun setTrackName(name: String)
+        fun showAboutDialog()
+        fun showTrackTitleDialog()
+        fun selectTrack()
+    }
 }

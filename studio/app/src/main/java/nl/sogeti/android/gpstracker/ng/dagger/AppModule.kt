@@ -30,8 +30,10 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Module
 import dagger.Provides
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import java.util.*
+import javax.inject.Singleton
 
 @Module
 class AppModule {
@@ -43,5 +45,11 @@ class AppModule {
     @Provides
     fun locale(): Locale {
         return Locale.getDefault()
+    }
+
+    @Singleton
+    @Provides
+    fun trackSelection(): TrackSelection {
+        return TrackSelection()
     }
 }

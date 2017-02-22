@@ -9,7 +9,7 @@
 
         <variable
             name="adapter"
-            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksViewAdapter" />
+            type="nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter" />
 
         <variable
             name="viewModel"

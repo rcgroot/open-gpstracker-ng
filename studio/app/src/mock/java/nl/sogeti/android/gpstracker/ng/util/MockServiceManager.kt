@@ -56,10 +56,8 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = STATE_LOGGING
-        globalState.trackId++
-
-        broadcaster.sendStartedRecording(context, trackId)
         gpsRecorder.startRecording()
+        broadcaster.sendStartedRecording(context, trackId)
     }
 
     override fun stopGPSLogging(context: Context) {

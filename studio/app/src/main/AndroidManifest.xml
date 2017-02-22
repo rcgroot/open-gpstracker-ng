@@ -20,7 +20,7 @@
             android:value="AIzaSyCFvI2hkcQYtbOkbN-C3WxN76UZPT_r49M" />
 
         <activity
-            android:name="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity"
+            android:name="nl.sogeti.android.gpstracker.ng.map.TrackActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -32,11 +32,11 @@
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity"
             android:label="@string/title_activity_tracks"
-            android:parentActivityName="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity"
+            android:parentActivityName="nl.sogeti.android.gpstracker.ng.map.TrackActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="nl.sogeti.android.gpstracker.ng.map.TrackMapActivity" />
+                android:value="nl.sogeti.android.gpstracker.ng.map.TrackActivity" />
         </activity>
     </application>
 

@@ -6,11 +6,11 @@
 
         <variable
             name="presenter"
-            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksPresenter" />
+            type="nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter" />
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.ng.tracklist.TracksViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewModel" />
     </data>
 
     <android.support.v7.widget.RecyclerView

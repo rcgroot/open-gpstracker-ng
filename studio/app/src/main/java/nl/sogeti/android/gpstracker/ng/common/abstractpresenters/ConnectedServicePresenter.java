@@ -32,16 +32,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import kotlin.jvm.functions.Function1;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
+import nl.sogeti.android.gpstracker.ng.utils.ContentProviderExtensionsKt;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
+
+import static nl.sogeti.android.gpstracker.integration.ContentConstants.TracksColumns.NAME;
 
 /**
  * Base class for presenters that source data from the IPC / Intent with
@@ -49,7 +54,8 @@ import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
  */
 public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
-    @Inject @Named("loggingStateFilter")
+    @Inject
+    @Named("loggingStateFilter")
     public IntentFilter loggingStateIntentFilter;
 
     @Inject
@@ -70,7 +76,13 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
                     Context context = ConnectedServicePresenter.this.getContext();
                     if (context != null) {
                         Uri trackUri = TrackUriExtensionKt.trackUri(serviceManager.getTrackId());
-                        didChangeLoggingState(trackUri, serviceManager.getLoggingState());
+                        String name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
+                            @Override
+                            public String invoke(Cursor cursor) {
+                                return ContentProviderExtensionsKt.getString(cursor, NAME);
+                            }
+                        }, null, null);
+                        didConnectToService(trackUri, name, serviceManager.getLoggingState());
                     }
                 }
             }
@@ -105,17 +117,16 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         this.serviceManager = serviceManager;
     }
 
-    public abstract void didChangeLoggingState(@NonNull Uri trackUri, int loggingState);
+    public abstract void didChangeLoggingState(@Nullable Uri trackUri, @Nullable String name, int loggingState);
+    public abstract void didConnectToService(@Nullable Uri trackUri, @Nullable String name, int loggingState);
 
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
             Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
-            if (trackUri == null) {
-                trackUri = TrackUriExtensionKt.trackUri(-1L);
-            }
-            didChangeLoggingState(trackUri, loggingState);
+            String name = intent.getStringExtra(ServiceConstants.EXTRA_TRACK_NAME);
+            didChangeLoggingState(trackUri, name, loggingState);
         }
     }
 }

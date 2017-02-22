@@ -26,31 +26,62 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.dagger
+package nl.sogeti.android.gpstracker.ng.map
 
-import dagger.Component
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackActivity
-import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackPresenter
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
-import javax.inject.Named
-import javax.inject.Singleton
+import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import javax.inject.Inject
 
-@Singleton
-@Component(modules = arrayOf(IntegrationModule::class, AppModule::class))
-interface AppComponent {
-    fun inject(injectable: ConnectedServicePresenter)
+class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener {
 
-    fun inject(injectable: SummaryCalculator)
+    @Inject
+    lateinit var trackSelection: TrackSelection
 
-    fun inject(injectable: TrackPresenter)
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
-    fun inject(injectable: TrackMapPresenter)
+    //region Presenter context
 
-    fun inject(injectable: TrackListPresenter)
+    override fun didStart() {
+        trackSelection.addListener(this)
+        trackSelection.trackUri?.let {
+            didSelectTrack(it, trackSelection.trackName)
+        }
 
-    @Named("providerAuthority")
-    fun providerAuthority(): String
+    }
+
+    override fun willStop() {
+        trackSelection.removeListener(this)
+    }
+
+    //endregion
+
+    //region View
+
+    fun onListOptionSelected() {
+        view.selectTrack()
+    }
+
+    fun onAboutOptionSelected() {
+        view.showAboutDialog()
+    }
+
+    fun onEditOptionSelected() {
+        view.showTrackTitleDialog()
+    }
+
+    //endregion
+
+    //region TrackSelection
+
+    override fun didSelectTrack(trackUri: Uri, name: String) {
+        viewModel.trackUri.set(trackUri)
+        viewModel.name.set(name)
+        view.setTrackName(name)
+    }
+
+    //endregion
 }

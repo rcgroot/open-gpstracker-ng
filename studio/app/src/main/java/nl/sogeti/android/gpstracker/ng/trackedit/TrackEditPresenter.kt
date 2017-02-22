@@ -41,7 +41,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
 
-class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : ContextedPresenter() {
+class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel.View) : ContextedPresenter() {
 
     val spinnerAdapter: SpinnerAdapter by lazy {
         object : BaseAdapter() {
@@ -128,11 +128,6 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: Listener) : Co
 
     private fun saveTrackName() {
         model.trackUri.get()?.updateName(context!!, model.name.get())
-    }
-
-    interface Listener {
-        fun dismiss()
-
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)

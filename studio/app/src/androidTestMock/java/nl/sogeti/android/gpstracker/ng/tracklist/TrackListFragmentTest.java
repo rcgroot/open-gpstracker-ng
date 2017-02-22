@@ -29,6 +29,6 @@ public class TrackListFragmentTest {
         wrapperFragment.launchFragment(null);
 
         // Verify
-        Assert.assertNotNull(sut.getTracksPresenter().getContext());
+        Assert.assertNotNull(sut.getTrackListPresenter().getContext());
     }
 }

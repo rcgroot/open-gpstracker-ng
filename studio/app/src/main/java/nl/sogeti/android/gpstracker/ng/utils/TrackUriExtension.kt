@@ -175,7 +175,7 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
     }
 
     val name = this.apply(context, { it.getString(NAME) }, listOf(NAME))
-    handler.addTrack(name ?: "")
+    handler.addTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
     segmentsUri.map(context, {
         val segmentId = it.getLong(0)
@@ -262,7 +262,7 @@ fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
 
 interface ResultHandler {
 
-    fun addTrack(name: String)
+    fun addTrack(uri:Uri, name: String)
 
     fun addSegment()
 

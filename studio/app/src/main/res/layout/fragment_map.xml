@@ -5,11 +5,8 @@
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.ng.map.TrackViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.map.TrackMapViewModel" />
 
-        <variable
-            name="recorder"
-            type="nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel" />
     </data>
 
     <com.google.android.gms.maps.MapView

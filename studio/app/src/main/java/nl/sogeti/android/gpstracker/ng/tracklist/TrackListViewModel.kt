@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,31 +26,17 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.dagger
+package nl.sogeti.android.gpstracker.ng.tracklist
 
-import dagger.Component
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackActivity
-import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackPresenter
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
-import javax.inject.Named
-import javax.inject.Singleton
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableField
+import android.net.Uri
 
-@Singleton
-@Component(modules = arrayOf(IntegrationModule::class, AppModule::class))
-interface AppComponent {
-    fun inject(injectable: ConnectedServicePresenter)
 
-    fun inject(injectable: SummaryCalculator)
+class TrackListViewModel {
+    val tracks = ObservableField<List<Uri>>();
 
-    fun inject(injectable: TrackPresenter)
-
-    fun inject(injectable: TrackMapPresenter)
-
-    fun inject(injectable: TrackListPresenter)
-
-    @Named("providerAuthority")
-    fun providerAuthority(): String
+    interface View {
+        fun dismiss()
+    }
 }

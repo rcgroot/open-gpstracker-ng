@@ -42,16 +42,12 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
 
 class RecordingFragment : Fragment() {
 
-    val recordingViewModel: RecordingViewModel = RecordingViewModel(trackUri(-1))
-    @VisibleForTesting
-    var binding: FragmentRecordingBinding? = null
-
-    val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
+    private val recordingViewModel: RecordingViewModel = RecordingViewModel(null)
+    private val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
         binding.track = recordingViewModel
-        this.binding = binding
 
         return binding.root
     }

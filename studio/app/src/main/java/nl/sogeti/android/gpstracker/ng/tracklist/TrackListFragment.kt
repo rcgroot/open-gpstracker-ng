@@ -41,13 +41,9 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 /**
  * Sets up display and selection of tracks in a list style
  */
-class TrackListFragment : Fragment() {
-    var tracksPresenter: TracksPresenter? = null
-    var listener: TracksPresenter.Listener? = null
-        set(value) {
-            field = value
-            tracksPresenter?.listener = listener
-        }
+class TrackListFragment : Fragment(), TrackListViewModel.View {
+    val viewModel = TrackListViewModel()
+    val trackListPresenter = TrackListPresenter(viewModel, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,29 +51,25 @@ class TrackListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        val viewModel = TracksViewModel()
-        val tracksPresenter = TracksPresenter(viewModel)
-        tracksPresenter.listener = listener
-        this.tracksPresenter = tracksPresenter
         binding.listview.layoutManager = LinearLayoutManager(activity)
         binding.viewModel = viewModel
-        binding.presenter = tracksPresenter
+        binding.presenter = trackListPresenter
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        tracksPresenter?.start(activity)
+        trackListPresenter.start(activity)
     }
 
     override fun onStop() {
         super.onStop()
-        tracksPresenter?.stop()
+        trackListPresenter.stop()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        this.tracksPresenter = null
+    override fun dismiss() {
+        // TODO not portable
+        activity.finish()
     }
 }

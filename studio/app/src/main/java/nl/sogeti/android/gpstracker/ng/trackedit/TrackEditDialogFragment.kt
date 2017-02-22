@@ -11,7 +11,7 @@ import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentEditDialogBinding
 
-class TrackEditDialogFragment : DialogFragment(), TrackEditPresenter.Listener {
+class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
     val model = TrackEditModel()
     val presenter = TrackEditPresenter(model, this)

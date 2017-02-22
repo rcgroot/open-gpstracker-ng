@@ -31,7 +31,6 @@ package nl.sogeti.android.gpstracker.ng.control
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
@@ -40,9 +39,19 @@ import nl.sogeti.android.gpstracker.v2.R
 
 class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServicePresenter() {
 
-    override fun didChangeLoggingState(trackUri: Uri, loggingState: Int) {
+    //region Service connection
+
+    override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
         viewModel.state = loggingState
     }
+
+    override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
+        viewModel.state = loggingState
+    }
+
+    //endregion
+
+    //region View callback
 
     fun onClickLeft() {
         context?.let {
@@ -65,6 +74,8 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
             }
         }
     }
+
+    //endregion
 
     private fun startLogging(context: Context) {
         serviceManager.startGPSLogging(context, context.getString(R.string.initial_track_name))

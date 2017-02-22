@@ -186,7 +186,7 @@ class MockTracksProvider : ContentProvider() {
 
         fun buildMatrixCursor(columns: Array<String>, content: List<List<Any>>): Cursor? {
             val cursor = MatrixCursor(columns)
-            for (row in content) {
+            for (row in content.iterator()) {
                 cursor.addRow(row)
             }
             return cursor

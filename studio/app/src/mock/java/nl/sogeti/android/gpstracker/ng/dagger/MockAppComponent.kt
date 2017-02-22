@@ -30,7 +30,9 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
+import javax.inject.Singleton
 
+@Singleton
 @Component(modules = arrayOf(MockIntegrationModule::class, AppModule::class))
 interface MockAppComponent : AppComponent {
 
