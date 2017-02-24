@@ -28,13 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.net.Uri
 
 
 class TrackListViewModel {
-    val tracks = ObservableField<List<Uri>>();
+    val tracks = ObservableField<List<Uri>>(emptyList())
 
     interface View {
         fun dismiss()

@@ -47,7 +47,7 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding
  */
 class ControlFragment : Fragment() {
 
-    val viewModel = LoggerViewModel()
+    val viewModel = ControlViewModel()
     private val controlPresenter = ControlPresenter(viewModel)
     private val permissionRequester = PermissionRequester()
     @VisibleForTesting
@@ -60,7 +60,7 @@ class ControlFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentControlBinding>(inflater, R.layout.fragment_control, container, false)
-        binding.logger = viewModel
+        binding.viewModel = viewModel
         binding.presenter = controlPresenter
         this.binding = binding
 

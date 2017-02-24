@@ -45,10 +45,6 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     val viewModel = TrackListViewModel()
     val trackListPresenter = TrackListPresenter(viewModel, this)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)

@@ -40,10 +40,9 @@ import android.view.MenuItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import nl.sogeti.android.gpstracker.integration.ContentConstants;
-import nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity;
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
+import nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 

@@ -26,38 +26,19 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.control;
+package nl.sogeti.android.gpstracker.ng.control
 
-import junit.framework.Assert;
+import android.databinding.BaseObservable
+import android.databinding.Bindable
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableInt
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import nl.sogeti.android.gpstracker.v2.BR
 
-import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
+import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN
 
-public class LoggerViewModelTest {
+class ControlViewModel : BaseObservable() {
 
-    private LoggerViewModel sut;
-
-    @Before
-    public void setup() {
-        sut = new LoggerViewModel();
-    }
-
-    @Test
-    public void testInit() {
-        // Verify
-        Assert.assertEquals(STATE_UNKNOWN, sut.getState());
-    }
-
-    @Test
-    public void testState() {
-        // Execute
-        sut.setState(88);
-
-        // Verify
-        Assert.assertEquals(88, sut.getState());
-    }
+    val enabled = ObservableBoolean(true)
+    val state = ObservableInt(STATE_UNKNOWN)
 }

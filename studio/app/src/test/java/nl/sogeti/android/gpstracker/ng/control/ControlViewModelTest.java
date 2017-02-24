@@ -28,27 +28,34 @@
  */
 package nl.sogeti.android.gpstracker.ng.control;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
+import junit.framework.Assert;
 
-import nl.sogeti.android.gpstracker.v2.BR;
+import org.junit.Before;
+import org.junit.Test;
 
 import static nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_UNKNOWN;
 
-public class LoggerViewModel extends BaseObservable {
-    private int state;
+public class ControlViewModelTest {
 
-    public LoggerViewModel() {
-        this.state = STATE_UNKNOWN;
+    private ControlViewModel sut;
+
+    @Before
+    public void setup() {
+        sut = new ControlViewModel();
     }
 
-    @Bindable
-    public int getState() {
-        return state;
+    @Test
+    public void testInit() {
+        // Verify
+        Assert.assertEquals(STATE_UNKNOWN, sut.getState().get());
     }
 
-    public void setState(int state) {
-        this.state = state;
-        notifyPropertyChanged(BR.state);
+    @Test
+    public void testState() {
+        // Execute
+        sut.getState().set(88);
+
+        // Verify
+        Assert.assertEquals(88, sut.getState().get());
     }
 }

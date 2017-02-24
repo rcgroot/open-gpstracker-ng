@@ -30,6 +30,8 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.utils.apply
@@ -37,16 +39,21 @@ import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.ng.utils.waypointsUri
 import nl.sogeti.android.gpstracker.v2.R
 
-class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServicePresenter() {
+class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter() {
+
+    val handler = Handler(Looper.getMainLooper())
+    val enableRunnable = { enableButtons() }
 
     //region Service connection
 
     override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
-        viewModel.state = loggingState
+        viewModel.state.set(loggingState)
+        enableButtons()
     }
 
     override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
-        viewModel.state = loggingState
+        viewModel.state.set(loggingState)
+        enableButtons()
     }
 
     //endregion
@@ -55,9 +62,10 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
 
     fun onClickLeft() {
         context?.let {
-            if (viewModel.state == STATE_LOGGING) {
+            disableUntilChange(200)
+            if (viewModel.state.get() == STATE_LOGGING) {
                 stopLogging(it)
-            } else if (viewModel.state == STATE_PAUSED) {
+            } else if (viewModel.state.get() == STATE_PAUSED) {
                 stopLogging(it)
             }
         }
@@ -65,17 +73,28 @@ class ControlPresenter(private val viewModel: LoggerViewModel) : ConnectedServic
 
     fun onClickRight() {
         context?.let {
-            if (viewModel.state == STATE_STOPPED) {
+            disableUntilChange(200)
+            if (viewModel.state.get() == STATE_STOPPED) {
                 startLogging(it)
-            } else if (viewModel.state == STATE_LOGGING) {
+            } else if (viewModel.state.get() == STATE_LOGGING) {
                 pauseLogging(it)
-            } else if (viewModel.state == STATE_PAUSED) {
+            } else if (viewModel.state.get() == STATE_PAUSED) {
                 resumeLogging(it)
             }
         }
     }
 
     //endregion
+
+    private fun disableUntilChange(timeout: Long) {
+        viewModel.enabled.set(false)
+        handler.postDelayed(enableRunnable, timeout)
+    }
+
+    private fun enableButtons() {
+        handler.removeCallbacks { enableRunnable }
+        viewModel.enabled.set(true)
+    }
 
     private fun startLogging(context: Context) {
         serviceManager.startGPSLogging(context, context.getString(R.string.initial_track_name))

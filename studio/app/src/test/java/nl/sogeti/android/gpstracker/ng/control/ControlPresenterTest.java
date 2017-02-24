@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.control;
 
 import android.content.Context;
+import android.databinding.ObservableInt;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,8 +55,7 @@ public class ControlPresenterTest {
     public MockAppComponentTestRule appComponentRule = new MockAppComponentTestRule();
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-    @Mock
-    LoggerViewModel mockLogger;
+    ControlViewModel viewModel;
     @Mock
     ServiceManager mockServiceManager;
     @Mock
@@ -64,7 +64,8 @@ public class ControlPresenterTest {
 
     @Before
     public void setup() {
-        sut = new ControlPresenter(mockLogger);
+        viewModel = new ControlViewModel();
+        sut = new ControlPresenter(viewModel);
         sut.setContext(mockContext);
         sut.setServiceManager(mockServiceManager);
     }
@@ -72,7 +73,7 @@ public class ControlPresenterTest {
     @Test
     public void leftClickDuringUnknown() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
+        viewModel.getState().set(STATE_UNKNOWN);
 
         // Execute
         sut.onClickLeft();
@@ -84,7 +85,7 @@ public class ControlPresenterTest {
     @Test
     public void leftClickDuringStopped() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_STOPPED);
+        viewModel.getState().set(STATE_STOPPED);
 
         // Execute
         sut.onClickLeft();
@@ -96,7 +97,7 @@ public class ControlPresenterTest {
     @Test
     public void leftClickDuringLogging() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_LOGGING);
+        viewModel.getState().set(STATE_LOGGING);
 
         // Execute
         sut.onClickLeft();
@@ -108,7 +109,7 @@ public class ControlPresenterTest {
     @Test
     public void leftClickDuringPaused() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_PAUSED);
+        viewModel.getState().set(STATE_PAUSED);
 
         // Execute
         sut.onClickLeft();
@@ -120,7 +121,7 @@ public class ControlPresenterTest {
     @Test
     public void rightClickDuringUnknown() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_UNKNOWN);
+        viewModel.getState().set(STATE_UNKNOWN);
 
         // Execute
         sut.onClickRight();
@@ -132,7 +133,7 @@ public class ControlPresenterTest {
     @Test
     public void rightClickDuringStopped() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_STOPPED);
+        viewModel.getState().set(STATE_STOPPED);
 
         // Execute
         sut.onClickRight();
@@ -144,7 +145,7 @@ public class ControlPresenterTest {
     @Test
     public void rightClickDuringLogging() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_LOGGING);
+        viewModel.getState().set(STATE_LOGGING);
 
         // Execute
         sut.onClickRight();
@@ -156,7 +157,7 @@ public class ControlPresenterTest {
     @Test
     public void rightClickDuringPaused() {
         // Prepare
-        when(mockLogger.getState()).thenReturn(STATE_PAUSED);
+        viewModel.getState().set(STATE_PAUSED);
 
         // Execute
         sut.onClickRight();
