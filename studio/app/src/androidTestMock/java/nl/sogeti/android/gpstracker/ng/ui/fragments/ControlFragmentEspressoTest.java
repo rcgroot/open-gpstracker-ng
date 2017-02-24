@@ -35,8 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
@@ -56,8 +54,6 @@ public class ControlFragmentEspressoTest {
 
     @Rule
     public FragmentTestRule<ControlFragment> wrapperFragment = new FragmentTestRule<>(ControlFragment.class);
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
     private ControlFragment sut;
     private MockServiceManager mockServiceManager;
 
@@ -145,5 +141,4 @@ public class ControlFragmentEspressoTest {
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
     }
-
 }
