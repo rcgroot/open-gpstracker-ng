@@ -35,15 +35,26 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
+import javax.inject.Inject
 
 class RecordingFragment : Fragment() {
 
     private val recordingViewModel: RecordingViewModel = RecordingViewModel(null)
     private val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
+
+    @Inject
+    lateinit var permissionRequester: PermissionRequester
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
@@ -52,13 +63,14 @@ class RecordingFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        recordingPresenter.start(activity)
+    override fun onStart() {
+        super.onStart()
+        permissionRequester.checkPermissions(activity) { recordingPresenter.start(activity) }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
+        permissionRequester.stop()
         recordingPresenter.stop()
     }
 }

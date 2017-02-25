@@ -39,6 +39,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_CONTROL;
+import static nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_HISTORY;
+
 /**
  * Asks for Open GPS tracker permissions
  */
@@ -47,48 +50,48 @@ public class PermissionRequester implements DialogInterface.OnClickListener {
     private static final int REQUEST_TRACKING_CONTROL = 10000001;
     private static final String INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker";
 
+    private static boolean isShowingDialog = false;
     private AlertDialog permissionDialog;
     private AlertDialog installDialog;
     private Activity activity;
     private Runnable runnable;
 
-    public void checkTrackingPermission(final Activity _activity, Runnable _runnable) {
+    public void checkPermissions(final Activity _activity, Runnable _runnable) {
         this.activity = _activity;
         this.runnable = _runnable;
 
         if (new ServiceManager().isPackageInstalled(activity)) {
-            if (ContextCompat.checkSelfPermission(activity, ServiceConstants.permission.TRACKING_CONTROL) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, ServiceConstants.permission.TRACKING_CONTROL)) {
-                    permissionDialog = new AlertDialog.Builder(activity)
-                            .setMessage(R.string.permission_explain_need_control)
-                            .setPositiveButton(android.R.string.ok, this)
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show();
+            if (isMissing(TRACKING_CONTROL) || isMissing(TRACKING_HISTORY)) {
+                if (shouldExplain(TRACKING_CONTROL) || shouldExplain(TRACKING_HISTORY)) {
+                    if (!isShowingDialog) {
+                        isShowingDialog = true;
+                        permissionDialog = new AlertDialog.Builder(activity)
+                                .setMessage(R.string.permission_explain_need_control)
+                                .setNegativeButton(android.R.string.cancel, this)
+                                .setPositiveButton(android.R.string.ok, this)
+                                .show();
+                    }
                 } else {
                     executePermissionsRequest();
                 }
             } else {
                 runnable.run();
             }
-        } else {
+        } else if (!isShowingDialog) {
+            isShowingDialog = true;
             installDialog = new AlertDialog.Builder(activity)
                     .setTitle(R.string.permission_missing_title)
                     .setMessage(R.string.permission_missing_message)
-                    .setNegativeButton(android.R.string.cancel, null)
+                    .setNegativeButton(android.R.string.cancel, this)
                     .setPositiveButton(R.string.permission_button_install, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            isShowingDialog = false;
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(INSTALL_URI));
                             activity.startActivity(intent);
                         }
                     })
                     .show();
-        }
-    }
-
-    private void executePermissionsRequest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(new String[]{ServiceConstants.permission.TRACKING_CONTROL, ServiceConstants.permission.TRACKING_HISTORY}, REQUEST_TRACKING_CONTROL);
         }
     }
 
@@ -110,13 +113,28 @@ public class PermissionRequester implements DialogInterface.OnClickListener {
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
+        isShowingDialog = false;
         executePermissionsRequest();
+    }
+
+    private boolean shouldExplain(String permission) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
+    }
+
+    private boolean isMissing(String permission) {
+        return ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void executePermissionsRequest() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(new String[]{TRACKING_CONTROL, TRACKING_HISTORY}, REQUEST_TRACKING_CONTROL);
+        }
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_TRACKING_CONTROL) {
             for (int i = 0; i < permissions.length; i++) {
-                if (ServiceConstants.permission.TRACKING_CONTROL.equals(permissions[i])
+                if (TRACKING_CONTROL.equals(permissions[i])
                         && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     runnable.run();
                 }
