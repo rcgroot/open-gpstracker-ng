@@ -10,14 +10,14 @@ import timber.log.Timber
 open class TracksBindingAdapters {
 
     @BindingAdapter("tracks")
-    fun setTracks(recyclerView: RecyclerView, tracks: ObservableField<List<Uri>>) {
+    fun setTracks(recyclerView: RecyclerView, tracks: List<Uri>) {
         val viewAdapter: TrackListViewAdapter
         if (recyclerView.adapter is TrackListViewAdapter) {
             viewAdapter = recyclerView.adapter as TrackListViewAdapter
-            viewAdapter.model = tracks.get()
+            viewAdapter.model = tracks
         } else {
             viewAdapter = TrackListViewAdapter(recyclerView.context)
-            viewAdapter.model = tracks.get()
+            viewAdapter.model = tracks
             recyclerView.adapter = viewAdapter
         }
     }
