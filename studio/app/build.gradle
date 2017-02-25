@@ -116,7 +116,6 @@ dependencies {
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
-    androidTestCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$espressoVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
 }
