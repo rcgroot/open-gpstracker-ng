@@ -34,14 +34,26 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
+import javax.inject.Inject
 
 class TrackMapFragment : Fragment() {
 
     private val viewModel = TrackMapViewModel()
     private val trackPresenter = TrackMapPresenter(viewModel)
+
+    @Inject
+    lateinit var permissionRequester: PermissionRequester
+
     private var binding: FragmentMapBinding? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)
@@ -53,16 +65,28 @@ class TrackMapFragment : Fragment() {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        permissionRequester.checkPermissions(activity) { trackPresenter.start(activity) }
+        binding!!.fragmentMapMapview?.onStart()
+    }
+
     override fun onResume() {
         super.onResume()
         binding!!.fragmentMapMapview?.onResume()
-        trackPresenter.start(activity)
+
     }
 
     override fun onPause() {
         super.onPause()
         binding!!.fragmentMapMapview?.onPause()
         trackPresenter.stop()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        permissionRequester.stop()
+        binding!!.fragmentMapMapview?.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

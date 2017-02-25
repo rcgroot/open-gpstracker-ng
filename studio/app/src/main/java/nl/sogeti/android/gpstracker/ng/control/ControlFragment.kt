@@ -30,17 +30,16 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentControlBinding
+import javax.inject.Inject
 
 /**
  * On screen controls for the logging state
@@ -49,12 +48,16 @@ class ControlFragment : Fragment() {
 
     val viewModel = ControlViewModel()
     private val controlPresenter = ControlPresenter(viewModel)
-    private val permissionRequester = PermissionRequester()
+
+    @Inject
+    lateinit var permissionRequester: PermissionRequester
+
     @VisibleForTesting
     var binding: FragmentControlBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        GpsTrackerApplication.appComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -67,13 +70,13 @@ class ControlFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        permissionRequester.checkTrackingPermission(activity) { controlPresenter.start(activity) }
+    override fun onStart() {
+        super.onStart()
+        permissionRequester.checkPermissions(activity) { controlPresenter.start(activity) }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         permissionRequester.stop()
         controlPresenter.stop()
     }

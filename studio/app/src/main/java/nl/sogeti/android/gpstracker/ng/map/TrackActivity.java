@@ -46,7 +46,6 @@ import nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
-
 public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
