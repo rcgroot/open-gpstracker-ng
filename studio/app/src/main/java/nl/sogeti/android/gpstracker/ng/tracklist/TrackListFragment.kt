@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -49,6 +50,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)
+        binding.listview.itemAnimator = DefaultItemAnimator() //TODO reduce flashing on changes
         binding.viewModel = viewModel
         binding.presenter = trackListPresenter
 
