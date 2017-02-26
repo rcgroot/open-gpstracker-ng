@@ -37,6 +37,7 @@ import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
+import timber.log.Timber
 
 /**
  * Sets up display and selection of tracks in a list style
@@ -56,6 +57,9 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun onStart() {
         super.onStart()
+        if (activity !is Listener) {
+            Timber.e("Host activity must implement this fragments Listener interface")
+        }
         trackListPresenter.start(activity)
     }
 
@@ -64,8 +68,12 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         trackListPresenter.stop()
     }
 
-    override fun dismiss() {
-        // TODO not portable
-        activity.finish()
+    override fun hideTrackList() {
+        val listener = activity as Listener
+        listener.hideTrackList(this)
+    }
+
+    interface Listener {
+        fun hideTrackList(trackListFragment: TrackListFragment);
     }
 }

@@ -62,7 +62,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     //region View
 
     fun onListOptionSelected() {
-        view.selectTrack()
+        view.showTrackSelection()
     }
 
     fun onAboutOptionSelected() {
@@ -80,7 +80,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     override fun didSelectTrack(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
         viewModel.name.set(name)
-        view.setTrackName(name)
+        view.showTrackName(name)
     }
 
     //endregion
