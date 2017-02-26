@@ -39,9 +39,9 @@ class TrackViewModel {
     val name = ObservableField("")
 
     interface View {
-        fun setTrackName(name: String)
+        fun showTrackName(name: String)
         fun showAboutDialog()
         fun showTrackTitleDialog()
-        fun selectTrack()
+        fun showTrackSelection()
     }
 }

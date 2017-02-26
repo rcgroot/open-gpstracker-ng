@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity"
+            android:name="nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity"
             android:label="@string/title_activity_tracks"
             android:parentActivityName="nl.sogeti.android.gpstracker.ng.map.TrackActivity"
             android:theme="@style/AppTheme">

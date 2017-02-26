@@ -1,8 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.BindingAdapter
-import android.databinding.ObservableArrayList
-import android.databinding.ObservableField
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import timber.log.Timber

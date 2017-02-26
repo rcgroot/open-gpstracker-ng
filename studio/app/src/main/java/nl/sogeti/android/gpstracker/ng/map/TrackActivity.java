@@ -37,20 +37,26 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.jetbrains.annotations.NotNull;
 
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
-import nl.sogeti.android.gpstracker.ng.tracklist.TracksActivity;
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
 
-public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
+public class TrackActivity extends AppCompatActivity implements TrackViewModel.View, TrackListFragment.Listener {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
     private static final String TAG_DIALOG = "DIALOG_TRACK_EDIT";
+    private static final String TRANSACTION_TRACKS = "TRANSACTION_TRACKS";
     private TrackViewModel viewModel = new TrackViewModel();
     private TrackPresenter presenter = new TrackPresenter(viewModel, this);
 
@@ -131,7 +137,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     //region View contract
 
     @Override
-    public void setTrackName(@NotNull String name) {
+    public void showTrackName(@NotNull String name) {
         invalidateOptionsMenu();
     }
 
@@ -147,9 +153,32 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     }
 
     @Override
-    public void selectTrack() {
-        Intent intent = new Intent(this, TracksActivity.class);
-        startActivity(intent);
+    public void showTrackSelection() {
+        View tracksContainer = findViewById(R.id.fragment_tracklist);
+        if (tracksContainer != null && tracksContainer instanceof ViewGroup) {
+            TrackListFragment fragment = (TrackListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_tracklist);
+            if (fragment == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_left)
+                        .addToBackStack(TRANSACTION_TRACKS)
+                        .replace(R.id.fragment_tracklist, new TrackListFragment())
+                        .commit();
+            } else {
+                hideTrackList(fragment);
+            }
+        } else {
+            Intent intent = new Intent(this, TrackListActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    //endregion
+
+    //region TrackList hosting
+
+    @Override
+    public void hideTrackList(@NotNull TrackListFragment trackListFragment) {
+        getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
     }
 
     //endregion

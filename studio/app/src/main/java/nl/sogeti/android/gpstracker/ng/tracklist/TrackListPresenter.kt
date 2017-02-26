@@ -94,7 +94,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didSelectTrack(track: TrackViewModel) {
         trackSelection.selectTrack(track.uri.get(), track.name.get())
-        view.dismiss()
+        view.hideTrackList()
     }
 }
 

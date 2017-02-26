@@ -36,6 +36,6 @@ class TrackListViewModel {
     val tracks = ObservableField<List<Uri>>(emptyList())
 
     interface View {
-        fun dismiss()
+        fun hideTrackList()
     }
 }
