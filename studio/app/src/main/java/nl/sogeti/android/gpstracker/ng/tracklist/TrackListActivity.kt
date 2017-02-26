@@ -38,7 +38,7 @@ import nl.sogeti.android.gpstracker.v2.R
 class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracks)
+        setContentView(R.layout.activity_tracklist)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
