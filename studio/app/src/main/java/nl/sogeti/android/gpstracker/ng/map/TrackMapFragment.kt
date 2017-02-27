@@ -45,15 +45,9 @@ class TrackMapFragment : Fragment() {
     private val viewModel = TrackMapViewModel()
     private val trackPresenter = TrackMapPresenter(viewModel)
 
-    @Inject
-    lateinit var permissionRequester: PermissionRequester
+    private var permissionRequester = PermissionRequester()
 
     private var binding: FragmentMapBinding? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GpsTrackerApplication.appComponent.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)

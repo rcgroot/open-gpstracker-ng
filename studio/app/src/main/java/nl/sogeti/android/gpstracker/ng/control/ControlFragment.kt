@@ -49,16 +49,10 @@ class ControlFragment : Fragment() {
     val viewModel = ControlViewModel()
     private val controlPresenter = ControlPresenter(viewModel)
 
-    @Inject
-    lateinit var permissionRequester: PermissionRequester
+    private var permissionRequester = PermissionRequester()
 
     @VisibleForTesting
     var binding: FragmentControlBinding? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GpsTrackerApplication.appComponent.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

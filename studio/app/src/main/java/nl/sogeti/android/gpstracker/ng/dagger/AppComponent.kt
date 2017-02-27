@@ -54,12 +54,6 @@ interface AppComponent {
 
     fun inject(injectable: TrackListPresenter)
 
-    fun inject(injectable: ControlFragment)
-
-    fun inject(injectable: TrackMapFragment)
-
-    fun inject(injectable: RecordingFragment)
-
     @Named("providerAuthority")
     fun providerAuthority(): String
 }
