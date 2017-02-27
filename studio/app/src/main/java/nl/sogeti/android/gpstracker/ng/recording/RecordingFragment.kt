@@ -47,14 +47,7 @@ class RecordingFragment : Fragment() {
 
     private val recordingViewModel: RecordingViewModel = RecordingViewModel(null)
     private val recordingPresenter: RecordingPresenter = RecordingPresenter(recordingViewModel)
-
-    @Inject
-    lateinit var permissionRequester: PermissionRequester
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GpsTrackerApplication.appComponent.inject(this)
-    }
+    private var permissionRequester = PermissionRequester()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
