@@ -30,11 +30,16 @@ package nl.sogeti.android.gpstracker.ng.recording
 
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import android.databinding.ObservableInt
 import android.net.Uri
 
 class RecordingViewModel(uri: Uri?) {
     val isRecording = ObservableBoolean(false)
-    val summary = ObservableField<String>("")
-    val name = ObservableField<String>("")
+    val state = ObservableField<String>("-")
+    val quality = ObservableField<String>("-")
+    val summary = ObservableField<String>("-")
+    val name = ObservableField<String>("-")
     val trackUri = ObservableField(uri)
+    val maxSatellites = ObservableInt(0)
+    val currentSatellites = ObservableInt(0)
 }

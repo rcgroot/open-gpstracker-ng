@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="track"
+            name="viewModel"
             type="nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel" />
     </data>
 
@@ -15,24 +15,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/accent"
-        app:isRecording="@{track.isRecording}">
+        app:isRecording="@{viewModel.isRecording}">
 
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/fragment_recording_icon"
+        <TextView
+            android:id="@+id/fragment_recording_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="@+id/fragment_recording_container"
-            app:layout_constraintTop_toTopOf="@+id/fragment_recording_container"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.state}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="RECORDING" />
+
+        <TextView
+            android:id="@+id/fragment_recording_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.summary}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/fragment_recording_status"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s" />
+
+        <ImageView
+
+            android:id="@+id/fragment_recording_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@{viewModel.quality}"
+            app:layout_constraintLeft_toLeftOf="@+id/fragment_recording_satellites"
+            app:layout_constraintRight_toRightOf="@+id/fragment_recording_satellites"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_satellite_black_24dp" />
 
         <TextView
-            android:id="@+id/fragment_recording_text"
-            android:layout_width="0dp"
+            android:id="@+id/fragment_recording_satellites"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toRightOf="@+id/fragment_recording_icon"
-            app:layout_constraintRight_toRightOf="@+id/fragment_recording_container"
-            app:layout_constraintTop_toTopOf="@+id/fragment_recording_icon"
-            tools:text="Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="2dp"
+            android:text="@{viewModel.currentSatellites+'/'+viewModel.maxSatellites}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_recording_image"
+            tools:text="4/7 sat" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

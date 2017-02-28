@@ -39,6 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
+            android:layout_toEndOf="@+id/fragment_tracklist"
+            android:layout_toRightOf="@+id/fragment_tracklist"
             tools:layout="@layout/fragment_recording" />
 
         <fragment

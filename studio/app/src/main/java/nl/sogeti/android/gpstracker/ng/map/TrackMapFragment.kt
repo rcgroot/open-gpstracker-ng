@@ -35,10 +35,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
-import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
-import javax.inject.Inject
 
 class TrackMapFragment : Fragment() {
 
