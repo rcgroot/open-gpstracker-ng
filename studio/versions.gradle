@@ -8,7 +8,7 @@ ext {
     supportLibraryVersion = '25.2.0'
     kotlinVersion = '1.0.6'
     wearableVersion = '1.4.0'
-    constraintsLibraryVersion = '1.0.0-beta4'
+    constraintsLibraryVersion = '1.0.0'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
 //    playServicesVersion = '10.2.0'
