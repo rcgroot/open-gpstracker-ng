@@ -175,7 +175,7 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
     }
 
     val name = this.apply(context, { it.getString(NAME) }, listOf(NAME))
-    handler.addTrack(this, name ?: "")
+    handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
     segmentsUri.map(context, {
         val segmentId = it.getLong(0)
@@ -186,8 +186,8 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
             if (lat != null && lon != null && time != null) {
-                val latLng = LatLng(lat, lon)
-                handler.addWaypoint(latLng, time)
+                val waypoint = Waypoint(latitude = lat, longitude = lon, time = time)
+                handler.addWaypoint(waypoint)
             }
         }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
     }, listOf(_ID))
@@ -262,16 +262,19 @@ fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
 
 interface ResultHandler {
 
-    fun addTrack(uri:Uri, name: String)
+    fun setTrack(uri: Uri, name: String)
 
     fun addSegment()
 
-    fun addWaypoint(latLng: LatLng, millisecondsTime: Long)
+    fun addWaypoint(waypoint: Waypoint)
 }
 
-data class Waypoint(val id: Long,
+data class Waypoint(val id: Long = -1L,
                     val latitude: Double,
                     val longitude: Double,
                     val time: Long,
-                    val speed: Double,
-                    val altitude: Double)
+                    val speed: Double = Double.MIN_VALUE,
+                    val altitude: Double = Double.MIN_VALUE) {
+    val latLng: LatLng
+        get() = LatLng(this.latitude, this.longitude)
+}

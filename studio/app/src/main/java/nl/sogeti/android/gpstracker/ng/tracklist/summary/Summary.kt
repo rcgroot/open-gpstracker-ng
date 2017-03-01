@@ -40,5 +40,7 @@ data class Summary(val trackUri: Uri,
                    val distance: String,
                    val timestamp: Long,
                    val bounds: LatLngBounds,
-                   val waypoints: List<List<LatLng>>,
-                   val count: Int)
+                   val waypoints: List<List<LatLng>>) {
+    val count: Int
+        get() = waypoints.fold(0, { count, list -> count + list.size })
+}

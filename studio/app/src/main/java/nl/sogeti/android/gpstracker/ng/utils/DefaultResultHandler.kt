@@ -31,15 +31,14 @@ package nl.sogeti.android.gpstracker.ng.utils
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import java.util.*
 
 class DefaultResultHandler : ResultHandler {
     var uri: Uri? = null
     var name: String? = null
-    val waypoints = mutableListOf<MutableList<LatLng>>()
+    val waypoints = mutableListOf<MutableList<Waypoint>>()
+    val headWaypoints = mutableListOf<Waypoint>()
     var boundsBuilder: LatLngBounds.Builder? = null
     var headBuilder: LatLngBounds.Builder? = null
-    var waypointCount = 0
     val bound: LatLngBounds
         get() {
             val builder = boundsBuilder
@@ -59,29 +58,27 @@ class DefaultResultHandler : ResultHandler {
         headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS
     }
 
-    override fun addTrack(uri: Uri, name: String) {
+    override fun setTrack(uri: Uri, name: String) {
         this.uri = uri
         this.name = name
-
     }
 
     override fun addSegment() {
-        waypoints.add(ArrayList<LatLng>())
+        waypoints.add(mutableListOf<Waypoint>())
     }
 
-    override fun addWaypoint(latLng: LatLng, millisecondsTime: Long) {
-        waypointCount++
+    override fun addWaypoint(waypoint: Waypoint) {
         // Last 5 minutes worth of waypoints make the head
-        if (millisecondsTime > headTime) {
+        if (waypoint.time > headTime) {
+            headWaypoints.add(waypoint)
             headBuilder = headBuilder ?: LatLngBounds.Builder()
-            headBuilder?.include(latLng)
+            headBuilder?.include(waypoint.latLng)
         }
         // Add each waypoint to the end of the last list of points (the current segment)
-        waypoints[waypoints.size - 1].add(latLng)
+        waypoints[waypoints.size - 1].add(waypoint)
         // Build a bounds for the whole track
         boundsBuilder = boundsBuilder ?: LatLngBounds.Builder()
-        boundsBuilder?.include(latLng)
+        boundsBuilder?.include(waypoint.latLng)
     }
-
 
 }

@@ -80,7 +80,8 @@ class SummaryCalculator {
         trackUri.readTrack(context, handler)
 
         // Return value
-        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bound, handler.waypoints, handler.waypointCount)
+        val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
+        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bound, listOfLatLngs)
 
         return summary
     }

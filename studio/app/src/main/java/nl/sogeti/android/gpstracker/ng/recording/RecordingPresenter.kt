@@ -31,12 +31,11 @@ package nl.sogeti.android.gpstracker.ng.recording
 import android.location.Location
 import android.net.Uri
 import android.os.AsyncTask
-import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
+import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
 
@@ -44,7 +43,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
 
-    private var isReading: Boolean = false
+    private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null
     override fun didStart() {
         super.didStart()
@@ -73,13 +72,17 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     //region ContentController
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        if (!isReading) {
-            readTrackSummary(contentUri)
-        }
+        readTrackSummary(contentUri)
     }
 
-    private fun readTrackSummary(contentUri: Uri) {
-        TrackReader(contentUri, viewModel).execute()
+    private fun readTrackSummary(trackUri: Uri) {
+        var executingReader = this.executingReader
+        if (executingReader == null || executingReader.trackUri != trackUri) {
+            executingReader?.cancel(true)
+            executingReader = TrackReader(trackUri, viewModel)
+            executingReader.execute()
+            this.executingReader = executingReader
+        }
     }
 
     //endregion
@@ -104,62 +107,48 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         }
     }
 
-    private inner class TrackReader internal constructor(internal val trackUri: Uri, internal val viewModel: RecordingViewModel) : AsyncTask<Void, Void, List<LatLng>>(), ResultHandler {
-        internal val collectedWaypoints = mutableListOf<LatLng>()
-        internal val collectedTimes = mutableListOf<Long>()
-        internal var speed = 0.0
+    private inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: RecordingViewModel)
+        : AsyncTask<Void, Void, Void>() {
 
-        override fun addTrack(uri: Uri, name: String) {
-            viewModel.name.set(name)
-            viewModel.trackUri.set(uri)
-        }
+        val handler = DefaultResultHandler()
 
-        @SuppressWarnings("EmptyMethod")
-        override fun addSegment() {
-            /* NO-OP */
-        }
-
-        override fun addWaypoint(latLng: LatLng, millisecondsTime: Long) {
-            collectedWaypoints.add(latLng)
-            collectedTimes.add(millisecondsTime)
-        }
-
-        override fun onPreExecute() {
-            isReading = true
-        }
-
-        override fun doInBackground(params: Array<Void>): List<LatLng> {
+        override fun doInBackground(vararg p: Void): Void? {
             val sel = ContentConstants.WaypointsColumns.TIME + " > ?"
             val args = listOf<String>(java.lang.Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS))
             val selection = Pair(sel, args)
-            context?.let { trackUri.readTrack(it, this, selection) }
-            val waypoints = mutableListOf<LatLng>()
+            context?.let { trackUri.readTrack(it, handler, selection) }
+
             var seconds = 0.0
             var meters = 0.0
-            if (waypoints.size > 0) {
-                for (i in 1..waypoints.size - 1) {
-                    seconds += (collectedTimes[i] / 1000 - collectedTimes[i - 1] / 1000).toDouble()
-                    val start = collectedWaypoints[i]
-                    val end = collectedWaypoints[i - 1]
+            var speed = 0.0
+            if (handler.headWaypoints.size > 0) {
+                for (i in 1..handler.headWaypoints.size - 1) {
+                    seconds += (handler.headWaypoints[i].time / 1000 - handler.headWaypoints[i - 1].time / 1000).toDouble()
+                    val start = handler.headWaypoints[i]
+                    val end = handler.headWaypoints[i - 1]
                     val result = FloatArray(1)
                     Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, result)
                     meters += result[0].toDouble()
                 }
                 speed = meters / 1000.0 / (seconds / 3600)
             }
+            context?.let {
+                val count = handler.waypoints.fold(0, { size, list -> size + list.size })
+                val waypointsSummary = it.resources.getQuantityString(R.plurals.fragment_recording_waypoints, count, count)
+                val summary = it.getString(R.string.fragment_recording_summary, waypointsSummary, speed, "km/h")
+                viewModel.summary.set(summary)
+            }
+            viewModel.name.set(handler.name)
 
-            return waypoints
+            return null
         }
 
-        override fun onPostExecute(segmentedWaypoints: List<LatLng>) {
-            val myContext = context
-            if (myContext != null) {
-                val waypoints = myContext.resources.getQuantityString(R.plurals.fragment_recording_waypoints, segmentedWaypoints.size, segmentedWaypoints.size)
-                val speed = myContext.getString(R.string.fragment_recording_summary, waypoints, speed, "km/h")
-                viewModel.summary.set(speed)
+        override fun onPostExecute(result: Void?) {
+            if (executingReader == this) {
+                executingReader = null
             }
-            isReading = false
         }
     }
+
     //endregion
 }

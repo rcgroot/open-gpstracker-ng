@@ -48,8 +48,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import nl.sogeti.android.gpstracker.ng.utils.CommonKt;
 import nl.sogeti.android.gpstracker.v2.R;
-import timber.log.Timber;
 
 public class TrackTileProvider implements TileProvider {
     private static final int STROKE_WIDTH_DP = 2;
@@ -115,7 +117,14 @@ public class TrackTileProvider implements TileProvider {
     private void waypointsDidChange() {
         pathRenderer = new PathRenderer(tileSize, strokeWidth, waypoints.get(), startBitmap, endBitmap);
         if (titleOverLay != null) {
-            titleOverLay.clearTileCache();
+            //Like: executeOnUiThread { titleOverLay.clearTileCache() }
+            CommonKt.executeOnUiThread(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    titleOverLay.clearTileCache();
+                    return null;
+                }
+            });
         }
     }
 

@@ -159,7 +159,8 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
             TrackListFragment fragment = (TrackListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_tracklist);
             if (fragment == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_left)
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left,
+                                R.anim.enter_from_left, R.anim.exit_to_left)
                         .addToBackStack(TRANSACTION_TRACKS)
                         .replace(R.id.fragment_tracklist, new TrackListFragment())
                         .commit();

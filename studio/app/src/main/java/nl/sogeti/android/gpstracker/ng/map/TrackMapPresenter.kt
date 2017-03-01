@@ -110,7 +110,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     }
 
     private fun startReadingTrack(trackUri: Uri) {
-        var executingReader = this.executingReader;
+        var executingReader = this.executingReader
         if (executingReader == null || executingReader.trackUri != trackUri) {
             executingReader?.cancel(true)
             executingReader = TrackReader(trackUri, viewModel)
@@ -155,7 +155,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         }
     }
 
-    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
+    private inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()
@@ -164,12 +164,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             context?.let {
                 trackUri.readTrack(it, handler, null)
             }
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
             viewModel.name.set(handler.name)
-
             var builder = handler.headBuilder
             if (builder != null) {
                 viewModel.trackHeadBounds.set(builder.build())
@@ -178,7 +173,12 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             if (builder != null) {
                 viewModel.completeBounds.set(builder.build())
             }
-            viewModel.waypoints.set(handler.waypoints)
+            viewModel.waypoints.set(handler.waypoints.map { it.map { it.latLng } })
+
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
             if (executingReader == this) {
                 executingReader = null
             }
