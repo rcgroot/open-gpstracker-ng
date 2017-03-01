@@ -33,13 +33,11 @@ import android.net.Uri
 import android.os.AsyncTask
 import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants
-import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
-import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.v2.R
 
 class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.ContentListener {
@@ -76,19 +74,34 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
         if (!isReading) {
-            TrackReader(contentUri, viewModel).execute()
+            readTrackSummary(contentUri)
         }
+    }
+
+    private fun readTrackSummary(contentUri: Uri) {
+        TrackReader(contentUri, viewModel).execute()
     }
 
     //endregion
 
-    /* Private */
+    //region Private
 
     private fun updateRecording(trackUri: Uri?, loggingState: Int) {
-        val isRecording = (loggingState == ServiceConstants.STATE_LOGGING) || (loggingState == ServiceConstants.STATE_PAUSED)
+        if (trackUri != null) {
+            contentController?.registerObserver(trackUri)
+            viewModel.trackUri.set(trackUri)
+        }
+
+        val isRecording = (loggingState == STATE_LOGGING) || (loggingState == STATE_PAUSED)
         viewModel.isRecording.set(isRecording)
-        viewModel.trackUri.set(trackUri)
-        contentController?.registerObserver(trackUri)
+        if (isRecording && trackUri != null) {
+            readTrackSummary(trackUri)
+        }
+        when (loggingState) {
+            STATE_LOGGING -> viewModel.state.set(context?.getString(R.string.state_logging))
+            STATE_PAUSED -> viewModel.state.set(context?.getString(R.string.state_paused))
+            STATE_STOPPED -> viewModel.state.set(context?.getString(R.string.state_stopped))
+        }
     }
 
     private inner class TrackReader internal constructor(internal val trackUri: Uri, internal val viewModel: RecordingViewModel) : AsyncTask<Void, Void, List<LatLng>>(), ResultHandler {
@@ -96,7 +109,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         internal val collectedTimes = mutableListOf<Long>()
         internal var speed = 0.0
 
-        override fun addTrack(uri:Uri, name: String) {
+        override fun addTrack(uri: Uri, name: String) {
             viewModel.name.set(name)
             viewModel.trackUri.set(uri)
         }
@@ -119,10 +132,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             val sel = ContentConstants.WaypointsColumns.TIME + " > ?"
             val args = listOf<String>(java.lang.Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS))
             val selection = Pair(sel, args)
-            val context = context
-            if (context != null) {
-                trackUri.readTrack(context, this, selection)
-            }
+            context?.let { trackUri.readTrack(it, this, selection) }
             val waypoints = mutableListOf<LatLng>()
             var seconds = 0.0
             var meters = 0.0
@@ -151,4 +161,5 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             isReading = false
         }
     }
+    //endregion
 }

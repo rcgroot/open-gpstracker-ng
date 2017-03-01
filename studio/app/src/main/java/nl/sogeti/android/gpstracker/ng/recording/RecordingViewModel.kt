@@ -34,12 +34,12 @@ import android.databinding.ObservableInt
 import android.net.Uri
 
 class RecordingViewModel(uri: Uri?) {
+    val trackUri = ObservableField(uri)
     val isRecording = ObservableBoolean(false)
     val state = ObservableField<String>("-")
-    val quality = ObservableField<String>("-")
-    val summary = ObservableField<String>("-")
     val name = ObservableField<String>("-")
-    val trackUri = ObservableField(uri)
+    val summary = ObservableField<String>("-")
+    val quality = ObservableField<String>("-")
     val maxSatellites = ObservableInt(0)
     val currentSatellites = ObservableInt(0)
 }
