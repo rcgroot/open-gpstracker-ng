@@ -38,6 +38,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.*
@@ -49,8 +50,11 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     private var contentController: ContentController? = null
     private var weakGoogleMap = WeakReference<GoogleMap?>(null)
+
     @Inject
     lateinit var trackSelection: TrackSelection
+    @Inject
+    lateinit var contentControllerProvider: ContentControllerProvider
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -60,7 +64,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         super.didStart()
         trackSelection.addListener(this)
         makeTrackSelection()
-        contentController = ContentController(context!!, this)
+        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
         contentController?.registerObserver(viewModel.trackUri.get())
         addTilesToMap()
     }

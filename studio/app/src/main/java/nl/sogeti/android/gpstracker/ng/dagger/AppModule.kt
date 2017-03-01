@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.dagger
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import java.util.*
@@ -58,5 +59,10 @@ class AppModule {
     @Provides
     fun permissionRequester(): PermissionRequester {
         return PermissionRequester()
+    }
+
+    @Provides
+    fun contentControllerProvider(): ContentControllerProvider {
+        return ContentControllerProvider()
     }
 }

@@ -33,21 +33,32 @@ import android.net.Uri
 import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
+import javax.inject.Inject
 
 class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.ContentListener {
 
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
-
     private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null
+
+    @Inject
+    lateinit var contentControllerProvider: ContentControllerProvider
+
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
+
     override fun didStart() {
         super.didStart()
-        contentController = ContentController(context!!, this)
+        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
         contentController?.registerObserver(viewModel.trackUri.get())
     }
 

@@ -30,12 +30,9 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.control.ControlFragment
-import nl.sogeti.android.gpstracker.ng.map.TrackActivity
-import nl.sogeti.android.gpstracker.ng.map.TrackMapFragment
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.map.TrackPresenter
-import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment
+import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import javax.inject.Named
@@ -44,8 +41,9 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = arrayOf(IntegrationModule::class, AppModule::class))
 interface AppComponent {
-    fun inject(injectable: ConnectedServicePresenter)
 
+    fun inject(injectable: ConnectedServicePresenter)
+    
     fun inject(injectable: SummaryCalculator)
 
     fun inject(injectable: TrackPresenter)
@@ -53,6 +51,8 @@ interface AppComponent {
     fun inject(injectable: TrackMapPresenter)
 
     fun inject(injectable: TrackListPresenter)
+
+    fun inject(injectable: RecordingPresenter)
 
     @Named("providerAuthority")
     fun providerAuthority(): String
