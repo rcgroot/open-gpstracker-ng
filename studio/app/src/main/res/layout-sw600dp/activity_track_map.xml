@@ -55,12 +55,12 @@
 
         <FrameLayout
             android:id="@+id/fragment_tracklist"
-            android:layout_width="400dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/toolbar"
-            android:elevation="8dp" />
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/toolbar" />
 
     </RelativeLayout>
 </layout>
