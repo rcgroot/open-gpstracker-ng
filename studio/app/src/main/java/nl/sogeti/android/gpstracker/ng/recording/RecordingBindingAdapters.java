@@ -29,10 +29,13 @@
 package nl.sogeti.android.gpstracker.ng.recording;
 
 import android.databinding.BindingAdapter;
+import android.support.v7.content.res.AppCompatResources;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingAdapters;
+import nl.sogeti.android.gpstracker.v2.R;
 
 public class RecordingBindingAdapters extends CommonBindingAdapters {
 
@@ -48,6 +51,30 @@ public class RecordingBindingAdapters extends CommonBindingAdapters {
                     container.setVisibility(View.GONE);
                 }
             }).start();
+        }
+    }
+
+    @BindingAdapter(("gps_signal_quality"))
+    public void setGpsSignalQuality(final ImageView imageView, int quality) {
+        switch (quality) {
+            case 0:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_none));
+                break;
+            case 1:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_low));
+                break;
+            case 2:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_medium));
+                break;
+            case 3:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_high));
+                break;
+            case 4:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_full));
+                break;
+            default:
+                imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), R.drawable.ic_satellite_none));
+                break;
         }
     }
 }

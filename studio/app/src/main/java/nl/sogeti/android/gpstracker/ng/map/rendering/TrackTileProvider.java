@@ -122,7 +122,7 @@ public class TrackTileProvider implements TileProvider {
                 @Override
                 public Unit invoke() {
                     titleOverLay.clearTileCache();
-                    return null;
+                    return Unit.INSTANCE;
                 }
             });
         }

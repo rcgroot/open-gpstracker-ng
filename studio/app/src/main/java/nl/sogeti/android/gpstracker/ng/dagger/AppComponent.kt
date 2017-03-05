@@ -39,11 +39,11 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(IntegrationModule::class, AppModule::class))
+@Component(modules = arrayOf(IntegrationModule::class, AppModule::class, SystemModule::class))
 interface AppComponent {
 
     fun inject(injectable: ConnectedServicePresenter)
-    
+
     fun inject(injectable: SummaryCalculator)
 
     fun inject(injectable: TrackPresenter)

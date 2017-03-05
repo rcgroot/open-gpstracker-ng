@@ -38,7 +38,7 @@
     <string name="action_edit">Edit details</string>
     <!--Map list screen / Recording fragment-->
     <string name="fragment_recording_summary">Recording: %1$s in last 5 minutes with average speed %2$.0f %3$s</string>
-    <string name="fragment_recording_satellites">%1$d/%2$d</string>
+    <string name="fragment_recording_satellites">SATS\n%1$d/%2$d</string>
     <string name="fragment_tracks_empty">No tracks found, record or import some</string>
     <plurals name="fragment_recording_waypoints">
         <item quantity="one">%d waypoint</item>

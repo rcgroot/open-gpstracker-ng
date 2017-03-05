@@ -39,7 +39,9 @@ class RecordingViewModel(uri: Uri?) {
     val state = ObservableField<String>("-")
     val name = ObservableField<String>("-")
     val summary = ObservableField<String>("-")
-    val quality = ObservableField<String>("-")
     val maxSatellites = ObservableInt(0)
     val currentSatellites = ObservableInt(0)
+    val isScanning = ObservableBoolean(false)
+    val hasFix = ObservableBoolean(false)
+    val signalQuality = ObservableInt(0)
 }

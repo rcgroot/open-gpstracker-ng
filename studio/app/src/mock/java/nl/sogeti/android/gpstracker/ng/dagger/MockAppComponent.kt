@@ -33,7 +33,7 @@ import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(MockIntegrationModule::class, AppModule::class))
+@Component(modules = arrayOf(MockIntegrationModule::class, AppModule::class, MockSystemModule::class))
 interface MockAppComponent : AppComponent {
 
     fun inject(injectable: MockBroadcastSender)

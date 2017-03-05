@@ -32,6 +32,7 @@ import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import java.util.*
@@ -43,11 +44,6 @@ class AppModule {
     @Provides
     fun timeSpanCalculator(): TimeSpanCalculator {
         return TimeSpanCalculator()
-    }
-
-    @Provides
-    fun locale(): Locale {
-        return Locale.getDefault()
     }
 
     @Singleton

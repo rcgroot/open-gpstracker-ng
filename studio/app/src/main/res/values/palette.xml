@@ -11,4 +11,7 @@
     <color name="divider" tools:keep="@color/divider">#B6B6B6</color>
 
     <color name="windowBackground">#38300a</color>
+
+    <color name="with_fix">#339922</color>
+    <color name="without_fix">#881133</color>
 </resources>
