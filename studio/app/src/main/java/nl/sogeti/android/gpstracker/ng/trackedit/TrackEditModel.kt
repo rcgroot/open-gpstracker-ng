@@ -33,8 +33,8 @@ import android.databinding.ObservableInt
 import android.net.Uri
 import android.widget.AdapterView.INVALID_POSITION
 
-class TrackEditModel {
-    val trackUri = ObservableField<Uri>()
+class TrackEditModel(uri: Uri) {
+    val trackUri = ObservableField<Uri>(uri)
     val name = ObservableField<String>("")
     val selectedPosition = ObservableInt(INVALID_POSITION)
     val trackTypes = TrackTypeDescriptions.allTrackTypes
@@ -42,6 +42,5 @@ class TrackEditModel {
 
     interface View {
         fun dismiss()
-
     }
 }

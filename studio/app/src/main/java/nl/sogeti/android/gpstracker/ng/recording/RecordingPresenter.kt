@@ -130,7 +130,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     override fun onFirstFix() {
         viewModel.hasFix.set(true)
-        viewModel.signalQuality.set(3)
+        viewModel.signalQuality.set(4)
     }
 
     //endregion
