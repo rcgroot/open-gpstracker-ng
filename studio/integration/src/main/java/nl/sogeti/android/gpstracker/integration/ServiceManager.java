@@ -48,7 +48,6 @@ import timber.log.Timber;
  */
 public class ServiceManager implements ServiceManagerInterface {
 
-    private static final String REMOTE_EXCEPTION = "REMOTE_EXCEPTION";
     private final Object mStartLock = new Object();
     private IGPSLoggerServiceRemote mGPSLoggerRemote;
     private boolean mBound;
@@ -89,13 +88,13 @@ public class ServiceManager implements ServiceManagerInterface {
         startGPSLogging(context, trackName);
     }
 
-    public  void pauseGPSLogging(Context context) {
+    public void pauseGPSLogging(Context context) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_PAUSE);
         context.startService(intent);
     }
 
-    public  void resumeGPSLogging(Context context) {
+    public void resumeGPSLogging(Context context) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESUME);
         context.startService(intent);
@@ -119,7 +118,7 @@ public class ServiceManager implements ServiceManagerInterface {
         context.startService(intent);
     }
 
-    public  void setCustomLoggingPrecision(Context context, long seconds, float meters) {
+    public void setCustomLoggingPrecision(Context context, long seconds, float meters) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, seconds);
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, meters);
@@ -166,7 +165,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Timber.e("Could get lastWaypoint GPSLoggerService.", e);
+                Timber.e(e, "Could get lastWaypoint GPSLoggerService.");
             }
             return lastWaypoint;
         }
@@ -182,7 +181,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Timber.e("Could get tracked distance from GPSLoggerService.", e);
+                Timber.e(e, "Could get tracked distance from GPSLoggerService.");
             }
             return distance;
         }
@@ -198,7 +197,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Timber.e("Could stat GPSLoggerService.", e);
+                Timber.e(e, "Could stat GPSLoggerService.");
             }
             return trackId;
         }
@@ -215,7 +214,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Timber.e("Could stat GPSLoggerService.", e);
+                Timber.e(e, "Could stat GPSLoggerService.");
             }
             return logging;
         }
@@ -231,7 +230,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     Timber.w("Remote interface to logging service not found. Started: " + mBound);
                 }
             } catch (RemoteException e) {
-                Timber.e("Could stat GPSLoggerService.", e);
+                Timber.e(e, "Could stat GPSLoggerService.");
             }
             return prepared;
         }
@@ -243,7 +242,7 @@ public class ServiceManager implements ServiceManagerInterface {
                 try {
                     this.mGPSLoggerRemote.storeMetaData(key, value);
                 } catch (RemoteException e) {
-                    Timber.e(ServiceManager.REMOTE_EXCEPTION, "Could not send data source to GPSLoggerService.", e);
+                    Timber.e(e, "Could not send data source to GPSLoggerService.");
                 }
             } else {
                 Timber.e("No GPSLoggerRemote service connected to this manager");
@@ -257,7 +256,7 @@ public class ServiceManager implements ServiceManagerInterface {
                 try {
                     this.mGPSLoggerRemote.storeMediaUri(mediaUri);
                 } catch (RemoteException e) {
-                    Timber.e(ServiceManager.REMOTE_EXCEPTION, "Could not send media to GPSLoggerService.", e);
+                    Timber.e(e, "Could not send media to GPSLoggerService.");
                 }
             } else {
                 Timber.e("No GPSLoggerRemote service connected to this manager");
@@ -322,7 +321,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     mBound = false;
                 }
             } catch (IllegalArgumentException e) {
-                Timber.w("Failed to unbind a service, perhaps the service disappeared?", e);
+                Timber.w(e, "Failed to unbind a service, perhaps the service disappeared?");
             }
         }
     }

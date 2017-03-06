@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.trackedit
 
 import android.net.Uri
+import android.support.v7.content.res.AppCompatResources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +62,7 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel
                 val trackType = model.trackTypes[position]
                 viewHolder.textView.text = context?.getString(trackType.stringId)
                 viewHolder.imageView.setImageDrawable(context?.getDrawable(trackType.drawableId))
+                context?.let { viewHolder.imageView.setImageDrawable(AppCompatResources.getDrawable(it, trackType.drawableId)) }
 
                 return itemView
             }
