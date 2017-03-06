@@ -36,9 +36,8 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import nl.sogeti.android.gpstracker.v2.R
 
-class TrackViewModel(uri: Uri) {
+class TrackViewModel(val uri: Uri) {
 
-    val uri = ObservableField<Uri>(uri)
     val name = ObservableField<String>()
     val iconType = ObservableInt(R.drawable.ic_track_type_default)
     val startDay = ObservableField<String>("--")

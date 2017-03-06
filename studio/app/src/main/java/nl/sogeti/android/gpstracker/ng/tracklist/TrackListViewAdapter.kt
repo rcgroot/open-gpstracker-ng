@@ -99,8 +99,8 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     private fun willDisplayTrack(context: Context, viewModel: TrackViewModel) {
-        summaryManager.collectSummaryInfo(context, viewModel.uri.get(), {
-            if (it.trackUri == viewModel.uri.get()) {
+        summaryManager.collectSummaryInfo(context, viewModel.uri, {
+            if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
                 viewModel.distance.set(it.distance)
                 viewModel.duration.set(it.duration)

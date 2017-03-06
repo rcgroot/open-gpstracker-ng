@@ -96,7 +96,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     /* RecycleView Adapter callbacks */
 
     override fun didSelectTrack(track: TrackViewModel) {
-        trackSelection.selectTrack(track.uri.get(), track.name.get())
+        trackSelection.selectTrack(track.uri, track.name.get())
         view.hideTrackList()
     }
 }
