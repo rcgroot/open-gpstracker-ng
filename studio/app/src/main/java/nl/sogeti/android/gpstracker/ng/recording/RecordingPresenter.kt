@@ -60,12 +60,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         GpsTrackerApplication.appComponent.inject(this)
     }
 
-    override fun didStart() {
-        super.didStart()
-        startGpsUpdates()
-        startContentUpdates()
-    }
-
     override fun willStop() {
         super.willStop()
         stopContentUpdates()
@@ -148,8 +142,10 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     }
 
     private fun startGpsUpdates() {
-        gpsStatusController = gpsStatusControllerProvider.createGpsStatusListenerProvider(context!!, this)
-        gpsStatusController?.startUpdates()
+        if (gpsStatusController == null) {
+            gpsStatusController = gpsStatusControllerProvider.createGpsStatusListenerProvider(context!!, this)
+            gpsStatusController?.startUpdates()
+        }
     }
 
     private fun stopGpsUpdates() {
@@ -166,7 +162,13 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         val isRecording = (loggingState == STATE_LOGGING) || (loggingState == STATE_PAUSED)
         viewModel.isRecording.set(isRecording)
         if (isRecording && trackUri != null) {
+            startContentUpdates()
+            startGpsUpdates()
             readTrackSummary(trackUri)
+        }
+        else {
+            stopContentUpdates()
+            stopGpsUpdates()
         }
         when (loggingState) {
             STATE_LOGGING -> viewModel.state.set(context?.getString(R.string.state_logging))
