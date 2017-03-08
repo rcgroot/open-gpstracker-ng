@@ -6,6 +6,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 
 class MockAppComponentTestRule : TestRule {
 
@@ -17,6 +18,7 @@ class MockAppComponentTestRule : TestRule {
             override fun evaluate() {
                 mockAppComponent = Mockito.mock(AppComponent::class.java)
                 GpsTrackerApplication.appComponent = mockAppComponent
+                `when`(mockAppComponent.providerAuthority()).thenReturn("none")
                 base.evaluate()
             }
         }

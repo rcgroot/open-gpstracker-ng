@@ -49,7 +49,6 @@ class TrackMapFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
         binding.viewModel = viewModel
-        binding.fragmentMapMapview.getMapAsync(trackPresenter)
         this.binding = binding
 
         return binding.root
@@ -57,8 +56,9 @@ class TrackMapFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.checkPermissions(activity) { trackPresenter.start(activity) }
         binding!!.fragmentMapMapview?.onStart()
+        binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
+        permissionRequester.checkPermissions(activity, { trackPresenter.start(activity) })
     }
 
     override fun onResume() {

@@ -42,14 +42,13 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvi
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.*
-import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener, TrackSelection.Listener {
     private var executingReader: TrackReader? = null
 
     private var contentController: ContentController? = null
-    private var weakGoogleMap = WeakReference<GoogleMap?>(null)
+    private var googleMap: GoogleMap? = null
 
     @Inject
     lateinit var trackSelection: TrackSelection
@@ -74,6 +73,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         trackSelection.removeListener(this)
         contentController?.unregisterObserver()
         contentController = null
+        googleMap = null
     }
 
     //region Track selection
@@ -126,12 +126,12 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     /* Google Map Tiles */
 
     override fun onMapReady(googleMap: GoogleMap) {
-        weakGoogleMap = WeakReference(googleMap)
+        this.googleMap = googleMap
         addTilesToMap()
     }
 
     private fun addTilesToMap() {
-        val googleMap = weakGoogleMap.get()
+        val googleMap = googleMap
         val context = this.context
         if (googleMap != null && context != null) {
             val tileProvider = TrackTileProvider(context, viewModel.waypoints)
@@ -159,7 +159,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         }
     }
 
-    private inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
+    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()
@@ -168,18 +168,19 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             context?.let {
                 trackUri.readTrack(it, handler, null)
             }
-            viewModel.name.set(handler.name)
-            var builder = handler.headBuilder
-            if (builder != null) {
-                viewModel.trackHeadBounds.set(builder.build())
-            }
-            builder = handler.boundsBuilder
-            if (builder != null) {
-                viewModel.completeBounds.set(builder.build())
-            }
-            viewModel.waypoints.set(handler.waypoints.map { it.map { it.latLng } })
+
+            updateViewModelWithHandler(handler)
 
             return null
+        }
+
+        fun updateViewModelWithHandler(handler: DefaultResultHandler) {
+            handler.headBuilder?.let { viewModel.trackHeadBounds.set(it.build()) }
+            handler.boundsBuilder?.let { viewModel.completeBounds.set(it.build()) }
+            viewModel.name.set(handler.name)
+            val points = handler.waypoints.map { it.map { it.latLng } }
+            val filteredPoints = points.filter { it.count() > 1 }
+            viewModel.waypoints.set(filteredPoints)
         }
 
         override fun onPostExecute(result: Void?) {

@@ -38,12 +38,12 @@ import nl.sogeti.android.gpstracker.v2.R
 
 class TrackViewModel(val uri: Uri) {
 
-    val name = ObservableField<String>()
+    val name = ObservableField<String>("")
     val iconType = ObservableInt(R.drawable.ic_track_type_default)
     val startDay = ObservableField<String>("--")
     val duration = ObservableField<String>("--")
     val distance = ObservableField<String>("--")
     val completeBounds = ObservableField<LatLngBounds?>()
     val waypoints = ObservableField<List<List<LatLng>>>(listOf())
-    var polylines = ObservableField<List<PolylineOptions>>()
+    var polylines = ObservableField<List<PolylineOptions>?>()
 }
