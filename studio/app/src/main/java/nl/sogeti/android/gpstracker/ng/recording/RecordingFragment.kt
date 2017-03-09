@@ -53,12 +53,16 @@ class RecordingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.checkPermissions(activity) { presenter.start(activity) }
+        permissionRequester.checkPermissions(this, { presenter.start(activity) })
     }
 
     override fun onStop() {
         super.onStop()
         permissionRequester.stop()
         presenter.stop()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

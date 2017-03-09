@@ -58,7 +58,7 @@ class TrackMapFragment : Fragment() {
         super.onStart()
         binding!!.fragmentMapMapview?.onStart()
         binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
-        permissionRequester.checkPermissions(activity, { trackPresenter.start(activity) })
+        permissionRequester.checkPermissions(this, { trackPresenter.start(activity) })
     }
 
     override fun onResume() {
@@ -93,5 +93,9 @@ class TrackMapFragment : Fragment() {
     override fun onLowMemory() {
         super.onLowMemory()
         binding?.fragmentMapMapview?.onLowMemory()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

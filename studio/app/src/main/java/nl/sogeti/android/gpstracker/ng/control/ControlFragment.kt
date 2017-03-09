@@ -64,7 +64,7 @@ class ControlFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.checkPermissions(activity) { controlPresenter.start(activity) }
+        permissionRequester.checkPermissions(this, { controlPresenter.start(activity) })
     }
 
     override fun onStop() {
