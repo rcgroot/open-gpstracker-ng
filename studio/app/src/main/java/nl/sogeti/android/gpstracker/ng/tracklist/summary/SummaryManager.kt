@@ -83,9 +83,13 @@ object summaryManager {
         }
         executor?.submit({
             val cacheHit = summaryCache[trackUri]
-            val trackWaypointsUri = trackUri.append(WAYPOINTS)
-            if (cacheHit != null && trackWaypointsUri.count(context) == cacheHit.count) {
-                callbackSummary(cacheHit)
+            if (cacheHit != null) {
+                val trackWaypointsUri = trackUri.append(WAYPOINTS)
+                val trackCount = trackWaypointsUri.count(context)
+                val cacheCount = cacheHit.count
+                if (trackCount == cacheCount) {
+                    callbackSummary(cacheHit)
+                }
             } else {
                 executeTrackCalculation(context, trackUri, callbackSummary)
             }

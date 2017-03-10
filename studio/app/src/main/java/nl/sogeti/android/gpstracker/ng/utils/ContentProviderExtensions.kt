@@ -161,14 +161,14 @@ fun Uri.append(id: Long): Uri {
     return ContentUris.withAppendedId(this, id)
 }
 
-fun Uri.count(context: Context,
+fun Uri.count(context: Context, projection: List<String>? = null,
               selectionPair: Pair <String, List<String>>? = null) : Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
-        cursor = context.contentResolver.query(this, arrayOf(BaseColumns._ID), selection, selectionArgs, null)
+        cursor = context.contentResolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.count
         } else {
