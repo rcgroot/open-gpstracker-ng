@@ -113,7 +113,7 @@ class PathRenderer {
             }
             last = new Point(previous);
         }
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(this.strokeWidth);
         paint.setAntiAlias(true);
