@@ -64,17 +64,17 @@ class TrackMapFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding!!.fragmentMapMapview?.onResume()
-
     }
 
     override fun onPause() {
         super.onPause()
         binding!!.fragmentMapMapview?.onPause()
-        trackPresenter.stop()
+
     }
 
     override fun onStop() {
         super.onStop()
+        trackPresenter.stop()
         permissionRequester.stop()
         binding!!.fragmentMapMapview?.onStop()
     }

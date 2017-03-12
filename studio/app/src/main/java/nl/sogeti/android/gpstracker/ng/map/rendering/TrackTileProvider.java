@@ -68,7 +68,6 @@ public class TrackTileProvider implements TileProvider {
     private Observable.OnPropertyChangedCallback modelCallback = new Callback();
 
     public TrackTileProvider(Context context, ObservableField<List<List<LatLng>>> waypoints) {
-        setWaypoints(waypoints);
         float density = context.getResources().getDisplayMetrics().density;
         float scaleFactor = density * SPEEDUP_FACTOR;
         this.tileSize = TILE_SIZE_DP * scaleFactor;
@@ -79,6 +78,7 @@ public class TrackTileProvider implements TileProvider {
         startBitmap = renderVectorDrawable(startDrawable);
         endBitmap = renderVectorDrawable(endDrawable);
 
+        setWaypoints(waypoints);
     }
 
     private Bitmap renderVectorDrawable(Drawable vectorDrawable) {
