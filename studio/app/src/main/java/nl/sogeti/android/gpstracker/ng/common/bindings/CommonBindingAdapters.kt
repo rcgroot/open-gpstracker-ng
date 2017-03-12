@@ -42,6 +42,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import nl.sogeti.android.gpstracker.v2.R
 
 
 open class CommonBindingAdapters {
@@ -62,13 +63,6 @@ open class CommonBindingAdapters {
         webView.loadUrl(url)
     }
 
-    @BindingAdapter("mapFocus")
-    fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
-        if (bounds != null) {
-            map.getMapAsync(MapUpdate(map, bounds))
-        }
-    }
-
     @BindingAdapter("polylines")
     fun setPolylines(map: MapView, polylines: List<PolylineOptions>?) {
         val tag = map.tag
@@ -81,17 +75,18 @@ open class CommonBindingAdapters {
         }
     }
 
-    class MapUpdate(val map: MapView, val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
-        val DPI_PADDING = 32.0F
+    @BindingAdapter("mapFocus")
+    fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
+        if (bounds != null) {
+            map.getMapAsync(MapUpdate(map, bounds))
+        }
+    }
 
+    class MapUpdate(private val map: MapView, private val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
         override fun onMapReady(googleMap: GoogleMap?) {
             if (googleMap != null) {
-                val pixelPadding = convertDpiToPixel(map.context, DPI_PADDING)
-                var padding = 0
-                if (map.width > 3 * pixelPadding && map.height > 3 * pixelPadding) {
-                    padding = ((pixelPadding + 0.5).toInt())
-                }
-                val update = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                var padding = map.context.resources.getDimension(R.dimen.map_padding)
+                val update = CameraUpdateFactory.newLatLngBounds(bounds, padding.toInt())
                 googleMap.animateCamera(update, this)
             }
         }

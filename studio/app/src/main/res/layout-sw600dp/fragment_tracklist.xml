@@ -14,7 +14,6 @@
     </data>
 
     <android.support.v7.widget.RecyclerView
-        android:elevation="8dp"
         android:id="@+id/listview"
         android:layout_width="400dp"
         android:layout_height="match_parent"
