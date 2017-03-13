@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.vanniktech.android.junit.jacoco'
 
-junitJacoco {
-    jacocoVersion = jacocoVersion
+jacoco {
+    toolVersion = jacocoVersion
 }
 
 android {
@@ -59,10 +59,6 @@ android {
 
     dataBinding {
         enabled = true
-    }
-
-    kapt {
-        generateStubs = true
     }
 
     lintOptions {

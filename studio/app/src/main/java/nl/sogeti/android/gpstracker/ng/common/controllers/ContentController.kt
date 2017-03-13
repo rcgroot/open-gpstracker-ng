@@ -36,7 +36,7 @@ class ContentController(val context: Context, val listener: ContentListener) {
         fun unregister() {
             if (registeredUri != null) {
                 context.contentResolver.unregisterContentObserver(contentObserver)
-                registeredUri = null4§
+                registeredUri = null
             }
         }
 

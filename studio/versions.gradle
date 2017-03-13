@@ -15,8 +15,7 @@ ext {
     googleServicesVersion = '3.0.0'
 
     // Testing
-    jacocoPluginVersion = '0.5.0'
-    jacocoVersion = '0.7.8'
+    jacocoVersion = '0.7.9'
     junitVersion = '4.12'
     mockitoVersion = '2.2.20'
     testRunnerVersion = '0.5'
