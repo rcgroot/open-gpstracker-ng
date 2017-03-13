@@ -82,13 +82,13 @@ class MockServiceManager : ServiceManagerInterface {
     fun reset() {
         started = false
         globalState.loggingState = STATE_UNKNOWN
-        globalState.trackId = 5L
+        globalState.trackId = -1L
     }
 
     companion object globalState {
         var started = false
         var loggingState = STATE_UNKNOWN
-        var trackId = 5L
+        var trackId = -1L
         var segmentId = 10L
         var waypointId = 100L
     }
@@ -117,7 +117,7 @@ class MockServiceManager : ServiceManagerInterface {
         }
 
         private fun recordNewTrack() {
-            trackId++
+            if (trackId > 0) trackId++ else trackId = 2
             MockTracksProvider.globalState.addTrack(trackId)
             recordNewSegment()
         }

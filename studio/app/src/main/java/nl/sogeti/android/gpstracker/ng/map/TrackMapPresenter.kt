@@ -45,8 +45,8 @@ import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 
 class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener, TrackSelection.Listener {
-    private var executingReader: TrackReader? = null
 
+    private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null
     private var googleMap: GoogleMap? = null
 
@@ -107,21 +107,13 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //endregion
 
-    /* Content watching */
+    //region Content watching
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
         startReadingTrack(contentUri)
     }
 
-    private fun startReadingTrack(trackUri: Uri) {
-        var executingReader = this.executingReader
-        if (executingReader == null || executingReader.trackUri != trackUri) {
-            executingReader?.cancel(true)
-            executingReader = TrackReader(trackUri, viewModel)
-            executingReader.execute()
-            this.executingReader = executingReader
-        }
-    }
+    //endregion
 
     /* Google Map Tiles */
 
@@ -140,6 +132,16 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     }
 
     /* Private */
+
+    private fun startReadingTrack(trackUri: Uri) {
+        var executingReader = this.executingReader
+        if (executingReader == null || executingReader.trackUri != trackUri) {
+            executingReader?.cancel(true)
+            executingReader = TrackReader(trackUri, viewModel)
+            executingReader.execute()
+            this.executingReader = executingReader
+        }
+    }
 
     private fun makeTrackSelection() {
         val trackUri = trackSelection.trackUri

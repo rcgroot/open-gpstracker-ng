@@ -75,13 +75,18 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
                 synchronized (ConnectedServicePresenter.this) {
                     Context context = ConnectedServicePresenter.this.getContext();
                     if (context != null) {
-                        Uri trackUri = TrackUriExtensionKt.trackUri(serviceManager.getTrackId());
-                        String name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
-                            @Override
-                            public String invoke(Cursor cursor) {
-                                return ContentProviderExtensionsKt.getString(cursor, NAME);
-                            }
-                        }, null, null);
+                        long trackId = serviceManager.getTrackId();
+                        Uri trackUri = null;
+                        String name = null;
+                        if (trackId > 0) {
+                            trackUri = TrackUriExtensionKt.trackUri(trackId);
+                            name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
+                                @Override
+                                public String invoke(Cursor cursor) {
+                                    return ContentProviderExtensionsKt.getString(cursor, NAME);
+                                }
+                            }, null, null);
+                        }
                         didConnectToService(trackUri, name, serviceManager.getLoggingState());
                     }
                 }

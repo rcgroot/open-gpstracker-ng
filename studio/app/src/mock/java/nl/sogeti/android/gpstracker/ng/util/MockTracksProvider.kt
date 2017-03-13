@@ -51,26 +51,57 @@ class MockTracksProvider : ContentProvider() {
         if (content != null) {
             cursor = globalState.buildMatrixCursor(content.first, content.second)
         } else {
-            Timber.w("Query on $uri did not match anything in global state $globalState ")
+            Timber.e("Query on $uri did not match anything in global state $globalState ")
         }
         return cursor
 
     }
 
-    override fun getType(uri: Uri): String? {
-        return null
-    }
-
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        return null
-    }
+        val content = globalState.uriContent[uri]
+        if (content != null && values != null) {
+            val row = mutableListOf<Any>()
+            val columns = content.first
+            for (index in 0..columns.size - 1) {
+                val column = columns[index]
+                val value = values.getAsString(column)
+                row.add(value)
+            }
+            content.second.add(row)
+        } else {
+            Timber.e("Insert on $uri did not match anything in global state $globalState ")
+        }
 
-    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-        return 0
+        return uri
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int {
+        var changed = 0
+        val content = globalState.uriContent[uri]
+        if (content != null && values != null && content.second.size > 0) {
+            val row = content.second.first()
+            val columns = content.first
+            for (index in 0..columns.size - 1) {
+                val column = columns[index]
+                val value = values.getAsString(column)
+                value?.let { row[index] = value; changed++ }
+            }
+            globalState.context?.contentResolver?.notifyChange(uri, null)
+        } else {
+            Timber.e("Update on $uri did not match anything in global state $globalState ")
+        }
+
+        return changed
+    }
+
+    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
+        Timber.e("Delete on $uri did not match anything in global state $globalState ")
         return 0
+    }
+
+    override fun getType(uri: Uri): String? {
+        Timber.e("getType on $uri did not match anything in global state $globalState ")
+        return null
     }
 
     fun reset() {
@@ -79,7 +110,7 @@ class MockTracksProvider : ContentProvider() {
 
     companion object globalState {
         var context: Context? = null
-        val uriContent = mutableMapOf<Uri, Pair<Array<String>, MutableList<List<Any>>>>()
+        val uriContent = mutableMapOf<Uri, Pair<Array<String>, MutableList<MutableList<Any>>>>()
             get() {
                 val preload = gpxAmsterdam
                 if (!preload.isEmpty()) {
@@ -105,7 +136,7 @@ class MockTracksProvider : ContentProvider() {
         }
 
         fun addTrack(trackId: Long) {
-            // .../track
+            // .../tracks
             val tracksUri = tracksUri()
             var content = uriContent[tracksUri]
             if (content == null) {
@@ -114,18 +145,22 @@ class MockTracksProvider : ContentProvider() {
             }
             addContentToTrackContent(content.second, trackId)
             context?.contentResolver?.notifyChange(tracksUri, null)
-            // .../track/id
+            // .../tracks/id
             content = createEmptyTrackContent()
             val trackUri = trackUri(trackId)
             uriContent[trackUri] = content
             addContentToTrackContent(content.second, trackId)
             context?.contentResolver?.notifyChange(trackUri, null)
+            // tracks/id/metadata
+            val metaContent = Pair(arrayOf(MetaDataColumns.KEY, MetaDataColumns.VALUE), mutableListOf<MutableList<Any>>())
+            val metaUri = metaDataTrackUri(trackId)
+            uriContent[metaUri] = metaContent
         }
 
-        private fun createEmptyTrackContent() = Pair(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME), mutableListOf<List<Any>>())
+        private fun createEmptyTrackContent() = Pair(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME), mutableListOf<MutableList<Any>>())
 
-        private fun addContentToTrackContent(content: MutableList<List<Any>>, trackId: Long) {
-            content.add(listOf(
+        private fun addContentToTrackContent(content: MutableList<MutableList<Any>>, trackId: Long) {
+            content.add(mutableListOf(
                     trackId,
                     "track $trackId",
                     Date().time))
@@ -149,10 +184,10 @@ class MockTracksProvider : ContentProvider() {
             context?.contentResolver?.notifyChange(segmentUri, null)
         }
 
-        private fun createEmptySegmentContent() = Pair(arrayOf(Segments._ID, Segments.TRACK), mutableListOf<List<Any>>())
+        private fun createEmptySegmentContent() = Pair(arrayOf(Segments._ID, Segments.TRACK), mutableListOf<MutableList<Any>>())
 
-        private fun addContentToSegmentContent(content: MutableList<List<Any>>, trackId: Long, segmentId: Long) {
-            content.add(listOf(
+        private fun addContentToSegmentContent(content: MutableList<MutableList<Any>>, trackId: Long, segmentId: Long) {
+            content.add(mutableListOf(
                     segmentId,
                     trackId))
         }
@@ -178,10 +213,10 @@ class MockTracksProvider : ContentProvider() {
             context?.contentResolver?.notifyChange(waypointsTrackUri, null)
         }
 
-        private fun createEmptyWaypointContent() = Pair(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME), mutableListOf<List<Any>>())
+        private fun createEmptyWaypointContent() = Pair(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME), mutableListOf<MutableList<Any>>())
 
-        private fun addContentToWaypointContent(content: MutableList<List<Any>>, segmentId: Long, waypointId: Long, latitude: Double, longitude: Double, time: Long) {
-            content.add(listOf(waypointId, segmentId, latitude, longitude, time))
+        private fun addContentToWaypointContent(content: MutableList<MutableList<Any>>, segmentId: Long, waypointId: Long, latitude: Double, longitude: Double, time: Long) {
+            content.add(mutableListOf(waypointId, segmentId, latitude, longitude, time))
         }
 
         fun buildMatrixCursor(columns: Array<String>, content: List<List<Any>>): Cursor? {

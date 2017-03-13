@@ -29,15 +29,23 @@
 package nl.sogeti.android.gpstracker.ng.map
 
 import android.net.Uri
+import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.utils.apply
+import nl.sogeti.android.gpstracker.ng.utils.getString
 import javax.inject.Inject
 
-class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener {
+class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener, ContentController.ContentListener {
 
+    private var contentController: ContentController? = null
     @Inject
     lateinit var trackSelection: TrackSelection
+    @Inject
+    lateinit var contentControllerProvider: ContentControllerProvider
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -47,14 +55,16 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     override fun didStart() {
         trackSelection.addListener(this)
+        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
         trackSelection.trackUri?.let {
             didSelectTrack(it, trackSelection.trackName)
         }
-
     }
 
     override fun willStop() {
         trackSelection.removeListener(this)
+        contentController?.unregisterObserver()
+        contentController = null
     }
 
     //endregion
@@ -79,6 +89,26 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     override fun didSelectTrack(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
+        contentController?.registerObserver(trackUri)
+        showName(name)
+    }
+
+    //endregion
+
+    //region Content watching
+
+    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
+        val name = contentUri.apply(context!!, { it.getString(ContentConstants.Tracks.NAME) })
+        name?.let {
+            showName(it)
+        }
+    }
+
+    //endregion
+
+    //region Private
+
+    private fun showName(name: String) {
         viewModel.name.set(name)
         view.showTrackName(name)
     }
