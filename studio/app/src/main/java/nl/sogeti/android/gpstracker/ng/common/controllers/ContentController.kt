@@ -1,9 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.common.controllers
 
 import android.content.Context
-import android.databinding.Observable
-import android.databinding.ObservableField
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 
 /**
  * Control the observing and monitoring for a observable uri value
@@ -21,7 +21,7 @@ class ContentController(val context: Context, val listener: ContentListener) {
         contentObserver.unregister()
     }
 
-    private inner class ContentObserver: android.database.ContentObserver(null) {
+    private inner class ContentObserver : android.database.ContentObserver(Handler(Looper.getMainLooper())) {
 
         var registeredUri: Uri? = null
 
@@ -36,12 +36,13 @@ class ContentController(val context: Context, val listener: ContentListener) {
         fun unregister() {
             if (registeredUri != null) {
                 context.contentResolver.unregisterContentObserver(contentObserver)
-                registeredUri = null
+                registeredUri = null4
             }
         }
 
         override fun onChange(selfChange: Boolean, changedUri: Uri) {
             registeredUri?.let { listener.onChangeUriContent(it, changedUri) }
+
         }
     }
 

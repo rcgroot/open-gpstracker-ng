@@ -61,7 +61,6 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel
                 }
                 val trackType = model.trackTypes[position]
                 viewHolder.textView.text = context?.getString(trackType.stringId)
-                viewHolder.imageView.setImageDrawable(context?.getDrawable(trackType.drawableId))
                 context?.let { viewHolder.imageView.setImageDrawable(AppCompatResources.getDrawable(it, trackType.drawableId)) }
 
                 return itemView
