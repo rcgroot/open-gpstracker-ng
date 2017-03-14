@@ -46,7 +46,7 @@ import timber.log.Timber
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
  */
 fun tracksUri(): Uri {
-    val trackUri = Uri.Builder()
+    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -60,7 +60,7 @@ fun tracksUri(): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
 fun trackUri(trackId: Long): Uri {
-    val trackUri = Uri.Builder()
+    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -74,7 +74,7 @@ fun trackUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
  */
 fun segmentsUri(trackId: Long): Uri {
-    val segmentUri = Uri.Builder()
+    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -90,7 +90,7 @@ fun segmentsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
  */
 fun segmentUri(trackId: Long, segmentId: Long): Uri {
-    val segmentUri = Uri.Builder()
+    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -107,7 +107,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
-    val segmentUri = Uri.Builder()
+    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -124,7 +124,7 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
  */
 fun waypointsUri(trackId: Long): Uri {
-    val waypointsUri = Uri.Builder()
+    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -135,23 +135,10 @@ fun waypointsUri(trackId: Long): Uri {
 }
 
 /**
- * @return uri, for example content://nl.sogeti.android.gpstracker.authority/metadata
- */
-fun metaDataUri(): Uri {
-    val metaDataUri = Uri.Builder()
-            .scheme("content")
-            .authority(GpsTrackerApplication.appComponent.providerAuthority())
-            .appendPath(ContentConstants.MetaData.METADATA)
-            .build()
-    return metaDataUri
-}
-
-
-/**
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/ID/metadata
  */
 fun metaDataTrackUri(id: Long): Uri {
-    val trackUri = Uri.Builder()
+    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -234,8 +221,7 @@ fun <T> Uri.traverseTrack(context: Context,
     return result
 }
 
-
-private fun buildWaypoint(cursor: Cursor): Waypoint {
+fun buildWaypoint(cursor: Cursor): Waypoint {
     return Waypoint(id = cursor.getLong(_ID) ?: -1,
             latitude = cursor.getDouble(LATITUDE) ?: 0.0,
             longitude = cursor.getDouble(LONGITUDE) ?: 0.0,

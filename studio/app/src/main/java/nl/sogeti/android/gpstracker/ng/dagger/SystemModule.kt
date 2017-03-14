@@ -1,5 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.dagger
 
+import android.net.Uri
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
@@ -17,4 +18,7 @@ class SystemModule {
     fun gpsStatusControllerProvider(): GpsStatusControllerProvider {
         return GpsStatusControllerProvider()
     }
+
+    @Provides
+    fun uriBuilder() = Uri.Builder()
 }

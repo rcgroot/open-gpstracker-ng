@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
+import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
@@ -56,4 +57,6 @@ interface AppComponent {
 
     @Named("providerAuthority")
     fun providerAuthority(): String
+
+    fun provideUriBuilder(): Uri.Builder
 }
