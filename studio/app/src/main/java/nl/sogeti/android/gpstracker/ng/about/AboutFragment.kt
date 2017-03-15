@@ -48,12 +48,8 @@ class AboutFragment : DialogFragment() {
 
         val builder = AlertDialog.Builder(activity)
         builder.setView(binding.root)
-        builder.setPositiveButton(android.R.string.ok) { dialog, which -> removeAbout() }
+        builder.setPositiveButton(android.R.string.ok) { _, _ -> dismiss() }
 
         return builder.create()
-    }
-
-    fun removeAbout() {
-        dismiss()
     }
 }
