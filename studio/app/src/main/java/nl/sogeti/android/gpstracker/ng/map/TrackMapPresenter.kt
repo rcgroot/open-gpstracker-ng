@@ -44,7 +44,7 @@ import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 
-class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.ContentListener, TrackSelection.Listener {
+class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
 
     private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null

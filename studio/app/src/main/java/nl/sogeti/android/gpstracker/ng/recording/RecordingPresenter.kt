@@ -44,7 +44,7 @@ import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.ContentListener, GpsStatusController.Listener {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
     private var executingReader: TrackReader? = null

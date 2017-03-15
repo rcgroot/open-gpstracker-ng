@@ -5,7 +5,7 @@ import android.content.Context
 
 class ContentControllerProvider {
 
-    fun createContentControllerProvider(context: Context, listener: ContentController.ContentListener): ContentController {
+    fun createContentControllerProvider(context: Context, listener: ContentController.Listener): ContentController {
         return ContentController(context, listener);
     }
 }

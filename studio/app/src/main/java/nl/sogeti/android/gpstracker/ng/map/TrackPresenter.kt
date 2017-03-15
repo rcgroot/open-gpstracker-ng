@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import javax.inject.Inject
 
-class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener, ContentController.ContentListener {
+class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener, ContentController.Listener {
 
     private var contentController: ContentController? = null
     @Inject

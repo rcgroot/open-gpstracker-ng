@@ -44,7 +44,7 @@ import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import timber.log.Timber
 import javax.inject.Inject
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.ContentListener, TrackListListener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListListener {
 
     private var contentController: ContentController? = null
 

@@ -6,10 +6,9 @@ import android.os.Handler
 import android.os.Looper
 
 /**
- * Control the observing and monitoring for a observable uri value
- * and its content.
+ * Control the observing and monitoring for a observable uri content.
  */
-class ContentController(val context: Context, val listener: ContentListener) {
+class ContentController(private val context: Context, private val listener: Listener) {
 
     private val contentObserver = ContentObserver()
 
@@ -46,7 +45,7 @@ class ContentController(val context: Context, val listener: ContentListener) {
         }
     }
 
-    interface ContentListener {
+    interface Listener {
         fun onChangeUriContent(contentUri: Uri, changesUri: Uri)
     }
 }
