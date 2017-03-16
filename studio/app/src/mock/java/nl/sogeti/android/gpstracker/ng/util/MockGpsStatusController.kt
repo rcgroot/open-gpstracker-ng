@@ -2,7 +2,7 @@ package nl.sogeti.android.gpstracker.ng.util
 
 import android.os.Handler
 import android.os.Looper
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 
 typealias Action = (GpsStatusController.Listener) -> Unit
 

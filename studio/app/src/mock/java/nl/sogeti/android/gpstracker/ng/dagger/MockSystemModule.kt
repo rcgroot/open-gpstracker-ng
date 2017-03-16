@@ -1,9 +1,10 @@
 package nl.sogeti.android.gpstracker.ng.dagger
 
 import android.net.Uri
+import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
 import nl.sogeti.android.gpstracker.ng.util.MockGpsStatusControllerProvider
 import java.util.*
 

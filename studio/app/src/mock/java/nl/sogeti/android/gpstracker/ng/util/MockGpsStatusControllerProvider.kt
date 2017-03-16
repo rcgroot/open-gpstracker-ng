@@ -1,8 +1,8 @@
 package nl.sogeti.android.gpstracker.ng.util
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusController
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
 
 class MockGpsStatusControllerProvider : GpsStatusControllerProvider() {
 
