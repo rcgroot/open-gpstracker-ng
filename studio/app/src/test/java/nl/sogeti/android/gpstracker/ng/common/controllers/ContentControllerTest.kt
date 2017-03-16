@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.Assert.assertThat

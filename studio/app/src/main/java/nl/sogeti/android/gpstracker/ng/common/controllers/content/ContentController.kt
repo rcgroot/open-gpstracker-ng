@@ -1,6 +1,7 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers
+package nl.sogeti.android.gpstracker.ng.common.controllers.content
 
 import android.content.Context
+import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper

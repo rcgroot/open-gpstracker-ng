@@ -29,19 +29,19 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.net.Uri
-import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import timber.log.Timber
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListListener {
@@ -52,6 +52,10 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     lateinit var trackSelection: TrackSelection
     @Inject
     lateinit var contentControllerProvider: ContentControllerProvider
+    @Inject
+    lateinit var summaryManager: SummaryManager
+    @Inject
+    lateinit var executor: Executor
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -81,7 +85,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     private fun addTracksToModel() {
         val context = this.context
         if (context != null) {
-            AsyncTask.THREAD_POOL_EXECUTOR.execute {
+            executor.execute {
                 val trackList = tracksUri().map(context, {
                     val id = it.getLong(ContentConstants.Tracks._ID)!!
                     trackUri(id)

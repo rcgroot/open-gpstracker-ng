@@ -36,13 +36,18 @@ import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.INVALID_POSITION
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions.Companion.loadTrackTypeFromContext
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
+import javax.inject.Inject
 
 class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel.View) : ContextedPresenter() {
+
+    @Inject
+    lateinit var summaryManager: SummaryManager
 
     val spinnerAdapter: SpinnerAdapter by lazy {
         object : BaseAdapter() {
@@ -84,6 +89,10 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel
                 model.selectedPosition.set(INVALID_POSITION)
             }
         }
+    }
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
     }
 
     override fun didStart() {

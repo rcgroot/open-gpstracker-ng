@@ -19,8 +19,8 @@ class MockAppComponentTestRule : TestRule {
         return object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
-                mockAppComponent = Mockito.mock(AppComponent::class.java)
                 val mockUriBuilder = createMockBuilder()
+                mockAppComponent = Mockito.mock(AppComponent::class.java)
                 GpsTrackerApplication.appComponent = mockAppComponent
                 `when`(mockAppComponent.providerAuthority()).thenReturn("mock-authority")
                 `when`(mockAppComponent.provideUriBuilder()).thenReturn(mockUriBuilder)

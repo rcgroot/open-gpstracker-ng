@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers
+package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
 
 interface GpsStatusController {
 

@@ -69,7 +69,7 @@ public class SummaryManagerTest {
     Context mockContext = null;
     @Mock
     ExecutorService mockExecutor = null;
-    private summaryManager sut = summaryManager.INSTANCE;
+    private SummaryManager sut = new SummaryManager();
 
     @Before
     public void setUp() {
@@ -137,7 +137,7 @@ public class SummaryManagerTest {
     @Test
     public void testBackgroundPriority() {
         // Prepare
-        ThreadFactory factory = new summaryManager.BackgroundThreadFactory();
+        ThreadFactory factory = new SummaryManager.BackgroundThreadFactory();
 
         // Execute
         Thread thread = factory.newThread(new Runnable() {

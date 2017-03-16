@@ -34,7 +34,9 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServic
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.map.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import javax.inject.Named
 import javax.inject.Singleton
@@ -54,6 +56,10 @@ interface AppComponent {
     fun inject(injectable: TrackListPresenter)
 
     fun inject(injectable: RecordingPresenter)
+
+    fun inject(injectable: TrackListViewAdapter)
+
+    fun inject(injectable: TrackEditPresenter)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

@@ -37,15 +37,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.summaryManager
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.append
 import nl.sogeti.android.gpstracker.ng.utils.count
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
+import javax.inject.Inject
 
 class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackListViewAdapter.ViewHolder>() {
 
+    @Inject
+    lateinit var summaryManager: SummaryManager
     var listener: TrackListListener? = null
     var model = listOf<Uri>()
         set(value) {
@@ -54,6 +58,10 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
             diffResult.dispatchUpdatesTo(this)
         }
     private val rowModels = mutableMapOf<Uri, TrackViewModel>()
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     override fun getItemCount(): Int {
         return model.size

@@ -37,8 +37,8 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.TracksColumns.N
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.*

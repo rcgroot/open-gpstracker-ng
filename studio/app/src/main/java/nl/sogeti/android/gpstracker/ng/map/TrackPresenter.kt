@@ -32,8 +32,8 @@ import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString

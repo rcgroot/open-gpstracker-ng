@@ -18,7 +18,7 @@ class ContextedPresenterTest {
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
     @Mock
-    var mockContext: Context? = null
+    lateinit var mockContext: Context
     @Mock
     lateinit var mockAppComponent: AppComponent
 
@@ -28,7 +28,7 @@ class ContextedPresenterTest {
         val sut = MyContextedPresenter()
 
         // Execute
-        sut.start(mockContext!!)
+        sut.start(mockContext)
 
         // Verify
         assertTrue(sut.didStart)
@@ -39,7 +39,7 @@ class ContextedPresenterTest {
     fun stop() {
         // Prepare
         val sut = MyContextedPresenter()
-        sut.start(mockContext!!)
+        sut.start(mockContext)
 
         // Execute
         sut.stop()

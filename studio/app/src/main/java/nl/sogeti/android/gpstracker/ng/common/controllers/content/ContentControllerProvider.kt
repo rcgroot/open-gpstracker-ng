@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers
+package nl.sogeti.android.gpstracker.ng.common.controllers.content
 
 import android.content.Context
 

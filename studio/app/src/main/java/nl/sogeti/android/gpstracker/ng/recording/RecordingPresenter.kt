@@ -35,10 +35,10 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.ContentControllerProvider
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusController
-import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R

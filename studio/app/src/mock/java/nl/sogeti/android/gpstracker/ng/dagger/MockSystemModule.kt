@@ -1,5 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.dagger
 
+import android.net.Uri
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.GpsStatusControllerProvider
@@ -19,4 +20,9 @@ class MockSystemModule {
         return MockGpsStatusControllerProvider()
     }
 
+    @Provides
+    fun uriBuilder() = Uri.Builder()
+
+    @Provides
+    fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
 }

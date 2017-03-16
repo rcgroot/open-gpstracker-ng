@@ -42,7 +42,7 @@ import java.util.concurrent.ThreadFactory
 /**
  * Helps in the retrieval, create and keeping up to date of summary data
  */
-object summaryManager {
+class SummaryManager {
     var executor: ExecutorService? = null
     val calculator by lazy { SummaryCalculator() }
     val summaryCache = ConcurrentHashMap<Uri, Summary>()
