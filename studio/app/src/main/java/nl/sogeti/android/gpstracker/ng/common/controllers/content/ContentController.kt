@@ -23,7 +23,7 @@ class ContentController(private val context: Context, private val listener: List
 
     private inner class ContentObserver : android.database.ContentObserver(Handler(Looper.getMainLooper())) {
 
-        var registeredUri: Uri? = null
+        private var registeredUri: Uri? = null
 
         fun register(uri: Uri?) {
             unregister()

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
 
 import android.content.Context
