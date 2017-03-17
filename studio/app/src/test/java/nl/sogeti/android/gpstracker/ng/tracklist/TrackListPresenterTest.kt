@@ -6,27 +6,18 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
+import nl.sogeti.android.gpstracker.ng.rules.any
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
 import java.util.concurrent.Executor
 
 class TrackListPresenterTest {
-
-    //region any() as seen on https://medium.com/@elye.project/befriending-kotlin-and-mockito-1c2e7b0ef791#.o6fwp9tpe
-    private fun <T> any(): T {
-        Mockito.any<T>()
-        return uninitialized()
-    }
-
-    private fun <T> uninitialized(): T = null as T
-    //endregion
 
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
@@ -85,7 +76,7 @@ class TrackListPresenterTest {
     fun testTrackSelection() {
         // Arrange
         val selectedUri = mock(Uri::class.java)
-        val  trackModel = TrackViewModel(selectedUri)
+        val trackModel = TrackViewModel(selectedUri)
         trackModel.name.set("testname")
         // Act
         sut.didSelectTrack(trackModel)
