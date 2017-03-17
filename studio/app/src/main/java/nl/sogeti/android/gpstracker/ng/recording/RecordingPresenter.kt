@@ -69,11 +69,11 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     //region Service connection
 
     override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(trackUri, loggingState)
+        updateRecording(trackUri, loggingState, name)
     }
 
     override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(trackUri, loggingState)
+        updateRecording(trackUri, loggingState, name)
     }
 
     //endregion
@@ -153,10 +153,13 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         gpsStatusController = null
     }
 
-    private fun updateRecording(trackUri: Uri?, loggingState: Int) {
+    private fun updateRecording(trackUri: Uri?, loggingState: Int, name: String?) {
         if (trackUri != null) {
             contentController?.registerObserver(trackUri)
             viewModel.trackUri.set(trackUri)
+        }
+        if (name != null) {
+            viewModel.name.set(name)
         }
 
         val isRecording = (loggingState == STATE_LOGGING) || (loggingState == STATE_PAUSED)
