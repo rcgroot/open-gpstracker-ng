@@ -39,6 +39,11 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.excellent
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.high
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.medium
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
@@ -47,14 +52,13 @@ import javax.inject.Inject
 class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
-    private var executingReader: TrackReader? = null
+    var executingReader: TrackReader? = null
     @Inject
     lateinit var contentControllerProvider: ContentControllerProvider
     private var contentController: ContentController? = null
     @Inject
     lateinit var gpsStatusControllerProvider: GpsStatusControllerProvider
     private var gpsStatusController: GpsStatusController? = null
-
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -113,18 +117,18 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         viewModel.currentSatellites.set(usedSatellites)
         viewModel.maxSatellites.set(maxSatellites)
         when {
-            usedSatellites > 8 -> viewModel.signalQuality.set(4)
-            usedSatellites > 6 -> viewModel.signalQuality.set(3)
-            usedSatellites > 4 -> viewModel.signalQuality.set(2)
-            usedSatellites > 2 -> viewModel.signalQuality.set(1)
-            else -> viewModel.signalQuality.set(0)
+            usedSatellites >= 10 -> viewModel.signalQuality.set(excellent)
+            usedSatellites >= 8 -> viewModel.signalQuality.set(high)
+            usedSatellites >= 6 -> viewModel.signalQuality.set(medium)
+            usedSatellites >= 4 -> viewModel.signalQuality.set(low)
+            else -> viewModel.signalQuality.set(none)
         }
-
     }
+
 
     override fun onFirstFix() {
         viewModel.hasFix.set(true)
-        viewModel.signalQuality.set(4)
+        viewModel.signalQuality.set(excellent)
     }
 
     //endregion
@@ -168,8 +172,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             startContentUpdates()
             startGpsUpdates()
             readTrackSummary(trackUri)
-        }
-        else {
+        } else {
             stopContentUpdates()
             stopGpsUpdates()
         }
@@ -180,7 +183,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         }
     }
 
-    private inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: RecordingViewModel)
+    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: RecordingViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()

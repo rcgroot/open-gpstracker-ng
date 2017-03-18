@@ -8,9 +8,16 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.excellent
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.high
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.medium
+import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -108,4 +115,86 @@ class RecordingPresenterTest {
         Assert.assertThat(viewModel.trackUri.get(), `is`(uri))
     }
 
+    @Test
+    fun testOnChangeUriContent() {
+        // Act
+        sut.onChangeUriContent(uri, uri)
+        // Assert
+        assertThat(sut.executingReader, `is`(notNullValue()))
+    }
+
+    @Test
+    fun testGpsStart() {
+        // Act
+        sut.onStart()
+        // Assert
+        assertThat(viewModel.isScanning.get(), `is`(true))
+        assertThat(viewModel.hasFix.get(), `is`(false))
+    }
+
+    @Test
+    fun testGpsStop() {
+        // Act
+        sut.onStop()
+        // Assert
+        assertThat(viewModel.isScanning.get(), `is`(false))
+        assertThat(viewModel.hasFix.get(), `is`(false))
+        assertThat(viewModel.maxSatellites.get(), `is`(0))
+        assertThat(viewModel.currentSatellites.get(), `is`(0))
+    }
+
+    @Test
+    fun onFirstFix(){
+        // Act
+        sut.onFirstFix()
+        // Assert
+        assertThat(viewModel.hasFix.get(), `is`(true))
+        assertThat(viewModel.signalQuality.get(), `is`(4))
+    }
+
+    @Test
+    fun onNoSignal() {
+        // Act
+        sut.onChange(0,0)
+        // Assert
+        assertThat(viewModel.maxSatellites.get(), `is`(0))
+        assertThat(viewModel.currentSatellites.get(), `is`(0))
+        assertThat(viewModel.signalQuality.get(), `is`(none))
+    }
+
+    @Test
+    fun onLowSignal() {
+        // Act
+        sut.onChange(4,4)
+        // Assert
+        assertThat(viewModel.maxSatellites.get(), `is`(4))
+        assertThat(viewModel.currentSatellites.get(), `is`(4))
+        assertThat(viewModel.signalQuality.get(), `is`(low))
+    }
+
+    @Test
+    fun onMediumSignal() {
+        // Act
+        sut.onChange(6,20)
+        // Assert
+        assertThat(viewModel.maxSatellites.get(), `is`(20))
+        assertThat(viewModel.currentSatellites.get(), `is`(6))
+        assertThat(viewModel.signalQuality.get(), `is`(medium))
+    }
+
+    @Test
+    fun onHighSignal() {
+        // Act
+        sut.onChange(8,20)
+        // Assert
+        assertThat(viewModel.signalQuality.get(), `is`(high))
+    }
+
+    @Test
+    fun onExcellentSignal() {
+        // Act
+        sut.onChange(10,20)
+        // Assert
+        assertThat(viewModel.signalQuality.get(), `is`(excellent))
+    }
 }
