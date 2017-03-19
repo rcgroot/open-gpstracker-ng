@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServic
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 
@@ -55,6 +55,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     lateinit var contentControllerFactory: ContentControllerFactory
     @Inject
     lateinit var trackReaderFactory: TrackReaderFactory
+    @Inject
+    lateinit var trackTileProviderFactory: TrackTileProviderFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -127,7 +129,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         val googleMap = googleMap
         val context = this.context
         if (googleMap != null && context != null) {
-            val tileProvider = TrackTileProvider(context, viewModel.waypoints)
+            val tileProvider = trackTileProviderFactory.createTrackTileProvider(context, viewModel.waypoints)
             tileProvider.provideFor(googleMap)
         }
     }

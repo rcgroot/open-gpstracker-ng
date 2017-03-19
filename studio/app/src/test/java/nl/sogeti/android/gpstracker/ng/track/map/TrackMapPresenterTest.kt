@@ -29,7 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.track.map
 
 import android.content.Context
+import android.databinding.ObservableField
 import android.net.Uri
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
@@ -37,6 +40,8 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any
+import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import org.hamcrest.CoreMatchers.`is`
@@ -76,6 +81,10 @@ class TrackMapPresenterTest {
     lateinit var trackReaderFactory: TrackReaderFactory
     @Mock
     lateinit var trackReader: TrackReader
+    @Mock
+    lateinit var trackTileProviderFactory: TrackTileProviderFactory
+    @Mock
+    lateinit var trackTileProvider: TrackTileProvider
 
     @Before
     fun setup() {
@@ -90,6 +99,8 @@ class TrackMapPresenterTest {
         sut.context = context
         `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
         sut.trackReaderFactory = trackReaderFactory
+        `when`(trackTileProviderFactory.createTrackTileProvider(any(), any())).thenReturn(trackTileProvider)
+        sut.trackTileProviderFactory = trackTileProviderFactory
     }
 
     @Test
@@ -217,5 +228,17 @@ class TrackMapPresenterTest {
         // Assert
         Assert.assertThat(viewModel.waypoints.get().count(), `is`(1))
         Assert.assertThat(viewModel.waypoints.get()[0].count(), `is`(2))
+    }
+
+    @Test
+    fun testMapReady() {
+        // Arrange
+        val waypoints = listOf(listOf<LatLng>())
+       viewModel.waypoints.set(waypoints)
+        val map = mock(GoogleMap::class.java)
+        // Act
+        sut.onMapReady(map)
+        // Assert
+        verify(trackTileProvider).provideFor(map)
     }
 }
