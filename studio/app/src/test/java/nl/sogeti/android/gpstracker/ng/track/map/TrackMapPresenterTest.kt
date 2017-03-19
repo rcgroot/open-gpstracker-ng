@@ -36,6 +36,7 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
+import nl.sogeti.android.gpstracker.ng.rules.any
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import org.hamcrest.CoreMatchers.`is`
@@ -71,6 +72,10 @@ class TrackMapPresenterTest {
     lateinit var trackSelection: TrackSelection
     @Mock
     lateinit var context: Context
+    @Mock
+    lateinit var trackReaderFactory: TrackReaderFactory
+    @Mock
+    lateinit var trackReader: TrackReader
 
     @Before
     fun setup() {
@@ -83,6 +88,8 @@ class TrackMapPresenterTest {
         `when`(trackSelection.trackName).thenReturn("selected")
         sut.trackSelection = trackSelection
         sut.context = context
+        `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
+        sut.trackReaderFactory = trackReaderFactory
     }
 
     @Test
@@ -141,7 +148,8 @@ class TrackMapPresenterTest {
     fun testContentChange() {
         // Act
         sut.onChangeUriContent(trackUri, trackUri)
-        // TODO
+        // Assert
+        verify(trackReaderFactory).createTrackReader(context, trackUri, viewModel)
     }
 
     @Test

@@ -33,6 +33,7 @@ import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.track.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import javax.inject.Singleton
@@ -41,29 +42,22 @@ import javax.inject.Singleton
 class AppModule {
 
     @Provides
-    fun timeSpanCalculator(): TimeSpanCalculator {
-        return TimeSpanCalculator()
-    }
+    fun timeSpanCalculator() = TimeSpanCalculator()
 
     @Singleton
     @Provides
-    fun trackSelection(): TrackSelection {
-        return TrackSelection()
-    }
+    fun trackSelection() = TrackSelection()
 
     @Provides
-    fun permissionRequester(): PermissionRequester {
-        return PermissionRequester()
-    }
+    fun permissionRequester() = PermissionRequester()
 
     @Provides
-    fun contentControllerFactory(): ContentControllerFactory {
-        return ContentControllerFactory()
-    }
+    fun contentControllerFactory() = ContentControllerFactory()
 
     @Singleton
     @Provides
-    fun summaryManager(): SummaryManager {
-        return SummaryManager()
-    }
+    fun summaryManager() = SummaryManager()
+
+    @Provides
+    fun trackReaderFactory() = TrackReaderFactory()
 }

@@ -53,7 +53,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     lateinit var trackSelection: TrackSelection
     @Inject
     lateinit var contentControllerFactory: ContentControllerFactory
-    var trackReaderProvider = TrackReaderFactory()
+    @Inject
+    lateinit var trackReaderFactory: TrackReaderFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -138,7 +139,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         var executingReader = this.executingReader
         if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
-            executingReader = trackReaderProvider.createTrackReader(context, trackUri, viewModel)
+            executingReader = trackReaderFactory.createTrackReader(context, trackUri, viewModel)
             executingReader.execute()
             this.executingReader = executingReader
         }
