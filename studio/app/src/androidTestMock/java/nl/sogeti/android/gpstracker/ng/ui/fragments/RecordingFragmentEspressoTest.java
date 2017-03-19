@@ -40,7 +40,7 @@ import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender;
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
-import nl.sogeti.android.gpstracker.ng.util.MockTracksProvider;
+import nl.sogeti.android.gpstracker.ng.util.MockTracksContentProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -55,23 +55,23 @@ public class RecordingFragmentEspressoTest {
     public FragmentTestRule<RecordingFragment> wrapperFragment = new FragmentTestRule<>(RecordingFragment.class);
     private RecordingFragment sut;
     private MockServiceManager mockServiceManager;
-    private MockTracksProvider mockTracksProvider;
+    private MockTracksContentProvider mockTracksContentProvider;
 
     @Before
     public void setUp() {
         Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
         mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
-        mockTracksProvider = new MockTracksProvider();
+        mockTracksContentProvider = new MockTracksContentProvider();
         sut = wrapperFragment.getFragment();
     }
 
     @After
     public void tearDown() {
         mockServiceManager.reset();
-        mockTracksProvider.reset();
+        mockTracksContentProvider.reset();
         mockServiceManager = null;
-        mockTracksProvider = null;
+        mockTracksContentProvider = null;
         sut = null;
         Espresso.unregisterIdlingResources(MockBroadcastSender.Espresso.getResource());
     }
@@ -87,7 +87,7 @@ public class RecordingFragmentEspressoTest {
     public void testVisibleWhenStarted() {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
-        MockTracksProvider.globalState.createTrack(1L, MockTracksProvider.globalState.getGpxAmsterdam());
+        MockTracksContentProvider.globalState.createTrack(1L, MockTracksContentProvider.globalState.getGpxAmsterdam());
 
         // Verify
         SystemClock.sleep(500);

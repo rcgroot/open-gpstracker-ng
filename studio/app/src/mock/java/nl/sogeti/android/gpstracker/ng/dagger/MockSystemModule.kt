@@ -4,8 +4,8 @@ import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
-import nl.sogeti.android.gpstracker.ng.util.MockGpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.util.MockGpsStatusControllerFactory
 import java.util.*
 
 @Module
@@ -17,8 +17,8 @@ class MockSystemModule {
     }
 
     @Provides
-    fun gpsStatusControllerProvider(): GpsStatusControllerProvider {
-        return MockGpsStatusControllerProvider()
+    fun gpsStatusControllerFactory(): GpsStatusControllerFactory {
+        return MockGpsStatusControllerFactory()
     }
 
     @Provides

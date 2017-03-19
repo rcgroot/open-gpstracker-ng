@@ -26,10 +26,9 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.map
+package nl.sogeti.android.gpstracker.ng.track.map
 
 import android.net.Uri
-import android.os.AsyncTask
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -38,9 +37,9 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
-import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 
@@ -53,7 +52,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     @Inject
     lateinit var trackSelection: TrackSelection
     @Inject
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
+    var trackReaderProvider = TrackReaderFactory()
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -63,7 +63,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         super.didStart()
         trackSelection.addListener(this)
         makeTrackSelection()
-        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
+        contentController = contentControllerFactory.createContentController(context!!, this)
         contentController?.registerObserver(viewModel.trackUri.get())
         addTilesToMap()
     }
@@ -134,10 +134,11 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     /* Private */
 
     private fun startReadingTrack(trackUri: Uri) {
+        val context = this.context!!
         var executingReader = this.executingReader
-        if (executingReader == null || executingReader.trackUri != trackUri) {
+        if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
-            executingReader = TrackReader(trackUri, viewModel)
+            executingReader = trackReaderProvider.createTrackReader(context, trackUri, viewModel)
             executingReader.execute()
             this.executingReader = executingReader
         }
@@ -160,35 +161,5 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             }
         }
     }
-
-    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: TrackMapViewModel)
-        : AsyncTask<Void, Void, Void>() {
-
-        val handler = DefaultResultHandler()
-
-        override fun doInBackground(vararg p: Void): Void? {
-            context?.let {
-                trackUri.readTrack(it, handler, null)
-            }
-
-            updateViewModelWithHandler(handler)
-
-            return null
-        }
-
-        fun updateViewModelWithHandler(handler: DefaultResultHandler) {
-            handler.headBuilder?.let { viewModel.trackHeadBounds.set(it.build()) }
-            handler.boundsBuilder?.let { viewModel.completeBounds.set(it.build()) }
-            viewModel.name.set(handler.name)
-            val points = handler.waypoints.map { it.map { it.latLng } }
-            val filteredPoints = points.filter { it.count() > 1 }
-            viewModel.waypoints.set(filteredPoints)
-        }
-
-        override fun onPostExecute(result: Void?) {
-            if (executingReader == this) {
-                executingReader = null
-            }
-        }
-    }
 }
+

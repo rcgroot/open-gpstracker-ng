@@ -8,7 +8,7 @@
 
         <activity android:name="nl.sogeti.android.gpstracker.ng.util.TestActivity" />
         <provider
-            android:name="nl.sogeti.android.gpstracker.ng.util.MockTracksProvider"
+            android:name="nl.sogeti.android.gpstracker.ng.util.MockTracksContentProvider"
             android:authorities="nl.sogeti.android.gpstracker.ng.mock.authority" />
     </application>
 </manifest>

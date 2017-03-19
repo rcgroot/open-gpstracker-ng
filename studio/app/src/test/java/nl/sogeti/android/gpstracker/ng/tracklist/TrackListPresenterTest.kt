@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any
@@ -29,7 +29,7 @@ class TrackListPresenterTest {
     @Mock
     lateinit var trackSelection: TrackSelection
     @Mock
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
     @Mock
     lateinit var summaryManager: SummaryManager
     @Mock
@@ -46,10 +46,10 @@ class TrackListPresenterTest {
         sut = TrackListPresenter(viewModel, view)
         sut.context = context
         sut.trackSelection = trackSelection
-        sut.contentControllerProvider = contentControllerProvider
+        sut.contentControllerFactory = contentControllerFactory
         sut.summaryManager = summaryManager
         sut.executor = executor
-        `when`(contentControllerProvider.createContentControllerProvider(any(), any()))
+        `when`(contentControllerFactory.createContentController(any(), any()))
                 .thenReturn(contentController)
     }
 

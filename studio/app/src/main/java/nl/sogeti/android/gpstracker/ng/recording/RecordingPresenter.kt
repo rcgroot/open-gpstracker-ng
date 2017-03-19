@@ -36,9 +36,9 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.high
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
@@ -54,10 +54,10 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
     var executingReader: TrackReader? = null
     @Inject
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
     private var contentController: ContentController? = null
     @Inject
-    lateinit var gpsStatusControllerProvider: GpsStatusControllerProvider
+    lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
     private var gpsStatusController: GpsStatusController? = null
 
     init {
@@ -136,7 +136,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     //region Private
 
     private fun startContentUpdates() {
-        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
+        contentController = contentControllerFactory.createContentController(context!!, this)
         contentController?.registerObserver(viewModel.trackUri.get())
     }
 
@@ -147,7 +147,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     private fun startGpsUpdates() {
         if (gpsStatusController == null) {
-            gpsStatusController = gpsStatusControllerProvider.createGpsStatusListenerProvider(context!!, this)
+            gpsStatusController = gpsStatusControllerFactory.createGpsStatusController(context!!, this)
             gpsStatusController?.startUpdates()
         }
     }

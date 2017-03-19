@@ -118,13 +118,13 @@ class MockServiceManager : ServiceManagerInterface {
 
         private fun recordNewTrack() {
             if (trackId > 0) trackId++ else trackId = 2
-            MockTracksProvider.globalState.addTrack(trackId)
+            MockTracksContentProvider.globalState.addTrack(trackId)
             recordNewSegment()
         }
 
         private fun recordNewSegment() {
             segmentId++
-            MockTracksProvider.globalState.addSegment(trackId, segmentId)
+            MockTracksContentProvider.globalState.addSegment(trackId, segmentId)
             recordNewWaypoint()
         }
 
@@ -134,7 +134,7 @@ class MockServiceManager : ServiceManagerInterface {
             val angularSpeed = 10.0
             val latitude = 50.0 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble() * angularSpeed))
             val longitude = 5.0 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble() * angularSpeed))
-            MockTracksProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
+            MockTracksContentProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
         }
     }
 }

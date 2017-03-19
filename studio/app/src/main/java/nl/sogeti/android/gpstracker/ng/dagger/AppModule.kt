@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.dagger
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.PermissionRequester
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
@@ -57,8 +57,8 @@ class AppModule {
     }
 
     @Provides
-    fun contentControllerProvider(): ContentControllerProvider {
-        return ContentControllerProvider()
+    fun contentControllerFactory(): ContentControllerFactory {
+        return ContentControllerFactory()
     }
 
     @Singleton

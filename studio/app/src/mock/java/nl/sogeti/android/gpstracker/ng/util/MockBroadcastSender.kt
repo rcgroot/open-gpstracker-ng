@@ -34,7 +34,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.support.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.MockedGpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import javax.inject.Inject

@@ -4,7 +4,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import java.util.*
 
 @Module
@@ -16,8 +16,8 @@ class SystemModule {
     }
 
     @Provides
-    fun gpsStatusControllerProvider(): GpsStatusControllerProvider {
-        return GpsStatusControllerProvider()
+    fun gpsStatusControllerFactory(): GpsStatusControllerFactory {
+        return GpsStatusControllerFactory()
     }
 
     @Provides

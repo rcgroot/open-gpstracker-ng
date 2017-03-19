@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.utils.*
 import timber.log.Timber
 import java.util.*
 
-class MockTracksProvider : ContentProvider() {
+class MockTracksContentProvider : ContentProvider() {
     override fun onCreate(): Boolean {
         globalState.context = context.applicationContext
         return true

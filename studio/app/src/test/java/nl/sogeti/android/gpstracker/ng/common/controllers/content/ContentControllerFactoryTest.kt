@@ -9,9 +9,9 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
 
-class ContentControllerProviderTest {
+class ContentControllerFactoryTest {
 
-    lateinit var sut: ContentControllerProvider
+    lateinit var sut: ContentControllerFactory
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
     @Mock
@@ -21,13 +21,13 @@ class ContentControllerProviderTest {
 
     @Before
     fun setUp() {
-        sut = ContentControllerProvider()
+        sut = ContentControllerFactory()
     }
 
     @Test
     fun createContentControllerProvider() {
         // Act
-        val controller = sut.createContentControllerProvider(context, listener)
+        val controller = sut.createContentController(context, listener)
         // Assert
         assertThat(controller, Matchers.`is`(Matchers.instanceOf(ContentController::class.java)))
     }

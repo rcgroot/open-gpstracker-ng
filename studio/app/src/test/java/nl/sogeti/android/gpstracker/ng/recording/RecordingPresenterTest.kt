@@ -5,9 +5,9 @@ import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.high
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
@@ -46,11 +46,11 @@ class RecordingPresenterTest {
     @Mock
     lateinit var trackUri: Uri
     @Mock
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
     @Mock
     lateinit var context: Context
     @Mock
-    lateinit var gpsStatusControllerProvider: GpsStatusControllerProvider
+    lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
 
     @Before
     fun setUp() {
@@ -58,10 +58,10 @@ class RecordingPresenterTest {
         sut = RecordingPresenter(viewModel)
         sut.serviceManager = serviceManager
         sut.context = context
-        `when`(contentControllerProvider.createContentControllerProvider(any(), any())).thenReturn(contentController)
-        sut.contentControllerProvider = contentControllerProvider
-        `when`(gpsStatusControllerProvider.createGpsStatusListenerProvider(any(), any())).thenReturn(gpsStatusController)
-        sut.gpsStatusControllerProvider = gpsStatusControllerProvider
+        `when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
+        sut.contentControllerFactory = contentControllerFactory
+        `when`(gpsStatusControllerFactory.createGpsStatusController(any(), any())).thenReturn(gpsStatusController)
+        sut.gpsStatusControllerFactory = gpsStatusControllerFactory
     }
 
     @Test

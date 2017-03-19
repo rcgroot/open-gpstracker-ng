@@ -11,9 +11,9 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
 
-class GpsStatusControllerProviderTest {
+class GpsStatusControllerFactoryTest {
 
-    lateinit var sut: GpsStatusControllerProvider
+    lateinit var sut: GpsStatusControllerFactory
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
     @Mock
@@ -23,13 +23,13 @@ class GpsStatusControllerProviderTest {
 
     @Before
     fun setUp() {
-        sut = GpsStatusControllerProvider()
+        sut = GpsStatusControllerFactory()
     }
 
     @Test
     fun createNougatController() {
         // Act
-        val controller = sut.createGpsStatusListenerProvider(context, listener, Build.VERSION_CODES.N)
+        val controller = sut.createGpsStatusController(context, listener, Build.VERSION_CODES.N)
         // Assert
         assertThat(controller, `is`(instanceOf(GnnsStatusControllerImpl::class.java)))
     }
@@ -37,7 +37,7 @@ class GpsStatusControllerProviderTest {
     @Test
     fun createPreNougatController() {
         // Act
-        val controller = sut.createGpsStatusListenerProvider(context, listener, Build.VERSION_CODES.M)
+        val controller = sut.createGpsStatusController(context, listener, Build.VERSION_CODES.M)
         // Assert
         assertThat(controller, `is`(instanceOf(GpsStatusControllerImpl::class.java)))
     }
@@ -45,7 +45,7 @@ class GpsStatusControllerProviderTest {
     @Test
     fun createDefaultController() {
         // Act
-        val controller = sut.createGpsStatusListenerProvider(context, listener)
+        val controller = sut.createGpsStatusController(context, listener)
         // Assert
         assertThat(controller, `is`(instanceOf(GpsStatusControllerImpl::class.java)))
     }

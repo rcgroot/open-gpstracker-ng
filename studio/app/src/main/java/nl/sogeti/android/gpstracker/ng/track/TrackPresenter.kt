@@ -26,14 +26,15 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.map
+package nl.sogeti.android.gpstracker.ng.track
 
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString
@@ -45,7 +46,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     @Inject
     lateinit var trackSelection: TrackSelection
     @Inject
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -55,7 +56,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     override fun didStart() {
         trackSelection.addListener(this)
-        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
+        contentController = contentControllerFactory.createContentController(context!!, this)
         trackSelection.trackUri?.let {
             didSelectTrack(it, trackSelection.trackName)
         }
@@ -98,7 +99,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     //region Content watching
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        val name = contentUri.apply(context!!, { it.getString(ContentConstants.Tracks.NAME) })
+        val name = contentUri.apply(context!!, { it.getString(NAME) })
         name?.let {
             showName(it)
         }

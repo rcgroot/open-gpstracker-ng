@@ -33,7 +33,7 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerProvider
+import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
@@ -51,7 +51,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     @Inject
     lateinit var trackSelection: TrackSelection
     @Inject
-    lateinit var contentControllerProvider: ContentControllerProvider
+    lateinit var contentControllerFactory: ContentControllerFactory
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
@@ -62,7 +62,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didStart() {
-        contentController = contentControllerProvider.createContentControllerProvider(context!!, this)
+        contentController = contentControllerFactory.createContentController(context!!, this)
         contentController?.registerObserver(tracksUri())
         summaryManager.start()
         addTracksToModel()

@@ -3,9 +3,9 @@ package nl.sogeti.android.gpstracker.ng.common.controllers.content
 import android.content.Context
 
 
-class ContentControllerProvider {
+class ContentControllerFactory {
 
-    fun createContentControllerProvider(context: Context, listener: ContentController.Listener): ContentController {
+    fun createContentController(context: Context, listener: ContentController.Listener): ContentController {
         return ContentController(context, listener);
     }
 }
