@@ -28,8 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.track.map
 
+import android.content.ContentResolver
 import android.content.Context
-import android.databinding.ObservableField
+import android.database.Cursor
 import android.net.Uri
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -50,6 +51,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -234,11 +236,39 @@ class TrackMapPresenterTest {
     fun testMapReady() {
         // Arrange
         val waypoints = listOf(listOf<LatLng>())
-       viewModel.waypoints.set(waypoints)
+        viewModel.waypoints.set(waypoints)
         val map = mock(GoogleMap::class.java)
         // Act
         sut.onMapReady(map)
         // Assert
         verify(trackTileProvider).provideFor(map)
+    }
+
+    @Test
+    fun trackSelection() {
+        // Arrange
+        val trackSelection = mock(TrackSelection::class.java)
+        sut.trackSelection = trackSelection
+        val contentResolver = mock(ContentResolver::class.java)
+        `when`(context.contentResolver).thenReturn(contentResolver)
+        val cursor = mock(Cursor::class.java)
+        `when`(cursor.moveToFirst()).thenReturn(true)
+        mockColumn(cursor, "_ID", 1, 2)
+        mockColumn(cursor, "name", 2, "cursorname")
+        `when`(contentResolver.query(any(), any(), any(), any(), any())).thenReturn(cursor)
+        // Act
+        sut.didStart()
+        // Assert
+        verify(trackSelection).selectTrack(any(), ArgumentMatchers.matches("cursorname"))
+    }
+
+    private fun mockColumn(cursor: Cursor, name: String, i: Int, value: Long) {
+        `when`(cursor.getColumnIndex(name)).thenReturn(i)
+        `when`(cursor.getLong(i)).thenReturn(value)
+    }
+
+    private fun mockColumn(cursor: Cursor, name: String, i: Int, value: String) {
+        `when`(cursor.getColumnIndex(name)).thenReturn(i)
+        `when`(cursor.getString(i)).thenReturn(value)
     }
 }

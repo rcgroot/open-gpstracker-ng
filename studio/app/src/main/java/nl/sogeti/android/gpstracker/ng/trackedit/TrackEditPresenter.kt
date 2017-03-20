@@ -49,36 +49,6 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel
     @Inject
     lateinit var summaryManager: SummaryManager
 
-    val spinnerAdapter: SpinnerAdapter by lazy {
-        object : BaseAdapter() {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-                val viewHolder: ViewHolder
-                val itemView: View
-                if (convertView == null) {
-                    itemView = LayoutInflater.from(context).inflate(R.layout.row_track_type, parent, false)
-                    viewHolder = ViewHolder(
-                            itemView.findViewById(R.id.row_track_type_image) as ImageView,
-                            itemView.findViewById(R.id.row_track_type_text) as TextView)
-                    itemView.tag = viewHolder
-                } else {
-                    itemView = convertView
-                    viewHolder = convertView.tag as ViewHolder
-                }
-                val trackType = model.trackTypes[position]
-                viewHolder.textView.text = context?.getString(trackType.stringId)
-                context?.let { viewHolder.imageView.setImageDrawable(AppCompatResources.getDrawable(it, trackType.drawableId)) }
-
-                return itemView
-            }
-
-            override fun getItem(position: Int): TrackType = model.trackTypes[position]
-
-            override fun getItemId(position: Int): Long = model.trackTypes[position].drawableId.toLong()
-
-            override fun getCount() = model.trackTypes.size
-        }
-    }
-
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {
         object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
