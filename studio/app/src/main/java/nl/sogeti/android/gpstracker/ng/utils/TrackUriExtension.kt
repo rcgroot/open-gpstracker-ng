@@ -236,6 +236,10 @@ fun Uri.updateName(context: Context, name: String) {
     context.contentResolver.update(this, values, null, null)
 }
 
+fun Uri.readName(context: Context): String {
+    return this.apply(context, { it.getString(ContentConstants.TracksColumns.NAME) }) ?: ""
+}
+
 fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
     val values = ContentValues()
     values.put(ContentConstants.MetaDataColumns.KEY, key)

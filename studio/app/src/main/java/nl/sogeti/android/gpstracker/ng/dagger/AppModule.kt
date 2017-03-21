@@ -35,6 +35,7 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.track.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import javax.inject.Singleton
@@ -64,4 +65,7 @@ class AppModule {
 
     @Provides
     fun trackTileProviderFactory() = TrackTileProviderFactory()
+
+    @Provides
+    fun trackTypeDescriptions() = TrackTypeDescriptions()
 }

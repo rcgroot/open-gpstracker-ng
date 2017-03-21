@@ -29,13 +29,15 @@
 package nl.sogeti.android.gpstracker.ng.trackedit
 
 import android.content.Context
+import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.metaDataTrackUri
+import nl.sogeti.android.gpstracker.ng.utils.updateCreateMetaData
 import nl.sogeti.android.gpstracker.v2.R
 
-class TrackTypeDescriptions(val context: Context) {
+class TrackTypeDescriptions {
 
     companion object {
         val KEY_META_FIELD_TRACK_TYPE = "SUMMARY_TYPE"
@@ -46,7 +48,7 @@ class TrackTypeDescriptions(val context: Context) {
         val VALUE_TYPE_RUN = "TYPE_RUN"
         val VALUE_TYPE_WALK = "TYPE_WALK"
         val VALUE_TYPE_TRAIN = "TYPE_TRAIN"
-        private val defaultType = TrackType(R.drawable.ic_track_type_default, R.string.track_type_default, VALUE_TYPE_DEFAULT)
+        val defaultType = TrackType(R.drawable.ic_track_type_default, R.string.track_type_default, VALUE_TYPE_DEFAULT)
 
         val allTrackTypes by lazy {
             listOf(
@@ -59,19 +61,26 @@ class TrackTypeDescriptions(val context: Context) {
                     TrackType(R.drawable.ic_track_type_boat, R.string.track_type_boat, VALUE_TYPE_BOAT)
             )
         }
+    }
 
-        fun trackTypeForContentType(contentType: String?): TrackType {
-            val trackType = allTrackTypes.find { it.contentValue == contentType }
 
-            return trackType ?: defaultType
-        }
+    fun trackTypeForContentType(contentType: String?): TrackType {
+        val trackType = allTrackTypes.find { it.contentValue == contentType }
 
-        fun loadTrackTypeFromContext(trackId: Long, context: Context): TrackType {
-            val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
-            val contentType = metaDataTrackUri(trackId).apply(context, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
-            val trackType = TrackTypeDescriptions.trackTypeForContentType(contentType)
-            return trackType
-        }
+        return trackType ?: defaultType
+    }
+
+    fun loadTrackType(context: Context, trackUri: Uri): TrackType {
+        val trackId: Long = trackUri.lastPathSegment.toLong()
+        val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
+        val contentType = metaDataTrackUri(trackId).apply(context, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
+        val trackType = trackTypeForContentType(contentType)
+        return trackType
+    }
+
+    fun saveTrackType(context: Context, trackUri: Uri, trackType: TrackType) {
+        val trackId: Long = trackUri.lastPathSegment.toLong()
+        metaDataTrackUri(trackId).updateCreateMetaData(context!!, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
     }
 }
 

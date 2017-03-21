@@ -45,6 +45,8 @@ class SummaryCalculator {
     lateinit var timeSpanUtil: TimeSpanCalculator
     @Inject
     lateinit var locale: Locale
+    @Inject
+    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -52,14 +54,12 @@ class SummaryCalculator {
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
         val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
-        val trackId: Long = trackUri.lastPathSegment.toLong()
-
         // Defaults
         val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
         var duration = context.getString(R.string.row_duraction_default)
         var distance = context.getString(R.string.row_distance_default)
         val timestamp = 0L
-        val trackType = TrackTypeDescriptions.loadTrackTypeFromContext(trackId, context)
+        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Calculate
         val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })

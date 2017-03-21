@@ -28,26 +28,26 @@
  */
 package nl.sogeti.android.gpstracker.ng.trackedit
 
+import android.content.Context
 import android.net.Uri
-import android.support.v7.content.res.AppCompatResources
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.INVALID_POSITION
-import nl.sogeti.android.gpstracker.integration.ContentConstants
+import android.widget.ImageView
+import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions.Companion.loadTrackTypeFromContext
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.utils.*
-import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.ng.utils.readName
+import nl.sogeti.android.gpstracker.ng.utils.updateName
 import javax.inject.Inject
 
-class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel.View) : ContextedPresenter() {
+class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter() {
 
     @Inject
     lateinit var summaryManager: SummaryManager
+    @Inject
+    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {
         object : AdapterView.OnItemSelectedListener {
@@ -67,47 +67,47 @@ class TrackEditPresenter(val model: TrackEditModel, val listener: TrackEditModel
 
     override fun didStart() {
         val trackUri = model.trackUri.get()
-        val trackId: Long = trackUri.lastPathSegment.toLong()
 
-        loadTrackName(trackUri)
-        loadTrackType(trackId)
+        loadTrackTypePosition(context!!, trackUri)
+        loadTrackName(context!!, trackUri)
     }
 
     override fun willStop() {
     }
 
     fun ok() {
-        saveTrackName()
-        saveTrackType()
-        summaryManager.summaryCache.remove(model.trackUri.get())
-        listener.dismiss()
+        val trackUri = model.trackUri.get()
+        context?.let {
+            saveTrackName(it, trackUri)
+            saveTrackTypePosition(it, trackUri)
+        }
+        summaryManager.removeFromCache(trackUri)
+        view.dismiss()
     }
 
     fun cancel() {
-        listener.dismiss()
+        view.dismiss()
     }
 
-    private fun loadTrackType(trackId: Long) {
-        context?.let {
-            val trackType = loadTrackTypeFromContext(trackId, it)
-            val position = model.trackTypes.indexOfFirst { it == trackType }
-            model.selectedPosition.set(position)
-        }
-    }
-
-    private fun saveTrackType() {
-        val trackUri = model.trackUri.get()
-        val trackId: Long = trackUri.lastPathSegment.toLong()
+    private fun saveTrackTypePosition(it: Context, trackUri: Uri) {
         val trackType = model.trackTypes.get(model.selectedPosition.get())
-        metaDataTrackUri(trackId).updateCreateMetaData(context!!, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
+        trackTypeDescriptions.saveTrackType(it, trackUri, trackType)
     }
 
-    private fun loadTrackName(trackUri: Uri) {
-        model.name.set(trackUri.apply(context!!, { it.getString(ContentConstants.TracksColumns.NAME) ?: "" }))
+    private fun loadTrackTypePosition(context: Context, trackUri: Uri) {
+        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
+        val position = model.trackTypes.indexOfFirst { it == trackType }
+        model.selectedPosition.set(position)
     }
 
-    private fun saveTrackName() {
-        model.trackUri.get()?.updateName(context!!, model.name.get())
+    private fun loadTrackName(context: Context, trackUri: Uri) {
+        val trackName = trackUri.readName(context)
+        model.name.set(trackName)
+    }
+
+    private fun saveTrackName(context: Context, trackUri: Uri) {
+        val trackName = model.name.get()
+        trackUri.updateName(context, trackName)
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)

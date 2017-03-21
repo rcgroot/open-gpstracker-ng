@@ -131,4 +131,8 @@ class SummaryManager {
             return thread
         }
     }
+
+    fun removeFromCache(trackUri: Uri) {
+        summaryCache.remove(trackUri)
+    }
 }
