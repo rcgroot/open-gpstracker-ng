@@ -32,8 +32,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.STATE_LOGGING
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
@@ -230,18 +228,6 @@ class TrackMapPresenterTest {
         // Assert
         Assert.assertThat(viewModel.waypoints.get().count(), `is`(1))
         Assert.assertThat(viewModel.waypoints.get()[0].count(), `is`(2))
-    }
-
-    @Test
-    fun testMapReady() {
-        // Arrange
-        val waypoints = listOf(listOf<LatLng>())
-        viewModel.waypoints.set(waypoints)
-        val map = mock(GoogleMap::class.java)
-        // Act
-        sut.onMapReady(map)
-        // Assert
-        verify(trackTileProvider).provideFor(map)
     }
 
     @Test
