@@ -28,18 +28,15 @@
  */
 package nl.sogeti.android.gpstracker.ng.common.bindings
 
-import android.content.Context
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.support.v7.widget.AppCompatSpinner
-import android.util.TypedValue
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.SpinnerAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import nl.sogeti.android.gpstracker.v2.R
@@ -65,40 +62,28 @@ open class CommonBindingAdapters {
 
     @BindingAdapter("polylines")
     fun setPolylines(map: MapView, polylines: List<PolylineOptions>?) {
-        val tag = map.tag
-        if (tag is GoogleMap) {
-            val googleMap = tag
+        val addLines: (GoogleMap) -> Unit = { googleMap ->
             googleMap.clear()
             polylines?.map {
                 googleMap.addPolyline(it)
             }
+        }
+        val tag = map.tag
+        if (tag is GoogleMap) {
+            addLines(tag)
+        } else {
+            map.getMapAsync(addLines)
         }
     }
 
     @BindingAdapter("mapFocus")
     fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
         if (bounds != null) {
-            map.getMapAsync(MapUpdate(map, bounds))
-        }
-    }
-
-    class MapUpdate(private val map: MapView, private val bounds: LatLngBounds) : GoogleMap.CancelableCallback, OnMapReadyCallback {
-        override fun onMapReady(googleMap: GoogleMap?) {
-            if (googleMap != null) {
-                var padding = map.context.resources.getDimension(R.dimen.map_padding)
+            map.getMapAsync {
+                val padding = map.context.resources.getDimension(R.dimen.map_padding)
                 val update = CameraUpdateFactory.newLatLngBounds(bounds, padding.toInt())
-                googleMap.animateCamera(update, this)
+                it.animateCamera(update, null)
             }
-        }
-
-        override fun onFinish() {
-        }
-
-        override fun onCancel() {
-        }
-
-        fun convertDpiToPixel(context: Context, dp: Float): Float {
-            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics);
         }
     }
 
