@@ -96,20 +96,20 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         viewModel.enabled.set(true)
     }
 
-    private fun startLogging(context: Context) {
+    fun startLogging(context: Context) {
         serviceManager.startGPSLogging(context, context.getString(R.string.initial_track_name))
     }
 
-    private fun stopLogging(context: Context) {
+    fun stopLogging(context: Context) {
         serviceManager.stopGPSLogging(context)
         deleteEmptyTrack(context, serviceManager.trackId)
     }
 
-    private fun pauseLogging(context: Context) {
+    fun pauseLogging(context: Context) {
         serviceManager.pauseGPSLogging(context)
     }
 
-    private fun resumeLogging(context: Context) {
+    fun resumeLogging(context: Context) {
         serviceManager.resumeGPSLogging(context)
     }
 
