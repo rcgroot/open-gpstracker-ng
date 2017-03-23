@@ -15,6 +15,7 @@ ext {
     googleServicesVersion = '3.0.0'
 
     // Testing
+    leakcanaryVersion = '1.5'
     jacocoVersion = '0.7.9'
     junitVersion = '4.12'
     mockitoVersion = '2.2.20'

@@ -102,12 +102,15 @@ dependencies {
     compile "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     mockCompile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
     testCompile "junit:junit:$rootProject.junitVersion"
     testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testCompile "org.robolectric:robolectric:$rootProject.robolectricVersion"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"

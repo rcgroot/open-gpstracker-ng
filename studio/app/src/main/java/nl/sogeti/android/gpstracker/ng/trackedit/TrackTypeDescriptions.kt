@@ -80,7 +80,7 @@ class TrackTypeDescriptions {
 
     fun saveTrackType(context: Context, trackUri: Uri, trackType: TrackType) {
         val trackId: Long = trackUri.lastPathSegment.toLong()
-        metaDataTrackUri(trackId).updateCreateMetaData(context!!, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
+        metaDataTrackUri(trackId).updateCreateMetaData(context, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
     }
 }
 

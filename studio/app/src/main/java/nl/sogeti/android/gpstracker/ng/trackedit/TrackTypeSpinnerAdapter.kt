@@ -25,8 +25,8 @@ class TrackTypeSpinnerAdapter(val context: Context, var trackTypes: List<TrackTy
             viewHolder = convertView.tag as TrackEditPresenter.ViewHolder
         }
         val trackType = trackTypes[position]
-        viewHolder.textView.text = context?.getString(trackType.stringId)
-        context?.let { viewHolder.imageView.setImageDrawable(AppCompatResources.getDrawable(it, trackType.drawableId)) }
+        viewHolder.textView.text = context.getString(trackType.stringId)
+        context.let { viewHolder.imageView.setImageDrawable(AppCompatResources.getDrawable(it, trackType.drawableId)) }
 
         return itemView
     }

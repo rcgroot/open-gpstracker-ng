@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.common
 import android.app.Application
 import android.databinding.DataBindingUtil
 import android.os.StrictMode
+import com.squareup.leakcanary.LeakCanary
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
 import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
 import nl.sogeti.android.gpstracker.ng.dagger.DaggerAppComponent
@@ -50,6 +51,11 @@ open class GpsTrackerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // Running the app for the heap analyzer, not for the user
+            return;
+        }
+        LeakCanary.install(this);
         setupDebugTree()
         buildAppComponent()
         setupDefaultViewBinding()
