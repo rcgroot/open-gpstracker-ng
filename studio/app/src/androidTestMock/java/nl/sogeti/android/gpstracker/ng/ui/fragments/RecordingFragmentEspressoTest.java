@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 
 import org.junit.After;
@@ -79,7 +78,6 @@ public class RecordingFragmentEspressoTest {
     @Test
     public void testStartUp() {
         // Verify
-        SystemClock.sleep(500);
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 
@@ -90,7 +88,6 @@ public class RecordingFragmentEspressoTest {
         MockTracksContentProvider.globalState.createTrack(1L, MockTracksContentProvider.globalState.getGpxAmsterdam());
 
         // Verify
-        SystemClock.sleep(500);
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -100,7 +97,6 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.pauseGPSLogging(sut.getActivity());
 
         // Verify
-        SystemClock.sleep(500);
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -110,7 +106,6 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.resumeGPSLogging(sut.getActivity());
 
         // Verify
-        SystemClock.sleep(500);
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
     }
 
@@ -120,7 +115,6 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager.stopGPSLogging(sut.getActivity());
 
         // Verify
-        SystemClock.sleep(500);
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 }

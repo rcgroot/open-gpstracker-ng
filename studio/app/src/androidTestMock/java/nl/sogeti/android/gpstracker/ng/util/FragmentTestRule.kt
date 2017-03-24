@@ -1,10 +1,13 @@
 package nl.sogeti.android.gpstracker.ng.util
 
+import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.test.InstrumentationRegistry
 import android.support.test.rule.ActivityTestRule
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
 class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean, launch: Boolean) : ActivityTestRule<TestActivity>(TestActivity::class.java, touch, launch) {
 
@@ -12,6 +15,23 @@ class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean
 
     val fragment: T = fragmentClass.newInstance()
     var arguments: Bundle? = null
+
+    override fun beforeActivityLaunched() {
+        super.beforeActivityLaunched()
+        // On Espresso 2.2.2 (at least) avoid the USE_CHOREOGRAPHER when using data binding
+        // http://stackoverflow.com/questions/40703567/how-do-i-make-espresso-wait-until-data-binding-has-updated-the-view-with-the-dat/42807742#42807742
+        // https://code.google.com/p/android/issues/detail?id=220247
+        setFinalStatic(ViewDataBinding::class.java, "USE_CHOREOGRAPHER", false)
+    }
+
+    fun setFinalStatic(clazz: Class<*>, fieldName: String, newValue: Any) {
+        val field = clazz.getDeclaredField(fieldName)
+        field.isAccessible = true
+        val modifiersField = Field::class.java.getDeclaredField("accessFlags")
+        modifiersField.isAccessible = true
+        modifiersField.setInt(field, field.modifiers and Modifier.FINAL.inv())
+        field.set(null, newValue)
+    }
 
     override fun afterActivityLaunched() {
         super.afterActivityLaunched()

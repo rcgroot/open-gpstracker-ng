@@ -45,6 +45,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
 import nl.sogeti.android.gpstracker.ng.utils.ContentProviderExtensionsKt;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
+import timber.log.Timber;
 
 import static nl.sogeti.android.gpstracker.integration.ContentConstants.TracksColumns.NAME;
 
@@ -128,6 +129,7 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Timber.d("Received in the mock sender");
             int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
             Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
             String name = intent.getStringExtra(ServiceConstants.EXTRA_TRACK_NAME);

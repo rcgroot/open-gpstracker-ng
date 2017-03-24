@@ -32,10 +32,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.IntentFilter.SYSTEM_LOW_PRIORITY
+import android.os.Handler
+import android.os.Looper
 import android.support.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.common.MockedGpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -66,7 +70,7 @@ class MockBroadcastSender {
 
     fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL) {
         resource.increment()
-        loggingStateIntentFilter.priority = -2000;
+        loggingStateIntentFilter.priority = SYSTEM_LOW_PRIORITY + 5
         context.registerReceiver(receiver, loggingStateIntentFilter)
         val intent = Intent(loggingStateIntentFilter.getAction(0))
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
@@ -79,8 +83,11 @@ class MockBroadcastSender {
         val resource = CountingIdlingResource("MockBroadcastSender", true)
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                resource.decrement()
-                context?.unregisterReceiver(this)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    Timber.d("Received in the mock sender")
+                    resource.decrement()
+                    context?.unregisterReceiver(this)
+                }, 50)
             }
         }
     }
