@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.tracklist;
+package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -9,10 +9,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 
-@RunWith(AndroidJUnit4.class)
-public class TrackListFragmentTest {
+public class TrackListFragmentEspressoTest {
 
     @Rule
     public FragmentTestRule<TrackListFragment> wrapperFragment = new FragmentTestRule<>(TrackListFragment.class, false, false);

@@ -28,16 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
-import android.support.test.runner.AndroidJUnit4;
 import android.webkit.WebView;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
@@ -49,7 +46,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
-@RunWith(AndroidJUnit4.class)
 public class AboutFragmentEspressoTest {
 
     @Rule
@@ -67,7 +63,7 @@ public class AboutFragmentEspressoTest {
 
     @After
     public void tearDown() {
-        if (webIdlingResource!=null) {
+        if (webIdlingResource != null) {
             Espresso.unregisterIdlingResources(webIdlingResource);
             webIdlingResource = null;
         }

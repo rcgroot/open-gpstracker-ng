@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 
 import org.junit.After;
