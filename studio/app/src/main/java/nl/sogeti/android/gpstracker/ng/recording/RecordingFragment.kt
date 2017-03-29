@@ -34,7 +34,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
 
@@ -53,7 +53,7 @@ class RecordingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.checkPermissions(this, { presenter.start(activity) })
+        permissionRequester.start(this, { presenter.start(activity) })
     }
 
     override fun onStop() {
@@ -63,6 +63,6 @@ class RecordingFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
 }

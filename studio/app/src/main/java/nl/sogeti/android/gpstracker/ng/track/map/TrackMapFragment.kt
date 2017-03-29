@@ -34,7 +34,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
 
@@ -58,7 +58,7 @@ class TrackMapFragment : Fragment() {
         super.onStart()
         binding!!.fragmentMapMapview?.onStart()
         binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
-        permissionRequester.checkPermissions(this, { trackPresenter.start(activity) })
+        permissionRequester.start(this, { trackPresenter.start(activity) })
     }
 
     override fun onResume() {
@@ -96,6 +96,6 @@ class TrackMapFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        permissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
 }

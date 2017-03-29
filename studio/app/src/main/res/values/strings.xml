@@ -90,4 +90,9 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
+    <string name="permission_explain_need_control">Open GPS Tracker NG needs your permission to access tracks and control logging of the original Open GPS Tracker.</string>
+    <string name="permission_missing_title">Missing installation</string>
+    <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
+    <string name="permission_button_install">Install</string>
+
 </resources>

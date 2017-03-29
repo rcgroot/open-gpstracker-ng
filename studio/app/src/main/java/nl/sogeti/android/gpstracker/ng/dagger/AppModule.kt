@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.integration.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.track.map.TrackReaderFactory
@@ -49,9 +49,6 @@ class AppModule {
     @Singleton
     @Provides
     fun trackSelection() = TrackSelection()
-
-    @Provides
-    fun permissionRequester() = PermissionRequester()
 
     @Provides
     fun contentControllerFactory() = ContentControllerFactory()

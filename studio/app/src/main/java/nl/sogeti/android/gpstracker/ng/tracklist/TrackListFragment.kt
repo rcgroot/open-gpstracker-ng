@@ -36,6 +36,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 import timber.log.Timber
@@ -44,8 +45,10 @@ import timber.log.Timber
  * Sets up display and selection of tracks in a list style
  */
 class TrackListFragment : Fragment(), TrackListViewModel.View {
-    val viewModel = TrackListViewModel()
-    val trackListPresenter = TrackListPresenter(viewModel, this)
+
+    private val viewModel = TrackListViewModel()
+    private val trackListPresenter = TrackListPresenter(viewModel, this)
+    private var permissionRequester = PermissionRequester()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
@@ -62,12 +65,13 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         if (activity !is Listener) {
             Timber.e("Host activity must implement this fragments Listener interface")
         }
-        trackListPresenter.start(activity)
+        permissionRequester.start(this, { trackListPresenter.start(activity) })
     }
 
     override fun onStop() {
         super.onStop()
         trackListPresenter.stop()
+        permissionRequester.stop()
     }
 
     override fun hideTrackList() {
@@ -77,5 +81,9 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     interface Listener {
         fun hideTrackList(trackListFragment: TrackListFragment);
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
 }

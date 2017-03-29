@@ -1,16 +1,17 @@
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.support.test.runner.AndroidJUnit4;
-
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
+import nl.sogeti.android.gpstracker.v2.R;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class TrackListFragmentEspressoTest {
 
@@ -29,6 +30,6 @@ public class TrackListFragmentEspressoTest {
         wrapperFragment.launchFragment(null);
 
         // Verify
-        Assert.assertNotNull(sut.getTrackListPresenter().getContext());
+        onView(withId(R.id.listview)).check(matches(isCompletelyDisplayed()));
     }
 }
