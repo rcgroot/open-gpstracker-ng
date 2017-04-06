@@ -83,17 +83,13 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     /* Content retrieval */
 
     private fun addTracksToModel() {
-        val context = this.context
-        if (context != null) {
-            executor.execute {
-                val trackList = tracksUri().map(context, {
-                    val id = it.getLong(ContentConstants.Tracks._ID)!!
-                    trackUri(id)
-                })
-                viewModel.tracks.set(trackList.asReversed())
-            }
-        } else {
-            Timber.w("Unexpected tracks update when context is gone")
+        val context = this.context ?: return
+        executor.execute {
+            val trackList = tracksUri().map(context, {
+                val id = it.getLong(ContentConstants.Tracks._ID)!!
+                trackUri(id)
+            })
+            viewModel.tracks.set(trackList.asReversed())
         }
     }
 

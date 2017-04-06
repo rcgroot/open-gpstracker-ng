@@ -31,7 +31,6 @@ package nl.sogeti.android.gpstracker.ng.recording
 import android.location.Location
 import android.net.Uri
 import android.os.AsyncTask
-import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
@@ -44,6 +43,7 @@ import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualit
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.medium
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.none
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
@@ -51,14 +51,16 @@ import javax.inject.Inject
 
 class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
-    private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
-    var executingReader: TrackReader? = null
+    private var gpsStatusController: GpsStatusController? = null
+    internal var executingReader: TrackReader? = null
     @Inject
     lateinit var contentControllerFactory: ContentControllerFactory
     private var contentController: ContentController? = null
     @Inject
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
-    private var gpsStatusController: GpsStatusController? = null
+    @Inject
+    lateinit var calculator: SummaryCalculator
+
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -189,31 +191,33 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         val handler = DefaultResultHandler()
 
         override fun doInBackground(vararg p: Void): Void? {
-            val sel = ContentConstants.WaypointsColumns.TIME + " > ?"
-            val args = listOf<String>(java.lang.Long.toString(System.currentTimeMillis() - FIVE_MINUTES_IN_MS))
-            val selection = Pair(sel, args)
-            context?.let { trackUri.readTrack(it, handler, selection) }
+            val context = context ?: return null
 
-            var seconds = 0.0
-            var meters = 0.0
-            var speed = 0.0
-            if (handler.headWaypoints.size > 0) {
-                for (i in 1..handler.headWaypoints.size - 1) {
-                    seconds += (handler.headWaypoints[i].time / 1000 - handler.headWaypoints[i - 1].time / 1000).toDouble()
-                    val start = handler.headWaypoints[i]
-                    val end = handler.headWaypoints[i - 1]
-                    val result = FloatArray(1)
-                    Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, result)
-                    meters += result[0].toDouble()
+            trackUri.readTrack(context, handler)
+
+            if (handler.waypoints.isEmpty()) {
+                return null
+            }
+
+            var milliSeconds = 0L
+            var meters = 0.0F
+            val results = FloatArray(1)
+            handler.waypoints.forEach {
+                for (i in 1..it.lastIndex) {
+                    val w1 = it[i - 1]
+                    val w2 = it[i]
+                    Location.distanceBetween(w1.latitude, w1.longitude, w2.latitude, w2.longitude, results)
+                    meters += results.first()
+                    milliSeconds += w2.time - w1.time
                 }
-                speed = meters / 1000.0 / (seconds / 3600)
             }
-            context?.let {
-                val count = handler.waypoints.fold(0, { size, list -> size + list.size })
-                val waypointsSummary = it.resources.getQuantityString(R.plurals.fragment_recording_waypoints, count, count)
-                val summary = it.getString(R.string.fragment_recording_summary, waypointsSummary, speed, "km/h")
-                viewModel.summary.set(summary)
-            }
+            val endTime = handler.waypoints.last().last().time
+            val startTime = handler.waypoints.first().first().time
+            val speed = calculator.convertMeterPerSecondsToSpeed(context, meters, milliSeconds / 1000)
+            val distance = calculator.convertMetersToDistance(context, meters)
+            val duration = calculator.convertStartEndToDuration(context, startTime, endTime)
+            val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
+            viewModel.summary.set(summary)
             viewModel.name.set(handler.name)
 
             return null

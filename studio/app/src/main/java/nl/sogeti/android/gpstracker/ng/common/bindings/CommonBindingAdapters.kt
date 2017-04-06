@@ -34,12 +34,13 @@ import android.support.v7.widget.AppCompatSpinner
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.SpinnerAdapter
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
-import nl.sogeti.android.gpstracker.v2.R
 
 
 open class CommonBindingAdapters {
@@ -76,13 +77,29 @@ open class CommonBindingAdapters {
         }
     }
 
-    @BindingAdapter("mapFocus")
-    fun setMapFocus(map: MapView, bounds: LatLngBounds?) {
+    @BindingAdapter("bounds")
+    fun setMapBounds(map: MapView, bounds: LatLngBounds?) {
         if (bounds != null) {
             map.getMapAsync {
-                val padding = map.context.resources.getDimension(R.dimen.map_padding)
-                val update = CameraUpdateFactory.newLatLngBounds(bounds, padding.toInt())
+                val update = CameraUpdateFactory.newLatLngBounds(bounds, 0)
                 it.animateCamera(update, null)
+            }
+        }
+    }
+
+    @BindingAdapter("center")
+    fun setMapTarget(map: MapView, center: LatLng?) {
+        val ZOOM_WORLD = 1.0F
+        val ZOOM_STREETS = 15.0F
+        if (center != null) {
+            map.getMapAsync {
+                val update: CameraUpdate
+                if (it.cameraPosition.zoom == ZOOM_WORLD) {
+                    update = CameraUpdateFactory.newLatLngZoom(center, ZOOM_STREETS)
+                } else {
+                    update = CameraUpdateFactory.newLatLng(center)
+                }
+                it.animateCamera(update)
             }
         }
     }

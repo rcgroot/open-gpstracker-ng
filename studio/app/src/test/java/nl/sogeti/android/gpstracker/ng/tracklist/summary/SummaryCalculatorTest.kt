@@ -61,7 +61,6 @@ class SummaryCalculatorTest {
     @Mock
     lateinit var timeSpanCalculator: TimeSpanCalculator
     val locale = Locale.US
-
     var referenceDate = Calendar.getInstance()!!
     lateinit var sut: SummaryCalculator
 
@@ -79,7 +78,6 @@ class SummaryCalculatorTest {
         `when`(context.getString(R.string.row_start_default)).thenReturn("--")
 
         `when`(context.resources).thenReturn(resources)
-
         `when`(resources.getQuantityString(R.plurals.track_duration_seconds, 1, 1)).thenReturn("1 second")
         `when`(resources.getQuantityString(R.plurals.track_duration_seconds, 6, 6)).thenReturn("6 seconds")
         `when`(resources.getQuantityString(R.plurals.track_duration_minutes, 1, 1)).thenReturn("1 minute")
@@ -277,5 +275,36 @@ class SummaryCalculatorTest {
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
         assertThat(timeName, `is`("Dec 6, 2015"))
+    }
+
+    @Test
+    fun testMPStoOneKMP() {
+        // Arrange
+        sut.locale = Locale.GERMAN
+        // Act
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F, 3600)
+        // Assert
+        assertThat(speed, `is`("1 kph"))
+    }
+
+    @Test
+    fun testMPStoTenKMP() {
+        // Arrange
+        sut.locale = Locale.GERMAN
+        // Act
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 3600)
+        // Assert
+        assertThat(speed, `is`("10 kph"))
+    }
+
+
+    @Test
+    fun testMPStoThreeKMP() {
+        // Arrange
+        sut.locale = Locale.GERMAN
+        // Act
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 10800)
+        // Assert
+        assertThat(speed, `is`("3 kph"))
     }
 }

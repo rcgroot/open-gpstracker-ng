@@ -40,5 +40,5 @@ class TrackMapViewModel {
     val isRecording = ObservableBoolean(false)
     val waypoints = ObservableField<List<List<LatLng>>>()
     val completeBounds = ObservableField<LatLngBounds>()
-    val trackHeadBounds = ObservableField<LatLngBounds>()
+    val trackHead = ObservableField<LatLng>()
 }

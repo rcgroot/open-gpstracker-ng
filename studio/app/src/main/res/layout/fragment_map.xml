@@ -13,5 +13,6 @@
         android:id="@+id/fragment_map_mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:mapFocus="@{viewModel.isRecording ? viewModel.trackHeadBounds : viewModel.completeBounds}" />
+        app:bounds="@{viewModel.isRecording ? null : viewModel.completeBounds }"
+        app:center="@{viewModel.isRecording ? viewModel.trackHead : null }" />
 </layout>

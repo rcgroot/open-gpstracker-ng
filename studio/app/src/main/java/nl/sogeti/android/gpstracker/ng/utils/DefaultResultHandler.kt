@@ -33,29 +33,24 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 
 class DefaultResultHandler : ResultHandler {
+    private val segmentsBuilder = mutableListOf<MutableList<Waypoint>>()
+    private var boundsBuilder: LatLngBounds.Builder? = null
+
     var uri: Uri? = null
     var name: String? = null
-    val waypoints = mutableListOf<MutableList<Waypoint>>()
-    val headWaypoints = mutableListOf<Waypoint>()
-    var boundsBuilder: LatLngBounds.Builder? = null
-    var headBuilder: LatLngBounds.Builder? = null
-    val bound: LatLngBounds
-        get() {
-            val builder = boundsBuilder
-            val bounds: LatLngBounds
-            if (builder != null) {
-                bounds = builder.build()
-            } else {
-                bounds = LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0))
-            }
-            return bounds
+    val bounds: LatLngBounds by lazy {
+        val builder = boundsBuilder
+        if (builder != null) {
+            builder.build()
+        } else {
+            LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0))
         }
-
-    private val FIVE_MINUTES_IN_MS = 5L * 60L * 1000L
-    private val headTime: Long
-
-    init {
-        headTime = System.currentTimeMillis() - FIVE_MINUTES_IN_MS
+    }
+    val waypoints: List<List<Waypoint>> by lazy {
+        segmentsBuilder
+        segmentsBuilder.filter {
+            it.count() > 1
+        }
     }
 
     override fun setTrack(uri: Uri, name: String) {
@@ -64,21 +59,14 @@ class DefaultResultHandler : ResultHandler {
     }
 
     override fun addSegment() {
-        waypoints.add(mutableListOf<Waypoint>())
+        segmentsBuilder.add(mutableListOf<Waypoint>())
     }
 
     override fun addWaypoint(waypoint: Waypoint) {
-        // Last 5 minutes worth of waypoints make the head
-        if (waypoint.time > headTime) {
-            headWaypoints.add(waypoint)
-            headBuilder = headBuilder ?: LatLngBounds.Builder()
-            headBuilder?.include(waypoint.latLng)
-        }
         // Add each waypoint to the end of the last list of points (the current segment)
-        waypoints[waypoints.size - 1].add(waypoint)
+        segmentsBuilder.last().add(waypoint)
         // Build a bounds for the whole track
         boundsBuilder = boundsBuilder ?: LatLngBounds.Builder()
         boundsBuilder?.include(waypoint.latLng)
     }
-
 }

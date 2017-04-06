@@ -81,7 +81,7 @@ class SummaryCalculator {
 
         // Return value
         val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
-        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bound, listOfLatLngs)
+        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bounds, listOfLatLngs)
 
         return summary
     }
@@ -95,7 +95,7 @@ class SummaryCalculator {
 
     //region Converter methods
 
-    internal fun convertMetersToDistance(context: Context, meters: Float): String {
+    fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
         if (meters >= 100000) {
             distance = context.getString(R.string.format_100_kilometer).format(locale, meters / 1000F)
@@ -120,7 +120,7 @@ class SummaryCalculator {
         return start.toString()
     }
 
-    internal fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
+    fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
         val msPerMinute = 1000L * 60L
         val msPerHour = msPerMinute * 60L
         val msPerDay = msPerHour * 24L
@@ -150,6 +150,22 @@ class SummaryCalculator {
         }
 
         return duration
+    }
+
+    fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
+        val metersPerSecondsToKilometerPerHour = meterspersecondFactor()
+        val kph = meters / seconds * metersPerSecondsToKilometerPerHour
+        return context.getString(R.string.formet_speed).format(locale, kph)
+    }
+
+    private fun meterspersecondFactor(): Float {
+        val country = locale.country
+        val factor = when (country) {
+            "US" -> 2.23693629F
+            else -> 3.6F
+        }
+
+        return factor
     }
     //endregion
 }

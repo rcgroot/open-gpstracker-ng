@@ -25,20 +25,19 @@ class TrackReader(val context: Context, val trackUri: Uri, private val viewModel
 
     override fun onPostExecute(result: Void?) {
         super.onPostExecute(result)
-        isFinished = false
+        isFinished = true
     }
 
     override fun onCancelled() {
         super.onCancelled()
-        isFinished = false
+        isFinished = true
     }
 
     fun updateViewModelWithHandler(handler: DefaultResultHandler) {
-        handler.headBuilder?.let { viewModel.trackHeadBounds.set(it.build()) }
-        handler.boundsBuilder?.let { viewModel.completeBounds.set(it.build()) }
+        viewModel.completeBounds.set(handler.bounds)
         viewModel.name.set(handler.name)
         val points = handler.waypoints.map { it.map { it.latLng } }
-        val filteredPoints = points.filter { it.count() > 1 }
-        viewModel.waypoints.set(filteredPoints)
+        viewModel.waypoints.set(points)
+        viewModel.trackHead.set(points.lastOrNull()?.lastOrNull())
     }
 }

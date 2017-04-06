@@ -32,21 +32,29 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.append
 import nl.sogeti.android.gpstracker.ng.utils.count
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
+import javax.inject.Inject
 
 /**
  * Helps in the retrieval, create and keeping up to date of summary data
  */
 class SummaryManager {
+
     var executor: ExecutorService? = null
-    val calculator by lazy { SummaryCalculator() }
     val summaryCache = ConcurrentHashMap<Uri, Summary>()
     var activeCount = 0
+    @Inject
+    lateinit var calculator: SummaryCalculator
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     fun start() {
         synchronized(this, {

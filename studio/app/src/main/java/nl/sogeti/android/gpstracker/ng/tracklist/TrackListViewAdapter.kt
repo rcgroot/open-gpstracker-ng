@@ -61,10 +61,15 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
+        setHasStableIds(true)
     }
 
     override fun getItemCount(): Int {
         return model.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return model[position].lastPathSegment.toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
