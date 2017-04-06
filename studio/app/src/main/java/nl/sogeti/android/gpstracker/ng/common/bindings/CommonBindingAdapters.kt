@@ -64,6 +64,8 @@ open class CommonBindingAdapters {
     @BindingAdapter("polylines")
     fun setPolylines(map: MapView, polylines: List<PolylineOptions>?) {
         val addLines: (GoogleMap) -> Unit = { googleMap ->
+            googleMap.uiSettings.isMapToolbarEnabled = false
+            map.tag = googleMap
             googleMap.clear()
             polylines?.map {
                 googleMap.addPolyline(it)

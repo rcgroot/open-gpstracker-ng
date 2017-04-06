@@ -102,8 +102,8 @@ dependencies {
     compile "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
+//    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
+    compile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     mockCompile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 

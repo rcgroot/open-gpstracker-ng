@@ -53,7 +53,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)
-        binding.listview.itemAnimator = DefaultItemAnimator() //TODO reduce flashing on changes
+        binding.listview.itemAnimator = DefaultItemAnimator()
         binding.viewModel = viewModel
         binding.presenter = trackListPresenter
 

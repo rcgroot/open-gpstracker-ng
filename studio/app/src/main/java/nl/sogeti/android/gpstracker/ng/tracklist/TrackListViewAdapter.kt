@@ -35,7 +35,6 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.android.gms.maps.GoogleMap
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackPolylineProvider
@@ -88,12 +87,6 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         if (holder.binding.viewModel != modelForUri) {
             holder.binding.viewModel = modelForUri
         }
-        if (!holder.didGetMaps) {
-            holder.didGetMaps = true
-            holder.binding.rowTrackMap.getMapAsync {
-                holder.googleMap = it
-            }
-        }
         willDisplayTrack(holder.itemView.context, holder.binding.viewModel)
     }
 
@@ -127,16 +120,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         })
     }
 
-    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root) {
-        var didGetMaps = false
-        var googleMap: GoogleMap? = null
-            set(map) {
-                field = map
-                binding.rowTrackMap.tag = field
-                map?.uiSettings?.isMapToolbarEnabled = false
-                binding.viewModel.polylines.notifyChange()
-            }
-    }
+    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root)
 
     inner class TrackDiffer(val oldList: List<Uri>, val newList: List<Uri>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

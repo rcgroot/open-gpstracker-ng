@@ -86,10 +86,8 @@ class SummaryManager {
      */
     fun collectSummaryInfo(context: Context, trackUri: Uri,
                            callbackSummary: (Summary) -> Unit) {
-        if (!isRunning()) {
-            return
-        }
-        executor?.submit({
+        val executor = executor ?: return
+        executor.submit({
             val cacheHit = summaryCache[trackUri]
             if (cacheHit != null) {
                 val trackWaypointsUri = trackUri.append(WAYPOINTS)
@@ -97,6 +95,8 @@ class SummaryManager {
                 val cacheCount = cacheHit.count
                 if (trackCount == cacheCount) {
                     callbackSummary(cacheHit)
+                } else {
+                    executeTrackCalculation(context, trackUri, callbackSummary)
                 }
             } else {
                 executeTrackCalculation(context, trackUri, callbackSummary)
