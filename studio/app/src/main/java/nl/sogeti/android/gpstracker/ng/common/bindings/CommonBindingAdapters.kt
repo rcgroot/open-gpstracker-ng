@@ -41,6 +41,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import nl.sogeti.android.gpstracker.v2.R
 
 
 open class CommonBindingAdapters {
@@ -83,7 +84,8 @@ open class CommonBindingAdapters {
     fun setMapBounds(map: MapView, bounds: LatLngBounds?) {
         if (bounds != null) {
             map.getMapAsync {
-                val update = CameraUpdateFactory.newLatLngBounds(bounds, 0)
+                val padding = map.context.resources.getDimension(R.dimen.map_padding)
+                val update = CameraUpdateFactory.newLatLngBounds(bounds, padding.toInt())
                 it.animateCamera(update, null)
             }
         }
