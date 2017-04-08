@@ -55,7 +55,6 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:alpha="@{viewModel.hasFix ? 1.0F : 0.5F}"
-            android:src="@drawable/ic_satellite_full"
             app:gps_signal_quality="@{viewModel.signalQuality}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_recording_satellites"
