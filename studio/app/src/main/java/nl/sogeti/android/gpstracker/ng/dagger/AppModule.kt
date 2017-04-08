@@ -33,6 +33,7 @@ import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.track.map.LocationFactory
 import nl.sogeti.android.gpstracker.ng.track.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
@@ -70,4 +71,6 @@ class AppModule {
     @Provides
     fun trackTypeDescriptions() = TrackTypeDescriptions()
 
+    @Provides
+    fun locationFactory() = LocationFactory()
 }

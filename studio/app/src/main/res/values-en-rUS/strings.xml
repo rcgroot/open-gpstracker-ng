@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="formet_speed">%.0f mph</string>
+    <string name="format_speed">%.0f mph</string>
 </resources>

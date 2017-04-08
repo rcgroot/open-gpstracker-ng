@@ -42,10 +42,8 @@ import nl.sogeti.android.gpstracker.ng.rules.any
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
-import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -128,7 +126,7 @@ class TrackMapPresenterTest {
         sut.didSelectTrack(trackUri, "somename")
         sut.didConnectToService(trackUri, "somename", STATE_LOGGING)
         // Assert
-        assertThat(viewModel.isRecording.get(), `is`(true))
+        assertThat(sut.recordingUri, `is`(trackUri))
         assertThat(viewModel.name.get(), `is`("somename"))
     }
 
@@ -139,7 +137,7 @@ class TrackMapPresenterTest {
         sut.didSelectTrack(otherUri, "othername")
         sut.didConnectToService(trackUri, "somename", STATE_LOGGING)
         // Assert
-        assertThat(viewModel.isRecording.get(), `is`(false))
+        assertThat(sut.recordingUri, `is`(trackUri))
         assertThat(viewModel.name.get(), `is`("othername"))
     }
 
@@ -151,7 +149,7 @@ class TrackMapPresenterTest {
         // Act
         sut.didChangeLoggingState(trackUri, "somename", STATE_LOGGING)
         // Assert
-        assertThat(viewModel.isRecording.get(), `is`(true))
+        assertThat(sut.recordingUri, `is`(trackUri))
         verify(trackSelection).selectTrack(trackUri, "somename")
     }
 
@@ -160,74 +158,7 @@ class TrackMapPresenterTest {
         // Act
         sut.onChangeUriContent(trackUri, trackUri)
         // Assert
-        verify(trackReaderFactory).createTrackReader(context, trackUri, viewModel)
-    }
-
-    @Test
-    fun testSetName() {
-        // Arrange
-        val uri = mock(Uri::class.java)
-        val reader = TrackReader(context, uri, viewModel)
-        `when`(handler.name).thenReturn("Input")
-        // Act
-        reader.updateViewModelWithHandler(handler)
-        // Assert
-        Assert.assertThat(viewModel.name.get(), `is`("Input"))
-    }
-
-    @Test
-    fun testSetSingleListOfWaypoints() {
-        // Arrange
-        val uri = mock(Uri::class.java)
-        val reader = TrackReader(context, uri, viewModel)
-        val waypoint = Waypoint(latitude = 1.2, longitude = 3.4, time = 1)
-        `when`(handler.waypoints).thenReturn(mutableListOf(mutableListOf(waypoint, waypoint)))
-        // Act
-        reader.updateViewModelWithHandler(handler)
-        // Assert
-        Assert.assertThat(viewModel.waypoints.get()[0][0].latitude, `is`(1.2))
-        Assert.assertThat(viewModel.waypoints.get()[0][0].longitude, `is`(3.4))
-    }
-
-    @Test
-    fun testSetSingleEmptyList() {
-        // Arrange
-        val uri = mock(Uri::class.java)
-        val reader = TrackReader(context, uri, viewModel)
-        `when`(handler.waypoints).thenReturn(mutableListOf<MutableList<Waypoint>>())
-        // Act
-        reader.updateViewModelWithHandler(handler)
-        // Assert
-        Assert.assertThat(viewModel.waypoints.get().count(), `is`(0))
-    }
-
-    @Test
-    fun testSetSingleEmptyListOfWaypoints() {
-        // Arrange
-        val uri = mock(Uri::class.java)
-        val reader = TrackReader(context, uri, viewModel)
-        `when`(handler.waypoints).thenReturn(mutableListOf(mutableListOf<Waypoint>()))
-        // Act
-        reader.updateViewModelWithHandler(handler)
-        // Assert
-        Assert.assertThat(viewModel.waypoints.get().count(), `is`(0))
-    }
-
-
-    @Test
-    fun testSetSingleEmptyFullCombinatie() {
-        // Arrange
-        val uri = mock(Uri::class.java)
-        val reader = TrackReader(context, uri, viewModel)
-        val empty = mutableListOf<Waypoint>()
-        val waypoint = Waypoint(latitude = 1.2, longitude = 3.4, time = 1)
-        val items = mutableListOf(waypoint, waypoint)
-        `when`(handler.waypoints).thenReturn(mutableListOf(empty, items))
-        // Act
-        reader.updateViewModelWithHandler(handler)
-        // Assert
-        Assert.assertThat(viewModel.waypoints.get().count(), `is`(1))
-        Assert.assertThat(viewModel.waypoints.get()[0].count(), `is`(2))
+        verify(trackReaderFactory).createTrackReader(any(), any(), any())
     }
 
     @Test

@@ -49,6 +49,7 @@ class TrackMapFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
         binding.viewModel = viewModel
+        binding.presenter = trackPresenter
         this.binding = binding
 
         return binding.root

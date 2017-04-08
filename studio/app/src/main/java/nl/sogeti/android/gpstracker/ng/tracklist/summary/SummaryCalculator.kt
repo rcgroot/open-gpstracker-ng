@@ -155,7 +155,7 @@ class SummaryCalculator {
     fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
         val metersPerSecondsToKilometerPerHour = meterspersecondFactor()
         val kph = meters / seconds * metersPerSecondsToKilometerPerHour
-        return context.getString(R.string.formet_speed).format(locale, kph)
+        return context.getString(R.string.format_speed).format(locale, kph)
     }
 
     private fun meterspersecondFactor(): Float {

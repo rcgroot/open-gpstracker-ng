@@ -3,27 +3,33 @@ package nl.sogeti.android.gpstracker.ng.track.map
 import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
+import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 
-class TrackReader(val context: Context, val trackUri: Uri, private val viewModel: TrackMapViewModel)
-    : AsyncTask<Void, Void, Void>() {
+class TrackReader(val context: Context, val trackUri: Uri, val action: (String, LatLngBounds, List<List<LatLng>>) -> Unit)
+    : AsyncTask<Void, Void, ResultHandler>() {
 
-    private val handler = DefaultResultHandler()
+
     var isFinished = false
         private set
 
-    override fun doInBackground(vararg p: Void): Void? {
+    override fun doInBackground(vararg p: Void): ResultHandler? {
+        val handler = DefaultResultHandler()
         if (isCancelled) return null
-        trackUri.readTrack(context, handler, null)
+        trackUri.readTrack(context, handler)
         if (isCancelled) return null
-        updateViewModelWithHandler(handler)
+        val points = handler.waypoints.map { it.map { it.latLng } }
+        val name = handler.name ?: ""
+        action(name, handler.bounds, points)
         if (isCancelled) return null
 
-        return null
+        return handler
     }
 
-    override fun onPostExecute(result: Void?) {
+    override fun onPostExecute(result: ResultHandler?) {
         super.onPostExecute(result)
         isFinished = true
     }
@@ -31,13 +37,5 @@ class TrackReader(val context: Context, val trackUri: Uri, private val viewModel
     override fun onCancelled() {
         super.onCancelled()
         isFinished = true
-    }
-
-    fun updateViewModelWithHandler(handler: DefaultResultHandler) {
-        viewModel.completeBounds.set(handler.bounds)
-        viewModel.name.set(handler.name)
-        val points = handler.waypoints.map { it.map { it.latLng } }
-        viewModel.waypoints.set(points)
-        viewModel.trackHead.set(points.lastOrNull()?.lastOrNull())
     }
 }

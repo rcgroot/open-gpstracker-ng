@@ -37,7 +37,6 @@ import com.google.android.gms.maps.model.LatLngBounds
 class TrackMapViewModel {
     val trackUri: ObservableField<Uri?> = ObservableField(null)
     val name: ObservableField<String> = ObservableField("")
-    val isRecording = ObservableBoolean(false)
     val waypoints = ObservableField<List<List<LatLng>>>()
     val completeBounds = ObservableField<LatLngBounds>()
     val trackHead = ObservableField<LatLng>()

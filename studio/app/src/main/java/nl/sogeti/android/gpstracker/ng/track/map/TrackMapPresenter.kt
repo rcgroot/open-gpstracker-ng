@@ -48,6 +48,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null
     private var googleMap: GoogleMap? = null
+    internal var recordingUri: Uri? = null
 
     @Inject
     lateinit var trackSelection: TrackSelection
@@ -57,6 +58,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     lateinit var trackReaderFactory: TrackReaderFactory
     @Inject
     lateinit var trackTileProviderFactory: TrackTileProviderFactory
+    @Inject
+    lateinit var locationFactory: LocationFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -93,18 +96,21 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     //region Service connecting
 
     override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
-        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
-        if (trackUri != null && isRecording && trackUri == viewModel.trackUri.get()) {
-            viewModel.isRecording.set(isRecording)
+        if (loggingState == ServiceConstants.STATE_LOGGING) {
+            recordingUri = trackUri
+        } else {
+            recordingUri = null
         }
     }
 
     override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
-        val isRecording = loggingState == ServiceConstants.STATE_LOGGING
-        if (trackUri != null && isRecording) {
-            val trackName = name ?: ""
-            trackSelection.selectTrack(trackUri, trackName)
-            viewModel.isRecording.set(isRecording)
+        if (loggingState == ServiceConstants.STATE_LOGGING) {
+            recordingUri = trackUri
+            if (trackUri != null) {
+                trackSelection.selectTrack(trackUri, name ?: "")
+            }
+        } else {
+            recordingUri = null
         }
     }
 
@@ -134,6 +140,14 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         }
     }
 
+    //region View callbacks
+
+    fun onClickMyLocation() {
+        val context = context ?: return
+        viewModel.trackHead.set(locationFactory.getLocation(context))
+        viewModel.completeBounds.set(null)
+    }
+
     /* Private */
 
     private fun startReadingTrack(trackUri: Uri) {
@@ -141,9 +155,19 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         var executingReader = this.executingReader
         if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
-            executingReader = trackReaderFactory.createTrackReader(context, trackUri, viewModel)
-            executingReader.execute()
+            executingReader = trackReaderFactory.createTrackReader(context, trackUri, { name, bounds, waypoint ->
+                viewModel.name.set(name)
+                viewModel.waypoints.set(waypoint)
+                if (recordingUri == trackUri) {
+                    viewModel.trackHead.set(waypoint.lastOrNull()?.lastOrNull())
+                    viewModel.completeBounds.set(null)
+                } else {
+                    viewModel.trackHead.set(null)
+                    viewModel.completeBounds.set(bounds)
+                }
+            })
             this.executingReader = executingReader
+            executingReader.execute()
         }
     }
 

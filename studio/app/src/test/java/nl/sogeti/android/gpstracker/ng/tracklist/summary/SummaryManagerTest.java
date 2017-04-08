@@ -155,6 +155,8 @@ public class SummaryManagerTest {
         // Prepare
         final List<Summary> callback = new LinkedList<>();
         Uri uri = mock(Uri.class);
+        sut.start();
+        sut.stop();
 
         // Execute
         sut.collectSummaryInfo(mockContext, uri, new Function1<Summary, Unit>() {

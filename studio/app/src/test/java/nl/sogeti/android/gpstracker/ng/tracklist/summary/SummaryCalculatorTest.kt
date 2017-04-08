@@ -71,6 +71,7 @@ class SummaryCalculatorTest {
         sut.locale = locale
         this.sut = sut
 
+        `when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
         `when`(context.getString(R.string.format_meters)).thenReturn("%.1f M")
         `when`(context.getString(R.string.format_100_meters)).thenReturn("%.0f M")
         `when`(context.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
@@ -284,7 +285,7 @@ class SummaryCalculatorTest {
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F, 3600)
         // Assert
-        assertThat(speed, `is`("1 kph"))
+        assertThat(speed, `is`("1 mock"))
     }
 
     @Test
@@ -294,7 +295,7 @@ class SummaryCalculatorTest {
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 3600)
         // Assert
-        assertThat(speed, `is`("10 kph"))
+        assertThat(speed, `is`("10 mock"))
     }
 
 
@@ -305,6 +306,6 @@ class SummaryCalculatorTest {
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 10800)
         // Assert
-        assertThat(speed, `is`("3 kph"))
+        assertThat(speed, `is`("3 mock"))
     }
 }
