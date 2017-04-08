@@ -6,6 +6,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.rule.ActivityTestRule
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
+import timber.log.Timber
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
@@ -27,9 +28,18 @@ class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean
     fun setFinalStatic(clazz: Class<*>, fieldName: String, newValue: Any) {
         val field = clazz.getDeclaredField(fieldName)
         field.isAccessible = true
-        val modifiersField = Field::class.java.getDeclaredField("accessFlags")
-        modifiersField.isAccessible = true
-        modifiersField.setInt(field, field.modifiers and Modifier.FINAL.inv())
+        var modifiersField: Field? = null
+        try {
+            modifiersField = Field::class.java.getDeclaredField("accessFlags")
+        } catch (exception: NoSuchFieldException) {
+            try {
+                modifiersField = Field::class.java.getDeclaredField("modifiers")
+            } catch (exception: NoSuchFieldException) {
+                Timber.e("Failed to change access flags / modifiers from ${clazz.canonicalName}")
+            }
+        }
+        modifiersField?.isAccessible = true
+        modifiersField?.setInt(field, field.modifiers and Modifier.FINAL.inv())
         field.set(null, newValue)
     }
 
