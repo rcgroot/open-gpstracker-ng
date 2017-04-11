@@ -23,6 +23,7 @@
         android:layout_gravity="center"
         android:layout_margin="8dp"
         android:onClick="@{() -> adapter.didSelectTrack(viewModel)}"
+        app:editMode="@{viewModel.editMode}"
         card_view:cardBackgroundColor="@color/primary_light"
         card_view:cardCornerRadius="4dp">
 
@@ -51,11 +52,11 @@
                 android:layout_marginTop="8dp"
                 android:clickable="false"
                 android:contentDescription="@string/row_track_map"
+                app:bounds="@{viewModel.completeBounds}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
                 app:liteMode="true"
-                app:bounds="@{viewModel.completeBounds}"
                 app:mapType="normal"
                 app:polylines="@{viewModel.polylines}" />
             <!--android:background="@drawable/checkered_background"-->
@@ -65,7 +66,6 @@
                 android:id="@+id/row_track_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
@@ -75,6 +75,8 @@
                 app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/row_track_icon"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintRight_toLeftOf="@+id/imageButton"
                 tools:text="Route to work" />
 
             <ImageView
@@ -128,6 +130,19 @@
                 app:layout_constraintRight_toLeftOf="@+id/row_track_distance"
                 app:layout_constraintTop_toBottomOf="@+id/row_track_map"
                 tools:text="1h30m" />
+
+            <ImageView
+                android:id="@+id/imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/transparent_button_background"
+                android:clickable="true"
+                android:onClick="@{() -> adapter.didClickRowOptioms(viewModel)}"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_overflow"
+                card_view:layout_constraintRight_toRightOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

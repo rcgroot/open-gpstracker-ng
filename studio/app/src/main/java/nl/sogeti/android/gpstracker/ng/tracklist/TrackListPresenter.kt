@@ -40,11 +40,10 @@ import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.map
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.ng.utils.tracksUri
-import timber.log.Timber
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListListener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListAdapterListener {
 
     private var contentController: ContentController? = null
 
@@ -93,11 +92,17 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         }
     }
 
-    /* RecycleView Adapter callbacks */
+    //region View (adapter) callbacks
 
-    override fun didSelectTrack(track: TrackViewModel) {
-        trackSelection.selectTrack(track.uri, track.name.get())
+    override fun didSelectTrack(track: Uri, name: String) {
+        trackSelection.selectTrack(track, name)
         view.hideTrackList()
     }
+
+    override fun didShareTrack(track: Uri) {}
+
+    override fun didDeleteTrack(track: Uri) {}
+
+    //endregion
 }
 

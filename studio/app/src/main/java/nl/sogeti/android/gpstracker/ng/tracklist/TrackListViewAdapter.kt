@@ -49,7 +49,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     @Inject
     lateinit var summaryManager: SummaryManager
-    var listener: TrackListListener? = null
+    var listener: TrackListAdapterListener? = null
     var model = listOf<Uri>()
         set(value) {
             val diffResult = DiffUtil.calculateDiff(TrackDiffer(field, value))
@@ -90,9 +90,18 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         willDisplayTrack(holder.itemView.context, holder.binding.viewModel)
     }
 
-    fun didSelectTrack(track: TrackViewModel) {
-        listener?.didSelectTrack(track)
+    //region Row callbacks
+
+    fun didSelectTrack(trackModel: TrackViewModel) {
+        listener?.didSelectTrack(trackModel.uri, trackModel.name.get())
     }
+
+    fun didClickRowOptioms(track: TrackViewModel) {
+        val opposite = !track.editMode.get()
+        track.editMode.set(opposite)
+    }
+
+    //endregion
 
     private fun rowViewModelForUri(uri: Uri): TrackViewModel? {
         var viewModel = rowModels[uri]

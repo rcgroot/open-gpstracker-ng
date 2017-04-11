@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
@@ -45,5 +46,6 @@ class TrackViewModel(val uri: Uri) {
     val distance = ObservableField<String>("--")
     val completeBounds = ObservableField<LatLngBounds?>()
     val waypoints = ObservableField<List<List<LatLng>>>(listOf())
-    var polylines = ObservableField<List<PolylineOptions>?>()
+    val polylines = ObservableField<List<PolylineOptions>?>()
+    val editMode = ObservableBoolean(false)
 }

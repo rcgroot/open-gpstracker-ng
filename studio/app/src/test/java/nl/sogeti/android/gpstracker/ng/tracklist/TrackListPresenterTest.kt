@@ -76,10 +76,8 @@ class TrackListPresenterTest {
     fun testTrackSelection() {
         // Arrange
         val selectedUri = mock(Uri::class.java)
-        val trackModel = TrackViewModel(selectedUri)
-        trackModel.name.set("testname")
         // Act
-        sut.didSelectTrack(trackModel)
+        sut.didSelectTrack(selectedUri, "testname")
         // Assert
         verify(trackSelection).selectTrack(selectedUri, "testname")
         verify(view).hideTrackList()
