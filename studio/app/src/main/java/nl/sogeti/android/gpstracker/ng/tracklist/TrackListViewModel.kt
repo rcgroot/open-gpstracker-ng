@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.content.Intent
 import android.databinding.ObservableField
 import android.net.Uri
 
@@ -38,5 +39,6 @@ class TrackListViewModel {
     interface View {
         fun hideTrackList()
         fun showTrackDeleteDialog(track: Uri)
+        fun showIntentChooser(intent: Intent, text: CharSequence)
     }
 }

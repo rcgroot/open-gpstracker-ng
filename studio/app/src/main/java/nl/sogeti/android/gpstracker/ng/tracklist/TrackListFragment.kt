@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -50,7 +51,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     private val viewModel = TrackListViewModel()
     private val trackListPresenter = TrackListPresenter(viewModel, this)
     private var permissionRequester = PermissionRequester()
-    
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)
@@ -85,6 +86,10 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     override fun showTrackDeleteDialog(track: Uri) {
         val listener = activity as Listener
         listener.showTrackDeleteDialog(track)
+    }
+
+    override fun showIntentChooser(intent: Intent, text: CharSequence) {
+        startActivity(Intent.createChooser(intent, text))
     }
 
     //endregion
