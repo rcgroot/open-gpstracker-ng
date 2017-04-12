@@ -82,6 +82,6 @@ class TrackTypeDescriptions {
         val trackId: Long = trackUri.lastPathSegment.toLong()
         metaDataTrackUri(trackId).updateCreateMetaData(context, TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
     }
-}
 
-data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String)
+    data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String)
+}

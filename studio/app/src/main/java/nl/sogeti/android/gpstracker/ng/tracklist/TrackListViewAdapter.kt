@@ -94,9 +94,20 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     fun didSelectTrack(trackModel: TrackViewModel) {
         listener?.didSelectTrack(trackModel.uri, trackModel.name.get())
+        trackModel.editMode.set(false)
     }
 
-    fun didClickRowOptioms(track: TrackViewModel) {
+    fun didShareTrack(trackModel: TrackViewModel) {
+        listener?.didShareTrack(trackModel.uri)
+        trackModel.editMode.set(false)
+    }
+
+    fun didDeleteTrack(trackModel: TrackViewModel) {
+        listener?.didDeleteTrack(trackModel.uri)
+        trackModel.editMode.set(false)
+    }
+
+    fun didClickRowOptions(track: TrackViewModel) {
         val opposite = !track.editMode.get()
         track.editMode.set(opposite)
     }

@@ -99,7 +99,9 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         view.hideTrackList()
     }
 
-    override fun didShareTrack(track: Uri) {}
+    override fun didShareTrack(track: Uri) {
+        view.showTrackDeleteDialog(track)
+    }
 
     override fun didDeleteTrack(track: Uri) {}
 

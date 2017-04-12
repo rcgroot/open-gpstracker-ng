@@ -66,6 +66,7 @@
                 android:id="@+id/row_track_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
@@ -76,7 +77,6 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/row_track_icon"
                 card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintRight_toLeftOf="@+id/imageButton"
                 tools:text="Route to work" />
 
             <ImageView
@@ -135,14 +135,42 @@
                 android:id="@+id/imageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
                 android:background="@drawable/transparent_button_background"
                 android:clickable="true"
-                android:onClick="@{() -> adapter.didClickRowOptioms(viewModel)}"
+                android:onClick="@{() -> adapter.didClickRowOptions(viewModel)}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_overflow"
                 card_view:layout_constraintRight_toRightOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/row_track_share"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onClick="@{() -> adapter.didDeleteTrack(viewModel)}"
+                android:drawableLeft="@drawable/ic_share_black_24dp"
+                android:text="@string/track_share"
+                android:visibility="gone"
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
+                card_view:layout_constraintLeft_toLeftOf="@+id/row_track_map"
+                card_view:layout_constraintRight_toLeftOf="@+id/row_track_delete"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_map"
+                tools:text="Share" />
+
+            <Button
+                android:id="@+id/row_track_delete"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:drawableLeft="@drawable/ic_delete_black_24dp"
+                android:text="@string/track_delete"
+                android:onClick="@{() -> adapter.didShareTrack(viewModel)}"
+                android:visibility="gone"
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
+                card_view:layout_constraintLeft_toRightOf="@+id/row_track_share"
+                card_view:layout_constraintRight_toRightOf="@+id/row_track_map"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_map"
+                card_view:layout_constraintVertical_bias="0.0"
+                tools:text="Delete" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

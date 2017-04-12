@@ -31,9 +31,10 @@ package nl.sogeti.android.gpstracker.ng.dagger
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.track.map.TrackMapPresenter
-import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
+import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
+import nl.sogeti.android.gpstracker.ng.track.map.TrackMapPresenter
+import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeletePresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
@@ -63,6 +64,8 @@ interface AppComponent {
     fun inject(injectable: TrackEditPresenter)
 
     fun inject(injectable: SummaryManager)
+
+    fun inject(injectable: TrackDeletePresenter)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

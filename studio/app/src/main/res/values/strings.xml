@@ -95,5 +95,9 @@
     <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
     <string name="permission_button_install">Install</string>
     <string name="format_speed">%.0f kph</string>
+    <string name="track_share">Share</string>
+    <string name="track_delete">Delete</string>
+    <string name="fragment_track_delete">Delete track</string>
+    <string name="fragment_track_delete_body">Are you sure you want to delete this track?</string>
 
 </resources>

@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import org.jetbrains.annotations.NotNull;
 
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
+import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity;
@@ -55,7 +56,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
-    private static final String TAG_DIALOG = "DIALOG_TRACK_EDIT";
+    private static final String TAG_DIALOG = "DIALOG";
     private static final String TRANSACTION_TRACKS = "TRANSACTION_TRACKS";
     private TrackViewModel viewModel = new TrackViewModel();
     private TrackPresenter presenter = new TrackPresenter(viewModel, this);
@@ -180,6 +181,11 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     @Override
     public void hideTrackList(@NotNull TrackListFragment trackListFragment) {
         getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
+    }
+
+    @Override
+    public void showTrackDeleteDialog(@NotNull Uri track) {
+        TrackDeleteDialogFragment.Companion.newInstance(track).show(getSupportFragmentManager(), TAG_DIALOG);
     }
 
     //endregion

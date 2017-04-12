@@ -26,17 +26,16 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracklist
+package nl.sogeti.android.gpstracker.ng.trackdelete
 
 import android.databinding.ObservableField
 import android.net.Uri
 
-
-class TrackListViewModel {
-    val tracks = ObservableField<List<Uri>>(emptyList())
+class TrackDeleteModel(uri: Uri) {
+    val trackUri = ObservableField<Uri>(uri)
+    val name = ObservableField<String>("")
 
     interface View {
-        fun hideTrackList()
-        fun showTrackDeleteDialog(track: Uri)
+        fun dismiss()
     }
 }

@@ -28,12 +28,17 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment
 import nl.sogeti.android.gpstracker.v2.R
 
 class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
+
+    private val TAG_DIALOG = "DIALOG"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracklist)
@@ -46,6 +51,10 @@ class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
 
     override fun hideTrackList(trackListFragment: TrackListFragment) {
         finish()
+    }
+
+    override fun showTrackDeleteDialog(track: Uri) {
+        TrackDeleteDialogFragment.Companion.newInstance(track).show(supportFragmentManager, TAG_DIALOG)
     }
 
     //endregion

@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -49,7 +50,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     private val viewModel = TrackListViewModel()
     private val trackListPresenter = TrackListPresenter(viewModel, this)
     private var permissionRequester = PermissionRequester()
-
+    
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)
@@ -74,13 +75,23 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         permissionRequester.stop()
     }
 
+    //region View contract
+
     override fun hideTrackList() {
         val listener = activity as Listener
         listener.hideTrackList(this)
     }
 
+    override fun showTrackDeleteDialog(track: Uri) {
+        val listener = activity as Listener
+        listener.showTrackDeleteDialog(track)
+    }
+
+    //endregion
+
     interface Listener {
         fun hideTrackList(trackListFragment: TrackListFragment);
+        fun showTrackDeleteDialog(track: Uri)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

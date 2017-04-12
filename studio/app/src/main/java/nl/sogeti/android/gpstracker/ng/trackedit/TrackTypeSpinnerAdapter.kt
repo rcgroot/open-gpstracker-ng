@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.v2.R
 
-class TrackTypeSpinnerAdapter(val context: Context, var trackTypes: List<TrackType>) : BaseAdapter() {
+class TrackTypeSpinnerAdapter(val context: Context, var trackTypes: List<TrackTypeDescriptions.TrackType>) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val viewHolder: TrackEditPresenter.ViewHolder
         val itemView: View
@@ -31,7 +31,7 @@ class TrackTypeSpinnerAdapter(val context: Context, var trackTypes: List<TrackTy
         return itemView
     }
 
-    override fun getItem(position: Int): TrackType = trackTypes[position]
+    override fun getItem(position: Int): TrackTypeDescriptions.TrackType = trackTypes[position]
 
     override fun getItemId(position: Int): Long = trackTypes[position].drawableId.toLong()
 

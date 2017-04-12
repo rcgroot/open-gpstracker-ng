@@ -68,6 +68,7 @@ class MockTracksContentProvider : ContentProvider() {
                 row.add(value)
             }
             content.second.add(row)
+            globalState.context?.contentResolver?.notifyChange(uri, null)
         } else {
             Timber.e("Insert on $uri did not match anything in global state $globalState ")
         }
@@ -95,8 +96,25 @@ class MockTracksContentProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-        Timber.e("Delete on $uri did not match anything in global state $globalState ")
-        return 0
+        val keys = globalState.uriContent.keys.filter { it.path.startsWith(uri.path) }
+        keys.forEach { globalState.uriContent.remove(it) }
+        var count = keys.count()
+        if (uri.path.matches(Regex("/tracks/\\d+"))) {
+            uri.lastPathSegment
+            val values = uriContent[tracksUri()]!!.second
+            for (i in values) {
+                if (i.first() as Long == uri.lastPathSegment.toLong()) {
+                    values.remove(i)
+                    count++
+                }
+            }
+        }
+        if (count > 0) {
+            globalState.context?.contentResolver?.notifyChange(uri, null)
+        } else {
+            Timber.e("Delete on $uri did not match anything in global state $globalState ")
+        }
+        return count
     }
 
     override fun getType(uri: Uri): String? {
