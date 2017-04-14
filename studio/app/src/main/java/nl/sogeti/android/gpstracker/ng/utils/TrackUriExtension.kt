@@ -107,7 +107,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
-    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -116,8 +116,30 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
             .appendEncodedPath(segmentId.toString())
             .appendPath(ContentConstants.Waypoints.WAYPOINTS)
             .build()
-    return segmentUri
+    return waypointsUri
 }
+
+
+/**
+ * @param trackId
+ * @param segmentId
+ * @param waypointId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints/21
+ */
+fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
+    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+            .scheme("content")
+            .authority(GpsTrackerApplication.appComponent.providerAuthority())
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendEncodedPath(segmentId.toString())
+            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .appendEncodedPath(waypointId.toString())
+            .build()
+    return waypointsUri
+}
+
 
 /**
  * @param trackId
@@ -144,6 +166,21 @@ fun metaDataTrackUri(id: Long): Uri {
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(id.toString())
             .appendPath(ContentConstants.MetaData.METADATA)
+            .build()
+    return trackUri
+}
+
+/**
+ *
+ * @param trackId
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
+ */
+fun sharedTrackUri(trackId: Long): Uri {
+    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+            .scheme("content")
+            .authority(GpsTrackerApplication.appComponent.providerShareAuthority())
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
             .build()
     return trackUri
 }

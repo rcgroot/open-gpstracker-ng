@@ -38,6 +38,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.sogeti.android.gpstracker.ng.track.TrackActivity" />
         </activity>
+
+        <provider
+            android:name="nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider"
+            android:authorities="${applicationId}.gpxshareprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
     </application>
 
 </manifest>

@@ -34,6 +34,7 @@ import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
 import javax.inject.Named
 
 @Module

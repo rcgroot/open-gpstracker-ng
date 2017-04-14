@@ -32,6 +32,7 @@ import android.content.IntentFilter
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
 import javax.inject.Named
 

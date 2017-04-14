@@ -28,17 +28,19 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.content.Intent
 import android.net.Uri
-import android.support.v4.content.ContextCompat.startActivity
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.sharing.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.utils.*
+import nl.sogeti.android.gpstracker.ng.utils.getLong
+import nl.sogeti.android.gpstracker.ng.utils.map
+import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
@@ -56,6 +58,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     lateinit var summaryManager: SummaryManager
     @Inject
     lateinit var executor: Executor
+    @Inject
+    lateinit var shareIntentFactory: ShareIntentFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -102,11 +106,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didShareTrack(track: Uri) {
         val context = context ?: return
-        val trackStream = track.append("stream")
-        val shareIntent = Intent()
-        shareIntent.action = Intent.ACTION_SEND
-        shareIntent.putExtra(Intent.EXTRA_STREAM, trackStream)
-        shareIntent.type = "application/gpx+xml"
+        val shareIntent = shareIntentFactory.createShareIntent(track)
         view.showIntentChooser(shareIntent, context.getText(R.string.track_share))
     }
 
