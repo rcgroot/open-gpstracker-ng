@@ -43,7 +43,7 @@ class DefaultResultHandler : ResultHandler {
         if (builder != null) {
             builder.build()
         } else {
-            LatLngBounds(LatLng(0.0, 0.0), LatLng(0.0, 0.0))
+            LatLngBounds(LatLng(0.0, 0.0), LatLng(50.0, 5.0))
         }
     }
     val waypoints: List<List<Waypoint>> by lazy {

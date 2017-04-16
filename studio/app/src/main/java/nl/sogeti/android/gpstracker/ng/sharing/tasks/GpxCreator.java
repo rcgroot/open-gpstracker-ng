@@ -81,8 +81,7 @@ public class GpxCreator {
     }
 
     /**
-     * @param outputStream will be wrapped with buffer and closed
-     * @return
+     * @param outputStream will be wrapped with buffer not not closed
      */
     public void createGpx(OutputStream outputStream) {
         BufferedOutputStream buf = null;
@@ -97,13 +96,6 @@ public class GpxCreator {
                     buf.close();
                 } catch (IOException e) {
                     Timber.w(e, "Failed to close buf after completion, ignoring.");
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    Timber.w(e, "Failed to close fos after completion, ignoring.");
                 }
             }
         }
@@ -195,7 +187,7 @@ public class GpxCreator {
         try {
             mediaCursor = resolver.query(media, new String[]{Media.URI, Media.TRACK, Media.SEGMENT, Media.WAYPOINT},
                     null, null, null);
-            if (mediaCursor.moveToFirst()) {
+            if (mediaCursor != null && mediaCursor.moveToFirst()) {
                 do {
                     Uri waypointUri = TrackUriExtensionKt.waypointUri(mediaCursor.getLong(1), mediaCursor.getLong(2), mediaCursor
                             .getLong(3));
@@ -268,7 +260,7 @@ public class GpxCreator {
         ContentResolver resolver = context.getContentResolver();
         try {
             segmentCursor = resolver.query(segments, new String[]{Segments._ID}, null, null, null);
-            if (segmentCursor.moveToFirst()) {
+            if (segmentCursor != null && segmentCursor.moveToFirst()) {
                 do {
                     Uri waypoints = Uri.withAppendedPath(segments, segmentCursor.getLong(0) + "/waypoints");
                     serializer.text("\n");
@@ -293,7 +285,7 @@ public class GpxCreator {
             waypointsCursor = resolver.query(waypoints, new String[]{Waypoints.LONGITUDE, Waypoints.LATITUDE,
                     Waypoints.TIME, Waypoints.ALTITUDE, Waypoints._ID, Waypoints.SPEED, Waypoints.ACCURACY,
                     Waypoints.BEARING}, null, null, null);
-            if (waypointsCursor.moveToFirst()) {
+            if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
                 do {
                     serializer.text("\n");
                     serializer.startTag("", "trkpt");
