@@ -85,7 +85,7 @@ public class RecordingFragmentEspressoTest {
     public void testVisibleWhenStarted() {
         // Execute
         mockServiceManager.startGPSLogging(sut.getActivity(), null);
-        MockTracksContentProvider.globalState.createTrack(1L, MockTracksContentProvider.globalState.getGpxAmsterdam());
+        MockTracksContentProvider.globalState.createTrack(1L, MockTracksContentProvider.globalState.getGpxAmsterdam(), null);
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));

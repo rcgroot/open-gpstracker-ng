@@ -133,7 +133,7 @@ class MockTracksContentProvider : ContentProvider() {
                 val preload = gpxAmsterdam
                 if (!preload.isEmpty()) {
                     gpxAmsterdam = listOf()
-                    createTrack(1L, preload)
+                    createTrack(1L, preload, "Zigzag Amsterdam")
                 }
                 return field
             }
@@ -141,8 +141,8 @@ class MockTracksContentProvider : ContentProvider() {
         // Some random picked points in Amsterdam, NL
         var gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
 
-        fun createTrack(trackId: Long, waypoints: List<Pair<Double, Double>>) {
-            addTrack(trackId)
+        fun createTrack(trackId: Long, waypoints: List<Pair<Double, Double>>, name: String? = null) {
+            addTrack(trackId, name)
             val segmentId = trackId * 10 + 1L
             addSegment(trackId, segmentId)
             val now = Date().time
@@ -153,7 +153,7 @@ class MockTracksContentProvider : ContentProvider() {
             }
         }
 
-        fun addTrack(trackId: Long) {
+        fun addTrack(trackId: Long, trackName: String? = null) {
             // .../tracks
             val tracksUri = tracksUri()
             var content = uriContent[tracksUri]
@@ -161,13 +161,13 @@ class MockTracksContentProvider : ContentProvider() {
                 content = createEmptyTrackContent()
                 uriContent[tracksUri] = content
             }
-            addContentToTrackContent(content.second, trackId)
+            addContentToTrackContent(content.second, trackId, trackName)
             context?.contentResolver?.notifyChange(tracksUri, null)
             // .../tracks/id
             content = createEmptyTrackContent()
             val trackUri = trackUri(trackId)
             uriContent[trackUri] = content
-            addContentToTrackContent(content.second, trackId)
+            addContentToTrackContent(content.second, trackId, trackName)
             context?.contentResolver?.notifyChange(trackUri, null)
             // tracks/id/metadata
             val metaContent = Pair(arrayOf(MetaDataColumns.KEY, MetaDataColumns.VALUE), mutableListOf<MutableList<Any>>())
@@ -177,10 +177,10 @@ class MockTracksContentProvider : ContentProvider() {
 
         private fun createEmptyTrackContent() = Pair(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME), mutableListOf<MutableList<Any>>())
 
-        private fun addContentToTrackContent(content: MutableList<MutableList<Any>>, trackId: Long) {
+        private fun addContentToTrackContent(content: MutableList<MutableList<Any>>, trackId: Long, trackName: String? = null) {
             content.add(mutableListOf(
                     trackId,
-                    "track $trackId",
+                    trackName ?: "track $trackId",
                     Date().time))
         }
 

@@ -49,6 +49,7 @@ android {
         }
         mock {
             applicationIdSuffix = ".mock"
+            minSdkVersion 18 // To work with uiautomator-v18
         }
     }
 
@@ -98,12 +99,14 @@ dependencies {
     compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
     compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    compile "com.google.firebase:firebase-crash:$rootProject.playServicesVersion"
     compile "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-//    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
+
     compile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
+//    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
+
+    releaseCompile "com.google.firebase:firebase-crash:$rootProject.playServicesVersion"
 
     mockCompile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
@@ -113,6 +116,7 @@ dependencies {
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
