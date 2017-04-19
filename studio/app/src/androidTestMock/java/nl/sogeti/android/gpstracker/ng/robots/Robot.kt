@@ -30,11 +30,9 @@ package nl.sogeti.android.gpstracker.ng.robots
 
 import android.graphics.Bitmap
 import android.os.Environment
+import android.os.SystemClock
 import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
-import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.uiautomator.UiDevice
 import timber.log.Timber
 import java.io.BufferedOutputStream
@@ -49,12 +47,15 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
     }
 
     fun takeScreenShot(): T {
-        onView(withId(android.R.id.content)).check(matches(isDisplayed()))
+        waitForIdle()
         val file = shoot()
         Timber.w("Created file ${file.absoluteFile}")
 
-
         return this as T
+    }
+
+    fun waitForIdle() {
+        getInstrumentation().waitForIdleSync()
     }
 
     fun back(): T {
@@ -70,6 +71,12 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
         device.takeScreenshot(file)
 
         return file
+    }
+
+    fun  sleep(seconds: Int): T {
+        SystemClock.sleep(seconds * 1000L)
+
+        return this as T
     }
 
     private fun write(bitmap: Bitmap, file: File) {

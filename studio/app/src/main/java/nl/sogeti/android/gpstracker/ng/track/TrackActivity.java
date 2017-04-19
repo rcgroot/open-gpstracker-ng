@@ -144,7 +144,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
 
     @Override
     public void showAboutDialog() {
-        new AboutFragment().show(getSupportFragmentManager(), "ABOUT");
+        new AboutFragment().show(getSupportFragmentManager(), AboutFragment.Companion.getTAG());
     }
 
     @Override

@@ -99,5 +99,9 @@
     <string name="track_delete">Delete</string>
     <string name="fragment_track_delete">Delete track</string>
     <string name="fragment_track_delete_body">Are you sure you want to delete this track?</string>
+    <string name="control_record">Record</string>
+    <string name="control_stop">Stop</string>
+    <string name="control_pause">Pause</string>
+    <string name="control_resume">Resume</string>
 
 </resources>

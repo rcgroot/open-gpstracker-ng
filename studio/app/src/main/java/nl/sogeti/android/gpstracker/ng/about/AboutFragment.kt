@@ -40,7 +40,10 @@ import nl.sogeti.android.gpstracker.v2.databinding.FragmentAboutBinding
  */
 class AboutFragment : DialogFragment() {
 
-    val model = AboutModel()
+    companion object {
+        val TAG = "AboutFragmentFragmentTag"
+    }
+    private val model = AboutModel()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var binding = DataBindingUtil.inflate<FragmentAboutBinding>(activity.layoutInflater, R.layout.fragment_about, null, false)

@@ -32,16 +32,13 @@ import android.app.Activity
 import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import android.support.test.espresso.IdlingResource
 import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.espresso.matcher.ViewMatchers.withText
-import com.google.android.gms.maps.GoogleMap
+import android.support.test.espresso.matcher.RootMatchers.isPlatformPopup
+import android.support.test.espresso.matcher.ViewMatchers.*
 import com.google.android.gms.maps.MapView
-import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
+import nl.sogeti.android.gpstracker.ng.util.IdlingMapResource
 import nl.sogeti.android.gpstracker.v2.R
 import org.hamcrest.Matchers.anyOf
-import timber.log.Timber
 
 class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScreen") {
 
@@ -61,6 +58,21 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
         return this
     }
 
+    fun selectWalking(): TrackRobot {
+        onView(withText(R.string.track_type_walk))
+                .inRoot(isPlatformPopup())
+                .perform(click())
+
+        return this
+    }
+
+    fun ok(): TrackRobot {
+        onView(withText(android.R.string.ok))
+                .perform(click())
+
+        return this
+    }
+
     fun openAbout(): TrackRobot {
         openActionBarOverflowOrOptionsMenu(activity)
         onView(anyOf(withId(R.id.action_about), withText(R.string.action_about)))
@@ -69,63 +81,50 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
         return this
     }
 
-    fun start() {
+    fun openTrackList(): TrackRobot {
+        onView(anyOf(withId(R.id.action_list), withText(R.string.action_list)))
+                .perform(click())
+
+        return this
+    }
+
+    fun startRecording(): TrackRobot {
+        onView(withContentDescription(R.string.control_record))
+                .perform(click())
+
+        return this
+    }
+
+    fun pauseRecording(): TrackRobot {
+        onView(withContentDescription(R.string.control_pause))
+                .perform(click())
+
+        return this
+    }
+
+    fun resumeRecording(): TrackRobot {
+        onView(withContentDescription(R.string.control_resume))
+                .perform(click())
+
+        return this
+    }
+
+    fun stopRecording(): TrackRobot {
+        onView(withContentDescription(R.string.control_stop))
+                .perform(click())
+
+        return this
+    }
+
+    fun start(): TrackRobot {
         val mapView = activity.findViewById(R.id.fragment_map_mapview) as MapView
         resource = IdlingMapResource(mapView)
         Espresso.registerIdlingResources(resource)
 
+        return this
     }
 
     fun stop() {
-        Espresso.unregisterIdlingResources(resource)
-    }
-
-    class IdlingMapResource(map: MapView) : IdlingResource, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapLoadedCallback {
-
-        private var isLoaded = false
-        private var isIdle = false
-
-        private var callback: IdlingResource.ResourceCallback? = null
-
-        init {
-            executeOnUiThread {
-                map.getMapAsync {
-                    it.setOnCameraIdleListener(this)
-                    it.setOnCameraMoveListener(this)
-                    it.setOnMapLoadedCallback(this)
-                }
-            }
-        }
-
-        override fun getName(): String = "MapResource"
-
-        override fun isIdleNow(): Boolean {
-            Timber.d("Is idle $isIdle")
-            return isIdle && isLoaded
-        }
-
-        override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
-            this.callback = callback
-        }
-
-        override fun onCameraIdle() {
-            Timber.d("Became idle")
-            isIdle = true
-            if (isIdleNow) {
-                callback?.onTransitionToIdle()
-            }
-        }
-
-        override fun onCameraMove() {
-            isLoaded = false
-            isIdle = false
-        }
-
-        override fun onMapLoaded() {
-            isLoaded = true
-            if (isIdleNow) {
-                callback?.onTransitionToIdle()
-            }
-        }
+        resource?.let { Espresso.unregisterIdlingResources(it) }
     }
 }

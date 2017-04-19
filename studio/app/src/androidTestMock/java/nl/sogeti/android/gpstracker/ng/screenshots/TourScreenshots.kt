@@ -44,20 +44,26 @@ class TourScreenshots {
     fun tour() {
         val trackRobot = TrackRobot(activityRule.activity)
         val aboutRobot = AboutRobot(activityRule.activity)
-        trackRobot.start()
-
         trackRobot
-                .takeScreenShot()
-                .editTrack()
-                .takeScreenShot()
-                .openTrackTypeSpinner()
-                .takeScreenShot()
-                .back()
-                .back()
+                .start().takeScreenShot()
+                .editTrack().takeScreenShot()
+                .openTrackTypeSpinner().takeScreenShot()
+                .selectWalking()
+                .ok()
+                .startRecording().takeScreenShot()
+                .sleep(10)
+                .pauseRecording().takeScreenShot()
+                .resumeRecording().takeScreenShot()
+                .sleep(10)
+                .stopRecording().takeScreenShot()
                 .openAbout()
         aboutRobot
-                .takeScreenShot()
+                .start().takeScreenShot()
                 .ok()
+        trackRobot
+                .openTrackList().takeScreenShot()
+
         trackRobot.stop()
+        aboutRobot.stop()
     }
 }

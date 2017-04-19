@@ -18,14 +18,19 @@ class ControlBindingAdapters : CommonBindingAdapters() {
         cancelAnimations(left, right)
         if (state == STATE_STOPPED) {
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
+            right.contentDescription = container.context.getString(R.string.control_record)
             showOnlyRightButton(left, right)
         } else if (state == STATE_LOGGING) {
             left.setImageResource(R.drawable.ic_stop_black_24dp)
+            left.contentDescription = container.context.getString(R.string.control_stop)
             right.setImageResource(R.drawable.ic_pause_black_24dp)
+            right.contentDescription = container.context.getString(R.string.control_pause)
             showAllButtons(left, right)
         } else if (state == STATE_PAUSED) {
             right.setImageResource(R.drawable.ic_navigation_black_24dp)
+            right.contentDescription = container.context.getString(R.string.control_resume)
             left.setImageResource(R.drawable.ic_stop_black_24dp)
+            left.contentDescription = container.context.getString(R.string.control_stop)
             showAllButtons(left, right)
         } else {
             // state == STATE_UNKNOWN and illegal states
