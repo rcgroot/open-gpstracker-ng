@@ -34,6 +34,7 @@ import android.os.SystemClock
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.uiautomator.UiDevice
+import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
 import timber.log.Timber
 import java.io.BufferedOutputStream
 import java.io.File
@@ -48,7 +49,10 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
 
     fun takeScreenShot(): T {
         waitForIdle()
+        MockServiceManager.pauseWaypointGenerations = true
+        sleep(1)
         val file = shoot()
+        MockServiceManager.pauseWaypointGenerations = false
         Timber.w("Created file ${file.absoluteFile}")
 
         return this as T
@@ -73,7 +77,7 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
         return file
     }
 
-    fun  sleep(seconds: Int): T {
+    fun sleep(seconds: Int): T {
         SystemClock.sleep(seconds * 1000L)
 
         return this as T

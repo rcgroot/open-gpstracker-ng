@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.screenshots
 
 import android.support.test.rule.ActivityTestRule
 import nl.sogeti.android.gpstracker.ng.robots.AboutRobot
+import nl.sogeti.android.gpstracker.ng.robots.TrackListRobot
 import nl.sogeti.android.gpstracker.ng.robots.TrackRobot
 import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import org.junit.Rule
@@ -44,6 +45,7 @@ class TourScreenshots {
     fun tour() {
         val trackRobot = TrackRobot(activityRule.activity)
         val aboutRobot = AboutRobot(activityRule.activity)
+        val trackListRobot = TrackListRobot(activityRule.activity)
         trackRobot
                 .start().takeScreenShot()
                 .editTrack().takeScreenShot()
@@ -62,6 +64,8 @@ class TourScreenshots {
                 .ok()
         trackRobot
                 .openTrackList().takeScreenShot()
+        trackListRobot
+                .openRowContextMenu(1).takeScreenShot()
 
         trackRobot.stop()
         aboutRobot.stop()

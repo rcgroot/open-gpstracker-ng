@@ -86,11 +86,12 @@ class MockServiceManager : ServiceManagerInterface {
     }
 
     companion object globalState {
-        var started = false
         var loggingState = STATE_UNKNOWN
-        var trackId = -1L
-        var segmentId = 10L
-        var waypointId = 100L
+        var pauseWaypointGenerations = false
+        private var started = false
+        private var trackId = -1L
+        private var segmentId = 10L
+        private var waypointId = 100L
     }
 
     class Recorder {
@@ -109,7 +110,9 @@ class MockServiceManager : ServiceManagerInterface {
             if (shouldScheduleWaypoints) {
                 Handler().postDelayed({
                     if (loggingState == STATE_LOGGING) {
-                        recordNewWaypoint()
+                        if (!pauseWaypointGenerations) {
+                            recordNewWaypoint()
+                        }
                         postNextWaypoint()
                     }
                 }, 2500)
