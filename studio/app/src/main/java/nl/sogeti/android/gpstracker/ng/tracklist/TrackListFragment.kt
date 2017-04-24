@@ -83,6 +83,11 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         listener.hideTrackList(this)
     }
 
+    override fun showTrackEditDialog(track: Uri) {
+        val listener = activity as Listener
+        listener.showTrackEditDialog(track)
+    }
+
     override fun showTrackDeleteDialog(track: Uri) {
         val listener = activity as Listener
         listener.showTrackDeleteDialog(track)
@@ -97,6 +102,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     interface Listener {
         fun hideTrackList(trackListFragment: TrackListFragment);
         fun showTrackDeleteDialog(track: Uri)
+        fun showTrackEditDialog(track: Uri)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

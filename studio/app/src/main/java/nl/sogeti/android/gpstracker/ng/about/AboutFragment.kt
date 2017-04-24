@@ -43,7 +43,7 @@ class AboutFragment : DialogFragment() {
     companion object {
         val TAG = "AboutFragmentFragmentTag"
     }
-    private val model = AboutModel()
+    internal val model = AboutModel()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         var binding = DataBindingUtil.inflate<FragmentAboutBinding>(activity.layoutInflater, R.layout.fragment_about, null, false)

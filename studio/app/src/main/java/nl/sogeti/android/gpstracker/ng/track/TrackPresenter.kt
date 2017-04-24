@@ -29,8 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.track
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.integration.ContentConstants
-import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.*
+import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
@@ -81,7 +80,8 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     }
 
     fun onEditOptionSelected() {
-        view.showTrackTitleDialog()
+        val trackUri = viewModel.trackUri.get()
+        trackUri?.let { view.showTrackEditDialog(it) }
     }
 
     //endregion

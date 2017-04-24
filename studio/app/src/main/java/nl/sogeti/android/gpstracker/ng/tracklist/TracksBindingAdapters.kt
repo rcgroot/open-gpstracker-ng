@@ -38,19 +38,25 @@ open class TracksBindingAdapters {
     fun setEditMode(card: CardView, editMode: Boolean) {
         val share = card.findViewById(R.id.row_track_share)
         val delete = card.findViewById(R.id.row_track_delete)
+        val edit = card.findViewById(R.id.row_track_edit)
         if (editMode) {
             if (share.visibility != VISIBLE) {
                 share.alpha = 0F
+                edit.alpha = 0F
                 delete.alpha = 0F
             }
             share.visibility = VISIBLE
+            edit.visibility = VISIBLE
             delete.visibility = VISIBLE
             share.animate().alpha(1.0F)
+            edit.animate().alpha(1.0F)
             delete.animate().alpha(1.0F)
         } else if (share.visibility == VISIBLE) {
             share.animate().alpha(0.0F)
+            edit.animate().alpha(0.0F)
             delete.animate().alpha(0.0F).withEndAction {
                 share.visibility = GONE
+                edit.visibility = GONE
                 delete.visibility = GONE
             }
         }

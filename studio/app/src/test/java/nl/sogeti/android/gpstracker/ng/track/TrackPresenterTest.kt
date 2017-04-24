@@ -95,7 +95,7 @@ class TrackPresenterTest {
         // Act
         sut.onEditOptionSelected()
         // Assert
-        verify(view).showTrackTitleDialog()
+        verify(view).showTrackEditDialog(trackUri)
     }
 
     @Test

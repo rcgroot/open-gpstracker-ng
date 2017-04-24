@@ -102,6 +102,11 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         trackModel.editMode.set(false)
     }
 
+    fun didEditTrack(trackModel: TrackViewModel) {
+        listener?.didEditTrack(trackModel.uri)
+        trackModel.editMode.set(false)
+    }
+
     fun didDeleteTrack(trackModel: TrackViewModel) {
         listener?.didDeleteTrack(trackModel.uri)
         trackModel.editMode.set(false)

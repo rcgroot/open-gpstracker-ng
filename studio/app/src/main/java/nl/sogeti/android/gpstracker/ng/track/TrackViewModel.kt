@@ -41,7 +41,7 @@ class TrackViewModel {
     interface View {
         fun showTrackName(name: String)
         fun showAboutDialog()
-        fun showTrackTitleDialog()
+        fun showTrackEditDialog(track: Uri)
         fun showTrackSelection()
     }
 }

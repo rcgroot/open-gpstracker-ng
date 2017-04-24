@@ -33,10 +33,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment
 import nl.sogeti.android.gpstracker.v2.R
 
 class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
-
     private val TAG_DIALOG = "DIALOG"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +55,10 @@ class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
 
     override fun showTrackDeleteDialog(track: Uri) {
         TrackDeleteDialogFragment.Companion.newInstance(track).show(supportFragmentManager, TAG_DIALOG)
+    }
+
+    override fun showTrackEditDialog(track: Uri) {
+        TrackEditDialogFragment.newInstance(track).show(supportFragmentManager, TAG_DIALOG)
     }
 
     //endregion

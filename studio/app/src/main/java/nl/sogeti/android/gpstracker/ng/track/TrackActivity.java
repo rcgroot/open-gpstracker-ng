@@ -148,8 +148,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     }
 
     @Override
-    public void showTrackTitleDialog() {
-        final Uri trackUri = viewModel.getTrackUri().get();
+    public void showTrackEditDialog(Uri trackUri) {
         TrackEditDialogFragment.Companion.newInstance(trackUri).show(getSupportFragmentManager(), TAG_DIALOG);
     }
 

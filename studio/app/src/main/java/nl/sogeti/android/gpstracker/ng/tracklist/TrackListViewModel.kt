@@ -32,7 +32,6 @@ import android.content.Intent
 import android.databinding.ObservableField
 import android.net.Uri
 
-
 class TrackListViewModel {
     val tracks = ObservableField<List<Uri>>(emptyList())
 
@@ -40,5 +39,6 @@ class TrackListViewModel {
         fun hideTrackList()
         fun showTrackDeleteDialog(track: Uri)
         fun showIntentChooser(intent: Intent, text: CharSequence)
+        fun showTrackEditDialog(track: Uri)
     }
 }

@@ -110,6 +110,10 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         view.showIntentChooser(shareIntent, context.getText(R.string.track_share))
     }
 
+    override fun didEditTrack(track: Uri) {
+        view.showTrackEditDialog(track)
+    }
+
     override fun didDeleteTrack(track: Uri) {
         view.showTrackDeleteDialog(track)
     }
