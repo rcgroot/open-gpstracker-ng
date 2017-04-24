@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 data class Summary(val trackUri: Uri,
                    val name: String,
                    val type: Int,
-                   val start: String,
+                   val start: Long,
                    val duration: String,
                    val distance: String,
                    val timestamp: Long,

@@ -62,8 +62,7 @@ class SummaryCalculator {
         val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Calculate
-        val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) })
-        val start = convertTimestampToStart(context, startTimestamp)
+        val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) }) ?: 0L
         val endTimestamp = waypointsUri.apply(context, { it.moveToLast();it.getLong(ContentConstants.Waypoints.TIME) })
         if (startTimestamp != null && endTimestamp != null && startTimestamp < endTimestamp) {
             duration = convertStartEndToDuration(context, startTimestamp, endTimestamp)
@@ -81,7 +80,7 @@ class SummaryCalculator {
 
         // Return value
         val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
-        val summary = Summary(trackUri, name, trackType.drawableId, start, duration, distance, timestamp, handler.bounds, listOfLatLngs)
+        val summary = Summary(trackUri, name, trackType.drawableId, startTimestamp, duration, distance, timestamp, handler.bounds, listOfLatLngs)
 
         return summary
     }
@@ -109,9 +108,9 @@ class SummaryCalculator {
         return distance
     }
 
-    internal fun convertTimestampToStart(context: Context, timestamp: Long?): String {
+    fun convertTimestampToStart(context: Context, timestamp: Long?): String {
         val start: CharSequence
-        if (timestamp == null) {
+        if (timestamp == null || timestamp == 0L) {
             start = context.getString(R.string.row_start_default)
         } else {
             start = timeSpanUtil.getRelativeTimeSpanString(timestamp)
@@ -167,5 +166,6 @@ class SummaryCalculator {
 
         return factor
     }
+
     //endregion
 }

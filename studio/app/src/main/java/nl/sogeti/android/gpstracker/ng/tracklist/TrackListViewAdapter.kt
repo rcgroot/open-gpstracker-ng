@@ -38,6 +38,7 @@ import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackPolylineProvider
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.append
 import nl.sogeti.android.gpstracker.ng.utils.count
@@ -49,6 +50,8 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     @Inject
     lateinit var summaryManager: SummaryManager
+    @Inject
+    lateinit var calculator: SummaryCalculator
     var listener: TrackListAdapterListener? = null
     var model = listOf<Uri>()
         set(value) {
@@ -140,7 +143,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
                 viewModel.name.set(it.name)
                 viewModel.iconType.set(it.type)
-                viewModel.startDay.set(it.start)
+                viewModel.startDay.set(calculator.convertTimestampToStart(context, it.start))
             }
         })
     }
