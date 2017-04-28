@@ -30,8 +30,10 @@ package nl.sogeti.android.gpstracker.ng.common.bindings
 
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
+import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatSpinner
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.SpinnerAdapter
 import com.google.android.gms.maps.CameraUpdate
@@ -41,19 +43,37 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
 
-
 open class CommonBindingAdapters {
+
     @BindingAdapter("bitmap")
     fun setBitmap(view: ImageView, bitmap: Bitmap?) {
         view.setImageBitmap(bitmap)
     }
 
+    @BindingAdapter("leftDrawable")
+    fun setLeftDrawable(button: Button, drawableName: String?) {
+        val drawableIdentifier = button.resources.getIdentifier(drawableName, "drawable", BuildConfig.APPLICATION_ID)
+        val drawable = VectorDrawableCompat.create(button.resources, drawableIdentifier, button.context.theme) ?: return
+        val tint = (button.tag as? Map<*, *>)?.get("tint") as? Int
+        if (tint != null) {
+            drawable.setTint(tint)
+        }
+        button.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    }
+
     @BindingAdapter("srcCompat")
-    fun setSrcCompat(view: ImageView, resource: Int?) {
-        if (resource != null) {
-            view.setImageResource(resource)
+    fun setImageSource(imageView: ImageView, resource: Int?) {
+        val resource = resource ?: return
+        val tint = (imageView.tag as? Map<*, *>)?.get("tint") as? Int
+        if (tint != null) {
+            val drawable = VectorDrawableCompat.create(imageView.resources, resource, imageView.context.theme) ?: return
+            drawable.setTint(tint)
+            imageView.setImageDrawable(drawable)
+        } else {
+            imageView.setImageResource(resource)
         }
     }
 

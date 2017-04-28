@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:privateContext="nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity">
     <item
-        android:id="@+id/action_edit"
-        android:icon="@drawable/ic_mode_edit_black_24dp"
-        android:orderInCategory="10"
-        android:title="@string/action_edit"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_list"
         android:icon="@drawable/ic_format_list_numbered_black_24dp"
         android:orderInCategory="20"
         android:title="@string/action_list"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_mode_edit_black_24dp"
+        android:orderInCategory="10"
+        android:title="@string/action_edit"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
         android:orderInCategory="30"

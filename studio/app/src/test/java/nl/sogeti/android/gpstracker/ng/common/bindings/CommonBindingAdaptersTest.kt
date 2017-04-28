@@ -35,7 +35,7 @@ class CommonBindingAdaptersTest {
         // Arrange
         val view = mock(ImageView::class.java)
         // Act
-        sut.setSrcCompat(view, 5)
+        sut.setImageSource(view, 5)
         // Assert
         verify(view).setImageResource(5)
     }

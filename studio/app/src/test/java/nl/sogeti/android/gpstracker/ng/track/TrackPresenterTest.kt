@@ -92,6 +92,8 @@ class TrackPresenterTest {
 
     @Test
     fun testEditSelected() {
+        // Arrange
+        viewModel.trackUri.set(trackUri)
         // Act
         sut.onEditOptionSelected()
         // Assert

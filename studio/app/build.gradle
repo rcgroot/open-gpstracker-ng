@@ -29,6 +29,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    productFlavors {
+        live {
+        }
+        mock {
+            applicationIdSuffix = ".mock"
+            minSdkVersion 18 // To work with uiautomator-v18
+        }
+    }
+
     if (System.getenv().containsKey("storeFile")) {
         apply from: 'signing.gradle'
     }
@@ -41,15 +50,6 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    productFlavors {
-        live {
-        }
-        mock {
-            applicationIdSuffix = ".mock"
-            minSdkVersion 18 // To work with uiautomator-v18
         }
     }
 
@@ -116,7 +116,7 @@ dependencies {
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestMockCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"

@@ -118,8 +118,8 @@ class ControlBindingAdapters : CommonBindingAdapters() {
     }
 
     private fun cancelAnimations(left: FloatingActionButton, right: FloatingActionButton) {
-        left.clearAnimation()
-        right.clearAnimation()
+        left.animate().cancel()
+        right.animate().cancel()
     }
 }
 

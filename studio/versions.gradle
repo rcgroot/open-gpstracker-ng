@@ -1,12 +1,12 @@
 ext {
     // Building
-    buildToolsVersion = '25.0.2'
+    buildToolsVersion = '25.0.3'
     gradlePluginVersion = '2.3.1'
     dataBindingVersion = '2.3.0'
 
     // App support
     supportLibraryVersion = '25.3.1'
-    kotlinVersion = '1.1.1'
+    kotlinVersion = '1.1.2'
     wearableVersion = '1.4.0'
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'

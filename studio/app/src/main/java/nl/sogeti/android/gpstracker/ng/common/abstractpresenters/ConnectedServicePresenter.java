@@ -88,7 +88,9 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
                                 }
                             }, null, null);
                         }
-                        didConnectToService(trackUri, name, serviceManager.getLoggingState());
+                        int loggingState = serviceManager.getLoggingState();
+                        Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
+                        didConnectToService(trackUri, name, loggingState);
                     }
                 }
             }
@@ -129,10 +131,11 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Timber.d("Received in the mock sender");
             int loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN);
             Uri trackUri = intent.getParcelableExtra(ServiceConstants.EXTRA_TRACK);
             String name = intent.getStringExtra(ServiceConstants.EXTRA_TRACK_NAME);
+
+            Timber.d("onReceive LoggerStateReceiver %s %s %d", trackUri, name, loggingState);
             didChangeLoggingState(trackUri, name, loggingState);
         }
     }

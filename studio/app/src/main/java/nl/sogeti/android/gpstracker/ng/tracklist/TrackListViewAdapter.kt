@@ -31,7 +31,9 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.net.Uri
+import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.util.DiffUtil
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -75,7 +77,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(parent?.context), R.layout.row_track, parent, false)
+        val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(context), R.layout.row_track, parent, false)
         val holder = ViewHolder(binding)
         // Weirdly enough the 'clickable="false"' in the XML resource doesn't work
         holder.binding.rowTrackMap.isClickable = false
