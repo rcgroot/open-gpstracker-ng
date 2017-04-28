@@ -57,10 +57,7 @@ open class CommonBindingAdapters {
     fun setLeftDrawable(button: Button, drawableName: String?) {
         val drawableIdentifier = button.resources.getIdentifier(drawableName, "drawable", BuildConfig.APPLICATION_ID)
         val drawable = VectorDrawableCompat.create(button.resources, drawableIdentifier, button.context.theme) ?: return
-        val tint = (button.tag as? Map<*, *>)?.get("tint") as? Int
-        if (tint != null) {
-            drawable.setTint(tint)
-        }
+        drawable.setTint(R.color.icons)
         button.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }
 

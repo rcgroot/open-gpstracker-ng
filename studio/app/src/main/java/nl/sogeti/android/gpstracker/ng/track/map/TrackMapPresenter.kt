@@ -159,8 +159,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
                 viewModel.name.set(name)
                 viewModel.waypoints.set(waypoint)
                 if (recordingUri == trackUri) {
-                    viewModel.trackHead.set(waypoint.lastOrNull()?.lastOrNull())
                     viewModel.completeBounds.set(null)
+                    viewModel.trackHead.set(waypoint.lastOrNull()?.lastOrNull())
                 } else {
                     viewModel.trackHead.set(null)
                     viewModel.completeBounds.set(bounds)

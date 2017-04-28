@@ -6,5 +6,5 @@ import com.google.android.gms.maps.model.LatLng
 
 class TrackTileProviderFactory {
 
-    fun createTrackTileProvider(context: Context, waypoints: ObservableField<List<List<LatLng>>>) = TrackTileProvider(context, waypoints)
+    fun createTrackTileProvider(context: Context, waypoints: ObservableField<List<List<LatLng>>?>) = TrackTileProvider(context, waypoints)
 }
