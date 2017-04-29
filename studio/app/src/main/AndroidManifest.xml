@@ -38,6 +38,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.sogeti.android.gpstracker.ng.track.TrackActivity" />
         </activity>
+        <activity
+            android:name="nl.sogeti.android.gpstracker.ng.graphs.GraphsActivity"
+            android:label="@string/title_activity_graphs"
+            android:parentActivityName="nl.sogeti.android.gpstracker.ng.track.TrackActivity"
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider"

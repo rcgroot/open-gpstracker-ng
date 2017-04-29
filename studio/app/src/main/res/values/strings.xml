@@ -104,5 +104,7 @@
     <string name="control_stop">Stop</string>
     <string name="control_pause">Pause</string>
     <string name="control_resume">Resume</string>
+    <string name="action_graphs">Graphs</string>
+    <string name="title_activity_graphs">Track graphs</string>
 
 </resources>

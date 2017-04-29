@@ -43,5 +43,6 @@ class TrackViewModel {
         fun showAboutDialog()
         fun showTrackEditDialog(track: Uri)
         fun showTrackSelection()
+        fun showGraphs(track: Uri)
     }
 }

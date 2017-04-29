@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import org.jetbrains.annotations.NotNull;
 
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
+import nl.sogeti.android.gpstracker.ng.graphs.GraphsActivity;
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
@@ -103,6 +104,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         getMenuInflater().inflate(R.menu.menu_map, menu);
         DrawableCompat.setTint(menu.findItem(R.id.action_edit).getIcon(), ContextCompat.getColor(this, R.color.primary_light));
         DrawableCompat.setTint(menu.findItem(R.id.action_list).getIcon(), ContextCompat.getColor(this, R.color.primary_light));
+        DrawableCompat.setTint(menu.findItem(R.id.action_graphs).getIcon(), ContextCompat.getColor(this, R.color.primary_light));
 
         return true;
     }
@@ -125,6 +127,9 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
             consumed = true;
         } else if (item.getItemId() == R.id.action_list) {
             presenter.onListOptionSelected();
+            consumed = true;
+        } else if (item.getItemId() == R.id.action_graphs) {
+            presenter.onGraphsOptionSelected();
             consumed = true;
         } else {
             consumed = super.onOptionsItemSelected(item);
@@ -171,6 +176,11 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
             Intent intent = new Intent(this, TrackListActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void showGraphs(Uri trackUri) {
+        startActivity(GraphsActivity.Companion.newIntent(this, trackUri));
     }
 
     //endregion

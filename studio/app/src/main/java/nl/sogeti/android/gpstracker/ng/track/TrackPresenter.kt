@@ -84,6 +84,11 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
         trackUri?.let { view.showTrackEditDialog(it) }
     }
 
+    fun onGraphsOptionSelected() {
+        val trackUri = viewModel.trackUri.get()
+        trackUri?.let { view.showGraphs(it) }
+    }
+
     //endregion
 
     //region TrackSelection
