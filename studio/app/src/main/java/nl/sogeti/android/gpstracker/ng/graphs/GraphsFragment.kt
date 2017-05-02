@@ -54,5 +54,4 @@ class GraphsFragment : Fragment() {
         graphPresenter.stop()
         permissionRequester.stop()
     }
-
 }

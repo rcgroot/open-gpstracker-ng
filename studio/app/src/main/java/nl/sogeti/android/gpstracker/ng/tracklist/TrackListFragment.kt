@@ -52,6 +52,12 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     private val trackListPresenter = TrackListPresenter(viewModel, this)
     private var permissionRequester = PermissionRequester()
 
+    companion object {
+        fun newInstance(): TrackListFragment {
+            return TrackListFragment()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)

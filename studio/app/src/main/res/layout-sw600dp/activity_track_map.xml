@@ -39,8 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:layout_toEndOf="@+id/fragment_tracklist"
-            android:layout_toRightOf="@+id/fragment_tracklist"
             tools:layout="@layout/fragment_recording" />
 
         <fragment
@@ -54,13 +52,13 @@
             tools:layout="@layout/fragment_control" />
 
         <FrameLayout
-            android:id="@+id/fragment_tracklist"
-            android:layout_width="wrap_content"
+            android:id="@+id/track_leftcontainer"
+            android:layout_width="400dp"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/toolbar" />
+            android:layout_below="@id/fragment_recording" />
 
     </RelativeLayout>
 </layout>

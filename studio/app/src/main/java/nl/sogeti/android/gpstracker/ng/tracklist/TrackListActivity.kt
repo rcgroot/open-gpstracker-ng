@@ -28,6 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -37,7 +39,15 @@ import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment
 import nl.sogeti.android.gpstracker.v2.R
 
 class TrackListActivity : AppCompatActivity(), TrackListFragment.Listener {
+
     private val TAG_DIALOG = "DIALOG"
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, TrackListActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

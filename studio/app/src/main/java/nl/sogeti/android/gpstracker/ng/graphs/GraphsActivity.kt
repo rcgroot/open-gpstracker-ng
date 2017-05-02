@@ -13,11 +13,11 @@ class GraphsActivity : AppCompatActivity() {
     companion object {
         private val EXTRA_TRACK_URI = "EXTRA_TRACK_URI"
 
-        fun newIntent(context: Context, trackUri: Uri): Intent {
+        fun start(context: Context, trackUri: Uri) {
             val intent = Intent(context, GraphsActivity::class.java)
             intent.putExtra(EXTRA_TRACK_URI, trackUri)
 
-            return intent
+            context.startActivity(intent)
         }
     }
 

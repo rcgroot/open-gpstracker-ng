@@ -28,10 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.track;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -44,12 +44,14 @@ import org.jetbrains.annotations.NotNull;
 
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsActivity;
+import nl.sogeti.android.gpstracker.ng.graphs.GraphsFragment;
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment;
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity;
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
+import timber.log.Timber;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
@@ -58,7 +60,8 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
     private static final String TAG_DIALOG = "DIALOG";
-    private static final String TRANSACTION_TRACKS = "TRANSACTION_TRACKS";
+    private static final String TRANSACTION_TRACKS = "FRAGMENT_TRANSACTION_TRACKS";
+    private static final String TRANSACTION_GRAPHS = "FRAGMENT_TRANSACTION_GRAPGS";
     private TrackViewModel viewModel = new TrackViewModel();
     private TrackPresenter presenter = new TrackPresenter(viewModel, this);
 
@@ -159,28 +162,22 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
 
     @Override
     public void showTrackSelection() {
-        View tracksContainer = findViewById(R.id.fragment_tracklist);
-        if (tracksContainer != null && tracksContainer instanceof ViewGroup) {
-            TrackListFragment fragment = (TrackListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_tracklist);
-            if (fragment == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left,
-                                R.anim.enter_from_left, R.anim.exit_to_left)
-                        .addToBackStack(TRANSACTION_TRACKS)
-                        .replace(R.id.fragment_tracklist, new TrackListFragment())
-                        .commit();
-            } else {
-                hideTrackList(fragment);
-            }
+        View leftContainer = findViewById(R.id.track_leftcontainer);
+        if (leftContainer != null && leftContainer instanceof ViewGroup) {
+            toggleContainerFragment(TrackListFragment.Companion.newInstance(), TRANSACTION_TRACKS);
         } else {
-            Intent intent = new Intent(this, TrackListActivity.class);
-            startActivity(intent);
+            TrackListActivity.Companion.start(this);
         }
     }
 
     @Override
     public void showGraphs(Uri trackUri) {
-        startActivity(GraphsActivity.Companion.newIntent(this, trackUri));
+        View leftContainer = findViewById(R.id.track_leftcontainer);
+        if (leftContainer != null && leftContainer instanceof ViewGroup) {
+            toggleContainerFragment(GraphsFragment.Companion.newInstance(trackUri), TRANSACTION_GRAPHS);
+        } else {
+            GraphsActivity.Companion.start(this, trackUri);
+        }
     }
 
     //endregion
@@ -198,4 +195,29 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     }
 
     //endregion
+
+
+    private void toggleContainerFragment(Fragment goal, String tag) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.track_leftcontainer);
+        if (fragment != null) {
+            getSupportFragmentManager().popBackStack(null, POP_BACK_STACK_INCLUSIVE);
+        }
+        if (fragment == null || fragment.getClass() != goal.getClass()) {
+            replaceFragmentInLeftContainer(goal, tag);
+        }
+    }
+
+    private void replaceFragmentInLeftContainer(Fragment goal, String tag) {
+        try {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left,
+                            R.anim.enter_from_left, R.anim.exit_to_left)
+                    .addToBackStack(tag)
+                    .replace(R.id.track_leftcontainer, goal)
+                    .commit();
+        } catch (Exception e) {
+            Timber.e(e, "Transaction to add Fragment failed");
+        }
+    }
+
 }
