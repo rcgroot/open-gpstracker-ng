@@ -56,7 +56,7 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = STATE_LOGGING
-        gpsRecorder.startRecording()
+        gpsRecorder.startRecording(trackName)
         broadcaster.sendStartedRecording(context, trackId)
     }
 
@@ -97,8 +97,8 @@ class MockServiceManager : ServiceManagerInterface {
     class Recorder {
         var shouldScheduleWaypoints = true
 
-        fun startRecording() {
-            recordNewTrack()
+        fun startRecording(trackName: String?) {
+            recordNewTrack(trackName)
             postNextWaypoint()
         }
 
@@ -119,9 +119,9 @@ class MockServiceManager : ServiceManagerInterface {
             }
         }
 
-        private fun recordNewTrack() {
+        private fun recordNewTrack(trackName: String?) {
             if (trackId > 0) trackId++ else trackId = 2
-            MockTracksContentProvider.globalState.addTrack(trackId)
+            MockTracksContentProvider.globalState.addTrack(trackId, trackName)
             recordNewSegment()
         }
 

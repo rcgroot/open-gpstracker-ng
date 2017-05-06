@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
@@ -42,6 +41,8 @@ import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -84,4 +85,7 @@ class AppModule {
     fun shareProviderAuthority(): String {
         return GpxShareProvider.AUTHORITY
     }
+
+    @Provides @Named("dayFormatter")
+    fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
 }

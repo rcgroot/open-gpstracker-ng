@@ -32,10 +32,12 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any
+import nl.sogeti.android.gpstracker.ng.trackedit.NameGenerator
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -44,6 +46,7 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
+import java.util.concurrent.Executor
 
 class ControlPresenterTest {
 
@@ -59,6 +62,10 @@ class ControlPresenterTest {
     lateinit var context: Context
     @Mock
     lateinit var trackUri: Uri
+    @Mock
+    lateinit var nameGenerator: NameGenerator
+    @Mock
+    lateinit var resolver: ContentResolver
 
     @Before
     fun setup() {
@@ -66,6 +73,10 @@ class ControlPresenterTest {
         sut = ControlPresenter(viewModel)
         sut.context = context
         sut.setServiceManager(serviceManager)
+        sut.asyncExecutor = Executor { it.run() }
+        sut.nameGenerator = nameGenerator
+        `when`(nameGenerator.generateName(any(), any())).thenReturn("Name")
+        `when`(context.contentResolver).thenReturn(resolver)
     }
 
     @Test

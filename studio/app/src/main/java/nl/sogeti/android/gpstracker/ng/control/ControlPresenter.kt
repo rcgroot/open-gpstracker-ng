@@ -30,19 +30,32 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.content.Context
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.utils.apply
-import nl.sogeti.android.gpstracker.ng.utils.trackUri
-import nl.sogeti.android.gpstracker.ng.utils.waypointsUri
+import nl.sogeti.android.gpstracker.ng.trackedit.NameGenerator
+import nl.sogeti.android.gpstracker.ng.utils.*
 import nl.sogeti.android.gpstracker.v2.R
+import java.util.*
+import java.util.concurrent.Executor
+import javax.inject.Inject
 
 class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter() {
 
+    @Inject
+    lateinit var nameGenerator: NameGenerator
+    @Inject
+    lateinit var asyncExecutor: Executor
+
     val handler = Handler(Looper.getMainLooper())
     val enableRunnable = { enableButtons() }
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     //region Service connection
 
@@ -54,6 +67,12 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
         viewModel.state.set(loggingState)
         enableButtons()
+
+        if (trackUri != null && loggingState == STATE_LOGGING) {
+            asyncExecutor.execute {
+                checkForInitialName(trackUri)
+            }
+        }
     }
 
     //endregion
@@ -61,26 +80,26 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     //region View callback
 
     fun onClickLeft() {
-        context?.let {
-            disableUntilChange(200)
-            if (viewModel.state.get() == STATE_LOGGING) {
-                stopLogging(it)
-            } else if (viewModel.state.get() == STATE_PAUSED) {
-                stopLogging(it)
-            }
+        val context = context?: return
+
+        disableUntilChange(200)
+        if (viewModel.state.get() == STATE_LOGGING) {
+            stopLogging(context)
+        } else if (viewModel.state.get() == STATE_PAUSED) {
+            stopLogging(context)
         }
     }
 
     fun onClickRight() {
-        context?.let {
-            disableUntilChange(200)
-            if (viewModel.state.get() == STATE_STOPPED) {
-                startLogging(it)
-            } else if (viewModel.state.get() == STATE_LOGGING) {
-                pauseLogging(it)
-            } else if (viewModel.state.get() == STATE_PAUSED) {
-                resumeLogging(it)
-            }
+        val context = context?: return
+
+        disableUntilChange(200)
+        if (viewModel.state.get() == STATE_STOPPED) {
+            startLogging(context)
+        } else if (viewModel.state.get() == STATE_LOGGING) {
+            pauseLogging(context)
+        } else if (viewModel.state.get() == STATE_PAUSED) {
+            resumeLogging(context)
         }
     }
 
@@ -94,6 +113,17 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     private fun enableButtons() {
         handler.removeCallbacks { enableRunnable }
         viewModel.enabled.set(true)
+    }
+
+    private fun checkForInitialName(trackUri: Uri) {
+        val context = context ?: return
+
+        val name = trackUri.readName(context)
+        if ( name == context.getString(R.string.initial_track_name) ) {
+            val trackUri = trackUri(serviceManager.trackId)
+            val generatedName = nameGenerator.generateName(context, Calendar.getInstance())
+            trackUri.updateName(context, generatedName)
+        }
     }
 
     fun startLogging(context: Context) {

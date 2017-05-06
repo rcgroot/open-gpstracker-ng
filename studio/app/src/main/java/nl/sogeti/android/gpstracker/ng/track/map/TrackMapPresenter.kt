@@ -144,7 +144,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     fun onClickMyLocation() {
         val context = context ?: return
-        viewModel.trackHead.set(locationFactory.getLocation(context))
+        viewModel.trackHead.set(locationFactory.getLocationCoordinates(context))
         viewModel.completeBounds.set(null)
     }
 

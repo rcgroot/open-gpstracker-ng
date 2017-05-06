@@ -73,7 +73,14 @@
     <string name="track_type_boat">on a boat</string>
     <string name="track_type_car">in a car</string>
     <string name="track_type_train">in a train</string>
+    <string name="period_morning">morning</string>
+    <string name="period_afternoon">afternoon</string>
+    <string name="period_evening">evening</string>
+    <string name="period_night">night</string>
     <string name="initial_track_name">Unnamed track</string>
+    <string name="initial_time_track_name">%1$s %2$s</string>
+    <string name="initial_time_location_track_name">%1$s %2$s in %3$s</string>
+
     <plurals name="track_duration_seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

@@ -45,6 +45,7 @@ import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualit
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
+import nl.sogeti.android.gpstracker.ng.utils.readName
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
@@ -163,9 +164,11 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         if (trackUri != null) {
             contentController?.registerObserver(trackUri)
             viewModel.trackUri.set(trackUri)
-        }
-        if (name != null) {
-            viewModel.name.set(name)
+            if (name != null) {
+                viewModel.name.set(name)
+            } else {
+                context?.let { viewModel.name.set(trackUri?.readName(it)) }
+            }
         }
 
         val isRecording = (loggingState == STATE_LOGGING) || (loggingState == STATE_PAUSED)
