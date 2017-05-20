@@ -8,6 +8,7 @@ jacoco {
 }
 
 android {
+
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 25
     buildToolsVersion "$rootProject.buildToolsVersion"
@@ -29,10 +30,14 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions "service"
+
     productFlavors {
         live {
+            dimension "service"
         }
         mock {
+            dimension "service"
             applicationIdSuffix = ".mock"
             minSdkVersion 18 // To work with uiautomator-v18
         }
