@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_scrollFlags="scroll|snap">
+
+    <TextView
+        android:id="@+id/graph_label_distance"
+        style="@style/TextAppearance.AppCompat.Small.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/graph_label_end"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Start"
+        app:layout_constraintHorizontal_chainStyle="spread" />
+
+    <TextView
+        android:id="@+id/graph_label_duration"
+        style="@style/TextAppearance.AppCompat.Small.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_end"
+        app:layout_constraintLeft_toRightOf="@+id/graph_label_end"
+        app:layout_constraintRight_toLeftOf="@+id/graph_label_pause"
+        tools:text="Total" />
+
+    <TextView
+        android:id="@+id/graph_label_pause"
+        style="@style/TextAppearance.AppCompat.Small.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_duration"
+        app:layout_constraintLeft_toRightOf="@+id/graph_label_duration"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="Paused" />
+
+    <TextView
+        android:id="@+id/graph_label_end"
+        style="@style/TextAppearance.AppCompat.Small.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_distance"
+        app:layout_constraintLeft_toRightOf="@+id/graph_label_distance"
+        app:layout_constraintRight_toLeftOf="@+id/graph_label_duration"
+        tools:text="Stop" />
+
+    <TextView
+        android:id="@+id/graph_value_start"
+        style="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/graph_value_end"
+        app:layout_constraintTop_toBottomOf="@+id/graph_label_distance"
+        tools:text="8:30" />
+
+    <TextView
+        android:id="@+id/graph_value_end"
+        style="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_start"
+        app:layout_constraintLeft_toRightOf="@+id/graph_value_start"
+        app:layout_constraintRight_toLeftOf="@+id/graph_value_duration"
+        tools:text="9:54" />
+
+    <TextView
+        android:id="@+id/graph_value_duration"
+        style="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_end"
+        app:layout_constraintLeft_toRightOf="@+id/graph_value_end"
+        app:layout_constraintRight_toLeftOf="@+id/graph_value_pause"
+        tools:text="1h35m" />
+
+    <TextView
+        android:id="@+id/graph_value_pause"
+        style="@style/TextAppearance.AppCompat.Medium.Inverse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_duration"
+        app:layout_constraintLeft_toRightOf="@+id/graph_value_duration"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="12m" />
+
+</android.support.constraint.ConstraintLayout>

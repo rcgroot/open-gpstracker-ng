@@ -12,16 +12,23 @@
             type="nl.sogeti.android.gpstracker.ng.graphs.GraphsViewModel" />
     </data>
 
-    <ScrollView
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <include layout="@layout/include_graphs" />
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hello Graphs" />
-    </ScrollView>
+            android:background="@null">
+
+            <include layout="@layout/include_graphs_times" />
+
+            <include layout="@layout/include_graphs_distance" />
+
+        </android.support.design.widget.AppBarLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
 
 </layout>
