@@ -138,14 +138,22 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         summaryManager.collectSummaryInfo(context, viewModel.uri, {
             if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
-                viewModel.distance.set(it.distance)
-                viewModel.duration.set(it.duration)
                 viewModel.waypoints.set(it.waypoints)
                 val trackPolylineProvider = TrackPolylineProvider(viewModel.waypoints.get())
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
-                viewModel.name.set(it.name)
                 viewModel.iconType.set(it.type)
-                viewModel.startDay.set(calculator.convertTimestampToStart(context, it.start))
+                viewModel.name.set(it.name)
+                viewModel.startDay.set(calculator.convertTimestampToStart(context, it.startTimestamp))
+                var duration = context.getString(R.string.row_duraction_default)
+                if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
+                    duration = calculator.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
+                }
+                viewModel.duration.set(duration)
+                var distance = context.getString(R.string.row_distance_default)
+                if (it.distance > 0) {
+                    distance = calculator.convertMetersToDistance(context, it.distance)
+                }
+                viewModel.distance.set(distance)
             }
         })
     }

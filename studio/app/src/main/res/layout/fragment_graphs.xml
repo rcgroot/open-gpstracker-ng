@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,16 +17,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/include_graphs" />
+        <include
+            layout="@layout/include_graphs"
+            bind:viewModel="@{viewModel}" />
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null">
 
-            <include layout="@layout/include_graphs_times" />
+            <include
+                layout="@layout/include_graphs_times"
+                bind:viewModel="@{viewModel}" />
 
-            <include layout="@layout/include_graphs_distance" />
+            <include
+                layout="@layout/include_graphs_distance"
+                bind:viewModel="@{viewModel}" />
 
         </android.support.design.widget.AppBarLayout>
 

@@ -72,10 +72,10 @@ class SummaryCalculatorTest {
         this.sut = sut
 
         `when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
-        `when`(context.getString(R.string.format_meters)).thenReturn("%.1f M")
-        `when`(context.getString(R.string.format_100_meters)).thenReturn("%.0f M")
-        `when`(context.getString(R.string.format_kilometer)).thenReturn("%.1f KM")
-        `when`(context.getString(R.string.format_100_kilometer)).thenReturn("%.0f KM")
+        `when`(context.getString(R.string.format_small_meters)).thenReturn("%.1f M")
+        `when`(context.getString(R.string.format_small_100_meters)).thenReturn("%.0f M")
+        `when`(context.getString(R.string.format_big_kilometer)).thenReturn("%.1f KM")
+        `when`(context.getString(R.string.format_big_100_kilometer)).thenReturn("%.0f KM")
         `when`(context.getString(R.string.row_start_default)).thenReturn("--")
 
         `when`(context.resources).thenReturn(resources)

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="format_speed">%1$.0f %2$s</string>
+
+    <item name="mps_to_speed" type="string">3.6</item>
+    <item name="speed_unit" type="string">kph</item>
+
+    <item name="m_to_small_distance" type="string">1.0</item>
+    <item name="m_to_big_distance" type="string">1000.0</item>
+
+    <string name="format_small_meters">%.1f M</string>
+    <string name="format_small_100_meters">%.0f M</string>
+    <string name="format_big_kilometer">%.1f KM</string>
+    <string name="format_big_100_kilometer">%.0f KM</string>
+
+</resources>

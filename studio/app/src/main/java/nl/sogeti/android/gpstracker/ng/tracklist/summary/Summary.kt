@@ -35,10 +35,10 @@ import com.google.android.gms.maps.model.LatLngBounds
 data class Summary(val trackUri: Uri,
                    val name: String,
                    val type: Int,
-                   val start: Long,
-                   val duration: String,
-                   val distance: String,
-                   val timestamp: Long,
+                   val startTimestamp: Long,
+                   val stopTimestamp: Long,
+                   val trackedPeriod: Long,
+                   val distance: Float,
                    val bounds: LatLngBounds,
                    val waypoints: List<List<LatLng>>) {
     val count: Int

@@ -32,6 +32,7 @@ import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
+import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.track.map.TrackMapPresenter
@@ -69,6 +70,8 @@ interface AppComponent {
     fun inject(injectable: TrackDeletePresenter)
 
     fun inject(injectable: ControlPresenter)
+
+    fun inject(injectable: GraphsPresenter)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

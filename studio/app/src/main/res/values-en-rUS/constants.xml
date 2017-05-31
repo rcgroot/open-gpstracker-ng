@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="mps_to_speed" type="string">2.23693629</item>
+    <item name="speed_unit" type="string">mph</item>
+
+    <item name="m_to_small_distance" type="string">1609.34400061</item>
+    <item name="m_to_big_distance" type="string">1609.34400061</item>
+
+
+
+    <string name="format_small_meters">%.1f mile</string>
+    <string name="format_small_100_meters">%.0f mile</string>
+    <string name="format_big_kilometer">%.1f mile</string>
+    <string name="format_big_100_kilometer">%.0f mil</string>
+
+</resources>

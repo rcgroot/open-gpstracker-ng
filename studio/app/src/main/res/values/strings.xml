@@ -62,10 +62,7 @@
     <string name="row_distance_default">--</string>
     <string name="row_track_icon_default">Default activity</string>
     <string name="row_track_map">Overview map</string>
-    <string name="format_meters">%.1f M</string>
-    <string name="format_100_meters">%.0f M</string>
-    <string name="format_kilometer">%.1f KM</string>
-    <string name="format_100_kilometer">%.0f KM</string>
+
     <string name="track_type_default">tracking</string>
     <string name="track_type_run">running</string>
     <string name="track_type_walk">walking</string>
@@ -101,7 +98,6 @@
     <string name="permission_missing_title">Missing installation</string>
     <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
     <string name="permission_button_install">Install</string>
-    <string name="format_speed">%.0f kph</string>
     <string name="track_share">Share</string>
     <string name="track_edit">Edit</string>
     <string name="track_delete">Delete</string>
@@ -113,5 +109,13 @@
     <string name="control_resume">Resume</string>
     <string name="action_graphs">Graphs</string>
     <string name="title_activity_graphs">Track graphs</string>
+    <string name="graph_label_day">Day</string>
+    <string name="graph_label_start_time">Time</string>
+    <string name="graph_label_total">Total</string>
+    <string name="graph_label_paused">Paused</string>
+    <string name="graph_label_distance">Distance</string>
+    <string name="graph_label_points">Points</string>
+    <string name="graph_label_speed">Speed</string>
+    <string name="graph_label_time">Time</string>
 
 </resources>

@@ -29,8 +29,11 @@
 package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
 import android.content.Context
+import android.content.res.Resources
 import android.location.Location
 import android.net.Uri
+import android.support.annotation.StringRes
+import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
@@ -53,43 +56,44 @@ class SummaryCalculator {
     }
 
     fun calculateSummary(context: Context, trackUri: Uri): Summary {
-        val waypointsUri = trackUri.append(ContentConstants.Waypoints.WAYPOINTS)
-        // Defaults
-        val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
-        var duration = context.getString(R.string.row_duraction_default)
-        var distance = context.getString(R.string.row_distance_default)
-        val timestamp = 0L
-        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
-
         // Calculate
-        val startTimestamp = waypointsUri.apply(context, { it.getLong(ContentConstants.Waypoints.TIME) }) ?: 0L
-        val endTimestamp = waypointsUri.apply(context, { it.moveToLast();it.getLong(ContentConstants.Waypoints.TIME) })
-        if (startTimestamp != null && endTimestamp != null && startTimestamp < endTimestamp) {
-            duration = convertStartEndToDuration(context, startTimestamp, endTimestamp)
-        }
-        val operation = { distance: Float?, first: Waypoint, second: Waypoint
-            ->
-            distance(first, second) + (distance ?: 0.0F)
-        }
-        val calculated = trackUri.traverseTrack(context, operation)
-        if (calculated != null && calculated > 1) {
-            distance = convertMetersToDistance(context, calculated)
-        }
         val handler = DefaultResultHandler()
         trackUri.readTrack(context, handler)
+        val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
+        val startTimestamp = handler.waypoints.firstOrNull()?.firstOrNull()?.time ?: 0L
+        val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
+        data class Data(val meter: Float, val time: Long)
+        fun reduce(waypoints: List<Waypoint>): Data {
+            var meters = 0.0F
+            var time = 0L
+            val outArray = floatArrayOf(0.0F)
+            for (i in 0..waypoints.lastIndex - 1) {
+                meters += distance(waypoints[i], waypoints[i + 1], outArray)
+                time += waypoints[i + 1].time - waypoints[i].time
+            }
+
+            return Data(meters, time)
+        }
+        val sum = handler.waypoints.map { reduce(it) }.fold(Data(0.0F, 0)) {
+            first, second ->
+            Data(first.meter + second.meter, first.time + second.time)
+        }
+        // Text values
+        val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
+        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Return value
-        val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
-        val summary = Summary(trackUri, name, trackType.drawableId, startTimestamp, duration, distance, timestamp, handler.bounds, listOfLatLngs)
+        val summary = Summary(trackUri = trackUri, name = name, type = trackType.drawableId,
+                startTimestamp = startTimestamp, stopTimestamp = endTimestamp,
+                trackedPeriod = sum.time, distance = sum.meter, bounds = handler.bounds, waypoints = listOfLatLngs)
 
         return summary
     }
 
-    fun distance(first: Waypoint, second: Waypoint): Float {
-        val result: FloatArray = floatArrayOf(0.0F)
-        Location.distanceBetween(first.latitude, first.longitude, second.latitude, second.longitude, result)
+    fun distance(first: Waypoint, second: Waypoint, outArray: FloatArray): Float {
+        Location.distanceBetween(first.latitude, first.longitude, second.latitude, second.longitude, outArray)
 
-        return result[0]
+        return outArray[0]
     }
 
     //region Converter methods
@@ -97,13 +101,17 @@ class SummaryCalculator {
     fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
         if (meters >= 100000) {
-            distance = context.getString(R.string.format_100_kilometer).format(locale, meters / 1000F)
+            val convert = context.resources.getFloat(R.string.m_to_big_distance)
+            distance = context.getString(R.string.format_big_100_kilometer).format(locale, meters / convert)
         } else if (meters >= 1000) {
-            distance = context.getString(R.string.format_kilometer).format(locale, meters / 1000F)
+            val convert = context.resources.getFloat(R.string.m_to_big_distance)
+            distance = context.getString(R.string.format_big_kilometer).format(locale, meters / convert)
         } else if (meters >= 100) {
-            distance = context.getString(R.string.format_100_meters).format(locale, meters)
+            val convert = context.resources.getFloat(R.string.m_to_small_distance)
+            distance = context.getString(R.string.format_small_100_meters).format(locale, meters / convert)
         } else {
-            distance = context.getString(R.string.format_meters).format(locale, meters)
+            val convert = context.resources.getFloat(R.string.m_to_small_distance)
+            distance = context.getString(R.string.format_small_meters).format(locale, meters / convert)
         }
         return distance
     }
@@ -152,20 +160,27 @@ class SummaryCalculator {
     }
 
     fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
-        val metersPerSecondsToKilometerPerHour = meterspersecondFactor()
-        val kph = meters / seconds * metersPerSecondsToKilometerPerHour
-        return context.getString(R.string.format_speed).format(locale, kph)
+        val conversion = context.resources.getFloat(R.string.mps_to_speed)
+        val unit = context.resources.getString(R.string.speed_unit)
+        val kph = meters / seconds * conversion
+
+        return context.getString(R.string.format_speed).format(locale, kph, unit)
     }
 
-    private fun meterspersecondFactor(): Float {
-        val country = locale.country
-        val factor = when (country) {
-            "US" -> 2.23693629F
-            else -> 3.6F
-        }
+    fun convertTimestampToDate(context: Context, startTimestamp: Long): String {
+        val date = Date(startTimestamp)
+        return DateFormat.getTimeFormat(context).format(date);
+    }
 
-        return factor
+    fun convertTimestampToTime(context: Context, startTimestamp: Long): String {
+        val date = Date(startTimestamp)
+        return DateFormat.getDateFormat(context).format(date);
     }
 
     //endregion
+}
+
+private fun Resources.getFloat(@StringRes resourceId: Int): Float {
+    val stringValue = this.getString(resourceId)
+    return stringValue.toFloat()
 }
