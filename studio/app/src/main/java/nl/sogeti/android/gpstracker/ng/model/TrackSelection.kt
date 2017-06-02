@@ -23,12 +23,12 @@ class TrackSelection {
         this.trackUri = trackUri
         this.trackName = trackName
         listeners.forEach {
-            it.didSelectTrack(trackUri, this.trackName)
+            it.onTrackSelection(trackUri, this.trackName)
         }
     }
 
     interface Listener {
-        fun didSelectTrack(trackUri: Uri, name: String)
+        fun onTrackSelection(trackUri: Uri, name: String)
     }
 
 }

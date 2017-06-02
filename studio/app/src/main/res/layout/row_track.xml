@@ -24,15 +24,16 @@
         android:layout_margin="8dp"
         android:onClick="@{() -> adapter.didSelectTrack(viewModel)}"
         app:editMode="@{viewModel.editMode}"
-        card_view:cardBackgroundColor="@color/primary_light"
+        card_view:cardBackgroundColor="@color/card_background"
         card_view:cardCornerRadius="4dp">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:orientation="vertical">
+            android:background="?attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
 
             <View
                 android:id="@+id/row_track_header_bg"
@@ -69,7 +70,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:text="@{viewModel.name}"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/card_text"
                 app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
                 app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
                 app:layout_constraintRight_toRightOf="parent"
@@ -95,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@{viewModel.startDay}"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/card_text"
                 app:layout_constraintLeft_toLeftOf="@+id/row_track_name"
                 app:layout_constraintTop_toBottomOf="@+id/row_track_map"
                 tools:text="5 jan" />
@@ -108,7 +109,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{viewModel.distance}"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/card_text"
                 app:layout_constraintRight_toRightOf="@+id/row_track_map"
                 app:layout_constraintTop_toBottomOf="@+id/row_track_map"
                 tools:text="12km" />
@@ -123,23 +124,31 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{viewModel.duration}"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/card_text"
                 app:layout_constraintLeft_toRightOf="@+id/row_track_date"
                 app:layout_constraintRight_toLeftOf="@+id/row_track_distance"
                 app:layout_constraintTop_toBottomOf="@+id/row_track_map"
                 tools:text="1h30m" />
 
-            <ImageView
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/row_track_overflow"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/transparent_button_background"
+                android:layout_height="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
                 android:clickable="true"
                 android:onClick="@{() -> adapter.didClickRowOptions(viewModel)}"
-                android:padding="8dp"
+                android:scaleType="center"
+                app:backgroundTint="@color/card_background"
+                app:borderWidth="0dp"
+                app:elevation="4dp"
+                app:hitPadding="@{@dimen/hit_padding}"
                 app:srcCompat="@drawable/ic_overflow"
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
                 card_view:layout_constraintRight_toRightOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent" />
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_icon"
+                card_view:layout_constraintVertical_bias="0.485" />
 
             <Button
                 android:id="@+id/row_track_share"
@@ -174,10 +183,10 @@
                 android:id="@+id/row_track_delete"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:leftDrawable='@{"ic_delete_black_24dp"}'
                 android:onClick="@{() -> adapter.didDeleteTrack(viewModel)}"
                 android:text="@string/track_delete"
                 android:visibility="gone"
+                app:leftDrawable='@{"ic_delete_black_24dp"}'
                 card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
                 card_view:layout_constraintLeft_toRightOf="@+id/row_track_edit"
                 card_view:layout_constraintRight_toRightOf="@+id/row_track_map"

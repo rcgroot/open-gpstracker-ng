@@ -30,8 +30,11 @@ package nl.sogeti.android.gpstracker.ng.common.bindings
 
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.widget.AppCompatSpinner
+import android.view.TouchDelegate
+import android.view.View
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
@@ -47,6 +50,20 @@ import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
 
 open class CommonBindingAdapters {
+
+    @BindingAdapter("hitPadding")
+    fun setHitRectPadding(view: View, padding: Float) {
+        val parent = view.parent
+        if (parent is View) {
+            parent.post {
+                val delta = padding.toInt()
+                val hitRect = Rect()
+                view.getHitRect(hitRect)
+                hitRect.set(hitRect.left - delta, hitRect.top - delta, hitRect.right + delta, hitRect.bottom + delta)
+                parent.touchDelegate = TouchDelegate(hitRect, view)
+            }
+        }
+    }
 
     @BindingAdapter("bitmap")
     fun setBitmap(view: ImageView, bitmap: Bitmap?) {

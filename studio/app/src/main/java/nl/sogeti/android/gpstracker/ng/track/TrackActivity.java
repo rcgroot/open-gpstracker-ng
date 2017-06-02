@@ -186,7 +186,8 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
 
     @Override
     public void hideTrackList(@NotNull TrackListFragment trackListFragment) {
-        getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
+        // For tablet we'll opt to leave the track list on the screen instead of removing it
+//        getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
@@ -200,7 +201,12 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     private void toggleContainerFragment(Fragment goal, String tag) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.track_leftcontainer);
         if (fragment != null) {
-            getSupportFragmentManager().popBackStack(null, POP_BACK_STACK_INCLUSIVE);
+            if (fragment instanceof TrackListFragment) {
+                getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
+            }
+            else if (fragment instanceof GraphsFragment) {
+                getSupportFragmentManager().popBackStack(TRANSACTION_GRAPHS, POP_BACK_STACK_INCLUSIVE);
+            }
         }
         if (fragment == null || fragment.getClass() != goal.getClass()) {
             replaceFragmentInLeftContainer(goal, tag);

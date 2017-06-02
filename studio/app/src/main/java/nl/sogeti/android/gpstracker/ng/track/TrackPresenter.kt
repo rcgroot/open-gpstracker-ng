@@ -57,7 +57,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
         trackSelection.addListener(this)
         contentController = contentControllerFactory.createContentController(context!!, this)
         trackSelection.trackUri?.let {
-            didSelectTrack(it, trackSelection.trackName)
+            onTrackSelection(it, trackSelection.trackName)
         }
     }
 
@@ -93,7 +93,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     //region TrackSelection
 
-    override fun didSelectTrack(trackUri: Uri, name: String) {
+    override fun onTrackSelection(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
         contentController?.registerObserver(trackUri)
         showName(name)

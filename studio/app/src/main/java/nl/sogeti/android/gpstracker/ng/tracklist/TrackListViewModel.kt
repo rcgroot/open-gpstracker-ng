@@ -34,6 +34,7 @@ import android.net.Uri
 
 class TrackListViewModel {
     val tracks = ObservableField<List<Uri>>(emptyList())
+    val selectedTrack = ObservableField<Uri?>(null)
 
     interface View {
         fun hideTrackList()

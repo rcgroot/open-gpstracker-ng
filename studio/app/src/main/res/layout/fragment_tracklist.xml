@@ -20,5 +20,6 @@
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
         app:tracks="@{viewModel.tracks}"
+        app:selected="@{viewModel.selectedTrack}"
         app:tracksListener="@{presenter}" />
 </layout>

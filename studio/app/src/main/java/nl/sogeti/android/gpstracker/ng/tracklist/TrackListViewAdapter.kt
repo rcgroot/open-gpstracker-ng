@@ -31,9 +31,7 @@ package nl.sogeti.android.gpstracker.ng.tracklist
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.net.Uri
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v7.util.DiffUtil
-import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -55,6 +53,12 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     @Inject
     lateinit var calculator: SummaryCalculator
     var listener: TrackListAdapterListener? = null
+
+    var selection: Uri? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     var model = listOf<Uri>()
         set(value) {
             val diffResult = DiffUtil.calculateDiff(TrackDiffer(field, value))
@@ -88,10 +92,11 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val modelForUri = rowViewModelForUri(model[position])
-        if (holder.binding.viewModel != modelForUri) {
-            holder.binding.viewModel = modelForUri
+        val viewModel = rowViewModelForUri(model[position])
+        if (holder.binding.viewModel != viewModel) {
+            holder.binding.viewModel = viewModel
         }
+        holder.binding.rowTrackCard.isActivated = (viewModel.uri == selection)
         willDisplayTrack(holder.itemView.context, holder.binding.viewModel)
     }
 
@@ -124,7 +129,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     //endregion
 
-    private fun rowViewModelForUri(uri: Uri): TrackViewModel? {
+    private fun rowViewModelForUri(uri: Uri): TrackViewModel {
         var viewModel = rowModels[uri]
         if (viewModel == null) {
             viewModel = TrackViewModel(uri)
@@ -180,6 +185,5 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
             return oldCount == newCount
         }
     }
-
 }
 

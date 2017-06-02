@@ -46,7 +46,7 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListAdapterListener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     private var contentController: ContentController? = null
 
@@ -66,6 +66,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didStart() {
+        trackSelection.addListener(this)
         contentController = contentControllerFactory.createContentController(context!!, this)
         contentController?.registerObserver(tracksUri())
         summaryManager.start()
@@ -73,6 +74,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun willStop() {
+        trackSelection.removeListener(this)
         contentController?.unregisterObserver()
         contentController = null
         summaryManager.stop()
@@ -93,6 +95,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
                 val id = it.getLong(ContentConstants.Tracks._ID)!!
                 trackUri(id)
             })
+            viewModel.selectedTrack.set(trackSelection.trackUri)
             viewModel.tracks.set(trackList.asReversed())
         }
     }
@@ -116,6 +119,14 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didDeleteTrack(track: Uri) {
         view.showTrackDeleteDialog(track)
+    }
+
+    //endregion
+
+    //region Track selection listening
+
+    override fun onTrackSelection(track: Uri, name: String) {
+        viewModel.selectedTrack.set(track)
     }
 
     //endregion

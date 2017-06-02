@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="512"
-   height="512"
-   viewBox="0 0 135.46667 135.46667"
+   width="320"
+   height="320"
+   viewBox="0 0 84.66667 84.666669"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.1 r"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="ic_overflow.svg">
   <defs
      id="defs2" />
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="256"
-     inkscape:cy="324"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="145.1371"
+     inkscape:cy="100.6094"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -37,30 +37,38 @@
      inkscape:lockguides="false"
      inkscape:window-width="1138"
      inkscape:window-height="1019"
-     inkscape:window-x="761"
-     inkscape:window-y="23"
-     inkscape:window-maximized="0">
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
     <inkscape:grid
        type="xygrid"
        id="grid4485"
-       empspacing="4" />
+       empspacing="4"
+       originx="-59.266664"
+       originy="-25.399926" />
     <sodipodi:guide
-       position="67.733335,169.33334"
+       position="42.333335,162.98341"
        orientation="1,0"
        id="guide4487"
-       inkscape:locked="false" />
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="33.866667,67.733335"
+       position="-25.399997,42.33341"
        orientation="0,1"
        id="guide4489"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="40.216668,93.133336"
+       position="-19.049996,67.733411"
        orientation="0,1"
        id="guide4501"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="42.333334,42.333334"
+       position="-16.933329,16.933409"
        orientation="0,1"
        id="guide4503"
        inkscape:locked="false" />
@@ -81,24 +89,24 @@
      inkscape:label="Laag 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-161.53331)">
+     transform="translate(-59.266668,-186.93338)">
     <circle
        style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.10599999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4493"
-       cx="67.73333"
+       cx="101.58397"
        cy="229.26665"
        r="8.4666662" />
     <circle
        r="8.4666662"
-       cy="195.40018"
-       cx="67.73333"
+       cy="196.4585"
+       cx="101.58397"
        id="circle4497"
        style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.10599999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <circle
        style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.10599999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="circle4499"
-       cx="67.73333"
-       cy="263.13339"
+       cx="101.58397"
+       cy="262.07504"
        r="8.4666662" />
   </g>
 </svg>

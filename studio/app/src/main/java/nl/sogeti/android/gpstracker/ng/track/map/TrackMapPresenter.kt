@@ -84,7 +84,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //region Track selection
 
-    override fun didSelectTrack(trackUri: Uri, name: String) {
+    override fun onTrackSelection(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
         viewModel.name.set(name)
         contentController?.registerObserver(trackUri)
@@ -174,7 +174,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     private fun makeTrackSelection() {
         val trackUri = trackSelection.trackUri
         if (trackUri != null && trackUri.lastPathSegment != "-1") {
-            didSelectTrack(trackUri, trackSelection.trackName)
+            onTrackSelection(trackUri, trackSelection.trackName)
         } else {
             val context = context
             if (context != null) {

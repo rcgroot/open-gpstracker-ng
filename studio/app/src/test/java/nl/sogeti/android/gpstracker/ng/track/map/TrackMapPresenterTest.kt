@@ -123,7 +123,7 @@ class TrackMapPresenterTest {
     @Test
     fun didConnectLogging() {
         // Act
-        sut.didSelectTrack(trackUri, "somename")
+        sut.onTrackSelection(trackUri, "somename")
         sut.didConnectToService(trackUri, "somename", STATE_LOGGING)
         // Assert
         assertThat(sut.recordingUri, `is`(trackUri))
@@ -134,7 +134,7 @@ class TrackMapPresenterTest {
     fun didConnectLoggingOtherTrack() {
         // Act
         val otherUri = mock(Uri::class.java)
-        sut.didSelectTrack(otherUri, "othername")
+        sut.onTrackSelection(otherUri, "othername")
         sut.didConnectToService(trackUri, "somename", STATE_LOGGING)
         // Assert
         assertThat(sut.recordingUri, `is`(trackUri))
@@ -145,7 +145,7 @@ class TrackMapPresenterTest {
     fun startedRecording() {
         // Arrange
         val otherUri = mock(Uri::class.java)
-        sut.didSelectTrack(otherUri, "othername")
+        sut.onTrackSelection(otherUri, "othername")
         // Act
         sut.didChangeLoggingState(trackUri, "somename", STATE_LOGGING)
         // Assert

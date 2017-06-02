@@ -1,7 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.model
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment
 import org.hamcrest.core.Is.`is`
 import org.junit.Assert
 import org.junit.Before
@@ -53,7 +52,7 @@ class TrackSelectionTest {
         sut.addListener(listener)
         // Assert
         sut.selectTrack(uri, "mock-name")
-        Mockito.verify(listener).didSelectTrack(uri, "mock-name")
+        Mockito.verify(listener).onTrackSelection(uri, "mock-name")
     }
 
     @Test
@@ -63,7 +62,7 @@ class TrackSelectionTest {
         sut.removeListener(listener)
         // Assert
         sut.selectTrack(uri, "mock-name")
-        Mockito.verify(listener, never()).didSelectTrack(uri, "mock-name")
+        Mockito.verify(listener, never()).onTrackSelection(uri, "mock-name")
     }
 
     @Test
@@ -73,6 +72,6 @@ class TrackSelectionTest {
         // Act
         sut.selectTrack(uri, "mock-name")
         // Assert
-        Mockito.verify(listener).didSelectTrack(uri, "mock-name")
+        Mockito.verify(listener).onTrackSelection(uri, "mock-name")
     }
 }

@@ -50,8 +50,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/activity_track_map_rename_hint"
                 android:inputType="text"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
                 android:text="@={model.name}">
 
             </EditText>
@@ -66,12 +64,12 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:trackTypes="@{model.trackTypes}"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@+id/text_input_layout"
             app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
-            app:selection="@{model.selectedPosition}" />
+            app:selection="@{model.selectedPosition}"
+            app:trackTypes="@{model.trackTypes}" />
 
         <Button
             android:id="@+id/fragment_trackEdit_ok"
