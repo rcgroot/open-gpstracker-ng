@@ -97,7 +97,13 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
             })
             viewModel.selectedTrack.set(trackSelection.trackUri)
             viewModel.tracks.set(trackList.asReversed())
+            trackSelection.trackUri?.let { scrollToTrack(it) }
         }
+    }
+
+    private fun scrollToTrack(trackUri: Uri) {
+        val postion = viewModel.tracks.get().indexOf(trackUri)
+        view.moveToPosition(postion)
     }
 
     //region View (adapter) callbacks

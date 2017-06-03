@@ -47,16 +47,18 @@ import timber.log.Timber
  * Sets up display and selection of tracks in a list style
  */
 class TrackListFragment : Fragment(), TrackListViewModel.View {
-
     private val viewModel = TrackListViewModel()
+
     private val trackListPresenter = TrackListPresenter(viewModel, this)
     private var permissionRequester = PermissionRequester()
-
     companion object {
+
         fun newInstance(): TrackListFragment {
             return TrackListFragment()
         }
     }
+
+    private var binding: FragmentTracklistBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
@@ -66,6 +68,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         binding.listview.itemAnimator = itemAnimator
         binding.viewModel = viewModel
         binding.presenter = trackListPresenter
+        this.binding = binding
 
         return binding.root
     }
@@ -82,6 +85,11 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         super.onStop()
         trackListPresenter.stop()
         permissionRequester.stop()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     //region View contract
@@ -103,6 +111,10 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun showIntentChooser(intent: Intent, text: CharSequence) {
         startActivity(Intent.createChooser(intent, text))
+    }
+
+    override fun moveToPosition(postion: Int) {
+        binding?.listview?.layoutManager?.scrollToPosition(postion)
     }
 
     //endregion

@@ -41,5 +41,6 @@ class TrackListViewModel {
         fun showTrackDeleteDialog(track: Uri)
         fun showIntentChooser(intent: Intent, text: CharSequence)
         fun showTrackEditDialog(track: Uri)
+        fun moveToPosition(postion: Int)
     }
 }
