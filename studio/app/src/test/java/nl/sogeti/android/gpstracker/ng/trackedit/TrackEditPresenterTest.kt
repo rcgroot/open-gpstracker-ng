@@ -47,7 +47,6 @@ class TrackEditPresenterTest {
         viewModel = TrackEditModel(trackUri)
         viewModel.selectedPosition.set(1)
         sut = TrackEditPresenter(viewModel, view)
-        sut.context = context
         sut.summaryManager = summaryManager
         sut.trackTypeDescriptions = trackTypeDescriptions
         `when`(context.contentResolver).thenReturn(contentResolver)
@@ -62,7 +61,7 @@ class TrackEditPresenterTest {
         `when`(cursor.getColumnIndex(any())).thenReturn(0)
         `when`(cursor.getString(0)).thenReturn("mockname")
         // Act
-        sut.didStart()
+        sut.start(context)
         // Verify
         assertThat(viewModel.selectedPosition.get(), `is`(4))
         assertThat(viewModel.name.get(), `is`("mockname"))
@@ -70,6 +69,9 @@ class TrackEditPresenterTest {
 
     @Test
     fun testOk() {
+        // Arrange
+        sut.start(context)
+        sut.model.selectedPosition.set(1)
         // Act
         sut.ok()
         // Assert

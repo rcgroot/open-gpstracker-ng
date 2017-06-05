@@ -88,23 +88,24 @@ class TrackMapPresenterTest {
     fun setup() {
         viewModel = TrackMapViewModel()
         sut = TrackMapPresenter(viewModel)
-        Mockito.`when`(contentControllerFactory.createContentController(nl.sogeti.android.gpstracker.ng.rules.any(), nl.sogeti.android.gpstracker.ng.rules.any())).thenReturn(contentController)
-        sut.contentControllerFactory = contentControllerFactory
         sut.serviceManager = serviceManager
         `when`(trackSelection.trackUri).thenReturn(trackUri)
         `when`(trackSelection.trackName).thenReturn("selected")
         sut.trackSelection = trackSelection
-        sut.context = context
         `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
         sut.trackReaderFactory = trackReaderFactory
+        sut.contentControllerFactory = contentControllerFactory
+
+        Mockito.`when`(contentControllerFactory.createContentController(nl.sogeti.android.gpstracker.ng.rules.any(), nl.sogeti.android.gpstracker.ng.rules.any())).thenReturn(contentController)
         `when`(trackTileProviderFactory.createTrackTileProvider(any(), any())).thenReturn(trackTileProvider)
         sut.trackTileProviderFactory = trackTileProviderFactory
+        sut.start(context)
     }
 
     @Test
     fun testStart() {
         // Act
-        sut.didStart()
+        sut.start(context)
         // Assert
         verify(trackSelection).addListener(sut)
         verify(contentController).registerObserver(trackUri)
@@ -112,8 +113,6 @@ class TrackMapPresenterTest {
 
     @Test
     fun testStop() {
-        // Arrange
-        sut.didStart()
         // Act
         sut.willStop()
         // Assert
@@ -155,6 +154,9 @@ class TrackMapPresenterTest {
 
     @Test
     fun testContentChange() {
+        // Arrange
+        reset(trackReaderFactory)
+        `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
         // Act
         sut.onChangeUriContent(trackUri, trackUri)
         // Assert

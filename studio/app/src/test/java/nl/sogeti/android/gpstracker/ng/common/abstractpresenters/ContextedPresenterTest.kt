@@ -35,7 +35,7 @@ class ContextedPresenterTest {
         assertEquals(sut.context, mockContext)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun stop() {
         // Prepare
         val sut = MyContextedPresenter()
@@ -46,7 +46,8 @@ class ContextedPresenterTest {
 
         // Verify
         assertTrue(sut.willStop)
-        assertNull(sut.context)
+        assertFalse(sut.isStarted)
+        sut.context
     }
 
     class MyContextedPresenter : ContextedPresenter() {

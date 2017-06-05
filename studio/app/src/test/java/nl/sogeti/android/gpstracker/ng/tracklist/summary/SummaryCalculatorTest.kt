@@ -87,6 +87,9 @@ class SummaryCalculatorTest {
         `when`(resources.getQuantityString(R.plurals.track_duration_hours, 1, 1)).thenReturn("1 hour")
         `when`(resources.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
         `when`(resources.getQuantityString(R.plurals.track_duration_days, 3, 3)).thenReturn("3 days")
+        `when`(resources.getString(R.string.mps_to_speed)).thenReturn("3.6")
+        `when`(resources.getString(R.string.m_to_big_distance)).thenReturn("1000.0")
+        `when`(resources.getString(R.string.m_to_small_distance)).thenReturn("1.0")
 
         referenceDate = Calendar.getInstance()
         referenceDate.set(YEAR, 2016)

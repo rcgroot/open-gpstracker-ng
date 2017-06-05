@@ -69,7 +69,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         super.didStart()
         trackSelection.addListener(this)
         makeTrackSelection()
-        contentController = contentControllerFactory.createContentController(context!!, this)
+        contentController = contentControllerFactory.createContentController(context, this)
         contentController?.registerObserver(viewModel.trackUri.get())
         addTilesToMap()
     }
@@ -133,8 +133,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     private fun addTilesToMap() {
         val googleMap = googleMap
-        val context = this.context
-        if (googleMap != null && context != null) {
+        if (googleMap != null) {
             val tileProvider = trackTileProviderFactory.createTrackTileProvider(context, viewModel.waypoints)
             tileProvider.provideFor(googleMap)
         }
@@ -143,7 +142,6 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     //region View callbacks
 
     fun onClickMyLocation() {
-        val context = context ?: return
         viewModel.trackHead.set(locationFactory.getLocationCoordinates(context))
         viewModel.completeBounds.set(null)
     }
@@ -151,7 +149,6 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     /* Private */
 
     private fun startReadingTrack(trackUri: Uri) {
-        val context = this.context!!
         var executingReader = this.executingReader
         if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
@@ -176,15 +173,12 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         if (trackUri != null && trackUri.lastPathSegment != "-1") {
             onTrackSelection(trackUri, trackSelection.trackName)
         } else {
-            val context = context
-            if (context != null) {
-                val lastTrack = tracksUri().apply(context, { it.moveToLast();Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) })
-                if (lastTrack != null && lastTrack.first != null) {
-                    val trackId = lastTrack.first!!
-                    val lastTrackUri = trackUri(trackId)
-                    val name = lastTrack.second ?: ""
-                    trackSelection.selectTrack(lastTrackUri, name)
-                }
+            val lastTrack = tracksUri().apply(context, { it.moveToLast();Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) })
+            if (lastTrack != null && lastTrack.first != null) {
+                val trackId = lastTrack.first!!
+                val lastTrackUri = trackUri(trackId)
+                val name = lastTrack.second ?: ""
+                trackSelection.selectTrack(lastTrackUri, name)
             }
         }
     }

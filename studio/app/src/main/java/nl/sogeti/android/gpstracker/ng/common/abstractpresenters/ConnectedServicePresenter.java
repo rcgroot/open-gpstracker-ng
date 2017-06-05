@@ -75,23 +75,21 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
             public void run() {
                 synchronized (ConnectedServicePresenter.this) {
                     Context context = ConnectedServicePresenter.this.getContext();
-                    if (context != null) {
-                        long trackId = serviceManager.getTrackId();
-                        Uri trackUri = null;
-                        String name = null;
-                        if (trackId > 0) {
-                            trackUri = TrackUriExtensionKt.trackUri(trackId);
-                            name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
-                                @Override
-                                public String invoke(Cursor cursor) {
-                                    return ContentProviderExtensionsKt.getString(cursor, NAME);
-                                }
-                            }, null, null);
-                        }
-                        int loggingState = serviceManager.getLoggingState();
-                        Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
-                        didConnectToService(trackUri, name, loggingState);
+                    long trackId = serviceManager.getTrackId();
+                    Uri trackUri = null;
+                    String name = null;
+                    if (trackId > 0) {
+                        trackUri = TrackUriExtensionKt.trackUri(trackId);
+                        name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
+                            @Override
+                            public String invoke(Cursor cursor) {
+                                return ContentProviderExtensionsKt.getString(cursor, NAME);
+                            }
+                        }, null, null);
                     }
+                    int loggingState = serviceManager.getLoggingState();
+                    Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
+                    didConnectToService(trackUri, name, loggingState);
                 }
             }
         });
@@ -108,14 +106,12 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
         unregisterReceiver();
         loggingStateReceiver = new LoggerStateReceiver();
         Context context = getContext();
-        if (context != null) {
-            context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
-        }
+        context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
     }
 
     private void unregisterReceiver() {
         Context context = getContext();
-        if (context != null && loggingStateReceiver != null) {
+        if (loggingStateReceiver != null) {
             context.unregisterReceiver(loggingStateReceiver);
             loggingStateReceiver = null;
         }
@@ -126,6 +122,7 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     }
 
     public abstract void didChangeLoggingState(@Nullable Uri trackUri, @Nullable String name, int loggingState);
+
     public abstract void didConnectToService(@Nullable Uri trackUri, @Nullable String name, int loggingState);
 
     private class LoggerStateReceiver extends BroadcastReceiver {

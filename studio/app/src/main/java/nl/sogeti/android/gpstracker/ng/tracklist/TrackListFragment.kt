@@ -39,6 +39,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
 import timber.log.Timber
@@ -47,18 +48,17 @@ import timber.log.Timber
  * Sets up display and selection of tracks in a list style
  */
 class TrackListFragment : Fragment(), TrackListViewModel.View {
-    private val viewModel = TrackListViewModel()
 
+    private val viewModel = TrackListViewModel()
     private val trackListPresenter = TrackListPresenter(viewModel, this)
     private var permissionRequester = PermissionRequester()
-    companion object {
+    private var binding: FragmentTracklistBinding? = null
 
+    companion object {
         fun newInstance(): TrackListFragment {
             return TrackListFragment()
         }
     }
-
-    private var binding: FragmentTracklistBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
@@ -114,7 +114,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     }
 
     override fun moveToPosition(postion: Int) {
-        binding?.listview?.layoutManager?.scrollToPosition(postion)
+        executeOnUiThread { binding?.listview?.layoutManager?.scrollToPosition(postion) }
     }
 
     //endregion

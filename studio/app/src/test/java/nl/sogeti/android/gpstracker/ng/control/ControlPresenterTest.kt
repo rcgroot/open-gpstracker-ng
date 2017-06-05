@@ -71,17 +71,18 @@ class ControlPresenterTest {
     fun setup() {
         viewModel = ControlViewModel()
         sut = ControlPresenter(viewModel)
-        sut.context = context
         sut.setServiceManager(serviceManager)
         sut.asyncExecutor = Executor { it.run() }
         sut.nameGenerator = nameGenerator
         `when`(nameGenerator.generateName(any(), any())).thenReturn("Name")
         `when`(context.contentResolver).thenReturn(resolver)
+        sut.start(context)
     }
 
     @Test
     fun leftClickDuringUnknown() {
         // Arrange
+        reset(serviceManager)
         viewModel.state.set(STATE_UNKNOWN)
 
         // Act
@@ -94,6 +95,7 @@ class ControlPresenterTest {
     @Test
     fun leftClickDuringStopped() {
         // Arrange
+        reset(serviceManager)
         viewModel.state.set(STATE_STOPPED)
 
         // Act
@@ -130,6 +132,7 @@ class ControlPresenterTest {
     @Test
     fun rightClickDuringUnknown() {
         // Arrange
+        reset(serviceManager)
         viewModel.state.set(STATE_UNKNOWN)
 
         // Act

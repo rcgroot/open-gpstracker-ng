@@ -47,7 +47,6 @@ class TrackPresenterTest {
     fun setUp() {
         viewModel = TrackViewModel()
         sut = TrackPresenter(viewModel, view)
-        sut.context = context
         `when`(trackSelection.trackUri).thenReturn(trackUri)
         `when`(trackSelection.trackName).thenReturn("selected")
         sut.trackSelection = trackSelection
@@ -58,7 +57,7 @@ class TrackPresenterTest {
     @Test
     fun didStart() {
         // Act
-        sut.didStart()
+        sut.start(context)
         // Assert
         verify(trackSelection).addListener(sut)
     }
@@ -66,7 +65,7 @@ class TrackPresenterTest {
     @Test
     fun willStop() {
         // Arrange
-        sut.didStart()
+        sut.start(context)
         // Act
         sut.willStop()
         // Assert
@@ -103,6 +102,7 @@ class TrackPresenterTest {
     @Test
     fun testContentChange() {
         // Arrange
+        sut.start(context)
         val cursor = mock(Cursor::class.java)
         `when`(cursor.moveToFirst()).thenReturn(true)
         `when`(cursor.getColumnIndex(any())).thenReturn(1)

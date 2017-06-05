@@ -31,8 +31,8 @@ package nl.sogeti.android.gpstracker.ng.graphs
 import android.databinding.ObservableField
 import android.net.Uri
 
-class GraphsViewModel(uri: Uri) {
-    val trackUri = ObservableField<Uri>(uri)
+class GraphsViewModel {
+    val trackUri = ObservableField<Uri?>(null)
     val distance = ObservableField<String>("-")
     val time = ObservableField<String>("-")
     val speed = ObservableField<String>("-")

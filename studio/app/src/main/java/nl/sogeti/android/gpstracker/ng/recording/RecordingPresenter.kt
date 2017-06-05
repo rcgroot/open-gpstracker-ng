@@ -139,7 +139,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     //region Private
 
     private fun startContentUpdates() {
-        contentController = contentControllerFactory.createContentController(context!!, this)
+        contentController = contentControllerFactory.createContentController(context, this)
         contentController?.registerObserver(viewModel.trackUri.get())
     }
 
@@ -150,7 +150,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     private fun startGpsUpdates() {
         if (gpsStatusController == null) {
-            gpsStatusController = gpsStatusControllerFactory.createGpsStatusController(context!!, this)
+            gpsStatusController = gpsStatusControllerFactory.createGpsStatusController(context, this)
             gpsStatusController?.startUpdates()
         }
     }
@@ -167,7 +167,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             if (name != null) {
                 viewModel.name.set(name)
             } else {
-                context?.let { viewModel.name.set(trackUri?.readName(it)) }
+                viewModel.name.set(trackUri?.readName(context))
             }
         }
 
@@ -182,9 +182,9 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             stopGpsUpdates()
         }
         when (loggingState) {
-            STATE_LOGGING -> viewModel.state.set(context?.getString(R.string.state_logging))
-            STATE_PAUSED -> viewModel.state.set(context?.getString(R.string.state_paused))
-            STATE_STOPPED -> viewModel.state.set(context?.getString(R.string.state_stopped))
+            STATE_LOGGING -> viewModel.state.set(context.getString(R.string.state_logging))
+            STATE_PAUSED -> viewModel.state.set(context.getString(R.string.state_paused))
+            STATE_STOPPED -> viewModel.state.set(context.getString(R.string.state_stopped))
         }
     }
 

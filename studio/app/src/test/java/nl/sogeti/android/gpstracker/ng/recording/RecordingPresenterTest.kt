@@ -57,7 +57,6 @@ class RecordingPresenterTest {
         viewModel = RecordingViewModel(uri)
         sut = RecordingPresenter(viewModel)
         sut.serviceManager = serviceManager
-        sut.context = context
         `when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
         sut.contentControllerFactory = contentControllerFactory
         `when`(gpsStatusControllerFactory.createGpsStatusController(any(), any())).thenReturn(gpsStatusController)
@@ -67,6 +66,7 @@ class RecordingPresenterTest {
     @Test
     fun testStop() {
         // Arrange
+        sut.start(context)
         sut.didConnectToService(trackUri, "mockTrack", ServiceConstants.STATE_LOGGING)
         // Act
         sut.willStop()
@@ -77,6 +77,8 @@ class RecordingPresenterTest {
 
     @Test
     fun testConnectToLoggingService() {
+        // Arrange
+        sut.start(context)
         // Act
         sut.didConnectToService(uri, "mockTrack", ServiceConstants.STATE_LOGGING)
         // Assert
@@ -87,6 +89,8 @@ class RecordingPresenterTest {
 
     @Test
     fun testConnectToPauseService() {
+        // Arrange
+        sut.start(context)
         // Act
         sut.didConnectToService(uri, "paused", ServiceConstants.STATE_PAUSED)
         // Assert
@@ -97,6 +101,8 @@ class RecordingPresenterTest {
 
     @Test
     fun testConnectToStoppedService() {
+        // Arrange
+        sut.start(context)
         // Act
         sut.didConnectToService(uri, "stopped", ServiceConstants.STATE_STOPPED)
         // Assert
@@ -107,6 +113,8 @@ class RecordingPresenterTest {
 
     @Test
     fun testChangeToLoggingService() {
+        // Arrange
+        sut.start(context)
         // Act
         sut.didChangeLoggingState(uri, "mockTrack", ServiceConstants.STATE_STOPPED)
         // Assert

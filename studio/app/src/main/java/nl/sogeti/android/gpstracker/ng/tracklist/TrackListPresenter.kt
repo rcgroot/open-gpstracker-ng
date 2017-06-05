@@ -67,7 +67,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didStart() {
         trackSelection.addListener(this)
-        contentController = contentControllerFactory.createContentController(context!!, this)
+        contentController = contentControllerFactory.createContentController(context, this)
         contentController?.registerObserver(tracksUri())
         summaryManager.start()
         addTracksToModel()
@@ -89,7 +89,6 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     /* Content retrieval */
 
     private fun addTracksToModel() {
-        val context = this.context ?: return
         executor.execute {
             val trackList = tracksUri().map(context, {
                 val id = it.getLong(ContentConstants.Tracks._ID)!!
@@ -114,7 +113,6 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didShareTrack(track: Uri) {
-        val context = context ?: return
         val shareIntent = shareIntentFactory.createShareIntent(track)
         view.showIntentChooser(shareIntent, context.getText(R.string.track_share))
     }

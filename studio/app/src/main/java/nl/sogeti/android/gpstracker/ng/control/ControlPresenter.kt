@@ -80,8 +80,6 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     //region View callback
 
     fun onClickLeft() {
-        val context = context?: return
-
         disableUntilChange(200)
         if (viewModel.state.get() == STATE_LOGGING) {
             stopLogging(context)
@@ -91,8 +89,6 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     }
 
     fun onClickRight() {
-        val context = context?: return
-
         disableUntilChange(200)
         if (viewModel.state.get() == STATE_STOPPED) {
             startLogging(context)
@@ -116,8 +112,6 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     }
 
     private fun checkForInitialName(trackUri: Uri) {
-        val context = context ?: return
-
         val name = trackUri.readName(context)
         if ( name == context.getString(R.string.initial_track_name) ) {
             val trackUri = trackUri(serviceManager.trackId)

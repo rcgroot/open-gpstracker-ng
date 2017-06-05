@@ -5,11 +5,17 @@ import timber.log.Timber
 
 
 abstract class ContextedPresenter {
-    var context: Context? = null
+    private var _context: Context? = null
+    val context: Context
+    get() {
+        return _context ?: throw IllegalStateException("Don't run the presenter outside its started state")
+    }
+    val isStarted: Boolean = _context != null
+
 
     fun start(context: Context) {
-        if (this.context == null) {
-            this.context = context
+        if (this._context == null) {
+            this._context = context
             didStart()
         } else {
             Timber.e("Starting already running presenter, ignoring call")
@@ -17,9 +23,9 @@ abstract class ContextedPresenter {
     }
 
     fun stop() {
-        if (context != null) {
+        if (_context != null) {
             willStop()
-            context = null
+            _context = null
         } else {
             Timber.e("Stopping not running running presenter, ignoring call")
         }

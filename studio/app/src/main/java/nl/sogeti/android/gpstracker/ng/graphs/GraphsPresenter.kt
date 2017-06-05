@@ -28,31 +28,63 @@
  */
 package nl.sogeti.android.gpstracker.ng.graphs
 
+import android.databinding.ObservableField
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
 
-class GraphsPresenter(val uri: Uri) : ContextedPresenter() {
+class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
 
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
     lateinit var calculator: SummaryCalculator
-    val viewModel: GraphsViewModel
+    val viewModel = GraphsViewModel()
+    @Inject
+    lateinit var trackSelection: TrackSelection
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
-        viewModel = GraphsViewModel(uri)
     }
 
     override fun didStart() {
-        val context = context ?: return
+        trackSelection.addListener(this)
         summaryManager.start()
-        summaryManager.collectSummaryInfo(context, uri) {
+        val trackUri = trackSelection.trackUri
+        if (trackUri != null) {
+            setTrack(trackUri)
+        }
+    }
+
+    override fun willStop() {
+        trackSelection.removeListener(this)
+        summaryManager.stop()
+    }
+
+    //region TrackSelection.Listener
+
+    override fun onTrackSelection(trackUri: Uri, name: String) {
+        setTrack(trackUri)
+    }
+
+    //endregion
+
+    private fun setTrack(trackUri: Uri) {
+        viewModel.trackUri.set(trackUri)
+        viewModel.distance.set("-")
+        viewModel.time.set("-")
+        viewModel.speed.set("-")
+        viewModel.waypoints.set("-")
+        viewModel.startDate.set("-")
+        viewModel.startTime.set("-")
+        viewModel.total.set("-")
+        viewModel.paused.set("-")
+        summaryManager.collectSummaryInfo(context, trackUri) {
             viewModel.waypoints.set(it.count.toString())
 
             var speed = context.getString(R.string.row_distance_default)
@@ -89,10 +121,6 @@ class GraphsPresenter(val uri: Uri) : ContextedPresenter() {
             viewModel.startDate.set(calculator.convertTimestampToDate(context, it.startTimestamp))
             viewModel.startTime.set(calculator.convertTimestampToTime(context, it.startTimestamp))
         }
-    }
-
-    override fun willStop() {
-        summaryManager.stop()
     }
 
 }

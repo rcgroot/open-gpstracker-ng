@@ -30,16 +30,10 @@ package nl.sogeti.android.gpstracker.ng.trackdelete
 
 import android.content.Context
 import android.net.Uri
-import android.view.View
-import android.widget.AdapterView
-import android.widget.AdapterView.INVALID_POSITION
-import android.widget.ImageView
-import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.readName
-import nl.sogeti.android.gpstracker.ng.utils.updateName
 import javax.inject.Inject
 
 class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteModel.View) : ContextedPresenter() {
@@ -53,7 +47,7 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
 
     override fun didStart() {
         val trackUri = model.trackUri.get()
-        loadTrackName(context!!, trackUri)
+        loadTrackName(context, trackUri)
     }
 
     override fun willStop() {
@@ -61,9 +55,7 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
 
     fun ok() {
         val trackUri = model.trackUri.get()
-        context?.let {
-            deleteTrack(it, trackUri)
-        }
+        deleteTrack(context, trackUri)
         summaryManager.removeFromCache(trackUri)
         view.dismiss()
     }

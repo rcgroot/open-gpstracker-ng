@@ -174,9 +174,9 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     public void showGraphs(Uri trackUri) {
         View leftContainer = findViewById(R.id.track_leftcontainer);
         if (leftContainer != null && leftContainer instanceof ViewGroup) {
-            toggleContainerFragment(GraphsFragment.Companion.newInstance(trackUri), TRANSACTION_GRAPHS);
+            toggleContainerFragment(GraphsFragment.Companion.newInstance(), TRANSACTION_GRAPHS);
         } else {
-            GraphsActivity.Companion.start(this, trackUri);
+            GraphsActivity.Companion.start(this);
         }
     }
 
