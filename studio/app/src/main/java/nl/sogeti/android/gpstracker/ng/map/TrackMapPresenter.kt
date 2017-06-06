@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.track.map
+package nl.sogeti.android.gpstracker.ng.map
 
 import android.net.Uri
 import android.provider.BaseColumns
@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServic
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 

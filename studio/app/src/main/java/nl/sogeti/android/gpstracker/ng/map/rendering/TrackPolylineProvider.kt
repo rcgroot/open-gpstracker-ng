@@ -26,17 +26,50 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.track.map
+package nl.sogeti.android.gpstracker.ng.map.rendering
 
-import android.databinding.ObservableField
-import android.net.Uri
+import android.graphics.Color
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
 
-class TrackMapViewModel {
-    val trackUri: ObservableField<Uri?> = ObservableField(null)
-    val name: ObservableField<String> = ObservableField("")
-    val waypoints = ObservableField<List<List<LatLng>>?>(null)
-    val completeBounds = ObservableField<LatLngBounds?>(null)
-    val trackHead = ObservableField<LatLng?>(null)
+class TrackPolylineProvider(val waypoints: List<List<LatLng>>) {
+
+    val lineOptions by lazy { drawPolylines() }
+
+    private val LINE_SEGMENTS = 150
+
+    private fun drawPolylines(): List<PolylineOptions> {
+        val points = waypoints.filter { it.size >= 2 }
+        val distribution = distribute(points)
+        val lineOptions = mutableListOf<PolylineOptions>()
+        for (i in points.indices) {
+            val options = PolylineOptions()
+                    .width(5f)
+                    .color(Color.RED)
+            fillLine(points[i], options, distribution[i])
+            lineOptions.add(options)
+        }
+
+        return lineOptions
+    }
+
+    private fun distribute(points: List<List<LatLng>>): List<Int> {
+        val distribution = mutableListOf<Int>()
+        val total = points.fold(0, { count, list -> count + list.size })
+        points.forEach { distribution.add((LINE_SEGMENTS * it.size) / total) }
+
+        return distribution
+    }
+
+    private fun fillLine(points: List<LatLng>, options: PolylineOptions, goal: Int) {
+        options.add(points.first())
+        if (goal > 0) {
+            val initialStep = points.size / goal
+            val step = Math.max(1, initialStep)
+            for (i in step..points.size - 1 step step) {
+                options.add(points[i])
+            }
+        }
+        options.add(points.last())
+    }
 }

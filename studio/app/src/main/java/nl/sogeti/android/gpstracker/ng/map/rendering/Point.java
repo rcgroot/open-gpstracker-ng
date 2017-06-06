@@ -26,63 +26,24 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.track.map.rendering;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
-import junit.framework.Assert;
+class Point {
+    double x, y;
 
-import org.junit.Test;
-
-public class PointTest {
-
-    @Test
-    public void testDistancePositiveRight() {
-        // Setup
-        Point a = new Point(10, 10);
-        Point b = new Point(12, 12);
-
-        // Execute
-        double distanceSquared = a.squaredDistanceTo(b);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    Point() {
     }
 
-    @Test
-    public void testDistancePositiveLeft() {
-        // Setup
-        Point a = new Point(10, 10);
-        Point b = new Point(12, 12);
-
-        // Execute
-        double distanceSquared = b.squaredDistanceTo(a);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    Point(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    @Test
-    public void testDistanceNegativeRight() {
-        // Setup
-        Point a = new Point(-1, -1);
-        Point b = new Point(1, 1);
-
-        // Execute
-        double distanceSquared = a.squaredDistanceTo(b);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    Point(Point previous) {
+        this(previous.x, previous.y);
     }
 
-    @Test
-    public void testDistanceNegativeLeft() {
-        // Setup
-        Point a = new Point(1, 1);
-        Point b = new Point(-1, -1);
-
-        // Execute
-        double distanceSquared = b.squaredDistanceTo(a);
-
-        // Verify
-        Assert.assertEquals(4, distanceSquared, 0.000001);
+    double squaredDistanceTo(Point other) {
+        return Math.abs(x - other.x) + Math.abs(y - other.y);
     }
 }

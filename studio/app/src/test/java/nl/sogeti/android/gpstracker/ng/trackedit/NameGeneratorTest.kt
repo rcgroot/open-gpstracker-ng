@@ -1,9 +1,8 @@
 package nl.sogeti.android.gpstracker.ng.trackedit
 
 import android.content.Context
-import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.ng.rules.any
-import nl.sogeti.android.gpstracker.ng.track.map.LocationFactory
+import nl.sogeti.android.gpstracker.ng.map.LocationFactory
 import nl.sogeti.android.gpstracker.v2.R
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

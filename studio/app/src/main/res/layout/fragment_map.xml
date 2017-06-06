@@ -7,11 +7,11 @@
 
         <variable
             name="presenter"
-            type="nl.sogeti.android.gpstracker.ng.track.map.TrackMapPresenter" />
+            type="nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter" />
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.ng.track.map.TrackMapViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.map.TrackMapViewModel" />
 
     </data>
 

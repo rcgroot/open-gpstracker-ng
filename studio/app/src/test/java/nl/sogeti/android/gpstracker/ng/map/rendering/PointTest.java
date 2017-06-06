@@ -26,47 +26,63 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.utils
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
-import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
+import junit.framework.Assert;
 
-class DefaultResultHandler : ResultHandler {
-    private val segmentsBuilder = mutableListOf<MutableList<Waypoint>>()
-    private var boundsBuilder: LatLngBounds.Builder? = null
+import org.junit.Test;
 
-    var uri: Uri? = null
-    var name: String? = null
-    val bounds: LatLngBounds by lazy {
-        val builder = boundsBuilder
-        if (builder != null) {
-            builder.build()
-        } else {
-            LatLngBounds(LatLng(0.0, 0.0), LatLng(50.0, 5.0))
-        }
-    }
-    val waypoints: List<List<Waypoint>> by lazy {
-        segmentsBuilder
-        segmentsBuilder.filter {
-            it.count() >= 1
-        }
+public class PointTest {
+
+    @Test
+    public void testDistancePositiveRight() {
+        // Setup
+        Point a = new Point(10, 10);
+        Point b = new Point(12, 12);
+
+        // Execute
+        double distanceSquared = a.squaredDistanceTo(b);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 
-    override fun setTrack(uri: Uri, name: String) {
-        this.uri = uri
-        this.name = name
+    @Test
+    public void testDistancePositiveLeft() {
+        // Setup
+        Point a = new Point(10, 10);
+        Point b = new Point(12, 12);
+
+        // Execute
+        double distanceSquared = b.squaredDistanceTo(a);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 
-    override fun addSegment() {
-        segmentsBuilder.add(mutableListOf<Waypoint>())
+    @Test
+    public void testDistanceNegativeRight() {
+        // Setup
+        Point a = new Point(-1, -1);
+        Point b = new Point(1, 1);
+
+        // Execute
+        double distanceSquared = a.squaredDistanceTo(b);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 
-    override fun addWaypoint(waypoint: Waypoint) {
-        // Add each waypoint to the end of the last list of points (the current segment)
-        segmentsBuilder.last().add(waypoint)
-        // Build a bounds for the whole track
-        boundsBuilder = boundsBuilder ?: LatLngBounds.Builder()
-        boundsBuilder?.include(waypoint.latLng)
+    @Test
+    public void testDistanceNegativeLeft() {
+        // Setup
+        Point a = new Point(1, 1);
+        Point b = new Point(-1, -1);
+
+        // Execute
+        double distanceSquared = b.squaredDistanceTo(a);
+
+        // Verify
+        Assert.assertEquals(4, distanceSquared, 0.000001);
     }
 }

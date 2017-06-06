@@ -27,7 +27,7 @@
 
         <fragment
             android:id="@+id/fragment_map"
-            android:name="nl.sogeti.android.gpstracker.ng.track.map.TrackMapFragment"
+            android:name="nl.sogeti.android.gpstracker.ng.map.TrackMapFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar"

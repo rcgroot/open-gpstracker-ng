@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.track.map.rendering;
+package nl.sogeti.android.gpstracker.ng.map.rendering;
 
 import android.content.Context;
 import android.databinding.Observable;

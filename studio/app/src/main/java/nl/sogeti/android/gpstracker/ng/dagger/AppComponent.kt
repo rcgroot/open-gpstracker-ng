@@ -35,7 +35,7 @@ import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
-import nl.sogeti.android.gpstracker.ng.track.map.TrackMapPresenter
+import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeletePresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter

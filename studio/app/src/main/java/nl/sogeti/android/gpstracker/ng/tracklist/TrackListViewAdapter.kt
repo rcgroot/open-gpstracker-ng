@@ -37,7 +37,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
-import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackPolylineProvider
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.append

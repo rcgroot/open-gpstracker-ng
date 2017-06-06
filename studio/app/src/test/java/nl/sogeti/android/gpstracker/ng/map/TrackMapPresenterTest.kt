@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.track.map
+package nl.sogeti.android.gpstracker.ng.map
 
 import android.content.ContentResolver
 import android.content.Context
@@ -39,8 +39,8 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any
-import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProvider
-import nl.sogeti.android.gpstracker.ng.track.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProvider
+import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
