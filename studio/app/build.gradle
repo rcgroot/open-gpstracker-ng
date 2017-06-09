@@ -89,6 +89,7 @@ configurations.all {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':integration')
+    compile project(':widgets')
 //    wearApp project(':wear')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"

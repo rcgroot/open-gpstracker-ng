@@ -143,7 +143,8 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         summaryManager.collectSummaryInfo(context, viewModel.uri, {
             if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
-                viewModel.waypoints.set(it.waypoints)
+                val listOfLatLngs = it.waypoints.map { it.map { it.latLng } }
+                viewModel.waypoints.set(listOfLatLngs)
                 val trackPolylineProvider = TrackPolylineProvider(viewModel.waypoints.get())
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
                 viewModel.iconType.set(it.type)

@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.graphs
 
-import android.databinding.ObservableField
 import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
@@ -121,6 +121,10 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
             viewModel.startDate.set(calculator.convertTimestampToDate(context, it.startTimestamp))
             viewModel.startTime.set(calculator.convertTimestampToTime(context, it.startTimestamp))
         }
+    }
+
+    private fun calculateSpeedGraph(waypoints: List<List<LatLng>>) {
+
     }
 
 }

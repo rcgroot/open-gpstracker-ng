@@ -59,7 +59,6 @@ class SummaryCalculator {
         // Calculate
         val handler = DefaultResultHandler()
         trackUri.readTrack(context, handler)
-        val listOfLatLngs = handler.waypoints.map { it.map { it.latLng } }
         val startTimestamp = handler.waypoints.firstOrNull()?.firstOrNull()?.time ?: 0L
         val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
         data class Data(val meter: Float, val time: Long)
@@ -85,7 +84,7 @@ class SummaryCalculator {
         // Return value
         val summary = Summary(trackUri = trackUri, name = name, type = trackType.drawableId,
                 startTimestamp = startTimestamp, stopTimestamp = endTimestamp,
-                trackedPeriod = sum.time, distance = sum.meter, bounds = handler.bounds, waypoints = listOfLatLngs)
+                trackedPeriod = sum.time, distance = sum.meter, bounds = handler.bounds, waypoints = handler.waypoints)
 
         return summary
     }

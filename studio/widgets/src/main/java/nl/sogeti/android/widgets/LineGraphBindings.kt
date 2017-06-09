@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,21 +26,42 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.graphs
+package nl.sogeti.android.widgets;
 
-import android.databinding.ObservableField
-import android.graphics.Point
-import android.net.Uri
+import android.databinding.BindingAdapter;
+import android.graphics.Color
+import android.graphics.Point;
+import android.support.annotation.ColorInt
 
-class GraphsViewModel {
-    val trackUri = ObservableField<Uri?>(null)
-    val distance = ObservableField<String>("-")
-    val time = ObservableField<String>("-")
-    val speed = ObservableField<String>("-")
-    val waypoints = ObservableField<String>("-")
-    val startDate = ObservableField<String>("-")
-    val startTime = ObservableField<String>("-")
-    val total = ObservableField<String>("-")
-    val paused = ObservableField<String>("-")
-    val speedAtTimeData = ObservableField<List<Point>>(emptyList<Point>())
+class LineGraphBindings {
+
+    @BindingAdapter("xUnit")
+    fun setXUnit(view: LineGraph, xUnit: String?) {
+        view.xUnit = xUnit ?: ""
+    }
+
+    @BindingAdapter("yUnit")
+    fun setYUnit(view: LineGraph, yUnit: String?) {
+        view.yUnit = yUnit ?: ""
+    }
+
+    @BindingAdapter("data")
+    fun setBitmap(view: LineGraph, data: List<Point>?) {
+        view.data = data ?: emptyList()
+    }
+
+    @BindingAdapter("topGradient")
+    fun setTopGradient(view: LineGraph, @ColorInt color: Int?) {
+        view.topGradientColor = color ?: Color.TRANSPARENT
+    }
+
+    @BindingAdapter("bottomGradient")
+    fun setBottomGradient(view: LineGraph, @ColorInt color: Int?) {
+        view.bottomGradientColor = color ?: Color.TRANSPARENT
+    }
+
+    @BindingAdapter("lineColor")
+    fun setLineColor(view: LineGraph, @ColorInt color: Int?) {
+        view.lineColor = color ?: Color.TRANSPARENT
+    }
 }

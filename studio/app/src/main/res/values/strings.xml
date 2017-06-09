@@ -117,5 +117,6 @@
     <string name="graph_label_points">Points</string>
     <string name="graph_label_speed">Speed</string>
     <string name="graph_label_time">Time</string>
+    <string name="graph_label_altitude">Altitude</string>
 
 </resources>

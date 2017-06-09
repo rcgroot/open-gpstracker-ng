@@ -29,8 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.tracklist.summary
 
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 
 data class Summary(val trackUri: Uri,
                    val name: String,
@@ -40,7 +40,7 @@ data class Summary(val trackUri: Uri,
                    val trackedPeriod: Long,
                    val distance: Float,
                    val bounds: LatLngBounds,
-                   val waypoints: List<List<LatLng>>) {
+                   val waypoints: List<List<Waypoint>>) {
     val count: Int
         get() = waypoints.fold(0, { count, list -> count + list.size })
 }
