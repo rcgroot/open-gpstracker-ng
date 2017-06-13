@@ -1,8 +1,8 @@
 ext {
     // Building
     buildToolsVersion = '25.0.3'
-    gradlePluginVersion = '2.3.2'
-    dataBindingVersion = '2.3.2'
+    gradlePluginVersion = '2.3.3'
+    dataBindingVersion = '2.3.3'
 
     // App support
     supportLibraryVersion = '25.3.1'
@@ -11,14 +11,14 @@ ext {
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
-    playServicesVersion = '10.2.6'
+    playServicesVersion = '11.0.0'
     googleServicesVersion = '3.0.0'
 
     // Testing
     leakcanaryVersion = '1.5'
     jacocoVersion = '0.7.9'
     junitVersion = '4.12'
-    mockitoVersion = '2.7.22'
+    mockitoVersion = '2.8.9'
     testRunnerVersion = '0.5'
     robolectricVersion = '3.3.1'
     espressoVersion = '2.2.2'
