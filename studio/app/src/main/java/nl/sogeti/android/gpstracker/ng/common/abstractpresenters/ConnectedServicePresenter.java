@@ -34,6 +34,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -70,30 +72,39 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
     @Override
     public void didStart() {
+        registerReceiver();
         serviceManager.startup(getContext(), new Runnable() {
             @Override
             public void run() {
                 synchronized (ConnectedServicePresenter.this) {
-                    Context context = ConnectedServicePresenter.this.getContext();
-                    long trackId = serviceManager.getTrackId();
-                    Uri trackUri = null;
-                    String name = null;
-                    if (trackId > 0) {
-                        trackUri = TrackUriExtensionKt.trackUri(trackId);
-                        name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
-                            @Override
-                            public String invoke(Cursor cursor) {
-                                return ContentProviderExtensionsKt.getString(cursor, NAME);
+                    new Handler(Looper.getMainLooper()).post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (isStarted()) {
+                                        Context context = ConnectedServicePresenter.this.getContext();
+                                        long trackId = serviceManager.getTrackId();
+                                        Uri trackUri = null;
+                                        String name = null;
+                                        if (trackId > 0) {
+                                            trackUri = TrackUriExtensionKt.trackUri(trackId);
+                                            name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
+                                                @Override
+                                                public String invoke(Cursor cursor) {
+                                                    return ContentProviderExtensionsKt.getString(cursor, NAME);
+                                                }
+                                            }, null, null);
+                                        }
+                                        int loggingState = serviceManager.getLoggingState();
+                                        Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
+                                        didConnectToService(trackUri, name, loggingState);
+                                    }
+                                }
                             }
-                        }, null, null);
-                    }
-                    int loggingState = serviceManager.getLoggingState();
-                    Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
-                    didConnectToService(trackUri, name, loggingState);
+                    );
                 }
             }
         });
-        registerReceiver();
     }
 
     @Override

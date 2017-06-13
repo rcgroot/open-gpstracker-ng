@@ -7,11 +7,11 @@ import timber.log.Timber
 abstract class ContextedPresenter {
     private var _context: Context? = null
     val context: Context
-    get() {
-        return _context ?: throw IllegalStateException("Don't run the presenter outside its started state")
-    }
-    val isStarted: Boolean = _context != null
-
+        get() {
+            return _context ?: throw IllegalStateException("Don't run the presenter outside its started state")
+        }
+    val isStarted: Boolean
+        get() = _context != null
 
     fun start(context: Context) {
         if (this._context == null) {
