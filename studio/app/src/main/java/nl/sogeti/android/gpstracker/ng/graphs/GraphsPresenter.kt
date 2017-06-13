@@ -28,14 +28,16 @@
  */
 package nl.sogeti.android.gpstracker.ng.graphs
 
+import android.graphics.PointF
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.widgets.GraphPoint
 import javax.inject.Inject
 
 class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
@@ -120,11 +122,67 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
 
             viewModel.startDate.set(calculator.convertTimestampToDate(context, it.startTimestamp))
             viewModel.startTime.set(calculator.convertTimestampToTime(context, it.startTimestamp))
+
+            viewModel.speedAtTimeData.set(calculateSpeedGraph(it.waypoints, it.startTimestamp, it.stopTimestamp))
         }
     }
 
-    private fun calculateSpeedGraph(waypoints: List<List<LatLng>>) {
+    private fun calculateSpeedGraph(waypoints: List<List<Waypoint>>, start: Long, stop: Long): List<GraphPoint> {
+        val list = mutableListOf<GraphPoint>()
+        val slots = 500
+        val slotSize = (stop - start) / slots
+        waypoints.forEach {
+            list.add(GraphPoint((it.first().time - start).toFloat(), 0f))
+            val points = calculateSpeedGraphSegment(it, start, slotSize)
+            list.addAll(points)
+        }
 
+        return list
     }
 
+    fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long, slotSize: Long): List<GraphPoint> {
+        val list = mutableListOf<GraphPoint>()
+        var duration = 0f
+        var distance = 0f
+        var time = 0f
+
+        data class Delta(val time: Float, val duration: Long, val distance: Float)
+
+        val outArray = floatArrayOf(0.0F)
+        val deltas = waypoints.forDelta { first, second ->
+            val duration = second.time - first.time
+            val distance = calculator.distance(first, second, outArray)
+            Delta((second.time - start).toFloat(), duration, distance)
+        }
+        deltas.forEach {
+            if (duration < slotSize) {
+                duration += it.duration
+                distance += it.distance
+                time = it.time
+            } else {
+                val x = time
+                val y = distance / duration
+                list.add(GraphPoint(x, y))
+                duration = 0f
+                distance = 0f
+            }
+        }
+
+        if (duration != 0f) {
+            val x = time
+            val y = distance / duration
+            list.add(GraphPoint(x, y))
+        }
+
+        return list
+    }
+
+    inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
+        val list = mutableListOf<R>()
+        for (i in 0..this.count() - 2) {
+            list.add(0, delta(this[i], this[i + 1]))
+        }
+
+        return list
+    }
 }

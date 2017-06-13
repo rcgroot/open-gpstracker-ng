@@ -25,10 +25,11 @@
             <nl.sogeti.android.widgets.LineGraph
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
-                android:background="@color/cardview_dark_background"
+                android:background="@color/primary_light"
                 app:data="@{viewModel.speedAtTimeData}"
-                app:xUnit="@{@string/graph_label_time}"
-                app:yUnit="@{@string/graph_label_speed}" />
+                app:line_color="@color/primary_text"
+                app:x_unit="@string/graph_label_time"
+                app:y_unit="@string/graph_label_speed" />
 
             <nl.sogeti.android.widgets.LineGraph
                 android:layout_width="match_parent"

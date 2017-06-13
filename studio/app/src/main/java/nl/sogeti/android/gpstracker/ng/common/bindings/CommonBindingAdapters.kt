@@ -48,8 +48,15 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.widgets.GraphPoint
+import nl.sogeti.android.widgets.LineGraph
 
 open class CommonBindingAdapters {
+
+    @BindingAdapter("data")
+    fun setData(view: LineGraph, data: List<GraphPoint>?) {
+        view.data = data ?: emptyList()
+    }
 
     @BindingAdapter("hitPadding")
     fun setHitRectPadding(view: View, padding: Float) {

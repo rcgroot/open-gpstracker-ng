@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LineGraphStyle">
+        <attr name="x_unit" format="string"/>
+        <attr name="y_unit" format="string"/>
+        <attr name="top_gradient" format="color"/>
+        <attr name="bottom_gradient" format="color"/>
+        <attr name="line_color" format="color"/>
+    </declare-styleable>
+</resources>

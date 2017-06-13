@@ -70,7 +70,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
 
         if (trackUri != null && loggingState == STATE_LOGGING) {
             asyncExecutor.execute {
-                checkForInitialName(trackUri)
+                checkForInitialName(context, trackUri)
             }
         }
     }
@@ -111,7 +111,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         viewModel.enabled.set(true)
     }
 
-    private fun checkForInitialName(trackUri: Uri) {
+    private fun checkForInitialName(context: Context, trackUri: Uri) {
         val name = trackUri.readName(context)
         if ( name == context.getString(R.string.initial_track_name) ) {
             val trackUri = trackUri(serviceManager.trackId)

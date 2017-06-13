@@ -26,42 +26,6 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.widgets;
+package nl.sogeti.android.widgets
 
-import android.databinding.BindingAdapter;
-import android.graphics.Color
-import android.graphics.Point;
-import android.support.annotation.ColorInt
-
-class LineGraphBindings {
-
-    @BindingAdapter("xUnit")
-    fun setXUnit(view: LineGraph, xUnit: String?) {
-        view.xUnit = xUnit ?: ""
-    }
-
-    @BindingAdapter("yUnit")
-    fun setYUnit(view: LineGraph, yUnit: String?) {
-        view.yUnit = yUnit ?: ""
-    }
-
-    @BindingAdapter("data")
-    fun setBitmap(view: LineGraph, data: List<Point>?) {
-        view.data = data ?: emptyList()
-    }
-
-    @BindingAdapter("topGradient")
-    fun setTopGradient(view: LineGraph, @ColorInt color: Int?) {
-        view.topGradientColor = color ?: Color.TRANSPARENT
-    }
-
-    @BindingAdapter("bottomGradient")
-    fun setBottomGradient(view: LineGraph, @ColorInt color: Int?) {
-        view.bottomGradientColor = color ?: Color.TRANSPARENT
-    }
-
-    @BindingAdapter("lineColor")
-    fun setLineColor(view: LineGraph, @ColorInt color: Int?) {
-        view.lineColor = color ?: Color.TRANSPARENT
-    }
-}
+data class GraphPoint(val x: Float, val y: Float)

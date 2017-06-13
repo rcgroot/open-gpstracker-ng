@@ -38,26 +38,33 @@ import timber.log.Timber
 
 class LineGraph : View {
 
-    var xUnit = ""
-    var yUnit = ""
-    @Size(multiple = 2) var data: List<Point> = listOf()
+    @Size(multiple = 2) var data: List<GraphPoint> = listOf()
         set(value) {
             field = value
             cachedPoints = null
+            invalidate()
         }
+    var xUnit = ""
+    var yUnit = ""
     var topGradientColor: Int = Color.DKGRAY
         set(value) {
             field = value
             createLineShader()
+            invalidate()
         }
     var bottomGradientColor = Color.TRANSPARENT
         set(value) {
             field = value
             createLineShader()
+            invalidate()
         }
     var lineColor
         set(value) {
             linePaint.color = value
+            axisPaint.color = value
+            gridPaint.color = value
+            textPaint.color = value
+            invalidate()
         }
         get() = linePaint.color
     private var cachedPoints: List<PointF>? = null
@@ -67,6 +74,7 @@ class LineGraph : View {
     private val linePaint = Paint()
     private val belowLinePaint = Paint()
     private val linePath = Path()
+    private val drawLinePath = Path()
     private var h = 0f
     private var w = 0f
     private var sectionHeight = 0f
@@ -75,15 +83,21 @@ class LineGraph : View {
 
     constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        if (attrs != null) appyStyle(attrs)
+    }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        if (attrs != null) appyStyle(attrs)
+    }
 
     init {
         axisPaint.color = Color.WHITE
         gridPaint.color = Color.WHITE
         gridPaint.style = Paint.Style.STROKE
-        gridPaint.pathEffect = DashPathEffect(floatArrayOf(2f, 2f), 2f)
+        val dash = dp2px(2)
+        gridPaint.pathEffect = DashPathEffect(floatArrayOf(dash, dash), dash)
         textPaint.textSize = dp2px(18)
         textPaint.color = Color.WHITE
         textPaint.isAntiAlias = true
@@ -96,8 +110,21 @@ class LineGraph : View {
         if (true) {
             xUnit = "time"
             yUnit = "speed"
-            data = listOf(Point(1, 12), Point(2, 24), Point(3, 36), Point(4, 23), Point(5, 65), Point(6, 12),
-                    Point(7, 80), Point(8, 65), Point(9, 12))
+            data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 12F),
+                    GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 12F))
+        }
+    }
+
+    fun appyStyle(attrs: AttributeSet) {
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.LineGraphStyle, 0, 0)
+        try {
+            xUnit = ta.getString(R.styleable.LineGraphStyle_x_unit) ?: xUnit
+            yUnit = ta.getString(R.styleable.LineGraphStyle_y_unit) ?: yUnit
+            topGradientColor = ta.getColor(R.styleable.LineGraphStyle_top_gradient, topGradientColor)
+            bottomGradientColor = ta.getColor(R.styleable.LineGraphStyle_bottom_gradient, bottomGradientColor)
+            lineColor= ta.getColor(R.styleable.LineGraphStyle_line_color, lineColor)
+        } finally {
+            ta.recycle()
         }
     }
 
@@ -118,9 +145,10 @@ class LineGraph : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         Timber.d("Drawing on canvas ${canvas.width}x${canvas.height}")
-        drawText(canvas)
-        drawAxis(canvas)
+        drawGrid(canvas)
         drawGraphLine(canvas)
+        drawAxis(canvas)
+        drawText(canvas)
     }
 
     private fun drawGraphLine(canvas: Canvas) {
@@ -144,18 +172,28 @@ class LineGraph : View {
     private fun drawAxis(canvas: Canvas) {
         // X-axis
         canvas.drawLine(unitTextMargin, h - unitTextMargin, w - unitTextMargin, h - unitTextMargin, axisPaint)
-        // Dotted X-axes
-        canvas.drawLine(unitTextMargin, h - unitTextMargin - 1 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 1 * sectionHeight, gridPaint)
-        canvas.drawLine(unitTextMargin, h - unitTextMargin - 2 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 2 * sectionHeight, gridPaint)
-        canvas.drawLine(unitTextMargin, h - unitTextMargin - 3 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 3 * sectionHeight, gridPaint)
-        canvas.drawLine(unitTextMargin, h - unitTextMargin - 4 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 4 * sectionHeight, gridPaint)
         // Y-axis
         canvas.drawLine(unitTextMargin, h - unitTextMargin, unitTextMargin, unitTextMargin, axisPaint)
+    }
+
+    private fun drawGrid(canvas: Canvas) {
+        // Dotted X-axes
+        drawLine(canvas, unitTextMargin, h - unitTextMargin - 1 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 1 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextMargin, h - unitTextMargin - 2 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 2 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextMargin, h - unitTextMargin - 3 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 3 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextMargin, h - unitTextMargin - 4 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 4 * sectionHeight, gridPaint)
         // Dotted Y-axes
-        canvas.drawLine(unitTextMargin + 1 * sectionWidth, h - unitTextMargin, unitTextMargin + 1 * sectionWidth, unitTextMargin, gridPaint)
-        canvas.drawLine(unitTextMargin + 2 * sectionWidth, h - unitTextMargin, unitTextMargin + 2 * sectionWidth, unitTextMargin, gridPaint)
-        canvas.drawLine(unitTextMargin + 3 * sectionWidth, h - unitTextMargin, unitTextMargin + 3 * sectionWidth, unitTextMargin, gridPaint)
-        canvas.drawLine(unitTextMargin + 4 * sectionWidth, h - unitTextMargin, unitTextMargin + 4 * sectionWidth, unitTextMargin, gridPaint)
+        drawLine(canvas, unitTextMargin + 1 * sectionWidth, h - unitTextMargin, unitTextMargin + 1 * sectionWidth, unitTextMargin, gridPaint)
+        drawLine(canvas, unitTextMargin + 2 * sectionWidth, h - unitTextMargin, unitTextMargin + 2 * sectionWidth, unitTextMargin, gridPaint)
+        drawLine(canvas, unitTextMargin + 3 * sectionWidth, h - unitTextMargin, unitTextMargin + 3 * sectionWidth, unitTextMargin, gridPaint)
+        drawLine(canvas, unitTextMargin + 4 * sectionWidth, h - unitTextMargin, unitTextMargin + 4 * sectionWidth, unitTextMargin, gridPaint)
+    }
+
+    private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {
+        drawLinePath.rewind()
+        drawLinePath.moveTo(x, y)
+        drawLinePath.lineTo(x2, y2)
+        canvas.drawPath(drawLinePath, paint)
     }
 
     private fun drawText(canvas: Canvas) {
@@ -169,18 +207,18 @@ class LineGraph : View {
     }
 
     private fun fillePointsCache() {
-        val minY = data.minBy { it.y }?.y ?: 0
-        val maxY = data.maxBy { it.y }?.y ?: 100
+        val minY = data.minBy { it.y }?.y ?: 0f
+        val maxY = data.maxBy { it.y }?.y ?: 100f
         val sorted = data.sortedBy { it.x }
-        val minX = sorted.firstOrNull()?.x ?: 0
-        val maxX = sorted.lastOrNull()?.x ?: 100
-        fun convertDataToPoint(point: Point): PointF {
-            val y = ((point.y - minY).toFloat() / (maxY - minY).toFloat()) * (sectionHeight * 4)
-            val x = ((point.x - minX).toFloat() / (maxX - minX).toFloat()) * (sectionWidth * 4)
-            return PointF(x + unitTextMargin + 1, h - unitTextMargin - y - 1)
+        val minX = sorted.firstOrNull()?.x ?: 0f
+        val maxX = sorted.lastOrNull()?.x ?: 100f
+        fun convertDataToPoint(point: GraphPoint): PointF {
+            val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)
+            val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
+            return PointF(x + unitTextMargin, h - unitTextMargin - y)
         }
 
-        cachedPoints = data.map { convertDataToPoint(it) }
+        cachedPoints = sorted.map { convertDataToPoint(it) }
     }
 
     fun dp2px(dp: Int): Float {

@@ -148,7 +148,7 @@ class MockTracksContentProvider : ContentProvider() {
             val now = Date().time
             for (i in waypoints.indices) {
                 val waypointId = segmentId * 10L + i
-                val time = now - (waypoints.size - i) * 60000
+                val time = now - (waypoints.size - i) * 6_0000
                 addWaypoint(trackId, segmentId, waypointId, waypoints[i].first, waypoints[i].second, time)
             }
         }

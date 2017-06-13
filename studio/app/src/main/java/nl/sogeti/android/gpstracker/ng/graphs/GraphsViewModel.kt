@@ -29,8 +29,9 @@
 package nl.sogeti.android.gpstracker.ng.graphs
 
 import android.databinding.ObservableField
-import android.graphics.Point
+import android.graphics.PointF
 import android.net.Uri
+import nl.sogeti.android.widgets.GraphPoint
 
 class GraphsViewModel {
     val trackUri = ObservableField<Uri?>(null)
@@ -42,5 +43,5 @@ class GraphsViewModel {
     val startTime = ObservableField<String>("-")
     val total = ObservableField<String>("-")
     val paused = ObservableField<String>("-")
-    val speedAtTimeData = ObservableField<List<Point>>(emptyList<Point>())
+    val speedAtTimeData = ObservableField<List<GraphPoint>>(emptyList<GraphPoint>())
 }
