@@ -41,11 +41,24 @@ class LineGraph : View {
     @Size(multiple = 2) var data: List<GraphPoint> = listOf()
         set(value) {
             field = value
-            cachedPoints = null
+            clearCachedPoints()
             invalidate()
         }
     var xUnit = ""
+        set(value) {
+            field = value
+            invalidate()
+        }
+    var description: (GraphPoint) -> Pair<String, String> = { _ -> Pair("", "") }
+        set(value) {
+            field = value
+            invalidate()
+        }
     var yUnit = ""
+        set(value) {
+            field = value
+            invalidate()
+        }
     var topGradientColor: Int = Color.DKGRAY
         set(value) {
             field = value
@@ -64,6 +77,7 @@ class LineGraph : View {
             axisPaint.color = value
             gridPaint.color = value
             textPaint.color = value
+            valueTextPaint.color = value
             invalidate()
         }
         get() = linePaint.color
@@ -71,6 +85,7 @@ class LineGraph : View {
     private val axisPaint = Paint()
     private val gridPaint = Paint()
     private val textPaint = Paint()
+    private val valueTextPaint = Paint()
     private val linePaint = Paint()
     private val belowLinePaint = Paint()
     private val linePath = Path()
@@ -79,14 +94,14 @@ class LineGraph : View {
     private var w = 0f
     private var sectionHeight = 0f
     private var sectionWidth = 0f
-    private var unitTextMargin = 25f
+    private var unitTextSideMargin = 0f
+    private val graphSideMargin = dp2px(8)
 
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         if (attrs != null) appyStyle(attrs)
     }
-
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         if (attrs != null) appyStyle(attrs)
@@ -101,19 +116,24 @@ class LineGraph : View {
         textPaint.textSize = dp2px(18)
         textPaint.color = Color.WHITE
         textPaint.isAntiAlias = true
+        valueTextPaint.textSize = dp2px(12)
+        valueTextPaint.color = Color.WHITE
+        valueTextPaint.isAntiAlias = true
         linePaint.color = Color.BLACK
         linePaint.isAntiAlias = true
         linePaint.style = Paint.Style.STROKE
         linePaint.setShadowLayer(3f, -2f, 1f, Color.BLACK)
         belowLinePaint.isAntiAlias = true
-        unitTextMargin = textPaint.fontMetrics.descent - textPaint.fontMetrics.ascent + textPaint.fontMetrics.leading
-        if (true) {
+        unitTextSideMargin = textPaint.textHeight() + valueTextPaint.textHeight()
+        if (isInEditMode) {
             xUnit = "time"
             yUnit = "speed"
             data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 12F),
                     GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 12F))
+            description = { _ -> Pair("X value", "Y value") }
         }
     }
+
 
     fun appyStyle(attrs: AttributeSet) {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.LineGraphStyle, 0, 0)
@@ -122,7 +142,7 @@ class LineGraph : View {
             yUnit = ta.getString(R.styleable.LineGraphStyle_y_unit) ?: yUnit
             topGradientColor = ta.getColor(R.styleable.LineGraphStyle_top_gradient, topGradientColor)
             bottomGradientColor = ta.getColor(R.styleable.LineGraphStyle_bottom_gradient, bottomGradientColor)
-            lineColor= ta.getColor(R.styleable.LineGraphStyle_line_color, lineColor)
+            lineColor = ta.getColor(R.styleable.LineGraphStyle_line_color, lineColor)
         } finally {
             ta.recycle()
         }
@@ -132,14 +152,11 @@ class LineGraph : View {
         super.onSizeChanged(w, h, oldw, oldh)
         this.w = w.toFloat()
         this.h = h.toFloat()
-        this.sectionHeight = (h - 2 * unitTextMargin) / 4f
-        this.sectionWidth = (w - 2 * unitTextMargin) / 4f
-        cachedPoints = null
+        this.sectionHeight = (h - unitTextSideMargin - graphSideMargin) / 4f
+        this.sectionWidth = (w - unitTextSideMargin - graphSideMargin) / 4f
+        clearCachedPoints()
+        fillePointsCache()
         createLineShader()
-    }
-
-    private fun createLineShader() {
-        belowLinePaint.shader = LinearGradient(0f, 0f, 0f, h, topGradientColor, bottomGradientColor, Shader.TileMode.CLAMP)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -151,42 +168,46 @@ class LineGraph : View {
         drawText(canvas)
     }
 
+    private fun createLineShader() {
+        belowLinePaint.shader = LinearGradient(0f, 0f, 0f, h, topGradientColor, bottomGradientColor, Shader.TileMode.CLAMP)
+    }
+
     private fun drawGraphLine(canvas: Canvas) {
         if (cachedPoints == null) {
             fillePointsCache()
         }
         linePath.reset()
-        linePath.moveTo(unitTextMargin + 1, h - unitTextMargin - 1)
+        linePath.moveTo(unitTextSideMargin + 1, h - unitTextSideMargin - 1)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
-        linePath.lineTo(w - unitTextMargin - 1, h - unitTextMargin - 1)
+        linePath.lineTo(w - unitTextSideMargin - 1, h - unitTextSideMargin - 1)
         linePath.close()
         canvas.drawPath(linePath, belowLinePaint)
 
         linePath.rewind()
-        linePath.moveTo(unitTextMargin + 1, h - unitTextMargin - 1)
+        linePath.moveTo(unitTextSideMargin + 1, h - unitTextSideMargin - 1)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
-        linePath.lineTo(w - unitTextMargin - 1, h - unitTextMargin - 1)
+        linePath.lineTo(w - unitTextSideMargin - 1, h - unitTextSideMargin - 1)
         canvas.drawPath(linePath, linePaint)
     }
 
     private fun drawAxis(canvas: Canvas) {
         // X-axis
-        canvas.drawLine(unitTextMargin, h - unitTextMargin, w - unitTextMargin, h - unitTextMargin, axisPaint)
+        canvas.drawLine(unitTextSideMargin, h - unitTextSideMargin, w - graphSideMargin, h - unitTextSideMargin, axisPaint)
         // Y-axis
-        canvas.drawLine(unitTextMargin, h - unitTextMargin, unitTextMargin, unitTextMargin, axisPaint)
+        canvas.drawLine(unitTextSideMargin, h - unitTextSideMargin, unitTextSideMargin, graphSideMargin, axisPaint)
     }
 
     private fun drawGrid(canvas: Canvas) {
         // Dotted X-axes
-        drawLine(canvas, unitTextMargin, h - unitTextMargin - 1 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 1 * sectionHeight, gridPaint)
-        drawLine(canvas, unitTextMargin, h - unitTextMargin - 2 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 2 * sectionHeight, gridPaint)
-        drawLine(canvas, unitTextMargin, h - unitTextMargin - 3 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 3 * sectionHeight, gridPaint)
-        drawLine(canvas, unitTextMargin, h - unitTextMargin - 4 * sectionHeight, w - unitTextMargin, h - unitTextMargin - 4 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextSideMargin, h - unitTextSideMargin - 1 * sectionHeight, w - graphSideMargin, h - unitTextSideMargin - 1 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextSideMargin, h - unitTextSideMargin - 2 * sectionHeight, w - graphSideMargin, h - unitTextSideMargin - 2 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextSideMargin, h - unitTextSideMargin - 3 * sectionHeight, w - graphSideMargin, h - unitTextSideMargin - 3 * sectionHeight, gridPaint)
+        drawLine(canvas, unitTextSideMargin, h - unitTextSideMargin - 4 * sectionHeight, w - graphSideMargin, h - unitTextSideMargin - 4 * sectionHeight, gridPaint)
         // Dotted Y-axes
-        drawLine(canvas, unitTextMargin + 1 * sectionWidth, h - unitTextMargin, unitTextMargin + 1 * sectionWidth, unitTextMargin, gridPaint)
-        drawLine(canvas, unitTextMargin + 2 * sectionWidth, h - unitTextMargin, unitTextMargin + 2 * sectionWidth, unitTextMargin, gridPaint)
-        drawLine(canvas, unitTextMargin + 3 * sectionWidth, h - unitTextMargin, unitTextMargin + 3 * sectionWidth, unitTextMargin, gridPaint)
-        drawLine(canvas, unitTextMargin + 4 * sectionWidth, h - unitTextMargin, unitTextMargin + 4 * sectionWidth, unitTextMargin, gridPaint)
+        drawLine(canvas, unitTextSideMargin + 1 * sectionWidth, h - unitTextSideMargin, unitTextSideMargin + 1 * sectionWidth, graphSideMargin, gridPaint)
+        drawLine(canvas, unitTextSideMargin + 2 * sectionWidth, h - unitTextSideMargin, unitTextSideMargin + 2 * sectionWidth, graphSideMargin, gridPaint)
+        drawLine(canvas, unitTextSideMargin + 3 * sectionWidth, h - unitTextSideMargin, unitTextSideMargin + 3 * sectionWidth, graphSideMargin, gridPaint)
+        drawLine(canvas, unitTextSideMargin + 4 * sectionWidth, h - unitTextSideMargin, unitTextSideMargin + 4 * sectionWidth, graphSideMargin, gridPaint)
     }
 
     private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {
@@ -197,35 +218,68 @@ class LineGraph : View {
     }
 
     private fun drawText(canvas: Canvas) {
+        if (cachedPoints == null) {
+            fillePointsCache()
+        }
+        val startDesc = description(GraphPoint(minX, minY))
+        val middleDesc = description(GraphPoint(maxX - minX, maxY - minY))
+        val endDesc = description(GraphPoint(maxX, maxY))
+
         canvas.rotate(-90f)
+        // Y unit
         val verticalTextWidth = textPaint.measureText(yUnit)
         canvas.drawText(yUnit, -verticalTextWidth / 2 - h / 2, -textPaint.fontMetrics.top, textPaint)
+        // Y values
+        canvas.drawText(startDesc.second, -graphSideMargin - 4 * sectionHeight, unitTextSideMargin, valueTextPaint)
+        val middleTextHeight = valueTextPaint.measureText(middleDesc.second)
+        canvas.drawText(middleDesc.second, -graphSideMargin - 2 * sectionHeight - middleTextHeight / 2, unitTextSideMargin, valueTextPaint)
+        val endTextHeight = valueTextPaint.measureText(endDesc.second)
+        canvas.drawText(endDesc.second, -graphSideMargin - endTextHeight, unitTextSideMargin, valueTextPaint)
         canvas.rotate(90f)
 
+        // X unit
         val horizontalTextWidth = textPaint.measureText(yUnit)
         canvas.drawText(xUnit, w / 2 - horizontalTextWidth / 2, h - textPaint.fontMetrics.bottom, textPaint)
+        // X values
+        canvas.drawText(startDesc.first, unitTextSideMargin, h - textPaint.textHeight(), valueTextPaint)
+        val middleTextWidth = valueTextPaint.measureText(middleDesc.first)
+        canvas.drawText(middleDesc.first, unitTextSideMargin + 2 * sectionWidth - middleTextWidth / 2f, h - textPaint.textHeight(), valueTextPaint)
+        val endTextWidth = valueTextPaint.measureText(endDesc.first)
+        canvas.drawText(endDesc.first, unitTextSideMargin + 4 * sectionWidth - endTextWidth, h - textPaint.textHeight(), valueTextPaint)
     }
 
+    private var minY: Float = 0f
+    private var maxY: Float = 1f
+    private var minX: Float = 0f
+    private var maxX: Float = 1f
+
     private fun fillePointsCache() {
-        val minY = data.minBy { it.y }?.y ?: 0f
-        val maxY = data.maxBy { it.y }?.y ?: 100f
+        minY = data.minBy { it.y }?.y ?: 0f
+        maxY = data.maxBy { it.y }?.y ?: 100f
         val sorted = data.sortedBy { it.x }
-        val minX = sorted.firstOrNull()?.x ?: 0f
-        val maxX = sorted.lastOrNull()?.x ?: 100f
+        minX = sorted.firstOrNull()?.x ?: 0f
+        maxX = sorted.lastOrNull()?.x ?: 100f
         fun convertDataToPoint(point: GraphPoint): PointF {
             val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)
             val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
-            return PointF(x + unitTextMargin, h - unitTextMargin - y)
+            return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
         }
 
         cachedPoints = sorted.map { convertDataToPoint(it) }
     }
 
-    fun dp2px(dp: Int): Float {
+    private fun clearCachedPoints() {
+        cachedPoints = null
+    }
+
+
+    private fun Paint.textHeight() = this.fontMetrics.descent - this.fontMetrics.ascent + this.fontMetrics.leading
+
+    private fun dp2px(dp: Int): Float {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics)
     }
 
-    fun drawOutline(canvas: Canvas) {
+    private fun drawOutline(canvas: Canvas) {
         canvas.drawLines(floatArrayOf(0f, 0f, w, h,
                 w, 0f, 0f, h,
                 0f, 0f, w, 0f,
