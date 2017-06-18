@@ -28,11 +28,14 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    flavorDimensions "service"
 
     productFlavors {
         live {
+            dimension "service"
         }
         mock {
+            dimension "service"
             applicationIdSuffix = ".mock"
             minSdkVersion 18 // To work with uiautomator-v18
         }
