@@ -28,11 +28,11 @@
  */
 package nl.sogeti.android.gpstracker.ng.graphs
 
-import android.graphics.PointF
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.tracklist.summary.Summary
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.Waypoint
@@ -87,44 +87,52 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         viewModel.total.set("-")
         viewModel.paused.set("-")
         summaryManager.collectSummaryInfo(context, trackUri) {
-            viewModel.waypoints.set(it.count.toString())
-
-            var speed = context.getString(R.string.row_distance_default)
-            if (it.trackedPeriod > 0 && it.distance > 0) {
-                speed = calculator.convertMeterPerSecondsToSpeed(context, it.distance, it.trackedPeriod / 1000)
-            }
-            viewModel.speed.set(speed)
-
-            var distance = context.getString(R.string.row_distance_default)
-            if (it.distance > 0) {
-                distance = calculator.convertMetersToDistance(context, it.distance)
-            }
-            viewModel.distance.set(distance)
-
-            var tracked = context.getString(R.string.row_distance_default)
-            if (it.trackedPeriod > 0) {
-                tracked = calculator.convertStartEndToDuration(context, 0, it.trackedPeriod)
-            }
-            viewModel.time.set(tracked)
-
-            var duration = context.getString(R.string.row_duraction_default)
-            if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
-                duration = calculator.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
-            }
-            viewModel.total.set(duration)
-
-            var pause = context.getString(R.string.row_distance_default)
-            val pausedTime = (it.stopTimestamp - it.startTimestamp) - it.trackedPeriod
-            if (pausedTime > 0) {
-                pause = calculator.convertStartEndToDuration(context, 0, pausedTime)
-            }
-            viewModel.paused.set(pause)
-
-            viewModel.startDate.set(calculator.convertTimestampToDate(context, it.startTimestamp))
-            viewModel.startTime.set(calculator.convertTimestampToTime(context, it.startTimestamp))
-
-            viewModel.speedAtTimeData.set(calculateSpeedGraph(it.waypoints, it.startTimestamp, it.stopTimestamp))
+            fillSummaryNumbers(it)
+            fillSpeedToTimeGraph(it)
         }
+    }
+
+    private fun fillSpeedToTimeGraph(it: Summary) {
+        val graphPoints = calculateSpeedGraph(it.waypoints, it.startTimestamp, it.stopTimestamp)
+        viewModel.speedAtTimeData.set(graphPoints)
+    }
+
+    private fun fillSummaryNumbers(it: Summary) {
+        viewModel.waypoints.set(it.count.toString())
+
+        var speed = context.getString(R.string.row_distance_default)
+        if (it.trackedPeriod > 0 && it.distance > 0) {
+            speed = calculator.convertMeterPerSecondsToSpeed(context, it.distance, it.trackedPeriod / 1000)
+        }
+        viewModel.speed.set(speed)
+
+        var distance = context.getString(R.string.row_distance_default)
+        if (it.distance > 0) {
+            distance = calculator.convertMetersToDistance(context, it.distance)
+        }
+        viewModel.distance.set(distance)
+
+        var tracked = context.getString(R.string.row_distance_default)
+        if (it.trackedPeriod > 0) {
+            tracked = calculator.convertStartEndToDuration(context, 0, it.trackedPeriod)
+        }
+        viewModel.time.set(tracked)
+
+        var duration = context.getString(R.string.row_duraction_default)
+        if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
+            duration = calculator.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
+        }
+        viewModel.total.set(duration)
+
+        var pause = context.getString(R.string.row_distance_default)
+        val pausedTime = (it.stopTimestamp - it.startTimestamp) - it.trackedPeriod
+        if (pausedTime > 0) {
+            pause = calculator.convertStartEndToDuration(context, 0, pausedTime)
+        }
+        viewModel.paused.set(pause)
+
+        viewModel.startDate.set(calculator.convertTimestampToDate(context, it.startTimestamp))
+        viewModel.startTime.set(calculator.convertTimestampToTime(context, it.startTimestamp))
     }
 
     private fun calculateSpeedGraph(waypoints: List<List<Waypoint>>, start: Long, stop: Long): List<GraphPoint> {
