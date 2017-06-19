@@ -90,42 +90,42 @@ configurations.all {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':integration')
-    compile project(':widgets')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':integration')
+    implementation project(':widgets')
 //    wearApp project(':wear')
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
-    compile "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:design:$rootProject.supportLibraryVersion"
-    compile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
-    compile "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
-    compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    compile "com.google.dagger:dagger:$rootProject.daggerVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+    implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
+    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
 
-    compile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
+    implementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 //    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
 
-    releaseCompile "com.google.firebase:firebase-crash:$rootProject.playServicesVersion"
+    releaseImplementation "com.google.firebase:firebase-crash:$rootProject.playServicesVersion"
 
-    mockCompile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+    mockImplementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
-    testCompile "junit:junit:$rootProject.junitVersion"
-    testCompile "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    testCompile "org.robolectric:robolectric:$rootProject.robolectricVersion"
-    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
+    testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
 
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
-    androidTestMockCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    androidTestCompile "com.android.support.test:runner:$rootProject.testRunnerVersion"
-    androidTestCompile "com.android.support.test:rules:$rootProject.testRunnerVersion"
-    androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
-    androidTestCompile "com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion"
+    androidTestMockImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestImplementation "com.android.support.test:runner:$rootProject.testRunnerVersion"
+    androidTestImplementation "com.android.support.test:rules:$rootProject.testRunnerVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

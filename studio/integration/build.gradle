@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    testCompile "junit:junit:$rootProject.junitVersion"
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    testImplementation "junit:junit:$rootProject.junitVersion"
 }
