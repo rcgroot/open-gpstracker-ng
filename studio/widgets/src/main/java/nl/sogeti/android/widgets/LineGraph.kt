@@ -128,8 +128,8 @@ class LineGraph : View {
         if (isInEditMode) {
             xUnit = "time"
             yUnit = "speed"
-            data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 12F),
-                    GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 12F))
+            data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 10F),
+                    GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 13F))
             description = { _ -> Pair("X value", "Y value") }
         }
     }
@@ -176,18 +176,20 @@ class LineGraph : View {
         if (cachedPoints == null) {
             fillePointsCache()
         }
+        // Gradient below
         linePath.reset()
-        linePath.moveTo(unitTextSideMargin + 1, h - unitTextSideMargin - 1)
+        linePath.moveTo(unitTextSideMargin, h - unitTextSideMargin)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
-        linePath.lineTo(w - unitTextSideMargin - 1, h - unitTextSideMargin - 1)
+        linePath.lineTo(w - graphSideMargin- 1, h - unitTextSideMargin)
         linePath.close()
         canvas.drawPath(linePath, belowLinePaint)
 
+        // Top line
         linePath.rewind()
-        linePath.moveTo(unitTextSideMargin + 1, h - unitTextSideMargin - 1)
+        linePath.moveTo(unitTextSideMargin, h - unitTextSideMargin)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
-        linePath.lineTo(w - unitTextSideMargin - 1, h - unitTextSideMargin - 1)
-        canvas.drawPath(linePath, linePaint)
+        linePath.lineTo(w - graphSideMargin, h - unitTextSideMargin)
+        canvas.drawPath(linePath, linePaint)4
     }
 
     private fun drawAxis(canvas: Canvas) {
@@ -210,13 +212,6 @@ class LineGraph : View {
         drawLine(canvas, unitTextSideMargin + 4 * sectionWidth, h - unitTextSideMargin, unitTextSideMargin + 4 * sectionWidth, graphSideMargin, gridPaint)
     }
 
-    private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {
-        drawLinePath.rewind()
-        drawLinePath.moveTo(x, y)
-        drawLinePath.lineTo(x2, y2)
-        canvas.drawPath(drawLinePath, paint)
-    }
-
     private fun drawText(canvas: Canvas) {
         if (cachedPoints == null) {
             fillePointsCache()
@@ -230,11 +225,11 @@ class LineGraph : View {
         val verticalTextWidth = textPaint.measureText(yUnit)
         canvas.drawText(yUnit, -verticalTextWidth / 2 - h / 2, -textPaint.fontMetrics.top, textPaint)
         // Y values
-        canvas.drawText(startDesc.second, -graphSideMargin - 4 * sectionHeight, unitTextSideMargin, valueTextPaint)
+        canvas.drawText(startDesc.second, -graphSideMargin - 4 * sectionHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
         val middleTextHeight = valueTextPaint.measureText(middleDesc.second)
-        canvas.drawText(middleDesc.second, -graphSideMargin - 2 * sectionHeight - middleTextHeight / 2, unitTextSideMargin, valueTextPaint)
+        canvas.drawText(middleDesc.second, -graphSideMargin - 2 * sectionHeight - middleTextHeight / 2, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
         val endTextHeight = valueTextPaint.measureText(endDesc.second)
-        canvas.drawText(endDesc.second, -graphSideMargin - endTextHeight, unitTextSideMargin, valueTextPaint)
+        canvas.drawText(endDesc.second, -graphSideMargin - endTextHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
         canvas.rotate(90f)
 
         // X unit
@@ -252,7 +247,6 @@ class LineGraph : View {
     private var maxY: Float = 1f
     private var minX: Float = 0f
     private var maxX: Float = 1f
-
     private fun fillePointsCache() {
         minY = data.minBy { it.y }?.y ?: 0f
         maxY = data.maxBy { it.y }?.y ?: 100f
@@ -270,6 +264,13 @@ class LineGraph : View {
 
     private fun clearCachedPoints() {
         cachedPoints = null
+    }
+
+    private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {
+        drawLinePath.rewind()
+        drawLinePath.moveTo(x, y)
+        drawLinePath.lineTo(x2, y2)
+        canvas.drawPath(drawLinePath, paint)
     }
 
 
