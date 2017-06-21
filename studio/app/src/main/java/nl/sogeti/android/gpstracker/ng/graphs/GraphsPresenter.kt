@@ -55,7 +55,11 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
     class SpeedValuesDescriptor(val calculator: SummaryCalculator) : LineGraph.ValueDescriptor {
         override fun describeYvalue(context: Context, yValue: Float): String {
             // Y value speed in the graph is meter per millisecond
-            return calculator.convertMeterPerSecondsToSpeed(context, yValue*1000f, 1)
+            return calculator.convertMeterPerSecondsToSpeed(context, yValue * 1000f, 1)
+        }
+
+        override fun describeXvalue(context: Context, xValue: Float): String {
+            return calculator.convertStartEndToDuration(context, 0, xValue.toLong())
         }
     }
 

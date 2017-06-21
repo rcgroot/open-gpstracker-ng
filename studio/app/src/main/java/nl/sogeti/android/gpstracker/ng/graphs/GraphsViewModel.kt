@@ -45,4 +45,6 @@ class GraphsViewModel {
     val paused = ObservableField<String>("-")
     val speedAtTimeData = ObservableField<List<GraphPoint>>(emptyList<GraphPoint>())
     val speedValueDescription = ObservableField<ValueDescriptor>(object : ValueDescriptor {})
+    val altitudeAtTimeData = ObservableField<List<GraphPoint>>(emptyList<GraphPoint>())
+    val altitudeValueDescription = ObservableField<ValueDescriptor>(object : ValueDescriptor {})
 }

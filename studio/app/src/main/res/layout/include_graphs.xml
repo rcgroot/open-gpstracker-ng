@@ -33,20 +33,14 @@
 
             <nl.sogeti.android.widgets.LineGraph
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="240dp"
                 android:layout_margin="8dp"
-                android:background="@android:color/holo_green_dark"
-                app:xUnit="@{@string/graph_label_time}"
-                app:yUnit="@{@string/graph_label_altitude}" />
-
-            <nl.sogeti.android.widgets.LineGraph
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="8dp"
-                android:background="@android:color/holo_blue_dark"
-                app:xUnit="@{@string/graph_label_distance}"
-                app:yUnit="@{@string/graph_label_speed}" />
-
+                android:background="@color/primary_light"
+                app:data="@{viewModel.altitudeAtTimeData}"
+                app:line_color="@color/primary_text"
+                app:value_description="@{viewModel.altitudeValueDescription}"
+                app:x_unit="@string/graph_label_time"
+                app:y_unit="@string/graph_label_altitude" />
 
         </LinearLayout>
 
