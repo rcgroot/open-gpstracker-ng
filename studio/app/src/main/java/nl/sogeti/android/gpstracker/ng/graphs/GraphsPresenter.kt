@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.graphs
 
+import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
@@ -38,6 +39,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.widgets.GraphPoint
+import nl.sogeti.android.widgets.LineGraph
 import javax.inject.Inject
 
 class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
@@ -46,9 +48,16 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
     lateinit var summaryManager: SummaryManager
     @Inject
     lateinit var calculator: SummaryCalculator
-    val viewModel = GraphsViewModel()
     @Inject
     lateinit var trackSelection: TrackSelection
+    val viewModel = GraphsViewModel()
+
+    class SpeedValuesDescriptor(val calculator: SummaryCalculator) : LineGraph.ValueDescriptor {
+        override fun describeYvalue(context: Context, yValue: Float): String {
+            // Y value speed in the graph is meter per millisecond
+            return calculator.convertMeterPerSecondsToSpeed(context, yValue*1000f, 1)
+        }
+    }
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -86,6 +95,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         viewModel.startTime.set("-")
         viewModel.total.set("-")
         viewModel.paused.set("-")
+        viewModel.speedValueDescription.set(SpeedValuesDescriptor(calculator))
         summaryManager.collectSummaryInfo(context, trackUri) {
             fillSummaryNumbers(it)
             fillSpeedToTimeGraph(it)

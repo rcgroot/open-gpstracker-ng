@@ -139,7 +139,30 @@ class MockTracksContentProvider : ContentProvider() {
             }
 
         // Some random picked points in Amsterdam, NL
-        var gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
+        var gpxAmsterdam = listOf(
+                Pair(52.3770600, 4.8984461),
+                Pair(52.3763940, 4.8972632),
+                Pair(52.3762200, 4.9028743),
+                Pair(52.3740490, 4.8999434),
+                Pair(52.3732520, 4.8940387),
+                Pair(52.3746273, 4.8936862),
+                Pair(52.3757935, 4.8913026),
+                Pair(52.3743277, 4.8904614),
+                Pair(52.3732363, 4.8899005),
+                Pair(52.3720379, 4.8910572),
+                Pair(52.3719737, 4.8950006),
+                Pair(52.3709465, 4.8950006),
+                Pair(52.3708181, 4.8911098),
+                Pair(52.3704328, 4.8876747),
+                Pair(52.3701011, 4.8876747),
+                Pair(52.3691915, 4.8869211),
+                Pair(52.3688705, 4.8919686),
+                Pair(52.3695768, 4.8935810),
+                Pair(52.3691808, 4.8993471),
+                Pair(52.3672011, 4.9051132),
+                Pair(52.3661524, 4.9119834),
+                Pair(52.3664734, 4.9212022)
+        )
 
         fun createTrack(trackId: Long, waypoints: List<Pair<Double, Double>>, name: String? = null) {
             addTrack(trackId, name)
@@ -148,7 +171,7 @@ class MockTracksContentProvider : ContentProvider() {
             val now = Date().time
             for (i in waypoints.indices) {
                 val waypointId = segmentId * 10L + i
-                val time = now - (waypoints.size - i) * 6_0000
+                val time = now - (waypoints.size - i) * 10_0000L + ((Math.random() * 4_000).toLong() - 2_000L)
                 addWaypoint(trackId, segmentId, waypointId, waypoints[i].first, waypoints[i].second, time)
             }
         }

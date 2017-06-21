@@ -36,6 +36,10 @@ import nl.sogeti.android.gpstracker.ng.tracklist.TracksBindingAdapters
 
 class CommonBindingComponent : DataBindingComponent {
 
+    override fun getLineGraphBindings(): LineGraphBindings {
+        return LineGraphBindings()
+    }
+
     override fun getCommonBindingAdapters(): CommonBindingAdapters {
         return CommonBindingAdapters()
     }

@@ -53,11 +53,6 @@ import nl.sogeti.android.widgets.LineGraph
 
 open class CommonBindingAdapters {
 
-    @BindingAdapter("data")
-    fun setData(view: LineGraph, data: List<GraphPoint>?) {
-        view.data = data ?: emptyList()
-    }
-
     @BindingAdapter("hitPadding")
     fun setHitRectPadding(view: View, padding: Float) {
         val parent = view.parent

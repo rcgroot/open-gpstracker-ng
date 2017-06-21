@@ -27,6 +27,7 @@
                 android:background="@color/primary_light"
                 app:data="@{viewModel.speedAtTimeData}"
                 app:line_color="@color/primary_text"
+                app:value_description="@{viewModel.speedValueDescription}"
                 app:x_unit="@string/graph_label_time"
                 app:y_unit="@string/graph_label_speed" />
 

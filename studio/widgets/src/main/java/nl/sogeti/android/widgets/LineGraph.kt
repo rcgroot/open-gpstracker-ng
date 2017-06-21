@@ -34,9 +34,18 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import timber.log.Timber
 
 class LineGraph : View {
+
+    interface ValueDescriptor {
+        fun describeXvalue(context: Context, xValue: Float): String {
+            return ""
+        }
+
+        fun describeYvalue(context: Context, yValue: Float): String {
+            return ""
+        }
+    }
 
     @Size(multiple = 2) var data: List<GraphPoint> = listOf()
         set(value) {
@@ -49,7 +58,7 @@ class LineGraph : View {
             field = value
             invalidate()
         }
-    var description: (GraphPoint) -> Pair<String, String> = { _ -> Pair("", "") }
+    var description = object : ValueDescriptor {}
         set(value) {
             field = value
             invalidate()
@@ -130,10 +139,17 @@ class LineGraph : View {
             yUnit = "speed"
             data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 10F),
                     GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 13F))
-            description = { _ -> Pair("X value", "Y value") }
+            description = object : ValueDescriptor {
+                override fun describeXvalue(context: Context, xValue: Float): String {
+                    return "X value"
+                }
+
+                override fun describeYvalue(context: Context, yValue: Float): String {
+                    return "Y value"
+                }
+            }
         }
     }
-
 
     fun appyStyle(attrs: AttributeSet) {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.LineGraphStyle, 0, 0)
@@ -161,7 +177,6 @@ class LineGraph : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        Timber.d("Drawing on canvas ${canvas.width}x${canvas.height}")
         drawGrid(canvas)
         drawGraphLine(canvas)
         drawAxis(canvas)
@@ -180,7 +195,7 @@ class LineGraph : View {
         linePath.reset()
         linePath.moveTo(unitTextSideMargin, h - unitTextSideMargin)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
-        linePath.lineTo(w - graphSideMargin- 1, h - unitTextSideMargin)
+        linePath.lineTo(w - graphSideMargin - 1, h - unitTextSideMargin)
         linePath.close()
         canvas.drawPath(linePath, belowLinePaint)
 
@@ -189,7 +204,7 @@ class LineGraph : View {
         linePath.moveTo(unitTextSideMargin, h - unitTextSideMargin)
         cachedPoints?.forEach { linePath.lineTo(it.x, it.y) }
         linePath.lineTo(w - graphSideMargin, h - unitTextSideMargin)
-        canvas.drawPath(linePath, linePaint)4
+        canvas.drawPath(linePath, linePaint)
     }
 
     private fun drawAxis(canvas: Canvas) {
@@ -216,31 +231,34 @@ class LineGraph : View {
         if (cachedPoints == null) {
             fillePointsCache()
         }
-        val startDesc = description(GraphPoint(minX, minY))
-        val middleDesc = description(GraphPoint(maxX - minX, maxY - minY))
-        val endDesc = description(GraphPoint(maxX, maxY))
+        val x1 = description.describeXvalue(context, minX)
+        val x2 = description.describeXvalue(context, (minX + maxX) / 2)
+        val x3 = description.describeXvalue(context, maxX)
+        val y1 = description.describeYvalue(context, minY)
+        val y2 = description.describeYvalue(context, (minY + maxY) / 2)
+        val y3 = description.describeYvalue(context, maxY)
 
         canvas.rotate(-90f)
         // Y unit
         val verticalTextWidth = textPaint.measureText(yUnit)
         canvas.drawText(yUnit, -verticalTextWidth / 2 - h / 2, -textPaint.fontMetrics.top, textPaint)
         // Y values
-        canvas.drawText(startDesc.second, -graphSideMargin - 4 * sectionHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
-        val middleTextHeight = valueTextPaint.measureText(middleDesc.second)
-        canvas.drawText(middleDesc.second, -graphSideMargin - 2 * sectionHeight - middleTextHeight / 2, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
-        val endTextHeight = valueTextPaint.measureText(endDesc.second)
-        canvas.drawText(endDesc.second, -graphSideMargin - endTextHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
+        canvas.drawText(y1, -graphSideMargin - 4 * sectionHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
+        val middleTextHeight = valueTextPaint.measureText(y2)
+        canvas.drawText(y2, -graphSideMargin - 2 * sectionHeight - middleTextHeight / 2, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
+        val endTextHeight = valueTextPaint.measureText(y3)
+        canvas.drawText(y3, -graphSideMargin - endTextHeight, unitTextSideMargin - valueTextPaint.fontMetrics.descent, valueTextPaint)
         canvas.rotate(90f)
 
         // X unit
         val horizontalTextWidth = textPaint.measureText(yUnit)
         canvas.drawText(xUnit, w / 2 - horizontalTextWidth / 2, h - textPaint.fontMetrics.bottom, textPaint)
         // X values
-        canvas.drawText(startDesc.first, unitTextSideMargin, h - textPaint.textHeight(), valueTextPaint)
-        val middleTextWidth = valueTextPaint.measureText(middleDesc.first)
-        canvas.drawText(middleDesc.first, unitTextSideMargin + 2 * sectionWidth - middleTextWidth / 2f, h - textPaint.textHeight(), valueTextPaint)
-        val endTextWidth = valueTextPaint.measureText(endDesc.first)
-        canvas.drawText(endDesc.first, unitTextSideMargin + 4 * sectionWidth - endTextWidth, h - textPaint.textHeight(), valueTextPaint)
+        canvas.drawText(x1, unitTextSideMargin, h - textPaint.textHeight(), valueTextPaint)
+        val middleTextWidth = valueTextPaint.measureText(x2)
+        canvas.drawText(x2, unitTextSideMargin + 2 * sectionWidth - middleTextWidth / 2f, h - textPaint.textHeight(), valueTextPaint)
+        val endTextWidth = valueTextPaint.measureText(x3)
+        canvas.drawText(x3, unitTextSideMargin + 4 * sectionWidth - endTextWidth, h - textPaint.textHeight(), valueTextPaint)
     }
 
     private var minY: Float = 0f
@@ -272,7 +290,6 @@ class LineGraph : View {
         drawLinePath.lineTo(x2, y2)
         canvas.drawPath(drawLinePath, paint)
     }
-
 
     private fun Paint.textHeight() = this.fontMetrics.descent - this.fontMetrics.ascent + this.fontMetrics.leading
 
