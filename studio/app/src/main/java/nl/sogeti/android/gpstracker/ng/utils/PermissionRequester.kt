@@ -54,6 +54,7 @@ class PermissionRequester {
         private val runnables = LinkedHashMap<PermissionRequester, () -> Unit>()
         private var permissionDialog: AlertDialog? = null
         private var installDialog: AlertDialog? = null
+        private var request: Array<String> = emptyArray()
 
         private val isShowingDialog: Boolean
             get() = permissionDialog != null || installDialog != null
@@ -101,14 +102,17 @@ class PermissionRequester {
 
     fun onRequestPermissionsResult(fragment: Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == REQUEST_TRACKING_CONTROL) {
-            val grants = grantResults.indices
-                    .filter { grantResults[it] == PackageManager.PERMISSION_GRANTED }
-                    .map { permissions[it] }
-            if (grants.contains(TRACKING_CONTROL) && grants.contains(TRACKING_HISTORY)) {
-                didReceivePermissions()
-            } else {
-                checkOpenGPSTrackerAccess(fragment)
-            }
+            synchronized(request, {
+                request = emptyArray()
+                val grants = grantResults.indices
+                        .filter { grantResults[it] == PackageManager.PERMISSION_GRANTED }
+                        .map { permissions[it] }
+                if (grants.contains(TRACKING_CONTROL) && grants.contains(TRACKING_HISTORY)) {
+                    didReceivePermissions()
+                } else {
+                    checkOpenGPSTrackerAccess(fragment)
+                }
+            })
         }
     }
 
@@ -144,10 +148,13 @@ class PermissionRequester {
     }
 
     private fun showRequest(fragment: Fragment) {
-        shared.permissionDialog = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fragment.requestPermissions(arrayOf(TRACKING_CONTROL, TRACKING_HISTORY), REQUEST_TRACKING_CONTROL)
-        }
+        synchronized(request, {
+            shared.permissionDialog = null
+            if (request.isEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                request = arrayOf(TRACKING_CONTROL, TRACKING_HISTORY)
+                fragment.requestPermissions(request, REQUEST_TRACKING_CONTROL)
+            }
+        })
     }
 
     private fun installOpenGpsTracker(context: Context) {

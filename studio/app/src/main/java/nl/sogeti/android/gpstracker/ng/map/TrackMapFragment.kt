@@ -58,8 +58,10 @@ class TrackMapFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding!!.fragmentMapMapview?.onStart()
-        binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
-        permissionRequester.start(this, { trackPresenter.start(activity) })
+        permissionRequester.start(this, {
+            trackPresenter.start(activity)
+            binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
+        })
     }
 
     override fun onResume() {
