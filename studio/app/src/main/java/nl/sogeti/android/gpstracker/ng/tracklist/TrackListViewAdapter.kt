@@ -97,7 +97,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
             holder.binding.viewModel = viewModel
         }
         holder.binding.rowTrackCard.isActivated = (viewModel.uri == selection)
-        willDisplayTrack(holder.itemView.context, holder.binding.viewModel)
+        willDisplayTrack(holder.itemView.context, viewModel)
     }
 
     //region Row callbacks
@@ -178,7 +178,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldList[oldItemPosition]
             val newItem = newList[newItemPosition]
-            val renderedWaypoints = rowViewModelForUri(oldItem)?.waypoints?.get()
+            val renderedWaypoints = rowViewModelForUri(oldItem).waypoints.get()
 
             val oldCount = renderedWaypoints?.count() ?: -1
             val newCount = newItem.append(WAYPOINTS).count(context)

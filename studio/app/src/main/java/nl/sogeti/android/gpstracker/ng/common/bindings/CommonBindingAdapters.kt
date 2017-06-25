@@ -32,6 +32,7 @@ import android.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.AppCompatSpinner
 import android.view.TouchDelegate
 import android.view.View
@@ -48,8 +49,6 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.widgets.GraphPoint
-import nl.sogeti.android.widgets.LineGraph
 
 open class CommonBindingAdapters {
 
@@ -76,13 +75,13 @@ open class CommonBindingAdapters {
     fun setLeftDrawable(button: Button, drawableName: String?) {
         val drawableIdentifier = button.resources.getIdentifier(drawableName, "drawable", BuildConfig.APPLICATION_ID)
         val drawable = VectorDrawableCompat.create(button.resources, drawableIdentifier, button.context.theme) ?: return
-        drawable.setTint(R.color.icons)
+        drawable.setTint(ResourcesCompat.getColor(button.resources, R.color.icons, button.context.theme))
         button.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }
 
     @BindingAdapter("srcCompat")
-    fun setImageSource(imageView: ImageView, resource: Int?) {
-        val resource = resource ?: return
+    fun setImageSource(imageView: ImageView, attributeValue: Int?) {
+        val resource = attributeValue ?: return
         val tint = (imageView.tag as? Map<*, *>)?.get("tint") as? Int
         if (tint != null) {
             val drawable = VectorDrawableCompat.create(imageView.resources, resource, imageView.context.theme) ?: return

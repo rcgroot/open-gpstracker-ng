@@ -114,7 +114,6 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     private fun checkForInitialName(context: Context, trackUri: Uri) {
         val name = trackUri.readName(context)
         if ( name == context.getString(R.string.initial_track_name) ) {
-            val trackUri = trackUri(serviceManager.trackId)
             val generatedName = nameGenerator.generateName(context, Calendar.getInstance())
             trackUri.updateName(context, generatedName)
         }

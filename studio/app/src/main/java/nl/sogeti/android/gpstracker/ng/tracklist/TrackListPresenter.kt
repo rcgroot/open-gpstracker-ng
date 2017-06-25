@@ -129,8 +129,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     //region Track selection listening
 
-    override fun onTrackSelection(track: Uri, name: String) {
-        viewModel.selectedTrack.set(track)
+    override fun onTrackSelection(trackUri: Uri, name: String) {
+        viewModel.selectedTrack.set(trackUri)
     }
 
     //endregion
