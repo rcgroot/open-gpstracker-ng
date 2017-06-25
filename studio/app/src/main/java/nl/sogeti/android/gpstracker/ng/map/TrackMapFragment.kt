@@ -57,7 +57,7 @@ class TrackMapFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        binding!!.fragmentMapMapview?.onStart()
+        binding!!.fragmentMapMapview.onStart()
         permissionRequester.start(this, {
             trackPresenter.start(activity)
             binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
@@ -66,12 +66,12 @@ class TrackMapFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding!!.fragmentMapMapview?.onResume()
+        binding!!.fragmentMapMapview.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        binding!!.fragmentMapMapview?.onPause()
+        binding!!.fragmentMapMapview.onPause()
 
     }
 
@@ -79,17 +79,17 @@ class TrackMapFragment : Fragment() {
         super.onStop()
         trackPresenter.stop()
         permissionRequester.stop()
-        binding!!.fragmentMapMapview?.onStop()
+        binding!!.fragmentMapMapview.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        binding!!.fragmentMapMapview?.onSaveInstanceState(outState)
+        binding!!.fragmentMapMapview.onSaveInstanceState(outState)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding!!.fragmentMapMapview?.onDestroy()
+        binding!!.fragmentMapMapview.onDestroy()
         binding = null
     }
 

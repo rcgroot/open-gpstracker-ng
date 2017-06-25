@@ -162,19 +162,19 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         return list
     }
 
+    data class Delta(val time: Float, val duration: Long, val distance: Float)
+
     fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long, slotSize: Long): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
         var duration = 0f
         var distance = 0f
         var time = 0f
 
-        data class Delta(val time: Float, val duration: Long, val distance: Float)
-
         val outArray = floatArrayOf(0.0F)
         val deltas = waypoints.forDelta { first, second ->
-            val duration = second.time - first.time
-            val distance = calculator.distance(first, second, outArray)
-            Delta((second.time - start).toFloat(), duration, distance)
+            val deltaDuration = second.time - first.time
+            val deltaDistance = calculator.distance(first, second, outArray)
+            Delta((second.time - start).toFloat(), deltaDuration, deltaDistance)
         }
         deltas.forEach {
             if (duration < slotSize) {
