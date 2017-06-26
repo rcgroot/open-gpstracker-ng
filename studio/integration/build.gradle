@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     testImplementation "junit:junit:$rootProject.junitVersion"
