@@ -26,6 +26,6 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.widgets
+package nl.sogeti.android.widgets.model
 
 data class GraphPoint(val x: Float, val y: Float)

@@ -30,17 +30,6 @@
                 app:x_unit="@string/graph_label_time"
                 app:y_unit="@string/graph_label_speed" />
 
-            <nl.sogeti.android.widgets.LineGraph
-                android:layout_width="match_parent"
-                android:layout_height="240dp"
-                android:layout_margin="8dp"
-                android:background="@color/primary_light"
-                app:data="@{viewModel.altitudeAtTimeData}"
-                app:line_color="@color/primary_text"
-                app:value_description="@{viewModel.altitudeValueDescription}"
-                app:x_unit="@string/graph_label_time"
-                app:y_unit="@string/graph_label_altitude" />
-
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

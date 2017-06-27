@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.graphs
 
 import android.databinding.ObservableField
 import android.net.Uri
-import nl.sogeti.android.widgets.GraphPoint
+import nl.sogeti.android.widgets.model.GraphPoint
 import nl.sogeti.android.widgets.LineGraph.ValueDescriptor
 
 class GraphsViewModel {

@@ -34,6 +34,7 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import nl.sogeti.android.widgets.model.GraphPoint
 
 class LineGraph : View {
 
@@ -265,6 +266,7 @@ class LineGraph : View {
     private var maxY: Float = 1f
     private var minX: Float = 0f
     private var maxX: Float = 1f
+
     private fun fillePointsCache() {
         minY = data.minBy { it.y }?.y ?: 0f
         maxY = data.maxBy { it.y }?.y ?: 100f
