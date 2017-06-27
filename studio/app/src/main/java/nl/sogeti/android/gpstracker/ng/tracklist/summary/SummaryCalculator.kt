@@ -168,12 +168,12 @@ class SummaryCalculator {
 
     fun convertTimestampToDate(context: Context, startTimestamp: Long): String {
         val date = Date(startTimestamp)
-        return DateFormat.getTimeFormat(context).format(date);
+        return DateFormat.getDateFormat(context).format(date)
     }
 
     fun convertTimestampToTime(context: Context, startTimestamp: Long): String {
         val date = Date(startTimestamp)
-        return DateFormat.getDateFormat(context).format(date);
+        return DateFormat.getTimeFormat(context).format(date)
     }
 
     //endregion

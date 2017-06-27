@@ -38,7 +38,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.Waypoint
 import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.widgets.GraphPoint
+import nl.sogeti.android.widgets.model.GraphPoint
 import nl.sogeti.android.widgets.LineGraph
 import javax.inject.Inject
 
