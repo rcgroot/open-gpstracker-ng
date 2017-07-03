@@ -55,15 +55,13 @@ import timber.log.Timber;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
-public class TrackActivity extends AppCompatActivity implements TrackViewModel.View, TrackListFragment.Listener {
+public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
-    private static final String TAG_DIALOG = "DIALOG";
-    private static final String TRANSACTION_TRACKS = "FRAGMENT_TRANSACTION_TRACKS";
-    private static final String TRANSACTION_GRAPHS = "FRAGMENT_TRANSACTION_GRAPGS";
-    private TrackViewModel viewModel = new TrackViewModel();
-    private TrackPresenter presenter = new TrackPresenter(viewModel, this);
+
+    private final TrackViewModel viewModel = new TrackViewModel();
+    private final TrackPresenter presenter = new TrackPresenter(viewModel, this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +81,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.start(this);
+        presenter.start(this, new TrackNavigator(this));
     }
 
     @Override
@@ -150,80 +148,5 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         invalidateOptionsMenu();
     }
 
-    @Override
-    public void showAboutDialog() {
-        new AboutFragment().show(getSupportFragmentManager(), AboutFragment.Companion.getTAG());
-    }
-
-    @Override
-    public void showTrackEditDialog(Uri trackUri) {
-        TrackEditDialogFragment.Companion.newInstance(trackUri).show(getSupportFragmentManager(), TAG_DIALOG);
-    }
-
-    @Override
-    public void showTrackSelection() {
-        View leftContainer = findViewById(R.id.track_leftcontainer);
-        if (leftContainer != null && leftContainer instanceof ViewGroup) {
-            toggleContainerFragment(TrackListFragment.Companion.newInstance(), TRANSACTION_TRACKS);
-        } else {
-            TrackListActivity.Companion.start(this);
-        }
-    }
-
-    @Override
-    public void showGraphs(Uri trackUri) {
-        View leftContainer = findViewById(R.id.track_leftcontainer);
-        if (leftContainer != null && leftContainer instanceof ViewGroup) {
-            toggleContainerFragment(GraphsFragment.Companion.newInstance(), TRANSACTION_GRAPHS);
-        } else {
-            GraphsActivity.Companion.start(this);
-        }
-    }
-
     //endregion
-
-    //region TrackList hosting
-
-    @Override
-    public void hideTrackList(@NotNull TrackListFragment trackListFragment) {
-        // For tablet we'll opt to leave the track list on the screen instead of removing it
-//        getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
-    }
-
-    @Override
-    public void showTrackDeleteDialog(@NotNull Uri track) {
-        TrackDeleteDialogFragment.Companion.newInstance(track).show(getSupportFragmentManager(), TAG_DIALOG);
-    }
-
-    //endregion
-
-
-    private void toggleContainerFragment(Fragment goal, String tag) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.track_leftcontainer);
-        if (fragment != null) {
-            if (fragment instanceof TrackListFragment) {
-                getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
-            }
-            else if (fragment instanceof GraphsFragment) {
-                getSupportFragmentManager().popBackStack(TRANSACTION_GRAPHS, POP_BACK_STACK_INCLUSIVE);
-            }
-        }
-        if (fragment == null || fragment.getClass() != goal.getClass()) {
-            replaceFragmentInLeftContainer(goal, tag);
-        }
-    }
-
-    private void replaceFragmentInLeftContainer(Fragment goal, String tag) {
-        try {
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left,
-                            R.anim.enter_from_left, R.anim.exit_to_left)
-                    .addToBackStack(tag)
-                    .replace(R.id.track_leftcontainer, goal)
-                    .commit();
-        } catch (Exception e) {
-            Timber.e(e, "Transaction to add Fragment failed");
-        }
-    }
-
-}
+ }

@@ -36,6 +36,7 @@ import nl.sogeti.android.gpstracker.integration.ContentConstants.TracksColumns.N
 import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
@@ -43,7 +44,7 @@ import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.utils.*
 import javax.inject.Inject
 
-class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
+class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter<Navigation>(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
 
     private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null

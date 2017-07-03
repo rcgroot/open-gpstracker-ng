@@ -34,6 +34,7 @@ import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
@@ -50,7 +51,7 @@ import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter<Navigation>(), ContentController.Listener, GpsStatusController.Listener {
 
     private var gpsStatusController: GpsStatusController? = null
     internal var executingReader: TrackReader? = null

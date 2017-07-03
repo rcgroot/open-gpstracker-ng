@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.utils.apply
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import javax.inject.Inject
 
-class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter(), TrackSelection.Listener, ContentController.Listener {
+class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View) : ContextedPresenter<TrackNavigator>(), TrackSelection.Listener, ContentController.Listener {
 
     private var contentController: ContentController? = null
     @Inject
@@ -72,21 +72,20 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     //region View
 
     fun onListOptionSelected() {
-        view.showTrackSelection()
+        navigation.showTrackSelection()
     }
 
     fun onAboutOptionSelected() {
-        view.showAboutDialog()
+        navigation.showAboutDialog()
     }
 
     fun onEditOptionSelected() {
         val trackUri = viewModel.trackUri.get()
-        trackUri?.let { view.showTrackEditDialog(it) }
+        trackUri?.let { navigation.showTrackEditDialog(it) }
     }
 
     fun onGraphsOptionSelected() {
-        val trackUri = viewModel.trackUri.get()
-        trackUri?.let { view.showGraphs(it) }
+        navigation.showGraphs()
     }
 
     //endregion

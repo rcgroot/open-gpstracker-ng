@@ -42,6 +42,8 @@ class TrackPresenterTest {
     lateinit var trackSelection: TrackSelection
     @Mock
     lateinit var trackUri: Uri
+    @Mock
+    lateinit var navigation: TrackNavigator
 
     @Before
     fun setUp() {
@@ -78,7 +80,7 @@ class TrackPresenterTest {
         // Act
         sut.onListOptionSelected()
         // Assert
-        verify(view).showTrackSelection()
+        verify(navigation).showTrackSelection()
     }
 
     @Test
@@ -86,7 +88,7 @@ class TrackPresenterTest {
         // Act
         sut.onAboutOptionSelected()
         // Assert
-        verify(view).showAboutDialog()
+        verify(navigation).showAboutDialog()
     }
 
     @Test
@@ -96,7 +98,7 @@ class TrackPresenterTest {
         // Act
         sut.onEditOptionSelected()
         // Assert
-        verify(view).showTrackEditDialog(trackUri)
+        verify(navigation).showTrackEditDialog(trackUri)
     }
 
     @Test

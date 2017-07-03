@@ -50,7 +50,7 @@ class ContextedPresenterTest {
         sut.context
     }
 
-    class MyContextedPresenter : ContextedPresenter() {
+    class MyContextedPresenter : ContextedPresenter<Navigation>() {
         var willStop = false
         var didStart = false
 
