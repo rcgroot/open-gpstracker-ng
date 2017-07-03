@@ -31,11 +31,12 @@ package nl.sogeti.android.gpstracker.ng.dagger
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
+import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeletePresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
@@ -49,29 +50,27 @@ import javax.inject.Singleton
 @Component(modules = arrayOf(IntegrationModule::class, AppModule::class, SystemModule::class))
 interface AppComponent {
 
-    fun inject(injectable: ConnectedServicePresenter)
-
-    fun inject(injectable: SummaryCalculator)
-
     fun inject(injectable: TrackPresenter)
 
     fun inject(injectable: TrackMapPresenter)
 
     fun inject(injectable: TrackListPresenter)
 
-    fun inject(injectable: RecordingPresenter)
-
-    fun inject(injectable: TrackListViewAdapter)
-
     fun inject(injectable: TrackEditPresenter)
 
-    fun inject(injectable: SummaryManager)
-
     fun inject(injectable: TrackDeletePresenter)
+
+    fun inject(injectable: RecordingPresenter)
 
     fun inject(injectable: ControlPresenter)
 
     fun inject(injectable: GraphsPresenter)
+
+    fun inject(injectable: SummaryCalculator)
+
+    fun inject(injectable: TrackListViewAdapter)
+
+    fun inject(injectable: SummaryManager)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

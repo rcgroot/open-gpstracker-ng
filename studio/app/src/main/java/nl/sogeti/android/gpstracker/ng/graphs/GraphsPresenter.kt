@@ -32,6 +32,7 @@ import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.Summary
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
@@ -42,7 +43,7 @@ import nl.sogeti.android.widgets.model.GraphPoint
 import nl.sogeti.android.widgets.LineGraph
 import javax.inject.Inject
 
-class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
+class GraphsPresenter : ContextedPresenter<Navigation>(), TrackSelection.Listener {
 
     @Inject
     lateinit var summaryManager: SummaryManager

@@ -7,4 +7,6 @@ interface TrackListAdapterListener {
     fun didShareTrack(track: Uri)
     fun didDeleteTrack(track: Uri)
     fun didEditTrack(track: Uri)
+    fun didSelectExport()
+    fun didSelectImport()
 }

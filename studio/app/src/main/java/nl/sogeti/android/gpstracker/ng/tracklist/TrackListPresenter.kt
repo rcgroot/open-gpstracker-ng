@@ -36,6 +36,7 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.sharing.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.map
@@ -46,10 +47,9 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter<TrackNavigator>(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     private var contentController: ContentController? = null
-
     @Inject
     lateinit var trackSelection: TrackSelection
     @Inject
@@ -109,20 +109,28 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didSelectTrack(track: Uri, name: String) {
         trackSelection.selectTrack(track, name)
-        view.hideTrackList()
+        navigation.hideTrackList()
     }
 
     override fun didShareTrack(track: Uri) {
         val shareIntent = shareIntentFactory.createShareIntent(track)
-        view.showIntentChooser(shareIntent, context.getText(R.string.track_share))
+        navigation.showIntentChooser(shareIntent, context.getText(R.string.track_share))
     }
 
     override fun didEditTrack(track: Uri) {
-        view.showTrackEditDialog(track)
+        navigation.showTrackEditDialog(track)
     }
 
     override fun didDeleteTrack(track: Uri) {
-        view.showTrackDeleteDialog(track)
+        navigation.showTrackDeleteDialog(track)
+    }
+
+    override fun didSelectExport() {
+        navigation.startFullExport()
+    }
+
+    override fun didSelectImport() {
+        navigation.startGpxFileSelection()
     }
 
     //endregion

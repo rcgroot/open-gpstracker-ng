@@ -45,6 +45,7 @@ import kotlin.jvm.functions.Function1;
 import nl.sogeti.android.gpstracker.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication;
+import nl.sogeti.android.gpstracker.ng.track.TrackNavigator;
 import nl.sogeti.android.gpstracker.ng.utils.ContentProviderExtensionsKt;
 import nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt;
 import timber.log.Timber;
@@ -55,7 +56,7 @@ import static nl.sogeti.android.gpstracker.integration.ContentConstants.TracksCo
  * Base class for presenters that source data from the IPC / Intent with
  * the original Open GPS Tracker app.
  */
-public abstract class ConnectedServicePresenter extends ContextedPresenter {
+public abstract class ConnectedServicePresenter<T extends Navigation> extends ContextedPresenter<T> {
 
     @Inject
     @Named("loggingStateFilter")
@@ -65,10 +66,6 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     public ServiceManagerInterface serviceManager;
 
     private BroadcastReceiver loggingStateReceiver;
-
-    public ConnectedServicePresenter() {
-        GpsTrackerApplication.appComponent.inject(this);
-    }
 
     @Override
     public void didStart() {

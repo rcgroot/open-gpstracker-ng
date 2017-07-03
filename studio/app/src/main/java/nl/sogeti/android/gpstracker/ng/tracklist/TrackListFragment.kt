@@ -28,21 +28,17 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
-import timber.log.Timber
 
 /**
  * Sets up display and selection of tracks in a list style
@@ -59,7 +55,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
             return TrackListFragment()
         }
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.listview.layoutManager = LinearLayoutManager(activity)
@@ -75,10 +71,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun onStart() {
         super.onStart()
-        if (activity !is Listener) {
-            Timber.e("Host activity must implement this fragments Listener interface")
-        }
-        permissionRequester.start(this, { trackListPresenter.start(activity) })
+        permissionRequester.start(this, { trackListPresenter.start(activity, TrackNavigator(activity)) })
     }
 
     override fun onStop() {
@@ -92,38 +85,33 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         binding = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.menu_import_export, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val isHandled: Boolean
+        if (item.itemId == R.id.menu_item_export) {
+            trackListPresenter.didSelectExport()
+            isHandled = true
+        } else if (item.itemId == R.id.menu_item_import) {
+            trackListPresenter.didSelectImport()
+            isHandled = true
+        } else {
+            isHandled = super.onOptionsItemSelected(item)
+        }
+        return isHandled
+    }
+
     //region View contract
-
-    override fun hideTrackList() {
-        val listener = activity as Listener
-        listener.hideTrackList(this)
-    }
-
-    override fun showTrackEditDialog(track: Uri) {
-        val listener = activity as Listener
-        listener.showTrackEditDialog(track)
-    }
-
-    override fun showTrackDeleteDialog(track: Uri) {
-        val listener = activity as Listener
-        listener.showTrackDeleteDialog(track)
-    }
-
-    override fun showIntentChooser(intent: Intent, text: CharSequence) {
-        startActivity(Intent.createChooser(intent, text))
-    }
 
     override fun moveToPosition(postion: Int) {
         executeOnUiThread { binding?.listview?.layoutManager?.scrollToPosition(postion) }
     }
 
     //endregion
-
-    interface Listener {
-        fun hideTrackList(trackListFragment: TrackListFragment);
-        fun showTrackDeleteDialog(track: Uri)
-        fun showTrackEditDialog(track: Uri)
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)

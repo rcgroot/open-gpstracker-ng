@@ -37,10 +37,6 @@ class TrackListViewModel {
     val selectedTrack = ObservableField<Uri?>(null)
 
     interface View {
-        fun hideTrackList()
-        fun showTrackDeleteDialog(track: Uri)
-        fun showIntentChooser(intent: Intent, text: CharSequence)
-        fun showTrackEditDialog(track: Uri)
         fun moveToPosition(postion: Int)
     }
 }

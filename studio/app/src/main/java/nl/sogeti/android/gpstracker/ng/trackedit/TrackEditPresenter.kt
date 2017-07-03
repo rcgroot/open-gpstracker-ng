@@ -37,12 +37,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.readName
 import nl.sogeti.android.gpstracker.ng.utils.updateName
 import javax.inject.Inject
 
-class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter() {
+class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter<Navigation>() {
 
     @Inject
     lateinit var summaryManager: SummaryManager
