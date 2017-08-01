@@ -17,8 +17,8 @@ class TrackTypeSpinnerAdapter(val context: Context, var trackTypes: List<TrackTy
         if (convertView == null) {
             itemView = LayoutInflater.from(context).inflate(R.layout.row_track_type, parent, false)
             viewHolder = TrackEditPresenter.ViewHolder(
-                    itemView.findViewById(R.id.row_track_type_image) as ImageView,
-                    itemView.findViewById(R.id.row_track_type_text) as TextView)
+                    itemView.findViewById<ImageView>(R.id.row_track_type_image),
+                    itemView.findViewById<TextView>(R.id.row_track_type_text))
             itemView.tag = viewHolder
         } else {
             itemView = convertView

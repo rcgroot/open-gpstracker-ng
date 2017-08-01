@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.about.AboutFragment
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
@@ -65,7 +66,7 @@ class TrackNavigator(val activity: FragmentActivity): Navigation {
     }
 
     private fun hasLeftContainer(): Boolean {
-        val leftContainer = activity.findViewById(R.id.track_leftcontainer)
+        val leftContainer = activity.findViewById<View>(R.id.track_leftcontainer)
         return leftContainer != null && leftContainer is ViewGroup
     }
 
