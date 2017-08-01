@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter
 import android.net.Uri
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import nl.sogeti.android.gpstracker.v2.R
@@ -49,9 +50,9 @@ open class TracksBindingAdapters {
 
     @BindingAdapter("editMode")
     fun setEditMode(card: CardView, editMode: Boolean) {
-        val share = card.findViewById(R.id.row_track_share)
-        val delete = card.findViewById(R.id.row_track_delete)
-        val edit = card.findViewById(R.id.row_track_edit)
+        val share = card.findViewById<View>(R.id.row_track_share)
+        val delete = card.findViewById<View>(R.id.row_track_delete)
+        val edit = card.findViewById<View>(R.id.row_track_edit)
         if (editMode) {
             if (share.visibility != VISIBLE) {
                 share.alpha = 0F
