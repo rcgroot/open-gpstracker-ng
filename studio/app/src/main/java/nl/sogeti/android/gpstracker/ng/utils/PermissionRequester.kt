@@ -35,15 +35,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_CONTROL
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_HISTORY
 import nl.sogeti.android.gpstracker.integration.ServiceManager
+import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Asks for Open GPS tracker permissions
@@ -62,6 +63,15 @@ class PermissionRequester {
 
     private val REQUEST_TRACKING_CONTROL = 10001
     private val INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker"
+
+    @Inject
+    lateinit var serviceManager: ServiceManagerInterface
+    @Inject
+    lateinit var permissionChecker: PermissionChecker
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
 
     fun start(fragment: Fragment, runnable: () -> Unit) {
         shared.runnables.put(this, runnable)
@@ -83,7 +93,7 @@ class PermissionRequester {
         val install = DialogInterface.OnClickListener { _, _ -> installOpenGpsTracker(fragment.context) }
         val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
 
-        if (ServiceManager().isPackageInstalled(fragment.context)) {
+        if (serviceManager.isPackageInstalled(fragment.context)) {
             // Installed, check permissions
             if (hasPermission(fragment.context, TRACKING_CONTROL) && hasPermission(fragment.context, TRACKING_HISTORY)) {
                 // Have permissions
@@ -164,10 +174,10 @@ class PermissionRequester {
     }
 
     private fun canAsk(activity: Activity, permission: String): Boolean {
-        return !ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+        return !permissionChecker.shouldShowRequestPermissionRationale(activity, permission)
     }
 
     private fun hasPermission(context: Context, permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        return permissionChecker.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 }

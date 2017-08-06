@@ -52,7 +52,7 @@ class AboutRobot(private val activity: AppCompatActivity) : Robot<AboutRobot>("A
         waitForIdle()
 
         val fragment = activity.supportFragmentManager.findFragmentByTag(AboutFragment.TAG) as AboutFragment
-        val webview = fragment.dialog.findViewById(R.id.fragment_about_webview) as WebView
+        val webview = fragment.dialog.findViewById<WebView>(R.id.fragment_about_webview)
         resource = WebViewIdlingResource(webview)
         Espresso.registerIdlingResources(resource)
 

@@ -34,16 +34,19 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentMapBinding
+import javax.inject.Inject
 
 class TrackMapFragment : Fragment() {
 
     private val viewModel = TrackMapViewModel()
     private val trackPresenter = TrackMapPresenter(viewModel)
-    private var permissionRequester = PermissionRequester()
+    private val permissionRequester = PermissionRequester()
     private var binding: FragmentMapBinding? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false)

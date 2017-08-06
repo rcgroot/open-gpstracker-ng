@@ -35,23 +35,23 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import javax.inject.Named
 
 @Module
 class IntegrationModule {
 
     @Provides @Named("loggingStateFilter")
-    fun loggingStateIntentFilter(): IntentFilter {
-        return IntentFilter(ServiceConstants.ACTION_BROADCAST_LOGGING_STATE)
-    }
+    fun loggingStateIntentFilter(): IntentFilter =
+            IntentFilter(ServiceConstants.ACTION_BROADCAST_LOGGING_STATE)
 
     @Provides
-    fun serviceManagerInterface(): ServiceManagerInterface {
-        return ServiceManager()
-    }
+    fun serviceManagerInterface(): ServiceManagerInterface = ServiceManager()
 
     @Provides @Named("providerAuthority")
-    fun providerAuthority(): String {
-        return nl.sogeti.android.gpstracker.integration.ContentConstants.GPS_TRACKS_AUTHORITY
-    }
+    fun providerAuthority(): String =
+            nl.sogeti.android.gpstracker.integration.ContentConstants.GPS_TRACKS_AUTHORITY
+
+    @Provides
+    fun permissionRequester(): PermissionRequester = PermissionRequester()
 }

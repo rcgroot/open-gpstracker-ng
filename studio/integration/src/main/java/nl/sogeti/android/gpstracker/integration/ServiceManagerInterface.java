@@ -22,4 +22,6 @@ public interface ServiceManagerInterface {
     void pauseGPSLogging(@NonNull Context context);
 
     void resumeGPSLogging(@NonNull Context context);
+
+    boolean isPackageInstalled(Context context);
 }

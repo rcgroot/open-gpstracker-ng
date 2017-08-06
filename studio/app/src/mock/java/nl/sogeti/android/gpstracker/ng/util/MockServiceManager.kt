@@ -79,6 +79,8 @@ class MockServiceManager : ServiceManagerInterface {
         gpsRecorder.resumeRecording()
     }
 
+    override fun isPackageInstalled(context: Context): Boolean = true
+
     fun reset() {
         started = false
         globalState.loggingState = STATE_UNKNOWN
