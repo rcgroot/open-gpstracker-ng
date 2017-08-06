@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,7 +58,7 @@ public class ControlFragmentEspressoTest {
 
     @Before
     public void setUp() {
-        Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
+        IdlingRegistry.getInstance().register(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
         mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         sut = wrapperFragment.getFragment();
@@ -69,7 +69,7 @@ public class ControlFragmentEspressoTest {
         mockServiceManager.reset();
         mockServiceManager = null;
         sut = null;
-        Espresso.unregisterIdlingResources(MockBroadcastSender.Espresso.getResource());
+        IdlingRegistry.getInstance().unregister(MockBroadcastSender.Espresso.getResource());
     }
 
     @Test

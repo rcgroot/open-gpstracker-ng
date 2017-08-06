@@ -6,6 +6,8 @@ import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.util.MockGpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.util.MockPermissionChecker
+import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
 import java.util.*
 
 @Module
@@ -26,4 +28,7 @@ class MockSystemModule {
 
     @Provides
     fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
+
+    @Provides
+    fun permissionChecker(): PermissionChecker = MockPermissionChecker()
 }

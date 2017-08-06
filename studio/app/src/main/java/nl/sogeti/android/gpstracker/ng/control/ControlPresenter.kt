@@ -45,14 +45,13 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter<Navigation>() {
-
     @Inject
     lateinit var nameGenerator: NameGenerator
     @Inject
     lateinit var asyncExecutor: Executor
 
     val handler = Handler(Looper.getMainLooper())
-    val enableRunnable = { enableButtons() }
+    private val enableRunnable = { enableButtons() }
 
     init {
         GpsTrackerApplication.appComponent.inject(this)

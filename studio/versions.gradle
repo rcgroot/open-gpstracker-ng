@@ -6,12 +6,12 @@ ext {
 
     // App support
     supportLibraryVersion = '26.0.0'
-    kotlinVersion = '1.1.4-eap-54'
+    kotlinVersion = '1.1.4-eap-69'
     wearableVersion = '1.4.0'
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
-    playServicesVersion = '11.0.2'
+    playServicesVersion = '11.0.4'
     googleServicesVersion = '3.0.0'
 
     // Testing
@@ -21,6 +21,6 @@ ext {
     mockitoVersion = '2.8.9'
     testRunnerVersion = '0.5'
     robolectricVersion = '3.3.1'
-    espressoVersion = '2.2.2'
+    espressoVersion = '3.0.0'
     robolectricVersion = '3.1.4'
 }

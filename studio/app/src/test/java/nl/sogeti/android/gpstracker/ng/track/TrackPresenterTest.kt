@@ -77,6 +77,8 @@ class TrackPresenterTest {
 
     @Test
     fun testOptionSelected() {
+        // Arrange
+        sut.start(context, navigation)
         // Act
         sut.onListOptionSelected()
         // Assert
@@ -85,6 +87,8 @@ class TrackPresenterTest {
 
     @Test
     fun testAboutSelected() {
+        // Arrange
+        sut.start(context, navigation)
         // Act
         sut.onAboutOptionSelected()
         // Assert
@@ -95,6 +99,7 @@ class TrackPresenterTest {
     fun testEditSelected() {
         // Arrange
         viewModel.trackUri.set(trackUri)
+        sut.start(context, navigation)
         // Act
         sut.onEditOptionSelected()
         // Assert

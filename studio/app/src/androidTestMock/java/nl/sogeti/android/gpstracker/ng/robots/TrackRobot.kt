@@ -117,7 +117,7 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
     }
 
     fun start(): TrackRobot {
-        val mapView = activity.findViewById(R.id.fragment_map_mapview) as MapView
+        val mapView = activity.findViewById<MapView>(R.id.fragment_map_mapview)
         resource = IdlingMapResource(mapView)
         Espresso.registerIdlingResources(resource)
 

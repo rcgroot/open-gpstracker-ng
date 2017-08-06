@@ -30,10 +30,9 @@ package nl.sogeti.android.gpstracker.ng.dagger
 
 import android.net.Uri
 import dagger.Component
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
+import nl.sogeti.android.gpstracker.ng.map.TrackMapFragment
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
@@ -43,6 +42,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -72,11 +72,12 @@ interface AppComponent {
 
     fun inject(injectable: SummaryManager)
 
+    fun inject(permissionRequester: PermissionRequester)
+
     @Named("providerAuthority")
     fun providerAuthority(): String
 
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
-
     fun provideUriBuilder(): Uri.Builder
 }
