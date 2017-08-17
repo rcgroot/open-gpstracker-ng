@@ -79,5 +79,6 @@ interface AppComponent {
 
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
+
     fun provideUriBuilder(): Uri.Builder
 }

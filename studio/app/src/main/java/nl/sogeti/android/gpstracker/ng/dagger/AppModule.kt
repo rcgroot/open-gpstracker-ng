@@ -76,9 +76,6 @@ class AppModule {
     fun trackTypeDescriptions() = TrackTypeDescriptions()
 
     @Provides
-    fun locationFactory() = LocationFactory()
-
-    @Provides
     fun shareIntentFactory() = ShareIntentFactory()
 
     @Provides @Named("shareProviderAuthority")

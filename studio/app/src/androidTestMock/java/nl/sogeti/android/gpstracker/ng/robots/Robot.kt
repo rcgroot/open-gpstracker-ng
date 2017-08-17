@@ -28,12 +28,17 @@
  */
 package nl.sogeti.android.gpstracker.ng.robots
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Environment
 import android.os.SystemClock
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
+import android.support.test.espresso.Espresso
 import android.support.test.uiautomator.UiDevice
+import android.support.v4.content.ContextCompat
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
 import timber.log.Timber
 import java.io.BufferedOutputStream
@@ -103,12 +108,37 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
     }
 
     private fun nextShotFile(): File {
-        shotsFired++
+        val context = getInstrumentation().context
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            throw IllegalStateException("Storage permission is not granted. Check App info")
+        }
+
+        var file : File? = null
         val fileName = "${screenName}_$shotsFired"
-        val path = File(Environment.getExternalStorageDirectory(), "screenshots")
-        path.mkdir()
-        val file = File(path, "$fileName.png")
-        file.createNewFile()
+        val root = Environment.getExternalStorageDirectory()
+        if (root != null && root.exists()) {
+            val path = File(root, "screenshots")
+            var exists = true
+            if (!path.exists()) {
+                exists = path.mkdir()
+            }
+            if (exists) {
+                shotsFired++
+                file = File(path, "$fileName.png")
+                Timber.d("Created new file $file")
+                file.createNewFile()
+            }
+            else {
+                Timber.e("Failed to create directory $path")
+            }
+        }
+        else {
+            Timber.e("Missing directory $root")
+        }
+        if (file == null) {
+            throw IllegalStateException("Should have created a file")
+        }
+
         return file
     }
 }

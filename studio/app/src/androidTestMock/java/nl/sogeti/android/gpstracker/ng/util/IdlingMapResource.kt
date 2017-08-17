@@ -27,7 +27,7 @@ class IdlingMapResource(map: MapView) : IdlingResource, GoogleMap.OnCameraIdleLi
     override fun getName(): String = "MapResource"
 
     override fun isIdleNow(): Boolean {
-        Timber.d("Is idle $isCameraIdle && $isMapLoaded")
+        Timber.d("Is idle camera $isCameraIdle && loaded $isMapLoaded")
         return isCameraIdle && isMapLoaded
     }
 

@@ -45,7 +45,8 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
     var resource: IdlingMapResource? = null
 
     fun editTrack(): TrackRobot {
-        onView(withId(R.id.action_edit))
+        openActionBarOverflowOrOptionsMenu(activity)
+        onView(anyOf(withText(R.string.action_edit), withText(R.string.action_edit)))
                 .perform(click())
 
         return this
@@ -75,7 +76,7 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
 
     fun openAbout(): TrackRobot {
         openActionBarOverflowOrOptionsMenu(activity)
-        onView(anyOf(withId(R.id.action_about), withText(R.string.action_about)))
+        onView(anyOf(withText(R.string.action_about), withText(R.string.action_about)))
                 .perform(click())
 
         return this
