@@ -69,10 +69,11 @@ public class SummaryManagerTest {
     Context mockContext = null;
     @Mock
     ExecutorService mockExecutor = null;
-    private SummaryManager sut = new SummaryManager();
+    private SummaryManager sut;
 
     @Before
     public void setUp() {
+        sut = new SummaryManager();
         sut.setExecutor(mockExecutor);
     }
 
