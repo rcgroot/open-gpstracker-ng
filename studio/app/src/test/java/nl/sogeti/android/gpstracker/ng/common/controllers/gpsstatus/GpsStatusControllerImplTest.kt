@@ -2,6 +2,7 @@
 
 package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.GpsSatellite
 import android.location.GpsStatus
@@ -16,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
 
+@SuppressLint("MissingPermission")
 class GpsStatusControllerImplTest {
 
     @get:Rule
@@ -35,7 +37,6 @@ class GpsStatusControllerImplTest {
         `when`(context.getSystemService(Context.LOCATION_SERVICE)).thenReturn(locationManager)
         sut = GpsStatusControllerImpl(context, listener)
     }
-
 
     @Test
     fun startUpdates() {

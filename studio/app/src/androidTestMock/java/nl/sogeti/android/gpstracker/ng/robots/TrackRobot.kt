@@ -29,9 +29,9 @@
 package nl.sogeti.android.gpstracker.ng.robots
 
 import android.app.Activity
-import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import android.support.test.espresso.IdlingRegistry
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.matcher.RootMatchers.isPlatformPopup
 import android.support.test.espresso.matcher.ViewMatchers.*
@@ -82,6 +82,13 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
         return this
     }
 
+    fun openGraph(): TrackRobot {
+        onView(anyOf(withId(R.id.action_graphs), withText(R.string.action_graphs)))
+                .perform(click())
+
+        return this
+    }
+
     fun openTrackList(): TrackRobot {
         onView(anyOf(withId(R.id.action_list), withText(R.string.action_list)))
                 .perform(click())
@@ -120,12 +127,14 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
     fun start(): TrackRobot {
         val mapView = activity.findViewById<MapView>(R.id.fragment_map_mapview)
         resource = IdlingMapResource(mapView)
-        Espresso.registerIdlingResources(resource)
+        IdlingRegistry.getInstance().register(resource)
 
         return this
     }
 
     fun stop() {
-        resource?.let { Espresso.unregisterIdlingResources(it) }
+        resource?.let {
+            IdlingRegistry.getInstance().register(it)
+        }
     }
 }

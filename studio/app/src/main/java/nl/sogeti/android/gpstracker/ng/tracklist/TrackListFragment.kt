@@ -63,10 +63,10 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.listview.layoutManager = LinearLayoutManager(activity)
+        binding.fragmentTracklistList.layoutManager = LinearLayoutManager(activity)
         val itemAnimator = DefaultItemAnimator()
         itemAnimator.supportsChangeAnimations = false
-        binding.listview.itemAnimator = itemAnimator
+        binding.fragmentTracklistList.itemAnimator = itemAnimator
         binding.viewModel = viewModel
         binding.presenter = trackListPresenter
         this.binding = binding
@@ -113,7 +113,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     //region View contract
 
     override fun moveToPosition(postion: Int) {
-        executeOnUiThread { binding?.listview?.layoutManager?.scrollToPosition(postion) }
+        executeOnUiThread { binding?.fragmentTracklistList?.layoutManager?.scrollToPosition(postion) }
     }
 
     //endregion

@@ -29,45 +29,101 @@
 package nl.sogeti.android.gpstracker.ng.screenshots
 
 import android.support.test.rule.ActivityTestRule
-import nl.sogeti.android.gpstracker.ng.robots.AboutRobot
-import nl.sogeti.android.gpstracker.ng.robots.TrackListRobot
-import nl.sogeti.android.gpstracker.ng.robots.TrackRobot
+import nl.sogeti.android.gpstracker.ng.robots.*
 import nl.sogeti.android.gpstracker.ng.track.TrackActivity
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 
 class TourScreenshots {
 
     @get:Rule
     var activityRule = ActivityTestRule<TrackActivity>(TrackActivity::class.java)
 
+    private lateinit var trackRobot: TrackRobot
+    private lateinit var aboutRobot: AboutRobot
+    private lateinit var trackListRobot: TrackListRobot
+    private lateinit var graphRobot: GraphRobot
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun setupOnce() {
+            Robot.resetScreenShots()
+        }
+    }
+
+    @Before
+    fun setUp() {
+        trackRobot = TrackRobot(activityRule.activity)
+        aboutRobot = AboutRobot(activityRule.activity)
+        trackListRobot = TrackListRobot()
+        graphRobot = GraphRobot()
+
+    }
+
+    @After
+    fun tearDown() {
+        trackRobot.stop()
+        aboutRobot.stop()
+    }
+
     @Test
-    fun tour() {
-        val trackRobot = TrackRobot(activityRule.activity)
-        val aboutRobot = AboutRobot(activityRule.activity)
-        val trackListRobot = TrackListRobot(activityRule.activity)
+    fun recordTrack() {
         trackRobot
-                .start().takeScreenShot()
-                .editTrack().takeScreenShot()
-                .openTrackTypeSpinner().takeScreenShot()
-                .selectWalking()
-                .ok()
+                .start()
                 .startRecording().takeScreenShot()
                 .sleep(10)
                 .pauseRecording().takeScreenShot()
                 .resumeRecording().takeScreenShot()
                 .sleep(10)
                 .stopRecording().takeScreenShot()
-                .openAbout()
-        aboutRobot
-                .start().takeScreenShot()
-                .ok()
+    }
+
+    @Test
+    fun editTrack() {
         trackRobot
+                .start()
+                .takeScreenShot()
+                .editTrack().takeScreenShot()
+                .openTrackTypeSpinner().takeScreenShot()
+                .selectWalking()
+                .ok()
+    }
+
+    @Test
+    fun trackList() {
+        trackRobot
+                .start()
                 .openTrackList().takeScreenShot()
         trackListRobot
-                .openRowContextMenu(1).takeScreenShot()
+                .openRowContextMenu(0).takeScreenShot()
+                .share().takeScreenShot()
+                .back()
+                .openRowContextMenu(0)
+                .edit().takeScreenShot()
+                .back()
+                .openRowContextMenu(0)
+                .delete().takeScreenShot()
+                .back()
+    }
 
-        trackRobot.stop()
-        aboutRobot.stop()
+    @Test
+    fun about() {
+        trackRobot
+                .start()
+                .openAbout().takeScreenShot()
+        aboutRobot
+                .start()
+                .ok()
+    }
+
+    @Test
+    fun graph() {
+        trackRobot
+                .start()
+                .openGraph()
+        graphRobot
+                .takeScreenShot()
+                .back()
+
     }
 }

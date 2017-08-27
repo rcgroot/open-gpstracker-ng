@@ -29,28 +29,18 @@
 package nl.sogeti.android.gpstracker.ng.robots
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Environment
 import android.os.SystemClock
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
-import android.support.test.espresso.Espresso
 import android.support.test.uiautomator.UiDevice
 import android.support.v4.content.ContextCompat
 import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
 import timber.log.Timber
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileOutputStream
-
 
 open class Robot<T : Robot<T>>(private val screenName: String) {
-
-    companion object {
-        var shotsFired = 0
-    }
 
     fun takeScreenShot(): T {
         waitForIdle()
@@ -75,7 +65,7 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
     }
 
     private fun shoot(): File {
-        val file = nextShotFile()
+        val file = nextShotFile(screenName)
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.takeScreenshot(file)
 
@@ -88,57 +78,60 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
         return this as T
     }
 
-    private fun write(bitmap: Bitmap, file: File) {
-        try {
-            var out: FileOutputStream? = null
-            var bout: BufferedOutputStream? = null
-            try {
-                out = FileOutputStream(file)
-                bout = BufferedOutputStream(out, 8194)
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, bout);
-                bout.flush()
-                out.flush()
-            } finally {
-                bout?.close()
-                out?.close()
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to write bitmap")
-        }
-    }
-
-    private fun nextShotFile(): File {
-        val context = getInstrumentation().context
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            throw IllegalStateException("Storage permission is not granted. Check App info")
+    companion object {
+        fun resetScreenShots() {
+            shotsFired = 0
+            screenshotsDirectory()?.deleteRecursively()
         }
 
-        var file : File? = null
-        val fileName = "${screenName}_$shotsFired"
-        val root = Environment.getExternalStorageDirectory()
-        if (root != null && root.exists()) {
-            val path = File(root, "screenshots")
-            var exists = true
-            if (!path.exists()) {
-                exists = path.mkdir()
+        private var shotsFired = 0
+
+        private fun nextShotFile(screenName: String): File {
+            val context = getInstrumentation().context
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                throw IllegalStateException("Storage permission is not granted. Check App info")
             }
-            if (exists) {
+
+            val directory = create(screenshotsDirectory())
+            var file: File? = null
+
+            if (directory != null) {
                 shotsFired++
-                file = File(path, "$fileName.png")
+                file = File(directory, String.format("%03d %s.png", shotsFired, screenName))
                 Timber.d("Created new file $file")
                 file.createNewFile()
+            } else {
+                Timber.e("Failed to create directory $directory")
             }
-            else {
-                Timber.e("Failed to create directory $path")
+
+            if (file == null) {
+                throw IllegalStateException("Should have created a file")
             }
-        }
-        else {
-            Timber.e("Missing directory $root")
-        }
-        if (file == null) {
-            throw IllegalStateException("Should have created a file")
+
+            return file
         }
 
-        return file
+        private fun create(path: File?): File? {
+            var path = path ?: return null
+            var exists = path.exists()
+            if (!exists) {
+                exists = path.mkdir()
+            }
+
+            return if (exists) path else null
+        }
+
+        private fun screenshotsDirectory(): File? {
+            var screenshotDirectory: File? = null
+            val root = Environment.getExternalStorageDirectory()
+            if (root != null && root.exists()) {
+                screenshotDirectory = File(root, "screenshots")
+            } else {
+                Timber.e("Missing directory $root")
+            }
+
+            return screenshotDirectory
+        }
     }
 }
+

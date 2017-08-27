@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.robots
 
 import android.support.test.espresso.Espresso
+import android.support.test.espresso.IdlingRegistry
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.v7.app.AppCompatActivity
@@ -54,12 +55,14 @@ class AboutRobot(private val activity: AppCompatActivity) : Robot<AboutRobot>("A
         val fragment = activity.supportFragmentManager.findFragmentByTag(AboutFragment.TAG) as AboutFragment
         val webview = fragment.dialog.findViewById<WebView>(R.id.fragment_about_webview)
         resource = WebViewIdlingResource(webview)
-        Espresso.registerIdlingResources(resource)
+        IdlingRegistry.getInstance().register(resource)
 
         return this
     }
 
     fun stop() {
-        resource?.let { Espresso.unregisterIdlingResources(it) }
+        resource?.let {
+            IdlingRegistry.getInstance().unregister(it)
+        }
     }
 }
