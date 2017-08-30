@@ -1,1 +1,1 @@
-include ':app', ':integration', ':widgets'
+include ':app', ':integration', ':widgets', ':gpx'

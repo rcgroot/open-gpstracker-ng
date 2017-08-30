@@ -34,7 +34,6 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.sharing.ShareIntentFactory
-import nl.sogeti.android.gpstracker.ng.map.LocationFactory
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
