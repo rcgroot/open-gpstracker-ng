@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.sharing
+package nl.sogeti.android.gpstracker.ng.export
 
 import android.content.Intent
 import android.net.Uri

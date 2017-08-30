@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.sharing
+package nl.sogeti.android.gpstracker.ng.export
 
 import android.content.ContentProvider
 import android.content.ContentValues
@@ -6,7 +6,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import nl.sogeti.android.gpstracker.ng.sharing.tasks.GpxCreator
+import nl.sogeti.android.gpstracker.ng.export.tasks.GpxCreator
 import nl.sogeti.android.gpstracker.ng.utils.trackUri
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber

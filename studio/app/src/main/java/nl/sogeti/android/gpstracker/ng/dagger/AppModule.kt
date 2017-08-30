@@ -32,9 +32,8 @@ import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.sharing.GpxShareProvider
-import nl.sogeti.android.gpstracker.ng.sharing.ShareIntentFactory
-import nl.sogeti.android.gpstracker.ng.map.LocationFactory
+import nl.sogeti.android.gpstracker.ng.export.GpxShareProvider
+import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions

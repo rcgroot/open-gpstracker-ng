@@ -35,7 +35,7 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresen
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.sharing.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
