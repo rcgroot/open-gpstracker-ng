@@ -70,8 +70,8 @@ class TourScreenshots {
     fun recordTrack() {
         trackRobot
                 .start()
-                .startRecording().takeScreenShot()
-                .sleep(10)
+                .startRecording()
+                .sleep(10).takeScreenShot()
                 .pauseRecording().takeScreenShot()
                 .resumeRecording().takeScreenShot()
                 .sleep(10)

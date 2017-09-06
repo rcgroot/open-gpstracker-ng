@@ -42,6 +42,23 @@ import java.io.File
 
 open class Robot<T : Robot<T>>(private val screenName: String) {
 
+    fun back(): T {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        device.pressBack()
+
+        return this as T
+    }
+
+    fun waitForIdle() {
+        getInstrumentation().waitForIdleSync()
+    }
+
+    fun sleep(seconds: Int): T {
+        SystemClock.sleep(seconds * 1000L)
+
+        return this as T
+    }
+
     fun takeScreenShot(): T {
         waitForIdle()
         MockServiceManager.pauseWaypointGenerations = true
@@ -53,29 +70,12 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
         return this as T
     }
 
-    fun waitForIdle() {
-        getInstrumentation().waitForIdleSync()
-    }
-
-    fun back(): T {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.pressBack()
-
-        return this as T
-    }
-
     private fun shoot(): File {
         val file = nextShotFile(screenName)
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         device.takeScreenshot(file)
 
         return file
-    }
-
-    fun sleep(seconds: Int): T {
-        SystemClock.sleep(seconds * 1000L)
-
-        return this as T
     }
 
     companion object {
