@@ -3,7 +3,6 @@ package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 import android.content.Context
 import timber.log.Timber
 
-
 abstract class ContextedPresenter<NAV: Navigation> {
 
     private var _navigation: NAV? = null

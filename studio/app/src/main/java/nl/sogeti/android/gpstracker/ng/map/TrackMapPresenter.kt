@@ -125,7 +125,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //endregion
 
-    /* Google Map Tiles */
+    //region Google Map Tiles
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
@@ -139,6 +139,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             tileProvider.provideFor(googleMap)
         }
     }
+    
+    //endregion
 
     //region View callbacks
 
