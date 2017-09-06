@@ -100,10 +100,10 @@ class TourScreenshots {
                 .back()
                 .openRowContextMenu(0)
                 .edit().takeScreenShot()
-                .back()
+                .cancelEdit()
                 .openRowContextMenu(0)
                 .delete().takeScreenShot()
-                .back()
+                .cancelDelete()
     }
 
     @Test

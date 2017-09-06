@@ -8,8 +8,8 @@ import timber.log.Timber
 
 class IdlingMapResource(map: MapView) : IdlingResource, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapLoadedCallback {
 
-    private var isMapLoaded = false
-    private var isCameraIdle = false
+    private var isMapLoaded = true
+    private var isCameraIdle = true
 
     private var callback: IdlingResource.ResourceCallback? = null
 

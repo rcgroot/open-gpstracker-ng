@@ -3,6 +3,7 @@ package nl.sogeti.android.gpstracker.ng.robots
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.UiController
 import android.support.test.espresso.ViewAction
+import android.support.test.espresso.ViewInteraction
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
@@ -18,9 +19,7 @@ import org.hamcrest.Matchers.anyOf
 class TrackListRobot : Robot<TrackListRobot>("TrackList") {
 
     fun openRowContextMenu(rowNumber: Int): TrackListRobot {
-
-        onView(matchTrackList())
-                .check(matches(isDisplayed()))
+        isTrackListDisplayed()
                 .perform(scrollToPosition<TrackListViewAdapter.ViewHolder>(rowNumber))
                 .perform(clickSubView(R.id.row_track_overflow))
 
@@ -46,15 +45,24 @@ class TrackListRobot : Robot<TrackListRobot>("TrackList") {
         return this
     }
 
-    fun isTrackListDisplayed() {
-        onView(matchTrackList())
-                .check(matches(isCompletelyDisplayed()))
+    fun cancelEdit(): TrackListRobot {
+        onView(withId(R.id.fragment_trackEdit_ok))
+                .perform(click())
+
+        return this
     }
 
-    /**
-     * Matches the recycle view id, which might change when it is included through xml as it is the root view element
-     */
-    private fun matchTrackList() = anyOf(withId(R.id.fragment_tracklist), withId(R.id.fragment_tracklist_list))
+    fun cancelDelete(): TrackListRobot {
+        onView(withId(R.id.fragment_trackdelete_cancel))
+                .perform(click())
+
+        return this
+    }
+
+    fun isTrackListDisplayed(): ViewInteraction {
+        return onView(anyOf(withId(R.id.fragment_tracklist), withId(R.id.fragment_tracklist_list)))
+                .check(matches(isCompletelyDisplayed()))
+    }
 
     private fun clickSubView(subViewId: Int): ViewAction {
         return object : ViewAction {
