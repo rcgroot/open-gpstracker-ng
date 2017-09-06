@@ -128,13 +128,13 @@ open class CommonBindingAdapters {
 
     @BindingAdapter("center")
     fun setMapTarget(map: MapView, center: LatLng?) {
-        val ZOOM_WORLD = 1.0F
-        val ZOOM_STREETS = 15.0F
+        val OVERVIEW = 10.0F
+        val CLOSE_UP = 15.0F
         if (center != null) {
             map.getMapAsync {
                 val update: CameraUpdate
-                if (it.cameraPosition.zoom == ZOOM_WORLD) {
-                    update = CameraUpdateFactory.newLatLngZoom(center, ZOOM_STREETS)
+                if (it.cameraPosition.zoom < OVERVIEW || it.cameraPosition.zoom > CLOSE_UP) {
+                    update = CameraUpdateFactory.newLatLngZoom(center, CLOSE_UP)
                 } else {
                     update = CameraUpdateFactory.newLatLng(center)
                 }
