@@ -15,13 +15,13 @@ abstract class ContextedPresenter<NAV: Navigation> {
         get() {
             return _context ?: throw IllegalStateException("Don't run the presenter outside its started state")
         }
-    val isStarted: Boolean
-        get() = _context != null
+    val contextWhenStarted: Context?
+        get() = _context
 
     fun start(context: Context, navigation: NAV? = null) {
-        if (!isStarted) {
-            _navigation = navigation
+        if (_context == null) {
             _context = context
+            _navigation = navigation
             didStart()
         } else {
             Timber.e("Starting already running presenter, ignoring call")
@@ -29,7 +29,7 @@ abstract class ContextedPresenter<NAV: Navigation> {
     }
 
     fun stop() {
-        if (isStarted) {
+        if (_context != null) {
             willStop()
             _context = null
             _navigation = null

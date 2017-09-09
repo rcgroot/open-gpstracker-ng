@@ -28,42 +28,43 @@
  */
 package nl.sogeti.android.gpstracker.ng.recording
 
-import android.databinding.DataBindingUtil
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.support.v7.app.AlertDialog
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
+import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.v2.R
-import nl.sogeti.android.gpstracker.v2.databinding.FragmentRecordingBinding
+import javax.inject.Inject
 
-class RecordingFragment : Fragment() {
+const val GPS_STATUS_PACKAGE_NAME = "com.eclipsim.gpsstatus2"
 
-    private val viewModel = RecordingViewModel(null)
-    private val presenter = RecordingPresenter(viewModel)
-    private var permissionRequester = PermissionRequester()
+class RecordingNavigation(val context: Context) : Navigation {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
-        binding.viewModel = viewModel
-        binding.presenter = presenter
+    @Inject
+    lateinit var packageManagerFactory: PackageManagerFactory
 
-        return binding.root
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
     }
 
-    override fun onStart() {
-        super.onStart()
-        permissionRequester.start(this, { presenter.start(context, RecordingNavigation(context)) })
+    fun openExternalGpsStatusApp() {
+        val packageManager = packageManagerFactory.createPackageManager(context)
+        val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        context.startActivity(intent);
     }
 
-    override fun onStop() {
-        super.onStop()
-        permissionRequester.stop()
-        presenter.stop()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+    fun showInstallHintForGpsStatusApp() {
+        AlertDialog.Builder(context)
+                .setTitle(R.string.fragment_recording_gpsstatus_title)
+                .setMessage(R.string.fragment_recording_gpsstatus_body)
+                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                .setPositiveButton(R.string.permission_button_install, { _, _ ->
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$GPS_STATUS_PACKAGE_NAME"))
+                    context.startActivity(intent)
+                })
+                .show()
     }
 }

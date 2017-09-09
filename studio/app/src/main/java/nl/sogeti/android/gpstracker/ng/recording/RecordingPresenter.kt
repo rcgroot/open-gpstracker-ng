@@ -34,11 +34,11 @@ import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.high
 import nl.sogeti.android.gpstracker.ng.recording.RecordingViewModel.signalQualityLevel.low
@@ -51,7 +51,7 @@ import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter<Navigation>(), ContentController.Listener, GpsStatusController.Listener {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter<RecordingNavigation>(), ContentController.Listener, GpsStatusController.Listener {
 
     private var gpsStatusController: GpsStatusController? = null
     internal var executingReader: TrackReader? = null
@@ -62,7 +62,8 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
     @Inject
     lateinit var calculator: SummaryCalculator
-
+    @Inject
+    lateinit var packageManagerFactory: PackageManagerFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -73,6 +74,20 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         stopContentUpdates()
         stopGpsUpdates()
     }
+
+    //region View
+
+    fun didSelectSignal() {
+        val packageManager = packageManagerFactory.createPackageManager(context)
+        val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
+        if (intent == null) {
+            navigation.showInstallHintForGpsStatusApp()
+        } else {
+            navigation.openExternalGpsStatusApp()
+        }
+    }
+
+    //endregion
 
     //region Service connection
 
@@ -195,7 +210,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         val handler = DefaultResultHandler()
 
         override fun doInBackground(vararg p: Void): Void? {
-            val context = context
+            val context = contextWhenStarted ?: return null
 
             trackUri.readTrack(context, handler)
 

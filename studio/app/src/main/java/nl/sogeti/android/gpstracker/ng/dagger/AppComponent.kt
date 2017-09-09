@@ -34,6 +34,7 @@ import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.map.TrackMapFragment
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
+import nl.sogeti.android.gpstracker.ng.recording.RecordingNavigation
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeletePresenter
@@ -73,6 +74,8 @@ interface AppComponent {
     fun inject(injectable: SummaryManager)
 
     fun inject(permissionRequester: PermissionRequester)
+
+    fun inject(permissionRequester: RecordingNavigation)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

@@ -39,6 +39,10 @@
     <!--Map list screen / Recording fragment-->
     <string name="fragment_recording_summary">%1$s in %2$s with a\n%3$s average speed</string>
     <string name="fragment_recording_satellites">SATS\n%1$d/%2$d</string>
+    <string name="fragment_recording_gpsstatus_title">Suggestion: GPS Status &amp; Toolbox</string>
+    <string name="fragment_recording_gpsstatus_body">In all the years of using GPS on Android I never found a better app to troubleshoot my GPS signal then <b>GPS Status &amp; Toolbox</b>.
+
+    After installation the satellite icon will directly open the status app.</string>
     <string name="fragment_tracks_empty">No tracks found, record or import some</string>
     <plurals name="fragment_recording_waypoints">
         <item quantity="one">%d waypoint</item>
@@ -120,5 +124,4 @@
     <string name="graph_label_altitude">Altitude</string>
     <string name="menu_item_export">Export</string>
     <string name="menu_item_import">Import</string>
-
 </resources>

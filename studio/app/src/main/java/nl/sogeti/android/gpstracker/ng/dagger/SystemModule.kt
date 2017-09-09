@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.map.LocationFactory
 import nl.sogeti.android.gpstracker.ng.map.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
@@ -34,4 +35,7 @@ class SystemModule {
 
     @Provides
     fun locationFactory(): LocationFactory = LocationFactoryImpl()
+
+    @Provides
+    fun packageManagerFactory() = PackageManagerFactory()
 }
