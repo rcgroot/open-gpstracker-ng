@@ -58,7 +58,6 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -77,10 +76,12 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
     override fun onStart() {
         super.onStart()
         permissionRequester.start(this, { trackListPresenter.start(activity, TrackNavigator(activity)) })
+        setHasOptionsMenu(true)
     }
 
     override fun onStop() {
         super.onStop()
+        setHasOptionsMenu(false)
         trackListPresenter.stop()
         permissionRequester.stop()
     }
