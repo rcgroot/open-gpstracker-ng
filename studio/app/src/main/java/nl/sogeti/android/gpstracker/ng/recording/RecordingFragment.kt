@@ -54,7 +54,7 @@ class RecordingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { presenter.start(context, RecordingNavigation(context)) })
+        permissionRequester.start(this, { presenter.start(context, RecordingNavigation()) })
     }
 
     override fun onStop() {

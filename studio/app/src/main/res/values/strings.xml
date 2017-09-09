@@ -40,9 +40,9 @@
     <string name="fragment_recording_summary">%1$s in %2$s with a\n%3$s average speed</string>
     <string name="fragment_recording_satellites">SATS\n%1$d/%2$d</string>
     <string name="fragment_recording_gpsstatus_title">Suggestion: GPS Status &amp; Toolbox</string>
-    <string name="fragment_recording_gpsstatus_body">In all the years of using GPS on Android I never found a better app to troubleshoot my GPS signal then <b>GPS Status &amp; Toolbox</b>.
-
-    After installation the satellite icon will directly open the status app.</string>
+    <string name="fragment_recording_gpsstatus_body">In all the years of using GPS on Android I never
+        found a better app to troubleshoot my GPS signal then <b>GPS Status &amp; Toolbox</b>.
+        \n\nAfter installation the satellite icon will directly open the status app.</string>
     <string name="fragment_tracks_empty">No tracks found, record or import some</string>
     <plurals name="fragment_recording_waypoints">
         <item quantity="one">%d waypoint</item>
@@ -66,7 +66,11 @@
     <string name="row_distance_default">--</string>
     <string name="row_track_icon_default">Default activity</string>
     <string name="row_track_map">Overview map</string>
-
+    <string name="fragment_tracks_exporter_title">OGT Exporter</string>
+    <string name="fragment_tracks_exporter_body">Exporting all tracks to GPX files is currently not
+        included in the app. An older preexisting app does offer this function. It can export all the
+        tracks to GPX files on Google Drive.
+        \n\nAfter installation the export option will directly open the Exporter app.</string>
     <string name="track_type_default">tracking</string>
     <string name="track_type_run">running</string>
     <string name="track_type_walk">walking</string>

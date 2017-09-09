@@ -40,7 +40,7 @@ import javax.inject.Inject
 
 const val GPS_STATUS_PACKAGE_NAME = "com.eclipsim.gpsstatus2"
 
-class RecordingNavigation(val context: Context) : Navigation {
+class RecordingNavigation : Navigation {
 
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory
@@ -49,14 +49,14 @@ class RecordingNavigation(val context: Context) : Navigation {
         GpsTrackerApplication.appComponent.inject(this)
     }
 
-    fun openExternalGpsStatusApp() {
+    fun openExternalGpsStatusApp(context: Context) {
         val packageManager = packageManagerFactory.createPackageManager(context)
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         context.startActivity(intent);
     }
 
-    fun showInstallHintForGpsStatusApp() {
+    fun showInstallHintForGpsStatusApp(context: Context) {
         AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_recording_gpsstatus_title)
                 .setMessage(R.string.fragment_recording_gpsstatus_body)

@@ -81,9 +81,9 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         val packageManager = packageManagerFactory.createPackageManager(context)
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
         if (intent == null) {
-            navigation.showInstallHintForGpsStatusApp()
+            navigation.showInstallHintForGpsStatusApp(context)
         } else {
-            navigation.openExternalGpsStatusApp()
+            navigation.openExternalGpsStatusApp(context)
         }
     }
 

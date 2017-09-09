@@ -34,6 +34,7 @@ import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
@@ -46,6 +47,7 @@ import nl.sogeti.android.gpstracker.v2.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
+const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
 class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter<TrackNavigator>(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
@@ -60,6 +62,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     lateinit var executor: Executor
     @Inject
     lateinit var shareIntentFactory: ShareIntentFactory
+    @Inject
+    lateinit var packageManagerFactory: PackageManagerFactory
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -126,7 +130,13 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didSelectExport() {
-        navigation.startFullExport()
+        val packageManager = packageManagerFactory.createPackageManager(context)
+        val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
+        if (intent == null) {
+            navigation.showInstallHintForOGTExporterApp(context)
+        } else {
+            navigation.openExternalOGTExporterApp(context)
+        }
     }
 
     override fun didSelectImport() {
