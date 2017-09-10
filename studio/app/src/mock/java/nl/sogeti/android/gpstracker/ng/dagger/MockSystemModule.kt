@@ -11,6 +11,7 @@ import nl.sogeti.android.gpstracker.ng.util.MockGpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.util.MockLocationFactory
 import nl.sogeti.android.gpstracker.ng.util.MockPermissionChecker
 import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
+import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
 import java.util.*
 
 @Module
@@ -40,4 +41,7 @@ class MockSystemModule {
 
     @Provides
     fun packageManagerFactory() = PackageManagerFactory()
+
+    @Provides
+    fun versionHelper() = VersionHelper()
 }

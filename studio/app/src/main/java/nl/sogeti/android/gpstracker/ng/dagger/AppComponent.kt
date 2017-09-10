@@ -40,6 +40,7 @@ import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeletePresenter
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditPresenter
+import nl.sogeti.android.gpstracker.ng.tracklist.TrackListNavigation
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
@@ -79,6 +80,8 @@ interface AppComponent {
     fun inject(injectable: RecordingNavigation)
 
     fun inject(injectable: TrackNavigator)
+
+    fun inject(injectable: TrackListNavigation)
 
     @Named("providerAuthority")
     fun providerAuthority(): String

@@ -28,22 +28,26 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.app.Activity
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.util.SparseArray
 import android.view.*
-import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
+import nl.sogeti.android.gpstracker.ng.utils.ActivityResultLambda
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
 import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentTracklistBinding
+import timber.log.Timber
 
 /**
  * Sets up display and selection of tracks in a list style
  */
-class TrackListFragment : Fragment(), TrackListViewModel.View {
+class TrackListFragment : Fragment(), TrackListViewModel.View, ActivityResultLambda {
 
     private val viewModel = TrackListViewModel()
     private val trackListPresenter = TrackListPresenter(viewModel, this)
@@ -75,7 +79,7 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { trackListPresenter.start(activity, TrackNavigator(activity)) })
+        permissionRequester.start(this, { trackListPresenter.start(activity, TrackListNavigation(this)) })
         setHasOptionsMenu(true)
     }
 
@@ -110,6 +114,29 @@ class TrackListFragment : Fragment(), TrackListViewModel.View {
         }
         return isHandled
     }
+
+    //region Activity results
+
+    private var requests = 1
+    private val resultHandlers = SparseArray<(Intent?) -> Unit>()
+
+    override fun startActivityForResult(intent: Intent, resultHandler: (Intent?) -> Unit) {
+        val requestCode = ++requests
+        resultHandlers.put(requestCode, resultHandler)
+        startActivityForResult(intent, requestCode)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, result: Intent?) {
+        val resultHandler = resultHandlers.get(requestCode)
+        resultHandlers.remove(requestCode)
+        if (resultCode == Activity.RESULT_OK && resultHandler != null) {
+            resultHandler(result)
+        } else {
+            Timber.e("Received $result without an way to handle")
+        }
+    }
+
+    //endregion
 
     //region View contract
 

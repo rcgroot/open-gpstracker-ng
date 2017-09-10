@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.content.Intent
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
@@ -35,9 +36,8 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresen
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
-import nl.sogeti.android.gpstracker.ng.track.TrackNavigator
+import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.map
@@ -49,7 +49,7 @@ import javax.inject.Inject
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter<TrackNavigator>(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter<TrackListNavigation>(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     private var contentController: ContentController? = null
     @Inject
@@ -113,7 +113,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didSelectTrack(track: Uri, name: String) {
         trackSelection.selectTrack(track, name)
-        navigation.hideTrackList()
+        navigation.finishTrackSelection()
     }
 
     override fun didShareTrack(track: Uri) {
@@ -140,7 +140,12 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didSelectImport() {
-        navigation.startGpxFileSelection()
+        navigation.startGpxFileSelection({ intent -> importGpx(intent) })
+    }
+
+    fun importGpx(intent: Intent?) {
+        val uri = intent?.data ?: return
+
     }
 
     //endregion

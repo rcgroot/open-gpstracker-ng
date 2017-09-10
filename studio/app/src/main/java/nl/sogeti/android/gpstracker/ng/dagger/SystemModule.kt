@@ -9,6 +9,7 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.Package
 import nl.sogeti.android.gpstracker.ng.map.LocationFactory
 import nl.sogeti.android.gpstracker.ng.map.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
+import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
 import java.util.*
 
 @Module
@@ -38,4 +39,7 @@ class SystemModule {
 
     @Provides
     fun packageManagerFactory() = PackageManagerFactory()
+
+    @Provides
+    fun versionHelper() = VersionHelper()
 }
