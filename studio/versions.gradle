@@ -20,7 +20,7 @@ ext {
     junitVersion = '4.12'
     mockitoVersion = '2.8.9'
     testRunnerVersion = '0.5'
-    robolectricVersion = '3.3.1'
+    robolectricVersion = '3.4.2'
     espressoVersion = '3.0.1'
     robolectricVersion = '3.1.4'
     uiautomator = '2.1.3'
