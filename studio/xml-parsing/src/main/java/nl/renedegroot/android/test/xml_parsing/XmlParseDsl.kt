@@ -5,6 +5,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.BufferedInputStream
 import java.io.InputStream
+import java.lang.Exception
 
 fun xml(init: XML.() -> Unit): XML {
     val xml = XML()
@@ -12,12 +13,18 @@ fun xml(init: XML.() -> Unit): XML {
     return xml
 }
 
+fun element(name: ElementName, minOccurs: Int = 1, maxOccurs: Int = 1, init: Element.() -> Unit): Element {
+    val tag = Element(name, minOccurs, maxOccurs)
+    tag.init()
+    return tag
+}
+
 @XmlParseDslMarker
 class XML {
-    private var root: Tag? = null
+    private var root: Element? = null
 
-    fun tag(name: String, init: Tag.() -> Unit): Tag {
-        val tag = Tag(name)
+    fun element(name: ElementName, minOccurs: Int = 1, maxOccurs: Int = 1, init: Element.() -> Unit): Element {
+        val tag = Element(name, minOccurs, maxOccurs)
         tag.init()
         root = tag
         return tag
@@ -47,13 +54,17 @@ class XML {
     }
 }
 
-class Tag(private val name: TagName) : Parser {
+class Element(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
     private val tags = mutableListOf<Parser>()
     private val attributes = mutableListOf<Attribute>()
     private var text: Text? = null
 
-    fun tag(name: String, init: Tag.() -> Unit): Tag {
-        val tag = Tag(name)
+    fun include(element: Element) {
+        tags.add(element)
+    }
+
+    fun element(name: String, minOccurs: Int = 1, maxOccurs: Int = 1, init: Element.() -> Unit): Element {
+        val tag = Element(name, minOccurs, maxOccurs)
         tag.init()
         tags.add(tag)
         return tag
@@ -72,23 +83,35 @@ class Tag(private val name: TagName) : Parser {
     }
 
     override fun parse(xmlParser: XmlPullParser) {
-        xmlParser.parseTag(name) {
-            it.parseAttributes(attributes)
+        var latest = xmlParser.nextIgnoringWhiteSpace()
+        if (latest == XmlPullParser.START_TAG && xmlParser.name == name) {
+            xmlParser.parseAttributes(attributes)
             tags.forEach {
                 it.parse(xmlParser)
             }
-            text?.parse(it)
+            text?.parse(xmlParser)
+            latest = xmlParser.nextIgnoringText()
+        } else {
+            throw XmlParseException("Expected to find START_TAG of '$name' but found ${xmlParser.state(latest)}")
+        }
+        if (latest != XmlPullParser.END_TAG || this.name != name) {
+            throw XmlParseException("Expected to find END_TAG of '$name' but found ${xmlParser.state(latest)}")
         }
     }
 }
 
 @XmlParseDslMarker
-class Attribute(val name: String, val action: (String) -> Unit)
+class Attribute(val name: AttributeName, val action: (String) -> Unit)
 
-class Text(val action: (String) -> Unit) : Parser {
+class Text(private val action: (String) -> Unit) : Parser {
 
     override fun parse(xmlParser: XmlPullParser) {
-        xmlParser.parseText(action)
+        val latest = xmlParser.next()
+        if (latest == XmlPullParser.TEXT) {
+            action(xmlParser.text)
+        } else {
+            throw XmlParseException("Expected to find TEXT but found ${xmlParser.state(latest)}")
+        }
     }
 }
 
@@ -99,28 +122,41 @@ annotation class XmlParseDslMarker
 internal interface Parser {
 
     fun parse(xmlParser: XmlPullParser)
+
 }
 
-private typealias TagName = String
+class XmlParseException(message: String) : Exception(message)
+
+private typealias ElementName = String
+
 private typealias AttributeName = String
-
-private fun XmlPullParser.parseTag(name: TagName, parse: (XmlPullParser) -> Unit) {
-    var latest = 0
-    while (latest != XmlPullParser.START_TAG && this.name != name) {
-        latest = next()
-    }
-    parse(this)
-    while (latest != XmlPullParser.END_TAG && this.name != name) {
-        latest = next()
+private fun XmlPullParser.state(latest: Int): String {
+    return when (latest) {
+        XmlPullParser.START_TAG -> "START_TAG of '$name'"
+        XmlPullParser.END_TAG -> "END_TAG of '$name'"
+        XmlPullParser.END_DOCUMENT -> "END_DOCUMENT of document"
+        XmlPullParser.START_DOCUMENT -> "START_DOCUMENT of document"
+        XmlPullParser.TEXT -> "TEXT of '$text'"
+        else -> "Unknown state"
     }
 }
 
-private fun XmlPullParser.parseText(action: (String) -> Unit) {
-    var latest = 0
-    while (latest != XmlPullParser.TEXT) {
-        latest = next()
+private fun XmlPullParser.nextIgnoringWhiteSpace(): Int {
+    var last = next()
+    while (last == XmlPullParser.TEXT && text.isBlank()) {
+        last = next()
     }
-    action(text)
+
+    return last
+}
+
+private fun XmlPullParser.nextIgnoringText(): Int {
+    var last = next()
+    while (last == XmlPullParser.TEXT) {
+        last = next()
+    }
+
+    return last
 }
 
 private fun XmlPullParser.parseAttributes(attributes: List<Attribute>) {

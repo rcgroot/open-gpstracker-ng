@@ -26,8 +26,7 @@ class XmlParseDslTest {
         // Arrange
         val stream = streamFromString("""<gpx></gpx>""")
         val parser = xml {
-            tag("gpx") {
-
+            element("gpx") {
             }
         }
         // Act
@@ -46,10 +45,10 @@ class XmlParseDslTest {
                 </metadata>
             </gpx>""")
         val xml = xml {
-            tag("gpx") {
-                tag("metadata") {
-                    tag("name") { text { output.add(it) } }
-                    tag("author") { text { output.add(it) } }
+            element("gpx") {
+                element("metadata") {
+                    element("name") { text { output.add(it) } }
+                    element("author") { text { output.add(it) } }
                 }
             }
         }
@@ -74,10 +73,11 @@ class XmlParseDslTest {
                 </metadata>
             </gpx>""")
         val xml = xml {
-            tag("gpx") {
-                tag("metadata") {
-                    tag("license") {
+            element("gpx") {
+                element("metadata") {
+                    element("copyright") {
                         attribute("author") { output.add(it) }
+                        element("license") {}
                     }
                 }
             }
@@ -95,11 +95,10 @@ class XmlParseDslTest {
         val output = mutableListOf<String>()
         val stream = streamFromString("""
             <copyright author="test-case" year="second">
-                <license>license://any/uri</license>
             </copyright>
             """)
         val xml = xml {
-            tag("copyright") {
+            element("copyright") {
                 attribute("year") { output.add(it) }
                 attribute("author") { output.add(it) }
             }
@@ -110,6 +109,48 @@ class XmlParseDslTest {
         Assert.assertThat(output.size, `is`(2))
         Assert.assertThat(output[0], `is`("test-case"))
         Assert.assertThat(output[1], `is`("second"))
+    }
+
+    @Test
+    fun optionalElementMissing() {
+        // Arrange
+        val output = mutableListOf<String>()
+        val stream = streamFromString("""
+            <copyright author="test-case" year="second">
+            </copyright>
+            """)
+        val xml = xml {
+            element("copyright") {
+                element("license", 0) {
+                    text { output.add(it) }
+                }
+            }
+        }
+        // Act
+        xml.parse(stream)
+        // Assert
+        Assert.assertThat(output.size, `is`(2))
+    }
+
+    @Test
+    fun optionalElementPresent() {
+        // Arrange
+        val output = mutableListOf<String>()
+        val stream = streamFromString("""
+            <copyright author="test-case" year="second">
+                <license>license://any/uri</license>
+            </copyright>
+            """)
+        val xml = xml {
+            element("copyright") {
+                element("license", 1) { text { output.add(it) } }
+            }
+        }
+        // Act
+        xml.parse(stream)
+        // Assert
+        Assert.assertThat(output.size, `is`(1))
+        Assert.assertThat(output[0], `is`("license://any/uri"))
     }
 
     private fun streamFromString(string: String): ByteArrayInputStream {

@@ -93,6 +93,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':integration')
     implementation project(':widgets')
+    implementation project(':xml-parsing')
     //    wearApp project(':wear')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
