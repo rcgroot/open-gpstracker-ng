@@ -221,6 +221,34 @@ class XmlParseDslTest {
         Assert.assertThat(output[2], `is`("license://any/3"))
     }
 
+    @Test
+    fun ignoreSubTree() {
+        // Arrange
+        val output = mutableListOf<String>()
+        val stream = streamFromString("""
+            <gpx>
+                <metadata>
+                    <copyright author="test-case">
+                        <license>license://any/uri</license>
+                    </copyright>
+                </metadata>
+                <data>real data</data>
+            </gpx>""")
+        val xml = xml {
+            element("gpx") {
+                ignore("metadata")
+                element("data") {
+                    text { output.add(it) }
+                }
+            }
+        }
+        // Act
+        xml.parse(stream)
+        // Assert
+        Assert.assertThat(output.size, `is`(1))
+        Assert.assertThat(output[0], `is`("real data"))
+    }
+
     private fun streamFromString(string: String): ByteArrayInputStream {
         return ByteArrayInputStream(string.toByteArray(Charset.forName("UTF-8")))
     }

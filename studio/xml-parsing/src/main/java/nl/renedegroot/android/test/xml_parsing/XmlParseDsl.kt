@@ -57,12 +57,8 @@ class XML {
 class Element(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
     private val tags = mutableListOf<Parser>()
     private val attributes = mutableListOf<Attribute>()
-    private var text: Text = Text{}
+    private var text: Text = Text {}
     private var occurred = 0
-
-    fun include(element: Element) {
-        tags.add(element)
-    }
 
     fun element(name: String, minOccurs: Int = 1, maxOccurs: Int = 1, init: Element.() -> Unit): Element {
         val tag = Element(name, minOccurs, maxOccurs)
@@ -81,6 +77,12 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
         val text = Text(action)
         this.text = text
         return text
+    }
+
+    fun ignore(name: String, minOccurs: Int = 1, maxOccurs: Int = 1): IgnoreElement {
+        val tag = IgnoreElement(name, minOccurs, maxOccurs)
+        tags.add(tag)
+        return tag
     }
 
     override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
@@ -107,11 +109,37 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
             throw XmlParseException("Expected to find START_TAG of '$name' but found ${xmlParser.state(next)}")
         }
 
-        if (next != XmlPullParser.END_TAG || this.name != name) {
+        if (next != XmlPullParser.END_TAG || xmlParser.name != name) {
             throw XmlParseException("Expected to find END_TAG of '$name' but found ${xmlParser.state(next)}")
         }
         occurred++
     }
+}
+
+class IgnoreElement(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
+    private var occurred = 0
+
+    override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
+        return occurred < minOccurs || (occurred < maxOccurs && xmlParser.name == name)
+    }
+
+    override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
+        var next = firstNext
+        if (next == XmlPullParser.START_TAG && xmlParser.name == name) {
+            while (!(xmlParser.name == name && next == XmlPullParser.END_TAG)) {
+                next = xmlParser.next()
+            }
+        } else {
+            throw XmlParseException("Expected to find START_TAG of '$name' but found ${xmlParser.state(next)}")
+        }
+
+        if (next != XmlPullParser.END_TAG || xmlParser.name != name) {
+            throw XmlParseException("Expected to find END_TAG of '$name' but found ${xmlParser.state(next)}")
+        }
+        occurred++
+
+    }
+
 }
 
 @XmlParseDslMarker
