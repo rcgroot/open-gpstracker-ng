@@ -40,15 +40,15 @@ class XML {
             val ur = UnicodeReader(bis, "UTF-8").use()
             xmlParser.setInput(ur)
 
-            var latest = 0
-            while (latest != XmlPullParser.START_DOCUMENT) {
-                latest = xmlParser.next()
+            var next = 0
+            while (next != XmlPullParser.START_DOCUMENT) {
+                next = xmlParser.next()
             }
 
-            root?.parse(xmlParser)
+            root?.parse(xmlParser, xmlParser.next())
 
-            while (latest != XmlPullParser.END_DOCUMENT) {
-                latest = xmlParser.next()
+            while (next != XmlPullParser.END_DOCUMENT) {
+                next = xmlParser.next()
             }
         }
     }
@@ -57,7 +57,8 @@ class XML {
 class Element(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
     private val tags = mutableListOf<Parser>()
     private val attributes = mutableListOf<Attribute>()
-    private var text: Text? = null
+    private var text: Text = Text{}
+    private var occurred = 0
 
     fun include(element: Element) {
         tags.add(element)
@@ -82,21 +83,34 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
         return text
     }
 
-    override fun parse(xmlParser: XmlPullParser) {
-        var latest = xmlParser.nextIgnoringWhiteSpace()
-        if (latest == XmlPullParser.START_TAG && xmlParser.name == name) {
+    override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
+        return occurred < minOccurs || (occurred < maxOccurs && xmlParser.name == name)
+    }
+
+    override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
+        var next = firstNext
+        if (next == XmlPullParser.START_TAG && xmlParser.name == name) {
             xmlParser.parseAttributes(attributes)
+
+            next = xmlParser.nextIgnoringWhiteSpace()
             tags.forEach {
-                it.parse(xmlParser)
+                while (it.matches(xmlParser, next)) {
+                    it.parse(xmlParser, next)
+                    next = xmlParser.nextIgnoringWhiteSpace()
+                }
             }
-            text?.parse(xmlParser)
-            latest = xmlParser.nextIgnoringText()
+            if (text.matches(xmlParser, next)) {
+                text.parse(xmlParser, next)
+                next = xmlParser.next()
+            }
         } else {
-            throw XmlParseException("Expected to find START_TAG of '$name' but found ${xmlParser.state(latest)}")
+            throw XmlParseException("Expected to find START_TAG of '$name' but found ${xmlParser.state(next)}")
         }
-        if (latest != XmlPullParser.END_TAG || this.name != name) {
-            throw XmlParseException("Expected to find END_TAG of '$name' but found ${xmlParser.state(latest)}")
+
+        if (next != XmlPullParser.END_TAG || this.name != name) {
+            throw XmlParseException("Expected to find END_TAG of '$name' but found ${xmlParser.state(next)}")
         }
+        occurred++
     }
 }
 
@@ -105,12 +119,15 @@ class Attribute(val name: AttributeName, val action: (String) -> Unit)
 
 class Text(private val action: (String) -> Unit) : Parser {
 
-    override fun parse(xmlParser: XmlPullParser) {
-        val latest = xmlParser.next()
-        if (latest == XmlPullParser.TEXT) {
+    override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
+        return next == XmlPullParser.TEXT
+    }
+
+    override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
+        if (matches(xmlParser, firstNext)) {
             action(xmlParser.text)
         } else {
-            throw XmlParseException("Expected to find TEXT but found ${xmlParser.state(latest)}")
+            throw XmlParseException("Expected to find TEXT but found ${xmlParser.state(firstNext)}")
         }
     }
 }
@@ -121,8 +138,9 @@ annotation class XmlParseDslMarker
 @XmlParseDslMarker
 internal interface Parser {
 
-    fun parse(xmlParser: XmlPullParser)
+    fun matches(xmlParser: XmlPullParser, next: Int): Boolean
 
+    fun parse(xmlParser: XmlPullParser, firstNext: Int)
 }
 
 class XmlParseException(message: String) : Exception(message)
