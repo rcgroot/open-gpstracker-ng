@@ -32,7 +32,7 @@ import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.graphs.GraphsPresenter
-import nl.sogeti.android.gpstracker.ng.map.TrackMapFragment
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.recording.RecordingNavigation
 import nl.sogeti.android.gpstracker.ng.recording.RecordingPresenter
@@ -83,11 +83,12 @@ interface AppComponent {
 
     fun inject(injectable: TrackListNavigation)
 
+    fun inject(injectable: GpxImportController)
+
     @Named("providerAuthority")
     fun providerAuthority(): String
 
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
-
     fun provideUriBuilder(): Uri.Builder
 }

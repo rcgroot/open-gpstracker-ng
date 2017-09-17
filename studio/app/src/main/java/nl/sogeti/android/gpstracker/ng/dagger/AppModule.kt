@@ -32,8 +32,9 @@ import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.export.GpxShareProvider
-import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider
+import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserFactory
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
@@ -84,4 +85,7 @@ class AppModule {
 
     @Provides @Named("dayFormatter")
     fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
+
+    @Provides
+    fun gpxParserFactory() = GpxParserFactory()
 }

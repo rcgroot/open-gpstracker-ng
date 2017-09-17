@@ -45,7 +45,7 @@
             android:theme="@style/AppTheme" />
 
         <provider
-            android:name="nl.sogeti.android.gpstracker.ng.export.GpxShareProvider"
+            android:name="nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider"
             android:authorities="${applicationId}.gpxshareprovider"
             android:exported="false"
             android:grantUriPermissions="true" />

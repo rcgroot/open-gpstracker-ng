@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.content.Intent
 import android.net.Uri
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
@@ -36,7 +35,8 @@ import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresen
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import nl.sogeti.android.gpstracker.ng.export.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
@@ -140,12 +140,14 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     override fun didSelectImport() {
-        navigation.startGpxFileSelection({ intent -> importGpx(intent) })
-    }
-
-    fun importGpx(intent: Intent?) {
-        val uri = intent?.data ?: return
-
+        val contentResolver = context.contentResolver
+        val controller = GpxImportController(ImportNotification())
+        navigation.startGpxFileSelection({ intent ->
+            val uri = intent?.data
+            uri?.let {
+                controller.import(contentResolver, uri)
+            }
+        })
     }
 
     //endregion
