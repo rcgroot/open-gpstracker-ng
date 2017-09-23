@@ -29,13 +29,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.gpximport
 
-import nl.renedegroot.android.test.xml_parsing.element
+import android.content.ContentValues
+import nl.renedegroot.android.test.xml_parsing.Element
 import nl.renedegroot.android.test.xml_parsing.xml
 import kotlin.Int.Companion.MAX_VALUE
 
 class GpxParserFactory {
 
-    fun createParse() =
+    fun createParse(contentValues: MutableList<ContentValues>) =
             xml {
                 element("gpx") {
                     attribute("version") {}
@@ -58,7 +59,7 @@ class GpxParserFactory {
                 }
             }
 
-    private fun trkType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
+    private fun Element.trkType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
         element("name", 0) {}
         element("cmt", 0) {}
         element("desc", 0) {}
@@ -73,7 +74,7 @@ class GpxParserFactory {
         }
     }
 
-    private fun rteType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
+    private fun Element.rteType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
         element("name", 0) {}
         element("cmt", 0) {}
         element("desc", 0) {}
@@ -85,7 +86,7 @@ class GpxParserFactory {
         wptType("wpt", 0, MAX_VALUE)
     }
 
-    private fun wptType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
+    private fun Element.wptType(name: String, minOccurs: Int = 1, maxOccurs: Int = 1) = element(name, minOccurs, maxOccurs) {
         attribute("lat") {}
         attribute("lon") {}
         element("ele", 0) {}
@@ -106,6 +107,6 @@ class GpxParserFactory {
         element("pdop", 0) {}
         element("ageofdgpsdata", 0) {}
         element("dgpsid", 0) {}
-        element("extensions", 0) {}
+        ignore("extensions", 0)
     }
 }

@@ -249,6 +249,33 @@ class XmlParseDslTest {
         Assert.assertThat(output[0], `is`("real data"))
     }
 
+    @Test
+    fun callBeforeAndAfter() {
+        // Arrange
+        val counts = mutableListOf<Int>()
+        val output = mutableListOf<String>()
+        val stream = streamFromString("""
+            <copyright author="test-case" >
+                2017
+            </copyright>
+            """)
+        val xml = xml {
+            element("copyright") {
+                before { counts.add(output.size) }
+                attribute("author") { output.add(it) }
+                text { output.add(it) }
+                after { counts.add(output.size) }
+            }
+        }
+        // Act
+        xml.parse(stream)
+        // Assert
+        Assert.assertThat(output.size, `is`(2))
+        Assert.assertThat(counts.size, `is`(2))
+        Assert.assertThat(counts[0], `is`(0))
+        Assert.assertThat(counts[1], `is`(2))
+    }
+
     private fun streamFromString(string: String): ByteArrayInputStream {
         return ByteArrayInputStream(string.toByteArray(Charset.forName("UTF-8")))
     }

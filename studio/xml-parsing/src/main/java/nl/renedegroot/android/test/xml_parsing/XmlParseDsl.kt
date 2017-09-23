@@ -85,9 +85,12 @@ class XML {
 
 class Element(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
     private val tags = mutableListOf<Parser>()
+
     private val attributes = mutableListOf<Attribute>()
     private var text: Text = Text {}
     private var occurred = 0
+    private var before = {}
+    private var after = {}
 
     fun element(name: String, minOccurs: Int = 1, maxOccurs: Int = 1, init: Element.() -> Unit): Element {
         val tag = Element(name, minOccurs, maxOccurs)
@@ -114,6 +117,14 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
         return tag
     }
 
+    fun before(action: () -> Unit) {
+        before = action
+    }
+
+    fun after(action: () -> Unit) {
+        after = action
+    }
+
     override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
         return occurred < minOccurs || (occurred < maxOccurs && xmlParser.name == name)
     }
@@ -121,19 +132,11 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
     override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
         var next = firstNext
         if (next == XmlPullParser.START_TAG && xmlParser.name == name) {
-            xmlParser.parseAttributes(attributes)
-
-            next = xmlParser.nextIgnoringWhiteSpace()
-            tags.forEach {
-                while (it.matches(xmlParser, next)) {
-                    it.parse(xmlParser, next)
-                    next = xmlParser.nextIgnoringWhiteSpace()
-                }
-            }
-            if (text.matches(xmlParser, next)) {
-                text.parse(xmlParser, next)
-                next = xmlParser.next()
-            }
+            before()
+            parseAttributes(xmlParser)
+            next = parseElements(xmlParser)
+            next = parseText(xmlParser, next)
+            after()
         } else {
             throw XmlParseException(buildErrorMessage(xmlParser, "START_TAG", name, next))
         }
@@ -143,9 +146,63 @@ class Element(private val name: ElementName, private var minOccurs: Int, private
         }
         occurred++
     }
+
+    override fun reset() {
+        occurred = 0
+    }
+
+    private fun parseAttributes(xmlParser: XmlPullParser) {
+        val actions = mutableMapOf<String, (String) -> Unit>()
+        attributes.forEach {
+            actions[it.name] = it.action
+        }
+        for (i in 0 until xmlParser.attributeCount) {
+            val attributeName = xmlParser.getAttributeName(i)
+            val action = actions[attributeName]
+            action?.invoke(xmlParser.getAttributeValue(i))
+        }
+    }
+
+    private fun parseElements(xmlParser: XmlPullParser): Int {
+        var next = xmlParser.nextIgnoringWhiteSpace()
+        tags.forEach {
+            while (it.matches(xmlParser, next)) {
+                it.parse(xmlParser, next)
+                next = xmlParser.nextIgnoringWhiteSpace()
+            }
+            it.reset()
+        }
+        return next
+    }
+
+    private fun parseText(xmlParser: XmlPullParser, startNext: Int): Int {
+        var next = startNext
+        if (text.matches(xmlParser, next)) {
+            text.parse(xmlParser, next)
+            next = xmlParser.next()
+        }
+        return next
+    }
+}
+
+class Text(private val action: (String) -> Unit) : Parser {
+    override fun matches(xmlParser: XmlPullParser, next: Int) = (next == XmlPullParser.TEXT)
+
+    override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
+        if (matches(xmlParser, firstNext)) {
+            action(xmlParser.text)
+        } else {
+            throw XmlParseException("At line ${xmlParser.lineNumber} expected to find TEXT but found '${xmlParser.state(firstNext)}'")
+        }
+    }
+
+    override fun reset() {
+        // No state to reset
+    }
 }
 
 class IgnoreElement(private val name: ElementName, private var minOccurs: Int, private var maxOccurs: Int) : Parser {
+
     private var occurred = 0
 
     override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
@@ -168,6 +225,9 @@ class IgnoreElement(private val name: ElementName, private var minOccurs: Int, p
         occurred++
 
     }
+    override fun reset() {
+        occurred = 0
+    }
 }
 
 private fun buildErrorMessage(xmlParser: XmlPullParser, expectedEvent: String, expectedString: String, next: Int) =
@@ -175,21 +235,6 @@ private fun buildErrorMessage(xmlParser: XmlPullParser, expectedEvent: String, e
 
 @XmlParseDslMarker
 class Attribute(val name: AttributeName, val action: (String) -> Unit)
-
-class Text(private val action: (String) -> Unit) : Parser {
-
-    override fun matches(xmlParser: XmlPullParser, next: Int): Boolean {
-        return next == XmlPullParser.TEXT
-    }
-
-    override fun parse(xmlParser: XmlPullParser, firstNext: Int) {
-        if (matches(xmlParser, firstNext)) {
-            action(xmlParser.text)
-        } else {
-            throw XmlParseException("At line ${xmlParser.lineNumber} expected to find TEXT but found '${xmlParser.state(firstNext)}'")
-        }
-    }
-}
 
 @DslMarker
 annotation class XmlParseDslMarker
@@ -200,6 +245,8 @@ internal interface Parser {
     fun matches(xmlParser: XmlPullParser, next: Int): Boolean
 
     fun parse(xmlParser: XmlPullParser, firstNext: Int)
+
+    fun reset()
 }
 
 class XmlParseException(message: String) : Exception(message)
@@ -235,16 +282,3 @@ private fun XmlPullParser.nextIgnoringText(): Int {
 
     return last
 }
-
-private fun XmlPullParser.parseAttributes(attributes: List<Attribute>) {
-    val actions = mutableMapOf<String, (String) -> Unit>()
-    attributes.forEach {
-        actions[it.name] = it.action
-    }
-    for (i in 0 until attributeCount) {
-        val attributeName = getAttributeName(i)
-        val action = actions[attributeName]
-        action?.invoke(getAttributeValue(i))
-    }
-}
-
