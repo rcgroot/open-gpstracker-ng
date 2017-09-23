@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.renedegroot.android.test.xml_parsing
+package nl.renedegroot.android.util.stream
 
 import java.io.*
 

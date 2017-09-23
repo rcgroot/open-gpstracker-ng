@@ -56,3 +56,4 @@ class GpxImportController(val callback: Callback) {
         fun didCompleteImport()
     }
 }
+

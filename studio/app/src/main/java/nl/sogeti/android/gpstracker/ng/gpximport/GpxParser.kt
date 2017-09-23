@@ -29,7 +29,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.gpximport
 
-interface GpxParserFactory {
-    fun createParse(): GpxParser
+import java.io.InputStream
+
+interface GpxParser {
+    fun parse(openInputStream: InputStream)
 
 }

@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
+//apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
-jacoco {
-    toolVersion = jacocoVersion
-}
+//jacoco {
+//    toolVersion = jacocoVersion
+//}
 
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
@@ -93,7 +93,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':integration')
     implementation project(':widgets')
-    implementation project(':xml-parsing')
     //    wearApp project(':wear')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"

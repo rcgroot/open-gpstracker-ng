@@ -1,1 +1,1 @@
-include ':app', ':integration', ':widgets', ':xml-parsing', ':utils'
+include ':app', ':integration', ':widgets', ':utils'
