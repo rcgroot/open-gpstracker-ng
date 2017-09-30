@@ -28,7 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
+import android.annotation.TargetApi
 import android.net.Uri
+import android.os.Build
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter

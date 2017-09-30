@@ -1,8 +1,11 @@
 package nl.sogeti.android.gpstracker.ng.gpximport
 
+import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.support.v4.app.JobIntentService
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
@@ -30,6 +33,7 @@ class ImportService : JobIntentService() {
             enqueueWork(context, ImportService::class.java, JOB_ID, work)
         }
 
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         fun importDirectory(context: Context, uri: Uri) {
             val work = Intent()
             work.putExtra(EXTRA_DIRECTORY, uri)
@@ -37,6 +41,7 @@ class ImportService : JobIntentService() {
         }
     }
 
+    @SuppressLint("NewApi")
     override fun onHandleWork(intent: Intent) {
         when {
             intent.hasExtra(EXTRA_FILE) -> importController.import(this, intent.getParcelableExtra(EXTRA_FILE))

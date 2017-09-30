@@ -40,6 +40,7 @@ import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class GpxImportController {
@@ -71,18 +72,19 @@ class GpxImportController {
             val name = it.getString(COLUMN_DISPLAY_NAME)
             if (mimeType == MIME_TYPE_GPX || name?.endsWith(".gpx", true) == true) {
                 import(context, DocumentsContract.buildDocumentUriUsingTree(uri, id))
+            } else {
+                Timber.e("Will not import file $name")
             }
         }
         notification.didCompleteImport()
     }
 
-    private fun extractName(uri: Uri) : String {
+    private fun extractName(uri: Uri): String {
         val startIndex = uri.lastPathSegment.indexOfLast { it.equals('/') }
 
         return if (startIndex != -1) {
-            uri.lastPathSegment.substring(startIndex+1).removeSuffix(".gpx")
-        }
-        else {
+            uri.lastPathSegment.substring(startIndex + 1).removeSuffix(".gpx")
+        } else {
             uri.lastPathSegment.removeSuffix(".gpx")
         }
     }
