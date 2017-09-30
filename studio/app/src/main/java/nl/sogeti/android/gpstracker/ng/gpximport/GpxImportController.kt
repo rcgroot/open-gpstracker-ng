@@ -29,31 +29,62 @@
  */
 package nl.sogeti.android.gpstracker.ng.gpximport
 
-import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
+import android.provider.DocumentsContract.Document.*
+import android.support.annotation.RequiresApi
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
+import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
+import nl.sogeti.android.gpstracker.ng.utils.getString
+import nl.sogeti.android.gpstracker.ng.utils.map
 import javax.inject.Inject
 
-class GpxImportController(val callback: Callback) {
+class GpxImportController {
 
     @Inject
     lateinit var gpxParserFactory: GpxParserFactory
+    @Inject
+    lateinit var notification: ImportNotification
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
     }
 
-    fun import(contentResolver: ContentResolver, uri: Uri, length: Int? = null) {
-        callback.didStartImport()
-        val parser = gpxParserFactory.createParse()
-        parser.parse(contentResolver.openInputStream(uri))
-        callback.didCompleteImport()
+    fun import(context: Context, uri: Uri) {
+        notification.didStartImport()
+        val parser = gpxParserFactory.createParser(context)
+        val defaultName = extractName(uri)
+        parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
+        notification.didCompleteImport()
     }
 
-    interface Callback {
-        fun didStartImport()
-        fun onProgress(progress: Int, goal: Int)
-        fun didCompleteImport()
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun importDirectory(context: Context, uri: Uri) {
+        notification.didStartImport()
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
+        childrenUri.map(context, projection = listOf(COLUMN_DOCUMENT_ID, COLUMN_MIME_TYPE, COLUMN_DISPLAY_NAME)) {
+            val id = it.getString(COLUMN_DOCUMENT_ID)
+            val mimeType = it.getString(COLUMN_MIME_TYPE)
+            val name = it.getString(COLUMN_DISPLAY_NAME)
+            if (mimeType == MIME_TYPE_GPX || name?.endsWith(".gpx", true) == true) {
+                import(context, DocumentsContract.buildDocumentUriUsingTree(uri, id))
+            }
+        }
+        notification.didCompleteImport()
+    }
+
+    private fun extractName(uri: Uri) : String {
+        val startIndex = uri.lastPathSegment.indexOfLast { it.equals('/') }
+
+        return if (startIndex != -1) {
+            uri.lastPathSegment.substring(startIndex+1).removeSuffix(".gpx")
+        }
+        else {
+            uri.lastPathSegment.removeSuffix(".gpx")
+        }
     }
 }
 

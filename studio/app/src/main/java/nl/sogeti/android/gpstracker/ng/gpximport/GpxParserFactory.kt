@@ -29,7 +29,18 @@
  */
 package nl.sogeti.android.gpstracker.ng.gpximport
 
-interface GpxParserFactory {
-    fun createParse(): GpxParser
+import android.content.Context
+import android.net.Uri
+import org.xmlpull.v1.XmlPullParserException
+import java.io.IOException
+import java.io.InputStream
 
+interface GpxParserFactory {
+    fun createParser(context: Context): GpxParser
+
+}
+
+interface GpxParser {
+    @Throws(IOException::class, XmlPullParserException::class)
+    fun parseTrack(openInputStream: InputStream, defaultName: String): Uri
 }

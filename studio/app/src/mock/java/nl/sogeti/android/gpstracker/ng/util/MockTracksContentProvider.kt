@@ -34,6 +34,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.provider.BaseColumns._ID
 import com.google.android.gms.maps.model.LatLng
 import nl.sogeti.android.gpstracker.integration.ContentConstants.*
 import nl.sogeti.android.gpstracker.ng.utils.*
@@ -47,6 +48,7 @@ class MockTracksContentProvider : ContentProvider() {
     }
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
+        Timber.v("Query on $uri")
         var cursor: Cursor? = null
         val content = globalState.uriContent[uri]
         if (content != null) {
@@ -58,14 +60,18 @@ class MockTracksContentProvider : ContentProvider() {
 
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+    override fun insert(uri: Uri, simpleValues: ContentValues?): Uri? {
+        Timber.v("Insert on $uri")
         val content = globalState.uriContent[uri]
-        if (content != null && values != null) {
+        val values = simpleValues ?: ContentValues()
+        val id = ++idGen
+        values.put(_ID, id)
+        if (content != null) {
             val row = mutableListOf<Any>()
             val columns = content.first
             for (index in 0 until columns.size) {
                 val column = columns[index]
-                val value = values.getAsString(column)
+                val value = values.getAsString(column) ?: ""
                 row.add(value)
             }
             content.second.add(row)
@@ -73,19 +79,26 @@ class MockTracksContentProvider : ContentProvider() {
         } else {
             Timber.e("Insert on $uri did not match anything in global state $globalState ")
         }
+        val createdUri = uri.buildUpon().appendPath(id.toString()).build()
+        when (uri.lastPathSegment) {
+            "tracks" -> globalState.uriContent[createdUri] = createEmptyTrackContent()
+            "segments" -> globalState.uriContent[createdUri] = createEmptySegmentContent()
+            "waypoints" -> globalState.uriContent[createdUri] = createEmptyWaypointContent()
+        }
 
-        return uri
+        return createdUri
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int {
+        Timber.v("Update on $uri")
         var changed = 0
         val content = globalState.uriContent[uri]
         if (content != null && values != null && content.second.size > 0) {
             val row = content.second.first()
             val columns = content.first
-            for (index in 0..columns.size - 1) {
+            for (index in 0 until columns.size) {
                 val column = columns[index]
-                val value = values.getAsString(column)
+                val value = values.get(column)
                 value?.let { row[index] = value; changed++ }
             }
             context.contentResolver?.notifyChange(uri, null)
@@ -97,6 +110,7 @@ class MockTracksContentProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
+        Timber.v("Delete on $uri")
         val keys = globalState.uriContent.keys.filter { it.path.startsWith(uri.path) }
         keys.forEach { globalState.uriContent.remove(it) }
         var count = keys.count()
@@ -129,6 +143,7 @@ class MockTracksContentProvider : ContentProvider() {
 
     companion object globalState {
 
+        var idGen = 1000L
         var lastWaypoint: LatLng = LatLng(52.3664734, 4.9212022)
 
         private var contentResolver: ContentResolver? = null

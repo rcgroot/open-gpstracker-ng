@@ -104,10 +104,10 @@ class TrackListFragment : Fragment(), TrackListViewModel.View, ActivityResultLam
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val isHandled: Boolean
         if (item.itemId == R.id.menu_item_export) {
-            trackListPresenter.didSelectExport()
+            trackListPresenter.didSelectExportToDirectory()
             isHandled = true
         } else if (item.itemId == R.id.menu_item_import) {
-            trackListPresenter.didSelectImport()
+            trackListPresenter.didSelectImportFromDirectory()
             isHandled = true
         } else {
             isHandled = super.onOptionsItemSelected(item)

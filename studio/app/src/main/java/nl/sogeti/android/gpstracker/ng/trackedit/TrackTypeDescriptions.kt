@@ -73,7 +73,7 @@ class TrackTypeDescriptions {
     fun loadTrackType(context: Context, trackUri: Uri): TrackType {
         val trackId: Long = trackUri.lastPathSegment.toLong()
         val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
-        val contentType = metaDataTrackUri(trackId).apply(context, { it.getString(ContentConstants.MetaDataColumns.VALUE) }, selectionPair = typeSelection)
+        val contentType = metaDataTrackUri(trackId).apply(context, selectionPair = typeSelection) { it.getString(ContentConstants.MetaDataColumns.VALUE) }
         val trackType = trackTypeForContentType(contentType)
         return trackType
     }

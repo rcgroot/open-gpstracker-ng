@@ -126,6 +126,6 @@
     <string name="graph_label_speed">Speed</string>
     <string name="graph_label_time">Time</string>
     <string name="graph_label_altitude">Altitude</string>
-    <string name="menu_item_export">Export</string>
-    <string name="menu_item_import">Import</string>
+    <string name="menu_item_export">Export to directory</string>
+    <string name="menu_item_import">Import from directory</string>
 </resources>

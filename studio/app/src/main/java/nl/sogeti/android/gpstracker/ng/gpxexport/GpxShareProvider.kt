@@ -41,10 +41,12 @@ import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber
 import java.io.FileOutputStream
 
-class GpxShareProvider : ContentProvider() {
-    companion object {
+const val MIME_TYPE_GPX = "application/gpx+xml"
+const val MIME_TYPE_GENERAL = "application/octet-stream"
 
-        val TRACK_MIME_TYPE = "application/gpx+xml"
+class GpxShareProvider : ContentProvider() {
+
+    companion object {
         val AUTHORITY = BuildConfig.APPLICATION_ID + ".gpxshareprovider"
         val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
         private val TRACK_ID = 1
@@ -63,7 +65,7 @@ class GpxShareProvider : ContentProvider() {
         var type: String? = null
         val match = uriMatcher.match(uri)
         if (match == TRACK_ID) {
-            type = TRACK_MIME_TYPE
+            type = MIME_TYPE_GPX
         }
 
         return type
@@ -73,7 +75,7 @@ class GpxShareProvider : ContentProvider() {
         var file: ParcelFileDescriptor? = null
         val match = uriMatcher.match(uri)
         if (match == TRACK_ID) {
-            file = openPipeHelper(uri, TRACK_MIME_TYPE, null, null,
+            file = openPipeHelper(uri, MIME_TYPE_GPX, null, null,
                     { output, shareUri, _, _, _ ->
                         val outputstream = FileOutputStream(output.fileDescriptor)
                         val trackUri = trackUri(shareUri.lastPathSegment.toLong())

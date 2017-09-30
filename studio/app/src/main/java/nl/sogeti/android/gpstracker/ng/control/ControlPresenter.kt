@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.control
 
 import android.content.Context
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
@@ -113,7 +112,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
 
     private fun checkForInitialName(context: Context, trackUri: Uri) {
         val name = trackUri.readName(context)
-        if ( name == context.getString(R.string.initial_track_name) ) {
+        if (name == context.getString(R.string.initial_track_name)) {
             val generatedName = nameGenerator.generateName(context, Calendar.getInstance())
             trackUri.updateName(context, generatedName)
         }
@@ -142,7 +141,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         }
 
         val waypointsUri = waypointsUri(trackId)
-        val firstWaypointId = waypointsUri.apply(context, { it.getLong(0) }) ?: -1L
+        val firstWaypointId = waypointsUri.apply(context) { it.getLong(0) } ?: -1L
         if (firstWaypointId == -1L) {
             context.contentResolver.delete(trackUri(trackId), null, null)
         }

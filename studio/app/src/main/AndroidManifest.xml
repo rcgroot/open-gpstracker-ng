@@ -49,6 +49,11 @@
             android:authorities="${applicationId}.gpxshareprovider"
             android:exported="false"
             android:grantUriPermissions="true" />
+
+        <service
+            android:name="nl.sogeti.android.gpstracker.ng.gpximport.ImportService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

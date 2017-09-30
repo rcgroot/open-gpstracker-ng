@@ -28,17 +28,20 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
-import nl.sogeti.android.gpstracker.ng.gpximport.GpxParser
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserFactory
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserImpl
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
@@ -91,9 +94,12 @@ class AppModule {
 
     @Provides
     fun gpxParserFactory() = object : GpxParserFactory {
-        override fun createParse(): GpxParser {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
+        override fun createParser(context: Context) = GpxParserImpl(context)
     }
+
+    @Provides
+    fun gpxImportController() = GpxImportController()
+
+    @Provides
+    fun importNotification() = ImportNotification()
 }

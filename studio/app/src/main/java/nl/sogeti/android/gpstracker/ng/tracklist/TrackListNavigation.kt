@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
+import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GENERAL
+import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment
@@ -55,14 +57,30 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
         if (versionHelper.isAtLeast(Build.VERSION_CODES.KITKAT)) {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "application/gpx+xml"
+            intent.type = MIME_TYPE_GENERAL
             if (fragment is ActivityResultLambda) {
                 fragment.startActivityForResult(intent, param)
             }
         } else {
             AlertDialog.Builder(fragment.context)
-                    .setTitle("Mot implemented")
-                    .setMessage("this feature does not exist yet")
+                    .setTitle("Not implemented ")
+                    .setMessage("This feature does not exist pre-KitKat")
+                    .create()
+                    .show()
+        }
+    }
+
+    fun startGpxDirectorySelection(param: (Intent?) -> Unit) {
+        if (versionHelper.isAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+            if (fragment is ActivityResultLambda) {
+                fragment.startActivityForResult(intent, param)
+            }
+        }
+        else {
+            AlertDialog.Builder(fragment.context)
+                    .setTitle("Not implemented ")
+                    .setMessage("This feature does not exist pre-Lollipop")
                     .create()
                     .show()
         }

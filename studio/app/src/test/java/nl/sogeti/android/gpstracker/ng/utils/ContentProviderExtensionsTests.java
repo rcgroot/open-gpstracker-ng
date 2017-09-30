@@ -115,12 +115,12 @@ public class ContentProviderExtensionsTests {
         given(mockContentResolver.query(mockUri, null, null, null, null)).willReturn(null);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
             }
-        }, null, null);
+        });
 
         // Verify
         Assert.assertNotNull(list);
@@ -135,12 +135,12 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.moveToFirst()).willReturn(false);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
             }
-        }, null, null);
+        });
 
         // Verify
         Assert.assertNotNull(list);
@@ -157,13 +157,13 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.moveToNext()).willReturn(false);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 invoke[0]++;
                 return "invoke_" + invoke[0];
             }
-        }, null, null);
+        });
 
         // Verify
         Assert.assertNotNull(list);

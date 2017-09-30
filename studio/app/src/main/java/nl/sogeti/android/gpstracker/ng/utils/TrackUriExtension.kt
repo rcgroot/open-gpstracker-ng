@@ -46,12 +46,11 @@ import timber.log.Timber
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
  */
 fun tracksUri(): Uri {
-    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .build()
-    return trackUri
 }
 
 /**
@@ -60,13 +59,12 @@ fun tracksUri(): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
 fun trackUri(trackId: Long): Uri {
-    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .build()
-    return trackUri
 }
 
 /**
@@ -74,14 +72,13 @@ fun trackUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
  */
 fun segmentsUri(trackId: Long): Uri {
-    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
-            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendPath(SEGMENTS)
             .build()
-    return segmentUri
 }
 
 /**
@@ -90,15 +87,14 @@ fun segmentsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
  */
 fun segmentUri(trackId: Long, segmentId: Long): Uri {
-    val segmentUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
-            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendPath(SEGMENTS)
             .appendEncodedPath(segmentId.toString())
             .build()
-    return segmentUri
 }
 
 /**
@@ -107,16 +103,15 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
-    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
-            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendPath(SEGMENTS)
             .appendEncodedPath(segmentId.toString())
-            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .appendPath(WAYPOINTS)
             .build()
-    return waypointsUri
 }
 
 
@@ -127,17 +122,16 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints/21
  */
 fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
-    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
-            .appendPath(ContentConstants.Segments.SEGMENTS)
+            .appendPath(SEGMENTS)
             .appendEncodedPath(segmentId.toString())
-            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .appendPath(WAYPOINTS)
             .appendEncodedPath(waypointId.toString())
             .build()
-    return waypointsUri
 }
 
 
@@ -146,28 +140,26 @@ fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
  */
 fun waypointsUri(trackId: Long): Uri {
-    val waypointsUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
-            .appendPath(ContentConstants.Waypoints.WAYPOINTS)
+            .appendPath(WAYPOINTS)
             .build()
-    return waypointsUri
 }
 
 /**
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/ID/metadata
  */
 fun metaDataTrackUri(id: Long): Uri {
-    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(id.toString())
             .appendPath(ContentConstants.MetaData.METADATA)
             .build()
-    return trackUri
 }
 
 /**
@@ -176,13 +168,12 @@ fun metaDataTrackUri(id: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
 fun sharedTrackUri(trackId: Long): Uri {
-    val trackUri = GpsTrackerApplication.appComponent.provideUriBuilder()
+    return GpsTrackerApplication.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(GpsTrackerApplication.appComponent.providerShareAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
             .build()
-    return trackUri
 }
 
 
@@ -193,19 +184,19 @@ fun sharedTrackUri(trackId: Long): Uri {
  * @param handler callback for results
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
-fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair <String, List<String>>? = null) {
+fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair<String, List<String>>? = null) {
     if (GpsTrackerApplication.appComponent.providerAuthority() != this.authority) {
         return
     }
 
-    val name = this.apply(context, { it.getString(NAME) }, listOf(NAME))
+    val name = this.apply(context, projection = listOf(NAME)) { it.getString(NAME) }
     handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
-    segmentsUri.map(context, {
+    segmentsUri.map(context, projection = listOf(_ID)) {
         val segmentId = it.getLong(0)
         handler.addSegment()
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
-        waypointsUri.map(context, {
+        waypointsUri.map(context, waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
             val lat = it.getDouble(LATITUDE)
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
@@ -213,8 +204,8 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
                 val waypoint = Waypoint(latitude = lat, longitude = lon, time = time)
                 handler.addWaypoint(waypoint)
             }
-        }, listOf(LATITUDE, LONGITUDE, TIME), waypointSelection)
-    }, listOf(_ID))
+        })
+    }
 }
 
 /**
@@ -227,12 +218,12 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
  */
 fun <T> Uri.traverseTrack(context: Context,
                           operation: (T?, Waypoint, Waypoint) -> T,
-                          selectionPair: Pair <String, List<String>>? = null): T? {
+                          selectionPair: Pair<String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     Timber.v("$this with selection $selection on $selectionArgs")
     val segmentsUri = this.append(SEGMENTS)
-    val segments = segmentsUri.map(context, { it.getLong(ContentConstants.Segments._ID)!! })
+    val segments = segmentsUri.map(context) { it.getLong(ContentConstants.Segments._ID)!! }
     var result: T? = null
     for (segmentId in segments) {
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
@@ -274,7 +265,7 @@ fun Uri.updateName(context: Context, name: String) {
 }
 
 fun Uri.readName(context: Context): String {
-    return this.apply(context, { it.getString(ContentConstants.TracksColumns.NAME) }) ?: ""
+    return this.apply(context) { it.getString(ContentConstants.TracksColumns.NAME) } ?: ""
 }
 
 fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {

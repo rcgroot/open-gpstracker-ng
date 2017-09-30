@@ -61,7 +61,9 @@ class SummaryCalculator {
         trackUri.readTrack(context, handler)
         val startTimestamp = handler.waypoints.firstOrNull()?.firstOrNull()?.time ?: 0L
         val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
+
         data class Data(val meter: Float, val time: Long)
+
         fun reduce(waypoints: List<Waypoint>): Data {
             var meters = 0.0F
             var time = 0L
@@ -73,12 +75,12 @@ class SummaryCalculator {
 
             return Data(meters, time)
         }
-        val sum = handler.waypoints.map { reduce(it) }.fold(Data(0.0F, 0)) {
-            first, second ->
+
+        val sum = handler.waypoints.map { reduce(it) }.fold(Data(0.0F, 0)) { first, second ->
             Data(first.meter + second.meter, first.time + second.time)
         }
         // Text values
-        val name = trackUri.apply(context, { it.getString(ContentConstants.Tracks.NAME) }) ?: "Unknown"
+        val name = trackUri.apply(context) { it.getString(ContentConstants.Tracks.NAME) } ?: "Unknown"
         val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Return value

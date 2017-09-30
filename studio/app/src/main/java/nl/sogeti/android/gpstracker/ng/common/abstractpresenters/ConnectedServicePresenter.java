@@ -83,12 +83,12 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
                                         String name = null;
                                         if (trackId > 0) {
                                             trackUri = TrackUriExtensionKt.trackUri(trackId);
-                                            name = ContentProviderExtensionsKt.apply(trackUri, context, new Function1<Cursor, String>() {
+                                            name = ContentProviderExtensionsKt.apply(trackUri, context, null, null, new Function1<Cursor, String>() {
                                                 @Override
                                                 public String invoke(Cursor cursor) {
                                                     return ContentProviderExtensionsKt.getString(cursor, NAME);
                                                 }
-                                            }, null, null);
+                                            });
                                         }
                                         int loggingState = serviceManager.getLoggingState();
                                         Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);

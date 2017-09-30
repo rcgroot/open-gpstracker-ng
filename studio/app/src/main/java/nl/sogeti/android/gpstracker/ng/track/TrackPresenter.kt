@@ -103,7 +103,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     //region Content watching
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        val name = contentUri.apply(context, { it.getString(NAME) })
+        val name = contentUri.apply(context) { it.getString(NAME) }
         name?.let {
             showName(it)
         }

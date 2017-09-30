@@ -108,7 +108,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     fun didShareTrack(trackModel: TrackViewModel) {
-        listener?.didShareTrack(trackModel.uri)
+        listener?.didSelectExportTrack(trackModel.uri)
         trackModel.editMode.set(false)
     }
 

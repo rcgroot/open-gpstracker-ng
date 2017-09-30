@@ -36,7 +36,7 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
-import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
+import nl.sogeti.android.gpstracker.ng.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
@@ -46,6 +46,7 @@ import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
+
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
@@ -94,10 +95,10 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     private fun addTracksToModel() {
         executor.execute {
-            val trackList = tracksUri().map(context, {
+            val trackList = tracksUri().map(context) {
                 val id = it.getLong(ContentConstants.Tracks._ID)!!
                 trackUri(id)
-            })
+            }
             viewModel.selectedTrack.set(trackSelection.trackUri)
             viewModel.tracks.set(trackList.asReversed())
             trackSelection.trackUri?.let { scrollToTrack(it) }
@@ -116,11 +117,6 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.finishTrackSelection()
     }
 
-    override fun didShareTrack(track: Uri) {
-        val shareIntent = shareIntentFactory.createShareIntent(track)
-        navigation.showIntentChooser(shareIntent, context.getText(R.string.track_share))
-    }
-
     override fun didEditTrack(track: Uri) {
         navigation.showTrackEditDialog(track)
     }
@@ -129,7 +125,12 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.showTrackDeleteDialog(track)
     }
 
-    override fun didSelectExport() {
+    override fun didSelectExportTrack(track: Uri) {
+        val shareIntent = shareIntentFactory.createShareIntent(track)
+        navigation.showIntentChooser(shareIntent, context.getText(R.string.track_share))
+    }
+
+    override fun didSelectExportToDirectory() {
         val packageManager = packageManagerFactory.createPackageManager(context)
         val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
         if (intent == null) {
@@ -139,15 +140,24 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         }
     }
 
-    override fun didSelectImport() {
-        val contentResolver = context.contentResolver
-        val controller = GpxImportController(ImportNotification())
+    override fun didSelectImportTrack() {
+        val context = context
         navigation.startGpxFileSelection({ intent ->
             val uri = intent?.data
             uri?.let {
-                controller.import(contentResolver, uri)
+                ImportService.importFile(context, uri)
             }
         })
+    }
+
+    override fun didSelectImportFromDirectory() {
+        val context = context
+        navigation.startGpxDirectorySelection { intent ->
+            val uri = intent?.data
+            uri?.let {
+                ImportService.importDirectory(context, uri)
+            }
+        }
     }
 
     //endregion

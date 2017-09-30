@@ -40,7 +40,7 @@ class ShareIntentFactory {
         val trackStream = sharedTrackUri(track.lastPathSegment.toLong())
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_STREAM, trackStream)
-        shareIntent.type = GpxShareProvider.TRACK_MIME_TYPE
+        shareIntent.type = MIME_TYPE_GPX
 
         return shareIntent
     }

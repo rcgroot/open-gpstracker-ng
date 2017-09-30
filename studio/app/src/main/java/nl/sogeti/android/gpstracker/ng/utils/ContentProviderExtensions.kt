@@ -32,7 +32,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.provider.BaseColumns
 import timber.log.Timber
 
 /* **
@@ -107,16 +106,16 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
  * @return List of T consisting of operation results, empty when there are no rows
  */
 fun <T> Uri.map(context: Context,
-                operation: (Cursor) -> T,
+                selection: Pair<String, List<String>>? = null,
                 projection: List<String>? = null,
-                selection: Pair <String, List<String>>? = null): List<T> {
+                operation: (Cursor) -> T): List<T> {
     val result = mutableListOf<T>()
 
-    this.apply(context, {
+    this.apply(context, selection, projection) {
         do {
             result.add(operation(it))
         } while (it.moveToNext())
-    }, projection, selection)
+    }
 
     return result
 }
@@ -132,9 +131,9 @@ fun <T> Uri.map(context: Context,
  * @return Null or T when the operation was applied to the first row of the cursor
  */
 fun <T> Uri.apply(context: Context,
-                  operation: (Cursor) -> T?,
+                  selectionPair: Pair<String, List<String>>? = null,
                   projection: List<String>? = null,
-                  selectionPair: Pair <String, List<String>>? = null): T? {
+                  operation: (Cursor) -> T?): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result: T? = null
@@ -162,7 +161,7 @@ fun Uri.append(id: Long): Uri {
 }
 
 fun Uri.count(context: Context, projection: List<String>? = null,
-              selectionPair: Pair <String, List<String>>? = null) : Int {
+              selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
