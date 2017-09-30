@@ -210,7 +210,12 @@ public class GpxParserImpl implements GpxParser {
                     if (!lastPosition.containsKey(Waypoints.SPEED)) {
                         lastPosition.put(Waypoints.SPEED, 0);
                     }
-                    bulk.add(lastPosition);
+                    if (lastPosition.containsKey(Waypoints.LATITUDE)
+                            && lastPosition.containsKey(Waypoints.LONGITUDE)
+                            && lastPosition.getAsDouble(Waypoints.LONGITUDE) != 0.0
+                            && lastPosition.getAsDouble(Waypoints.LATITUDE) != 0.0) {
+                        bulk.add(lastPosition);
+                    }
                     lastPosition = null;
                 }
             } else if (eventType == XmlPullParser.TEXT) {
