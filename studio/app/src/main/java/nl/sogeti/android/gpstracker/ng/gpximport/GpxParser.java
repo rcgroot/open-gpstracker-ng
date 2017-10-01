@@ -55,7 +55,8 @@ import timber.log.Timber;
 
 import static nl.sogeti.android.gpstracker.ng.utils.TrackUriExtensionKt.tracksUri;
 
-public class GpxParserImpl implements GpxParser {
+public class GpxParser {
+
     private static final SimpleDateFormat ZULU_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
     private static final SimpleDateFormat ZULU_DATE_FORMAT_MS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
     private static final SimpleDateFormat ZULU_DATE_FORMAT_BC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'", Locale.US);
@@ -74,14 +75,11 @@ public class GpxParserImpl implements GpxParser {
         TimeZone utc = TimeZone.getTimeZone("UTC");
         ZULU_DATE_FORMAT.setTimeZone(utc); // ZULU_DATE_FORMAT format ends with Z for UTC so make that true
         ZULU_DATE_FORMAT_MS.setTimeZone(utc);
-
     }
 
-    private final Context context;
     private final ContentResolver contentResolver;
 
-    public GpxParserImpl(Context context) {
-        this.context = context;
+    public GpxParser(Context context) {
         this.contentResolver = context.getContentResolver();
     }
 
@@ -125,7 +123,6 @@ public class GpxParserImpl implements GpxParser {
      * @param defaultName
      * @return content provider uri
      */
-    @Override
     public Uri parseTrack(@NotNull InputStream inputStream, String defaultName) throws XmlPullParserException, IOException {
         Uri trackUri = null;
         int eventType;

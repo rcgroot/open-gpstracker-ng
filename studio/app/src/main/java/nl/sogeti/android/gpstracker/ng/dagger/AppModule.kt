@@ -35,13 +35,15 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportControllerFactory
+import nl.sogeti.android.gpstracker.ng.gpximport.GpxParser
 import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserFactory
-import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserImpl
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
+import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
@@ -94,12 +96,16 @@ class AppModule {
 
     @Provides
     fun gpxParserFactory() = object : GpxParserFactory {
-        override fun createParser(context: Context) = GpxParserImpl(context)
+        override fun createGpxParser(context: Context) = GpxParser(context)
     }
 
     @Provides
-    fun gpxImportController() = GpxImportController()
+    fun gpxImportControllerFactory() = object : GpxImportControllerFactory {
+        override fun createGpxImportController(context: Context) = GpxImportController(context)
+    }
 
     @Provides
-    fun importNotification() = ImportNotification()
+    fun importNotificationFactory() = object : ImportNotificationFactory {
+        override fun createImportNotification(context: Context) = ImportNotification(context)
+    }
 }

@@ -29,13 +29,88 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-class ImportNotification {
+import android.annotation.TargetApi
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+import android.support.v4.app.NotificationCompat
+import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
+import nl.sogeti.android.gpstracker.v2.R
+import javax.inject.Inject
+
+
+private const val NOTIFICATION_CHANNEL_ID = "import_notification"
+private const val NOTIFICATION_IMPORT_ID = R.string.notification_import_title
+
+class ImportNotification(val context: Context) {
+
+    @Inject
+    lateinit var versionHelper: VersionHelper
+    private var importBuilder: NotificationCompat.Builder? = null
+    private val notificationManager: NotificationManager by lazy {
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    init {
+        GpsTrackerApplication.appComponent.inject(this)
+    }
+
     fun didStartImport() {
+        if (versionHelper.isAtLeast(Build.VERSION_CODES.O)) {
+            createChannel()
+        }
+
+        val importBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(context.getString(R.string.notification_import_title))
+                .setContentText(context.getString(R.string.notification_import_context_ongoing))
+                .setSmallIcon(R.drawable.ic_file_download_black_24dp)
+                .setProgress(1, 0, true)
+        importComplete = false
+        notificationManager.notify(NOTIFICATION_IMPORT_ID, importBuilder.build())
+
+        this.importBuilder = importBuilder
     }
 
     fun onProgress(progress: Int, goal: Int) {
+        importBuilder?.let {
+            it.setProgress(goal, progress, false)
+            importComplete = false
+            notificationManager.notify(NOTIFICATION_IMPORT_ID, it.build())
+        }
     }
 
     fun didCompleteImport() {
+        importBuilder?.let {
+            it.setContentText(context.getString(R.string.notification_import_context_complete))
+                    .setProgress(0, 0, false)
+            importComplete = true
+            notificationManager.notify(NOTIFICATION_IMPORT_ID, it.build())
+
+        }
+    }
+
+    fun dismissCompletedImport() {
+        if (importComplete) {
+            notificationManager.cancel(NOTIFICATION_IMPORT_ID)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun createChannel() {
+        if (notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) != null) {
+            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.notification_operation_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH)
+            channel.description = context.getString(R.string.notification_operation_channel_description)
+            channel.enableLights(false)
+            channel.enableVibration(false)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    companion object {
+        private var importComplete = true
     }
 }

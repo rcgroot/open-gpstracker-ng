@@ -26,11 +26,11 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.gpximport
+package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.content.Context
 
-interface GpxParserFactory {
+interface ImportNotificationFactory {
 
-    fun createGpxParser(context: Context): GpxParser
+    fun createImportNotification(context: Context): ImportNotification
 }

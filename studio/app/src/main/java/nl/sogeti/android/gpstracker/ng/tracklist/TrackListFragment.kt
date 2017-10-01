@@ -60,10 +60,6 @@ class TrackListFragment : Fragment(), TrackListViewModel.View, ActivityResultLam
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.fragmentTracklistList.layoutManager = LinearLayoutManager(activity)

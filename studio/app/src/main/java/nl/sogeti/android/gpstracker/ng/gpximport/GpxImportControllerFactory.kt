@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.gpximport
 
 import android.content.Context
 
-interface GpxParserFactory {
-
-    fun createGpxParser(context: Context): GpxParser
+interface GpxImportControllerFactory {
+    fun createGpxImportController(context: Context): GpxImportController
 }

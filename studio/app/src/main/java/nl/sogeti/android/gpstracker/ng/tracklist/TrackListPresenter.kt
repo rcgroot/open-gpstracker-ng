@@ -28,9 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
-import android.annotation.TargetApi
 import android.net.Uri
-import android.os.Build
 import nl.sogeti.android.gpstracker.integration.ContentConstants
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
@@ -67,6 +65,12 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     lateinit var shareIntentFactory: ShareIntentFactory
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory
+    @Inject
+    lateinit var notificationFactory: ImportNotificationFactory
+
+    private val notification: ImportNotification by lazy {
+        notificationFactory.createImportNotification(context)
+    }
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -85,6 +89,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         contentController?.unregisterObserver()
         contentController = null
         summaryManager.stop()
+        notification.dismissCompletedImport()
     }
 
     /* Content watching */
