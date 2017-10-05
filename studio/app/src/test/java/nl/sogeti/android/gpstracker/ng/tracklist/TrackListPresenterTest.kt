@@ -42,6 +42,8 @@ class TrackListPresenterTest {
     lateinit var navigation: TrackListNavigation
     @Mock
     lateinit var notificationFactory: ImportNotificationFactory
+    @Mock
+    lateinit var notification: ImportNotification
     lateinit var sut: TrackListPresenter
 
     @Before
@@ -55,6 +57,8 @@ class TrackListPresenterTest {
         sut.notificationFactory = notificationFactory
         `when`(contentControllerFactory.createContentController(any(), any()))
                 .thenReturn(contentController)
+        `when`(notificationFactory.createImportNotification(context))
+                .thenReturn(notification)
     }
 
     @Test
