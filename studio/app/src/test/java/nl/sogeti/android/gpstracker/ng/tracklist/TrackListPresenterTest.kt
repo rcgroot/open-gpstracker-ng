@@ -40,6 +40,8 @@ class TrackListPresenterTest {
     lateinit var executor: Executor
     @Mock
     lateinit var navigation: TrackListNavigation
+    @Mock
+    lateinit var notificationFactory: ImportNotificationFactory
     lateinit var sut: TrackListPresenter
 
     @Before
@@ -50,6 +52,7 @@ class TrackListPresenterTest {
         sut.contentControllerFactory = contentControllerFactory
         sut.summaryManager = summaryManager
         sut.executor = executor
+        sut.notificationFactory = notificationFactory
         `when`(contentControllerFactory.createContentController(any(), any()))
                 .thenReturn(contentController)
     }
