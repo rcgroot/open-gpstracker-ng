@@ -36,13 +36,15 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.app.JobIntentService
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.trackedit.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.v2.R
 import timber.log.Timber
 import javax.inject.Inject
 
-const val EXTRA_FILE = "GPX_FILE_URI"
-const val EXTRA_DIRECTORY = "GPX_DIRECTORY_URI"
-const val JOB_ID = R.menu.menu_import_export
+private const val EXTRA_FILE = "GPX_FILE_URI"
+private const val EXTRA_TYPE = "EXTRA_TRACK_TYPE"
+private const val EXTRA_DIRECTORY = "GPX_DIRECTORY_URI"
+private const val JOB_ID = R.menu.menu_import_export
 
 class ImportService : JobIntentService() {
 
@@ -59,25 +61,28 @@ class ImportService : JobIntentService() {
 
     companion object {
 
-        fun importFile(context: Context, uri: Uri) {
+        fun importFile(context: Context, uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
             val work = Intent()
             work.putExtra(EXTRA_FILE, uri)
+            work.putExtra(EXTRA_TYPE, trackType)
             enqueueWork(context, ImportService::class.java, JOB_ID, work)
         }
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        fun importDirectory(context: Context, uri: Uri) {
+        fun importDirectory(context: Context, uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
             val work = Intent()
             work.putExtra(EXTRA_DIRECTORY, uri)
+            work.putExtra(EXTRA_TYPE, trackType)
             enqueueWork(context, ImportService::class.java, JOB_ID, work)
         }
     }
 
     @SuppressLint("NewApi")
     override fun onHandleWork(intent: Intent) {
+        val trackType = intent.getStringExtra(EXTRA_TYPE)
         when {
-            intent.hasExtra(EXTRA_FILE) -> importController.import(intent.getParcelableExtra(EXTRA_FILE))
-            intent.hasExtra(EXTRA_DIRECTORY) -> importController.importDirectory(intent.getParcelableExtra(EXTRA_DIRECTORY))
+            intent.hasExtra(EXTRA_FILE) -> importController.import(intent.getParcelableExtra(EXTRA_FILE), trackType)
+            intent.hasExtra(EXTRA_DIRECTORY) -> importController.importDirectory(intent.getParcelableExtra(EXTRA_DIRECTORY), trackType)
             else -> Timber.e("Failed to handle import work $intent")
         }
     }

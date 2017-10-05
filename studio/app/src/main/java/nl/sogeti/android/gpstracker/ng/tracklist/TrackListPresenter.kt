@@ -38,6 +38,8 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.Package
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.trackedit.KEY_META_FIELD_TRACK_TYPE
+import nl.sogeti.android.gpstracker.ng.trackedit.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.getLong
 import nl.sogeti.android.gpstracker.ng.utils.map
@@ -152,7 +154,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.startGpxFileSelection({ intent ->
             val uri = intent?.data
             uri?.let {
-                ImportService.importFile(context, uri)
+                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE) ?: VALUE_TYPE_DEFAULT
+                ImportService.importFile(context, uri, trackType)
             }
         })
     }
@@ -162,7 +165,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.startGpxDirectorySelection { intent ->
             val uri = intent?.data
             uri?.let {
-                ImportService.importDirectory(context, uri)
+                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE) ?: VALUE_TYPE_DEFAULT
+                ImportService.importDirectory(context, uri, trackType)
             }
         }
     }

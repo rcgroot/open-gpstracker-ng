@@ -37,6 +37,8 @@ import android.provider.DocumentsContract.Document.*
 import android.support.annotation.RequiresApi
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
+import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.trackedit.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.utils.count
@@ -51,6 +53,8 @@ class GpxImportController(private val context: Context) {
     lateinit var gpxParserFactory: GpxParserFactory
     @Inject
     lateinit var notificationFactory: ImportNotificationFactory
+    @Inject
+    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     private val notification: ImportNotification by lazy {
         notificationFactory.createImportNotification(context)
@@ -60,22 +64,23 @@ class GpxImportController(private val context: Context) {
         GpsTrackerApplication.appComponent.inject(this)
     }
 
-    fun import(uri: Uri) {
+    fun import(uri: Uri, trackType: String) {
         notification.didStartImport()
         notification.onProgress(0, 1)
-        importTrack(uri)
+        importTrack(uri, trackType)
         notification.onProgress(1, 1)
         notification.didCompleteImport()
     }
 
-    private fun importTrack(uri: Uri) {
+    private fun importTrack(uri: Uri, trackType: String) {
         val parser = gpxParserFactory.createGpxParser(context)
         val defaultName = extractName(uri)
-        parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
+        val trackUri = parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
+        trackTypeDescriptions.saveTrackType(context, trackUri, trackType)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun importDirectory(uri: Uri) {
+    fun importDirectory(uri: Uri, trackType: String) {
         notification.didStartImport()
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
         val projection = listOf(COLUMN_DOCUMENT_ID, COLUMN_MIME_TYPE, COLUMN_DISPLAY_NAME)
@@ -87,7 +92,7 @@ class GpxImportController(private val context: Context) {
             val mimeType = it.getString(COLUMN_MIME_TYPE)
             val name = it.getString(COLUMN_DISPLAY_NAME)
             if (mimeType == MIME_TYPE_GPX || name?.endsWith(".gpx", true) == true) {
-                importTrack(DocumentsContract.buildDocumentUriUsingTree(uri, id))
+                importTrack(DocumentsContract.buildDocumentUriUsingTree(uri, id), trackType)
             } else {
                 Timber.e("Will not import file $name")
             }

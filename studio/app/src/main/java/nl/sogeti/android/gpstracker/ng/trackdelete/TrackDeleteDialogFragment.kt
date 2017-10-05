@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.FragmentDeleteDialogBinding
 
+private const val ARG_URI = "ARGUMENT_URI"
+
 class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
 
     companion object {
-        private val ARG_URI = "ARGUMENT_URI"
+
         fun newInstance(uri: Uri): TrackDeleteDialogFragment {
             val arguments = Bundle()
             arguments.putParcelable(ARG_URI, uri)
@@ -29,7 +31,7 @@ class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentDeleteDialogBinding>(inflater, R.layout.fragment_delete_dialog, container, false)
 
-        val uri = arguments.get(TrackDeleteDialogFragment.ARG_URI) as Uri
+        val uri = arguments.get(ARG_URI) as Uri
         val model = TrackDeleteModel(uri)
         val presenter = TrackDeletePresenter(model, this)
         binding.model = model

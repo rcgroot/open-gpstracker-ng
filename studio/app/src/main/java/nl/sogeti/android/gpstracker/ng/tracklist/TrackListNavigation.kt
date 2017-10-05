@@ -1,3 +1,31 @@
+/*------------------------------------------------------------------------------
+ **     Ident: Sogeti Smart Mobile Solutions
+ **    Author: rene
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ **------------------------------------------------------------------------------
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
+ ** The Netherlands                  |  permission of the copyright holder.
+ *------------------------------------------------------------------------------
+ *
+ *   This file is part of OpenGPSTracker.
+ *
+ *   OpenGPSTracker is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   OpenGPSTracker is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.content.Context
@@ -10,9 +38,10 @@ import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GENERAL
-import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
+import nl.sogeti.android.gpstracker.ng.gpximport.ImportTrackTypeDialogFragment
 import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment
+import nl.sogeti.android.gpstracker.ng.trackedit.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment
 import nl.sogeti.android.gpstracker.ng.utils.ActivityResultLambda
 import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
@@ -58,9 +87,7 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = MIME_TYPE_GENERAL
-            if (fragment is ActivityResultLambda) {
-                fragment.startActivityForResult(intent, param)
-            }
+            startTypeImport(intent, param)
         } else {
             AlertDialog.Builder(fragment.context)
                     .setTitle("Not implemented ")
@@ -73,16 +100,26 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
     fun startGpxDirectorySelection(param: (Intent?) -> Unit) {
         if (versionHelper.isAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            if (fragment is ActivityResultLambda) {
-                fragment.startActivityForResult(intent, param)
-            }
-        }
-        else {
+            startTypeImport(intent, param)
+        } else {
             AlertDialog.Builder(fragment.context)
                     .setTitle("Not implemented ")
                     .setMessage("This feature does not exist pre-Lollipop")
                     .create()
                     .show()
+        }
+    }
+
+    private fun startTypeImport(intent: Intent, param: (Intent?) -> Unit) {
+        if (fragment is ActivityResultLambda) {
+            fragment.startActivityForResult(intent) { intent ->
+                intent?.let {
+                    ImportTrackTypeDialogFragment().show(fragment.fragmentManager, TAG_DIALOG) { type ->
+                        intent.putExtra(KEY_META_FIELD_TRACK_TYPE, type)
+                        param(intent)
+                    }
+                }
+            }
         }
     }
 
