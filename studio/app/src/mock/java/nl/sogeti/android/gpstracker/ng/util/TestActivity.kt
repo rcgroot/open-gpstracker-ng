@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.util
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import android.widget.FrameLayout
 import nl.sogeti.android.gpstracker.v2.R
 
@@ -40,5 +41,9 @@ class TestActivity : AppCompatActivity() {
         val frameLayout = FrameLayout(this)
         frameLayout.id = R.id.title
         setContentView(frameLayout)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
     }
 }

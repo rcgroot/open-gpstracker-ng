@@ -60,7 +60,7 @@ public class AboutFragmentEspressoTest {
     @Before
     public void setUp() {
         sut = wrapperFragment.getFragment();
-        WebView webview = (WebView) sut.getDialog().findViewById(R.id.fragment_about_webview);
+        WebView webview = sut.getDialog().findViewById(R.id.fragment_about_webview);
         webIdlingResource = new WebViewIdlingResource(webview);
         Espresso.registerIdlingResources(webIdlingResource);
     }
