@@ -32,11 +32,17 @@ import android.support.test.rule.ActivityTestRule
 import nl.sogeti.android.gpstracker.ng.robots.*
 import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import org.junit.*
+import android.support.test.rule.GrantPermissionRule
+
+
 
 class TourScreenshots {
 
     @get:Rule
     var activityRule = ActivityTestRule<TrackActivity>(TrackActivity::class.java)
+    @get:Rule
+    var runtimePermissionRule = GrantPermissionRule.grant(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
 
     private lateinit var trackRobot: TrackRobot
     private lateinit var aboutRobot: AboutRobot

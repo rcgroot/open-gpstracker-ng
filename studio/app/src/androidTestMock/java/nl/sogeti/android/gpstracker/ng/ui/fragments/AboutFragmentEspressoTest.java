@@ -28,7 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.Manifest;
 import android.support.test.espresso.Espresso;
+import android.support.test.rule.GrantPermissionRule;
 import android.webkit.WebView;
 
 import org.junit.After;
@@ -48,6 +50,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class AboutFragmentEspressoTest {
 
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule .grant(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     @Rule
     public FragmentTestRule<AboutFragment> wrapperFragment = new FragmentTestRule<>(AboutFragment.class);
     private AboutFragment sut = null;

@@ -28,7 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
+import android.Manifest;
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.rule.GrantPermissionRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,6 +54,8 @@ import static org.hamcrest.Matchers.not;
 public class RecordingFragmentEspressoTest {
 
     @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    @Rule
     public FragmentTestRule<RecordingFragment> wrapperFragment = new FragmentTestRule<>(RecordingFragment.class);
     private RecordingFragment sut;
     private MockServiceManager mockServiceManager;
@@ -58,7 +63,7 @@ public class RecordingFragmentEspressoTest {
 
     @Before
     public void setUp() {
-        Espresso.registerIdlingResources(MockBroadcastSender.Espresso.getResource());
+        IdlingRegistry.getInstance().register(MockBroadcastSender.Espresso.getResource());
         mockServiceManager = new MockServiceManager();
         mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         mockTracksContentProvider = new MockTracksContentProvider();
@@ -72,7 +77,7 @@ public class RecordingFragmentEspressoTest {
         mockServiceManager = null;
         mockTracksContentProvider = null;
         sut = null;
-        Espresso.unregisterIdlingResources(MockBroadcastSender.Espresso.getResource());
+        IdlingRegistry.getInstance().unregister(MockBroadcastSender.Espresso.getResource());
     }
 
     @Test
