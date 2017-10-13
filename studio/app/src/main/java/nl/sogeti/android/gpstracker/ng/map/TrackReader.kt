@@ -37,7 +37,7 @@ import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.ResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 
-class TrackReader(val context: Context, val trackUri: Uri, val action: (String, LatLngBounds, List<List<LatLng>>) -> Unit)
+class TrackReader(private var context: Context, internal val trackUri: Uri, private val action: (String, LatLngBounds, List<List<LatLng>>) -> Unit)
     : AsyncTask<Void, Void, ResultHandler>() {
 
 

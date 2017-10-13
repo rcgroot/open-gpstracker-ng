@@ -34,7 +34,7 @@ import android.support.v4.app.Fragment
 
 class FragmentResultLambda<T> : Fragment() {
 
-    var resultLamda: (T) -> Unit = {}
+    var resultLambda: (T) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

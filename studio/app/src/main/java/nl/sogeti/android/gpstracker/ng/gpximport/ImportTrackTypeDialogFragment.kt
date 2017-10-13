@@ -47,7 +47,7 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
 
     fun show(manager: FragmentManager, tag: String, resultLambda: (String) -> Unit) {
         val lambdaHolder = FragmentResultLambda<String>()
-        lambdaHolder.resultLamda = resultLambda
+        lambdaHolder.resultLambda = resultLambda
         manager.beginTransaction().add(lambdaHolder, TAG_LAMBDA_FRAGMENT).commit()
         setTargetFragment(lambdaHolder, 324)
 
@@ -67,7 +67,7 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
         binding.model = importTrackTypeModel
         binding.fragmentImporttracktypeSpinner.onItemSelectedListener = importTrackTypePresenter.onItemSelectedListener
         if (targetFragment is FragmentResultLambda<*>) {
-            importTrackTypePresenter.resultLambda = (targetFragment as FragmentResultLambda<String>).resultLamda
+            importTrackTypePresenter.resultLambda = (targetFragment as FragmentResultLambda<String>).resultLambda
         }
         presenter = importTrackTypePresenter
 

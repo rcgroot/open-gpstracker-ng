@@ -177,7 +177,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
             onTrackSelection(trackUri, trackSelection.trackName)
         } else {
             val lastTrack = tracksUri().apply(context) { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
-            if (lastTrack != null && lastTrack.first != null) {
+            if (lastTrack?.first != null) {
                 val trackId = lastTrack.first!!
                 val lastTrackUri = trackUri(trackId)
                 val name = lastTrack.second ?: ""
