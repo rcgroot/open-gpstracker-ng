@@ -30,12 +30,17 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.annotation.TargetApi
+import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.TaskStackBuilder
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
 import nl.sogeti.android.gpstracker.v2.R
 import javax.inject.Inject
@@ -48,9 +53,18 @@ class ImportNotification(val context: Context) {
 
     @Inject
     lateinit var versionHelper: VersionHelper
-    private var importBuilder: NotificationCompat.Builder? = null
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+    private val builder: NotificationCompat.Builder by lazy {
+        NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(context.getString(R.string.notification_import_title))
+                .setContentText(context.getString(R.string.notification_import_context_ongoing))
+                .setSmallIcon(R.drawable.ic_file_download_black_24dp)
+                .setProgress(1, 0, true)
+                .setAutoCancel(true)
+                .setOngoing(true)
+                .setTrackListTargetIntent(context)
     }
 
     init {
@@ -62,34 +76,25 @@ class ImportNotification(val context: Context) {
             createChannel()
         }
 
-        val importBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(context.getString(R.string.notification_import_title))
-                .setContentText(context.getString(R.string.notification_import_context_ongoing))
-                .setSmallIcon(R.drawable.ic_file_download_black_24dp)
-                .setProgress(1, 0, true)
-        importComplete = false
-        notificationManager.notify(NOTIFICATION_IMPORT_ID, importBuilder.build())
 
-        this.importBuilder = importBuilder
+        importComplete = false
+        notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
     }
 
     fun onProgress(progress: Int, goal: Int) {
-        importBuilder?.let {
-            it.setProgress(goal, progress, false)
-            importComplete = false
-            notificationManager.notify(NOTIFICATION_IMPORT_ID, it.build())
-        }
+        builder.setProgress(goal, progress, false)
+        importComplete = false
+        notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
     }
 
     fun didCompleteImport() {
-        importBuilder?.let {
-            it.setContentText(context.getString(R.string.notification_import_context_complete))
-                    .setProgress(0, 0, false)
-            importComplete = true
-            notificationManager.notify(NOTIFICATION_IMPORT_ID, it.build())
+        builder.setContentText(context.getString(R.string.notification_import_context_complete))
+                .setProgress(0, 0, false)
+        importComplete = true
+        notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
 
-        }
     }
+
 
     fun dismissCompletedImport() {
         if (importComplete) {
@@ -103,6 +108,7 @@ class ImportNotification(val context: Context) {
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     context.getString(R.string.notification_operation_channel_name),
                     NotificationManager.IMPORTANCE_HIGH)
+            channel.lockscreenVisibility = VISIBILITY_PUBLIC
             channel.description = context.getString(R.string.notification_operation_channel_description)
             channel.enableLights(false)
             channel.enableVibration(false)
@@ -113,4 +119,22 @@ class ImportNotification(val context: Context) {
     companion object {
         private var importComplete = true
     }
+}
+
+private fun NotificationCompat.Builder.setTrackListTargetIntent(context: Context): NotificationCompat.Builder {
+
+    val resultPendingIntent: PendingIntent
+    if (context.resources.getBoolean(R.bool.track_map_multi_pane)) {
+        val intent = TrackActivity.newIntent(context, true)
+        resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    } else {
+        val stackBuilder = TaskStackBuilder.create(context)
+        stackBuilder.addParentStack(TrackActivity::class.java)
+        stackBuilder.addNextIntent(Intent(context, TrackActivity::class.java))
+        stackBuilder.addNextIntent(Intent(context, TrackListActivity::class.java))
+        resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+    setContentIntent(resultPendingIntent)
+
+    return this
 }

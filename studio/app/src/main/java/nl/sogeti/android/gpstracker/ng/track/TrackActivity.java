@@ -28,40 +28,39 @@
  */
 package nl.sogeti.android.gpstracker.ng.track;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import org.jetbrains.annotations.NotNull;
 
-import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
-import nl.sogeti.android.gpstracker.ng.graphs.GraphsActivity;
-import nl.sogeti.android.gpstracker.ng.graphs.GraphsFragment;
-import nl.sogeti.android.gpstracker.ng.trackdelete.TrackDeleteDialogFragment;
-import nl.sogeti.android.gpstracker.ng.trackedit.TrackEditDialogFragment;
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListActivity;
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListFragment;
 import nl.sogeti.android.gpstracker.v2.R;
 import nl.sogeti.android.gpstracker.v2.databinding.ActivityTrackMapBinding;
-import timber.log.Timber;
-
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
+    private static final String ARG_SHOW_TRACKS = "ARG_SHOW_TRACKS";
 
     private final TrackViewModel viewModel = new TrackViewModel();
     private final TrackPresenter presenter = new TrackPresenter(viewModel, this);
+    private boolean startWithOpenTracks;
+
+    @NotNull
+    public static Intent newIntent(Context context, boolean showTracks) {
+        Intent intent = new Intent(context, TrackActivity.class);
+        intent.putExtra(ARG_SHOW_TRACKS, showTracks);
+
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +69,11 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
         binding.setViewModel(viewModel);
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            boolean showTrack = getIntent().getBooleanExtra(ARG_SHOW_TRACKS, false);
+            startWithOpenTracks = showTrack;
+        } else {
+            startWithOpenTracks = false;
             Uri uri = savedInstanceState.getParcelable(KEY_SELECTED_TRACK_URI);
             String name = savedInstanceState.getString(KEY_SELECTED_TRACK_NAME);
             viewModel.getTrackUri().set(uri);
@@ -81,7 +84,11 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.start(this, new TrackNavigator(this));
+        TrackNavigator navigation = new TrackNavigator(this);
+        presenter.start(this, navigation);
+        if (startWithOpenTracks) {
+            navigation.showTrackSelection();
+        }
     }
 
     @Override
@@ -149,4 +156,4 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     }
 
     //endregion
- }
+}
