@@ -32,6 +32,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.provider.BaseColumns
 import timber.log.Timber
 
 /* **
@@ -160,18 +161,38 @@ fun Uri.append(id: Long): Uri {
     return ContentUris.withAppendedId(this, id)
 }
 
-fun Uri.count(context: Context, projection: List<String>? = null,
-              selectionPair: Pair<String, List<String>>? = null): Int {
+fun Uri.count(context: Context, selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
-        cursor = context.contentResolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
+        val projection = arrayOf("count(*) AS count")
+        cursor = context.contentResolver.query(this, projection, selection, selectionArgs, null)
+        if (cursor != null && cursor.moveToFirst()) {
+            result = cursor.getInt(0)
+        } else {
+            Timber.w("Uri $this count operation didn't have results")
+        }
+    } finally {
+        cursor?.close()
+    }
+
+    return result
+}
+
+fun Uri.countResult(context: Context, projection: Array<String> = arrayOf(BaseColumns._ID),
+                    selectionPair: Pair<String, List<String>>? = null): Int {
+    val selectionArgs = selectionPair?.second?.toTypedArray()
+    val selection = selectionPair?.first
+    var result = 0
+    var cursor: Cursor? = null
+    try {
+        cursor = context.contentResolver.query(this, projection, selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.count
         } else {
-            Timber.w("Uri $this apply operation didn't have results")
+            Timber.w("Uri $this countResult operation didn't have results")
         }
     } finally {
         cursor?.close()

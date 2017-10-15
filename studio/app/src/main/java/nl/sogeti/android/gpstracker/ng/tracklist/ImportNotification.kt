@@ -30,9 +30,11 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.annotation.TargetApi
+import android.app.Notification.PRIORITY_LOW
 import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -63,6 +65,7 @@ class ImportNotification(val context: Context) {
                 .setSmallIcon(R.drawable.ic_file_download_black_24dp)
                 .setProgress(1, 0, true)
                 .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
                 .setTrackListTargetIntent(context)
     }
@@ -82,13 +85,15 @@ class ImportNotification(val context: Context) {
     }
 
     fun onProgress(progress: Int, goal: Int) {
-        builder.setProgress(goal, progress, false)
+        builder.setPriority(NotificationCompat.PRIORITY_MIN)
+                .setProgress(goal, progress, false)
         importComplete = false
         notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
     }
 
     fun didCompleteImport() {
-        builder.setContentText(context.getString(R.string.notification_import_context_complete))
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentText(context.getString(R.string.notification_import_context_complete))
                 .setProgress(0, 0, false)
         importComplete = true
         notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
@@ -104,14 +109,16 @@ class ImportNotification(val context: Context) {
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun createChannel() {
-        if (notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) != null) {
+        if (notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     context.getString(R.string.notification_operation_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH)
+                    NotificationManager.IMPORTANCE_DEFAULT)
             channel.lockscreenVisibility = VISIBILITY_PUBLIC
+            channel.name = context.getString(R.string.notification_operation_channel_name)
             channel.description = context.getString(R.string.notification_operation_channel_description)
             channel.enableLights(false)
             channel.enableVibration(false)
+            channel.importance = IMPORTANCE_LOW
             notificationManager.createNotificationChannel(channel)
         }
     }

@@ -1,8 +1,8 @@
 ext {
     // Building
     buildToolsVersion = '26.0.2'
-    gradlePluginVersion = '3.0.0-beta7'
-    dataBindingVersion = '3.0.0-beta7'
+    gradlePluginVersion = '3.0.0-rc1'
+    dataBindingVersion = '3.0.0-rc1'
 
     // App support
     supportLibraryVersion = '26.1.0'
@@ -11,7 +11,7 @@ ext {
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
-    playServicesVersion = '11.4.0'
+    playServicesVersion = '11.4.2'
     googleServicesVersion = '3.0.0'
 
     // Testing

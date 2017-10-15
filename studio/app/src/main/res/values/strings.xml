@@ -128,7 +128,7 @@
     <string name="graph_label_altitude">Altitude</string>
     <string name="menu_item_export">Export to directory</string>
     <string name="menu_item_import">Import from directory</string>
-    <string name="notification_operation_channel_name">Background operation</string>
+    <string name="notification_operation_channel_name">Open GPS Tracker backgrounds operations</string>
     <string name="notification_operation_channel_description">Running operation that will continue to complete even if the initiating screen is closed. Like import, export or recording.</string>
     <string name="notification_import_title">Import of GPX file into Open GPS Tracker</string>
     <string name="notification_import_context_ongoing">Import in progress</string>

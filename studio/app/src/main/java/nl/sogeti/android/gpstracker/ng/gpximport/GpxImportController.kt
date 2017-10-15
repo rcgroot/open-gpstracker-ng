@@ -38,10 +38,9 @@ import android.support.annotation.RequiresApi
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
-import nl.sogeti.android.gpstracker.ng.trackedit.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
-import nl.sogeti.android.gpstracker.ng.utils.count
+import nl.sogeti.android.gpstracker.ng.utils.countResult
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
 import timber.log.Timber
@@ -84,7 +83,7 @@ class GpxImportController(private val context: Context) {
         notification.didStartImport()
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
         val projection = listOf(COLUMN_DOCUMENT_ID, COLUMN_MIME_TYPE, COLUMN_DISPLAY_NAME)
-        val count = childrenUri.count(context, projection)
+        val count = childrenUri.countResult(context)
         var progress = 0
         notification.onProgress(progress, count)
         childrenUri.map(context, projection = projection) {

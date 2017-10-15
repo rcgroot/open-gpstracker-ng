@@ -114,33 +114,25 @@ class SummaryManager {
         }
     }
 
-    fun numberOfThreads(): Int {
-        val threads: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            threads = Runtime.getRuntime().availableProcessors()
-        } else {
-            threads = 2
-        }
+    fun numberOfThreads() =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Runtime.getRuntime().availableProcessors()
+            } else {
+                2
+            }
 
-        return threads
+    fun removeFromCache(trackUri: Uri) {
+        summaryCache.remove(trackUri)
     }
 
-    internal class BackgroundThreadFactory : ThreadFactory {
-        val group = ThreadGroup("SummaryManager")
+    class BackgroundThreadFactory : ThreadFactory {
+        private val group = ThreadGroup("SummaryManager")
 
         init {
             group.isDaemon = false
             group.maxPriority = android.os.Process.THREAD_PRIORITY_BACKGROUND
         }
 
-        override fun newThread(task: Runnable?): Thread {
-            val thread = Thread(group, task)
-
-            return thread
-        }
-    }
-
-    fun removeFromCache(trackUri: Uri) {
-        summaryCache.remove(trackUri)
+        override fun newThread(task: Runnable?) = Thread(group, task)
     }
 }

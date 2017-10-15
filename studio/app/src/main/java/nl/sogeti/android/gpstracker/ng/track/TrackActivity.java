@@ -70,8 +70,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         binding.toolbar.bringToFront();
         binding.setViewModel(viewModel);
         if (savedInstanceState == null) {
-            boolean showTrack = getIntent().getBooleanExtra(ARG_SHOW_TRACKS, false);
-            startWithOpenTracks = showTrack;
+            startWithOpenTracks = getIntent().getBooleanExtra(ARG_SHOW_TRACKS, false);
         } else {
             startWithOpenTracks = false;
             Uri uri = savedInstanceState.getParcelable(KEY_SELECTED_TRACK_URI);

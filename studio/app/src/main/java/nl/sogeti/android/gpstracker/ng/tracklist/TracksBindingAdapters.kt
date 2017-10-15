@@ -17,10 +17,10 @@ open class TracksBindingAdapters {
         val viewAdapter: TrackListViewAdapter
         if (recyclerView.adapter is TrackListViewAdapter) {
             viewAdapter = recyclerView.adapter as TrackListViewAdapter
-            viewAdapter.model = tracks ?: emptyList()
+            viewAdapter.updateTracks(tracks ?: emptyList())
         } else {
             viewAdapter = TrackListViewAdapter(recyclerView.context)
-            viewAdapter.model = tracks?: emptyList()
+            viewAdapter.updateTracks(tracks ?: emptyList())
             recyclerView.adapter = viewAdapter
         }
     }
