@@ -68,7 +68,8 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
     @Override
     public void didStart() {
         registerReceiver();
-        serviceManager.startup(getContext(), new Runnable() {
+        final Context context = getContext();
+        serviceManager.startup(context, new Runnable() {
             @Override
             public void run() {
                 synchronized (ConnectedServicePresenter.this) {
@@ -76,24 +77,21 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    Context context = getContextWhenStarted();
-                                    if (context != null) {
-                                        long trackId = serviceManager.getTrackId();
-                                        Uri trackUri = null;
-                                        String name = null;
-                                        if (trackId > 0) {
-                                            trackUri = TrackUriExtensionKt.trackUri(trackId);
-                                            name = ContentProviderExtensionsKt.apply(trackUri, context, null, null, new Function1<Cursor, String>() {
-                                                @Override
-                                                public String invoke(Cursor cursor) {
-                                                    return ContentProviderExtensionsKt.getString(cursor, NAME);
-                                                }
-                                            });
-                                        }
-                                        int loggingState = serviceManager.getLoggingState();
-                                        Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
-                                        didConnectToService(trackUri, name, loggingState);
+                                    long trackId = serviceManager.getTrackId();
+                                    Uri trackUri = null;
+                                    String name = null;
+                                    if (trackId > 0) {
+                                        trackUri = TrackUriExtensionKt.trackUri(trackId);
+                                        name = ContentProviderExtensionsKt.apply(trackUri, context, null, null, new Function1<Cursor, String>() {
+                                            @Override
+                                            public String invoke(Cursor cursor) {
+                                                return ContentProviderExtensionsKt.getString(cursor, NAME);
+                                            }
+                                        });
                                     }
+                                    int loggingState = serviceManager.getLoggingState();
+                                    Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
+                                    didConnectToService(trackUri, name, loggingState);
                                 }
                             }
                     );

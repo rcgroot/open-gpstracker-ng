@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.recording
 
+import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.AsyncTask
@@ -111,7 +112,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         var executingReader = this.executingReader
         if (executingReader == null || executingReader.trackUri != trackUri) {
             executingReader?.cancel(true)
-            executingReader = TrackReader(trackUri, viewModel)
+            executingReader = TrackReader(context, trackUri, viewModel)
             executingReader.execute()
             this.executingReader = executingReader
         }
@@ -204,14 +205,12 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         }
     }
 
-    inner class TrackReader internal constructor(val trackUri: Uri, private val viewModel: RecordingViewModel)
+    inner class TrackReader internal constructor(private val context: Context, val trackUri: Uri, private val viewModel: RecordingViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()
 
         override fun doInBackground(vararg p: Void): Void? {
-            val context = contextWhenStarted ?: return null
-
             trackUri.readTrack(context, handler)
 
             if (handler.waypoints.isEmpty()) {

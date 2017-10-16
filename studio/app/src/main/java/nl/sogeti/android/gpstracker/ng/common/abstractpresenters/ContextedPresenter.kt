@@ -15,8 +15,6 @@ abstract class ContextedPresenter<NAV: Navigation> {
         get() {
             return _context ?: throw IllegalStateException("Don't run the presenter outside its started state")
         }
-    val contextWhenStarted: Context?
-        get() = _context
 
     fun start(context: Context, navigation: NAV? = null) {
         if (_context == null) {
