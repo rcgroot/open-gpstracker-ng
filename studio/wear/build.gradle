@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+android {
+    def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
+    compileSdkVersion 26
+    buildToolsVersion "$rootProject.buildToolsVersion"
+
+    defaultConfig {
+        applicationId "nl.sogeti.android.gpstracker.v2.wear"
+        targetSdkVersion 26
+        minSdkVersion 23
+        versionCode buildNumber
+        versionName "2.0.0-SNAPSHOT"
+        buildConfigField "int", "BUILD_NUMBER", buildNumber as String
+        buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
+    }
+
+    flavorDimensions "service"
+
+    productFlavors {
+        live {
+            dimension "service"
+        }
+        mock {
+            dimension "service"
+            applicationIdSuffix = ".mock"
+        }
+    }
+
+    if (System.getenv().containsKey("storeFile")) {
+        apply from: '../signing.gradle'
+    }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$rootProject.kotlinVersion"
+    implementation "com.google.android.support:wearable:$rootProject.wearableVersion"
+    implementation "com.google.android.gms:play-services-wearable:$rootProject.playServicesVersion"
+    implementation "com.android.support:percent:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:wear:$rootProject.supportLibraryVersion"
+    compileOnly "com.google.android.wearable:wearable:$rootProject.wearableVersion"
+}
