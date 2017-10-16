@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.utils
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
@@ -39,19 +40,21 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_CONTROL
 import nl.sogeti.android.gpstracker.integration.ServiceConstants.permission.TRACKING_HISTORY
-import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.*
 import javax.inject.Inject
 
+private const val REQUEST_TRACKING_CONTROL = 10001
+private const val INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker"
+
 /**
  * Asks for Open GPS tracker permissions
  */
 class PermissionRequester {
 
-    companion object shared {
+    companion object {
         private val runnables = LinkedHashMap<PermissionRequester, () -> Unit>()
         private var permissionDialog: AlertDialog? = null
         private var installDialog: AlertDialog? = null
@@ -60,9 +63,6 @@ class PermissionRequester {
         private val isShowingDialog: Boolean
             get() = permissionDialog != null || installDialog != null
     }
-
-    private val REQUEST_TRACKING_CONTROL = 10001
-    private val INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker"
 
     @Inject
     lateinit var serviceManager: ServiceManagerInterface
@@ -74,38 +74,42 @@ class PermissionRequester {
     }
 
     fun start(fragment: Fragment, runnable: () -> Unit) {
-        shared.runnables.put(this, runnable)
+        runnables.put(this, runnable)
         checkOpenGPSTrackerAccess(fragment)
     }
 
     fun stop() {
-        shared.runnables.remove(this)
+        runnables.remove(this)
         if (runnables.isEmpty()) {
-            shared.installDialog?.dismiss()
-            shared.installDialog = null
-            shared.permissionDialog?.dismiss()
-            shared.permissionDialog = null
+            installDialog?.dismiss()
+            installDialog = null
+            permissionDialog?.dismiss()
+            permissionDialog = null
         }
     }
 
-    fun checkOpenGPSTrackerAccess(fragment: Fragment) {
+    private fun checkOpenGPSTrackerAccess(fragment: Fragment) {
         val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
         val install = DialogInterface.OnClickListener { _, _ -> installOpenGpsTracker(fragment.context) }
         val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
 
         if (serviceManager.isPackageInstalled(fragment.context)) {
             // Installed, check permissions
-            if (hasPermission(fragment.context, TRACKING_CONTROL) && hasPermission(fragment.context, TRACKING_HISTORY)) {
+            if (hasPermission(fragment.context, TRACKING_CONTROL)
+                    && hasPermission(fragment.context, TRACKING_HISTORY)
+                    && hasPermission(fragment.context, ACCESS_FINE_LOCATION)) {
                 // Have permissions
                 didReceivePermissions()
-            } else if (canAsk(fragment.activity, TRACKING_CONTROL)) {
+            } else if (canAsk(fragment.activity, TRACKING_CONTROL)
+                    && canAsk(fragment.activity, TRACKING_HISTORY)
+                    && canAsk(fragment.activity, ACCESS_FINE_LOCATION)) {
                 // Ask permissions
                 showRequest(fragment)
             } else {
                 // Explain permissions
                 showRationale(fragment.context, startRequest, cancel)
             }
-        } else if (!shared.isShowingDialog) {
+        } else if (!isShowingDialog) {
             showInstallLink(fragment.context, cancel, install)
         }
     }
@@ -117,7 +121,9 @@ class PermissionRequester {
                 val grants = grantResults.indices
                         .filter { grantResults[it] == PackageManager.PERMISSION_GRANTED }
                         .map { permissions[it] }
-                if (grants.contains(TRACKING_CONTROL) && grants.contains(TRACKING_HISTORY)) {
+                if (grants.contains(TRACKING_CONTROL)
+                        && grants.contains(TRACKING_HISTORY)
+                        && grants.contains(ACCESS_FINE_LOCATION)) {
                     didReceivePermissions()
                 } else {
                     checkOpenGPSTrackerAccess(fragment)
@@ -127,15 +133,15 @@ class PermissionRequester {
     }
 
     private fun didReceivePermissions() {
-        for (runnable in shared.runnables.values) {
+        for (runnable in runnables.values) {
             runnable()
         }
-        shared.runnables.clear()
+        runnables.clear()
     }
 
     private fun cancel() {
-        shared.installDialog = null
-        shared.permissionDialog = null
+        installDialog = null
+        permissionDialog = null
     }
 
     private fun showInstallLink(context: Context, cancel: DialogInterface.OnClickListener, okListener: DialogInterface.OnClickListener) {
@@ -159,16 +165,16 @@ class PermissionRequester {
 
     private fun showRequest(fragment: Fragment) {
         synchronized(request, {
-            shared.permissionDialog = null
+            permissionDialog = null
             if (request.isEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                request = arrayOf(TRACKING_CONTROL, TRACKING_HISTORY)
+                request = arrayOf(TRACKING_CONTROL, TRACKING_HISTORY, ACCESS_FINE_LOCATION)
                 fragment.requestPermissions(request, REQUEST_TRACKING_CONTROL)
             }
         })
     }
 
     private fun installOpenGpsTracker(context: Context) {
-        shared.installDialog = null
+        installDialog = null
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(INSTALL_URI))
         context.startActivity(intent)
     }

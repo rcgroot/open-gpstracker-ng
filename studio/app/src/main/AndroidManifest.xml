@@ -4,7 +4,6 @@
     package="nl.sogeti.android.gpstracker.v2"
     android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
