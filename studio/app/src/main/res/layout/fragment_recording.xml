@@ -81,12 +81,16 @@
 
         <TextView
             android:id="@+id/fragment_recording_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:minLines="1"
             android:text="@{viewModel.name}"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintLeft_toRightOf="@+id/fragment_recording_status"
             app:layout_constraintRight_toLeftOf="@+id/fragment_recording_satellites"
