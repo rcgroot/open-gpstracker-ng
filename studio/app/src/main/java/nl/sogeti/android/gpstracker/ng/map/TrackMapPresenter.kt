@@ -182,6 +182,8 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
                 val lastTrackUri = trackUri(trackId)
                 val name = lastTrack.second ?: ""
                 trackSelection.selectTrack(lastTrackUri, name)
+            } else {
+                viewModel.trackHead.set(locationFactory.getLocationCoordinates(context))
             }
         }
     }
