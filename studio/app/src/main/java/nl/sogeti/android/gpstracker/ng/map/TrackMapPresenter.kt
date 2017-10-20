@@ -46,6 +46,7 @@ import javax.inject.Inject
 
 class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter<Navigation>(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
 
+    private var started = false
     private var executingReader: TrackReader? = null
     private var contentController: ContentController? = null
     private var googleMap: GoogleMap? = null
@@ -68,6 +69,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     override fun didStart() {
         super.didStart()
+        started = true
         trackSelection.addListener(this)
         makeTrackSelection()
         contentController = contentControllerFactory.createContentController(context, this)
@@ -77,6 +79,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     override fun willStop() {
         super.willStop()
+        started = false
         trackSelection.removeListener(this)
         contentController?.unregisterObserver()
         contentController = null
@@ -134,7 +137,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     private fun addTilesToMap() {
         val googleMap = googleMap
-        if (googleMap != null) {
+        if (googleMap != null && started) {
             val tileProvider = trackTileProviderFactory.createTrackTileProvider(context, viewModel.waypoints)
             tileProvider.provideFor(googleMap)
         }

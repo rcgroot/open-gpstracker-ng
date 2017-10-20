@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.common
 import android.app.Application
 import android.databinding.DataBindingUtil
 import android.os.StrictMode
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
 import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
@@ -53,12 +54,23 @@ open class GpsTrackerApplication : Application() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // Running the app for the heap analyzer, not for the user
-            return;
+            return
         }
-        LeakCanary.install(this);
+        setupLeakCanary()
         setupDebugTree()
         buildAppComponent()
         setupDefaultViewBinding()
+        setupAnalytics()
+    }
+
+    private fun setupAnalytics() {
+        if (debug) {
+            FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
+        }
+    }
+
+    private fun setupLeakCanary() {
+        LeakCanary.install(this)
     }
 
     protected open fun buildAppComponent() {

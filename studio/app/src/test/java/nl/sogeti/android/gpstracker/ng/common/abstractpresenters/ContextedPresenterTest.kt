@@ -44,7 +44,6 @@ class ContextedPresenterTest {
 
         // Verify
         assertTrue(sut.willStop)
-        assertNull(sut.contextWhenStarted)
         sut.context
     }
 

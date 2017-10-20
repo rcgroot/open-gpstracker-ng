@@ -1,13 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 26
     buildToolsVersion "$rootProject.buildToolsVersion"
+    flavorDimensions "service"
 
     defaultConfig {
-        applicationId "nl.sogeti.android.gpstracker.v2.wear"
+        applicationId "nl.sogeti.android.gpstracker.ng"
         targetSdkVersion 26
         minSdkVersion 23
         versionCode buildNumber
@@ -15,8 +17,6 @@ android {
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
-
-    flavorDimensions "service"
 
     productFlavors {
         live {
@@ -43,16 +43,28 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':wear-shared')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$rootProject.kotlinVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
     implementation "com.google.android.support:wearable:$rootProject.wearableVersion"
     implementation "com.google.android.gms:play-services-wearable:$rootProject.playServicesVersion"
     implementation "com.android.support:percent:$rootProject.supportLibraryVersion"
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:wear:$rootProject.supportLibraryVersion"
+    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+
+    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+
     compileOnly "com.google.android.wearable:wearable:$rootProject.wearableVersion"
+    compile project(path: ':utils')
 }

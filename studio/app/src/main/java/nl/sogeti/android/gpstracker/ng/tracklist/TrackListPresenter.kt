@@ -48,6 +48,7 @@ import nl.sogeti.android.gpstracker.ng.utils.tracksUri
 import nl.sogeti.android.gpstracker.v2.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
+import javax.inject.Named
 
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
@@ -61,7 +62,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     lateinit var contentControllerFactory: ContentControllerFactory
     @Inject
     lateinit var summaryManager: SummaryManager
-    @Inject
+    @field:[Inject Named("SystemBackgroundExecutor")]
     lateinit var executor: Executor
     @Inject
     lateinit var shareIntentFactory: ShareIntentFactory

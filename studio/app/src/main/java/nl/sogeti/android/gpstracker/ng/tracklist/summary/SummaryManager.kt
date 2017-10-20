@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.tracklist.summary
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import nl.renedegroot.android.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.utils.append
@@ -38,7 +39,6 @@ import nl.sogeti.android.gpstracker.ng.utils.count
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
 import javax.inject.Inject
 
 /**
@@ -60,7 +60,7 @@ class SummaryManager {
         synchronized(this, {
             activeCount++
             if (executor == null) {
-                executor = Executors.newFixedThreadPool(numberOfThreads(), BackgroundThreadFactory())
+                executor = Executors.newFixedThreadPool(numberOfThreads(), BackgroundThreadFactory("SummaryManager"))
             }
         })
     }
@@ -123,16 +123,5 @@ class SummaryManager {
 
     fun removeFromCache(trackUri: Uri) {
         summaryCache.remove(trackUri)
-    }
-
-    class BackgroundThreadFactory : ThreadFactory {
-        private val group = ThreadGroup("SummaryManager")
-
-        init {
-            group.isDaemon = false
-            group.maxPriority = android.os.Process.THREAD_PRIORITY_BACKGROUND
-        }
-
-        override fun newThread(task: Runnable?) = Thread(group, task)
     }
 }

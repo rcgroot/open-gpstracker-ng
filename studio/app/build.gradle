@@ -11,6 +11,7 @@ android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 26
     buildToolsVersion "$rootProject.buildToolsVersion"
+    flavorDimensions "service"
 
     dataBinding {
         enabled = true
@@ -28,7 +29,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    flavorDimensions "service"
 
     productFlavors {
         live {
@@ -95,8 +95,8 @@ dependencies {
     implementation project(':integration')
     implementation project(':widgets')
     implementation project(':utils')
+    implementation project(':wear-shared')
 
-    //    wearApp project(':wear')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"

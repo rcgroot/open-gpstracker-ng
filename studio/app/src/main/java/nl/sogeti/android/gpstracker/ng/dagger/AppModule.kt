@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.dagger
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import nl.renedegroot.android.concurrent.ExecutorFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
@@ -47,6 +48,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
+import nl.sogeti.android.gpstracker.v2.sharedwear.MessageSenderFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Named
@@ -108,4 +110,10 @@ class AppModule {
     fun importNotificationFactory() = object : ImportNotificationFactory {
         override fun createImportNotification(context: Context) = ImportNotification(context)
     }
+
+    @Provides
+    fun messageSenderFactory() = MessageSenderFactory()
+
+    @Provides
+    fun executorFactory() = ExecutorFactory()
 }

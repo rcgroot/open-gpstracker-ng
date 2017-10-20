@@ -13,6 +13,7 @@ import nl.sogeti.android.gpstracker.ng.util.MockPermissionChecker
 import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
 import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
 import java.util.*
+import javax.inject.Named
 
 @Module
 class MockSystemModule {
@@ -31,6 +32,7 @@ class MockSystemModule {
     fun uriBuilder() = Uri.Builder()
 
     @Provides
+    @Named("SystemBackgroundExecutor")
     fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
 
     @Provides

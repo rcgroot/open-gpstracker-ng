@@ -136,22 +136,6 @@ public class SummaryManagerTest {
     }
 
     @Test
-    public void testBackgroundPriority() {
-        // Prepare
-        ThreadFactory factory = new SummaryManager.BackgroundThreadFactory();
-
-        // Execute
-        Thread thread = factory.newThread(new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
-
-        // Verify
-        assertThat(thread.getPriority(), Matchers.lessThanOrEqualTo(android.os.Process.THREAD_PRIORITY_BACKGROUND));
-    }
-
-    @Test
     public void testCallWhenStopped() {
         // Prepare
         final List<Summary> callback = new LinkedList<>();

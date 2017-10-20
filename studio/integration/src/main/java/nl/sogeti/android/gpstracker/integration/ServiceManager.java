@@ -299,7 +299,7 @@ public class ServiceManager implements ServiceManagerInterface {
                     try {
                         context.bindService(createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
                     } catch (SecurityException e) {
-                        Timber.e("Did not bind service because required permission is lacking");
+                        Timber.e(e, "Did not bind service because required permission is lacking");
                     }
                 }
             } else {

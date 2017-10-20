@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.v2.wear.ControlPresenter" />
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.v2.wear.ControlViewModel" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:onClick="@{() -> presenter.onClickSummary()}"
+        android:padding="@dimen/inner_frame_layout_padding"
+        app:boxedEdges="all">
+
+        <ImageView
+            android:id="@+id/wear_control_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.2"
+            android:src="@{viewModel.state}" />
+
+        <TextView
+            android:id="@+id/wear_control_top_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@{viewModel.averageSpeed}"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/wear_control_left_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/wear_control_left_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.distance}"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/wear_control_right_title"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/wear_control_top_title"
+            app:layout_constraintTop_toBottomOf="@+id/wear_control_top_title" />
+
+        <TextView
+            android:id="@+id/wear_control_right_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:text="@{viewModel.duration}"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/wear_control_top_title"
+            app:layout_constraintStart_toEndOf="@+id/wear_control_left_title"
+            app:layout_constraintTop_toTopOf="@+id/wear_control_left_title" />
+    </android.support.constraint.ConstraintLayout>
+
+</layout>
+

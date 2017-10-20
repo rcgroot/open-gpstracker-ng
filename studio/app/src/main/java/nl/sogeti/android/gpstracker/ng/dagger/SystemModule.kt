@@ -11,6 +11,8 @@ import nl.sogeti.android.gpstracker.ng.map.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
 import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
 import java.util.*
+import java.util.concurrent.Executor
+import javax.inject.Named
 
 @Module
 class SystemModule {
@@ -29,7 +31,8 @@ class SystemModule {
     fun uriBuilder() = Uri.Builder()
 
     @Provides
-    fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
+    @Named("SystemBackgroundExecutor")
+    fun executor(): Executor = AsyncTask.THREAD_POOL_EXECUTOR
 
     @Provides
     fun permissionChecker() = PermissionChecker()

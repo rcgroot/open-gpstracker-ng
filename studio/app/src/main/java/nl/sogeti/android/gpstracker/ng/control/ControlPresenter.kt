@@ -42,11 +42,12 @@ import nl.sogeti.android.gpstracker.v2.R
 import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Inject
+import javax.inject.Named
 
 class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter<Navigation>() {
     @Inject
     lateinit var nameGenerator: NameGenerator
-    @Inject
+    @field:[Inject Named("SystemBackgroundExecutor")]
     lateinit var asyncExecutor: Executor
 
     val handler = Handler(Looper.getMainLooper())

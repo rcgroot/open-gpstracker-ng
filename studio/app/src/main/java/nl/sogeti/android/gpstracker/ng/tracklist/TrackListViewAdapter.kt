@@ -37,6 +37,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import nl.renedegroot.android.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackPolylineProvider
@@ -47,14 +48,12 @@ import nl.sogeti.android.gpstracker.ng.utils.count
 import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
-import timber.log.Timber
 import java.util.concurrent.Executors
-import java.util.concurrent.ThreadFactory
 import javax.inject.Inject
 
 class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackListViewAdapter.ViewHolder>() {
 
-    private val executor = Executors.newFixedThreadPool(1, BackgroundThreadFactory())!!
+    private val executor = Executors.newFixedThreadPool(1, BackgroundThreadFactory("TrackListDiffer"))
     private var layoutManager: RecyclerView.LayoutManager? = null
     private val rowModels = mutableMapOf<Uri, TrackViewModel>()
 
@@ -240,17 +239,6 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
             return oldCount == newCount
         }
-    }
-
-    class BackgroundThreadFactory : ThreadFactory {
-        private val group = ThreadGroup("TrackListDiffer")
-
-        init {
-            group.isDaemon = false
-            group.maxPriority = android.os.Process.THREAD_PRIORITY_BACKGROUND
-        }
-
-        override fun newThread(task: Runnable?) = Thread(group, task)
     }
 }
 

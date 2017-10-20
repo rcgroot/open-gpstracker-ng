@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">wear</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
-    <string name="hello_world">Hello Square World!</string>
+    <string name="app_name">OGT - Control</string>
+    <string name="control_start">Start</string>
+    <string name="control_pause">Pause</string>
+    <string name="control_stop">Stop</string>
+    <string name="control_resume">Resume</string>
+    <string name="control_syncing">Connecting</string>
 </resources>
