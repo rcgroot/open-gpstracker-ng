@@ -30,7 +30,12 @@ package nl.sogeti.android.gpstracker.v2.wear
 
 import android.databinding.ObservableInt
 
-class Control(iconId: Int, stringId: Int) {
+sealed class Control(iconId: Int, stringId: Int) {
     val iconId = ObservableInt(iconId)
     val stringId = ObservableInt(stringId)
+    class Start : Control(R.drawable.ic_navigation_black_24dp, R.string.control_start)
+    class Pause: Control(R.drawable.ic_pause_black_24dp, R.string.control_pause)
+    class Stop : Control(R.drawable.ic_stop_black_24dp, R.string.control_stop)
+    class Sync : Control(R.drawable.ic_sync_black_24dp, R.string.control_syncing)
+    class Disconnect : Control(R.drawable.ic_sync_disabled_black_24dp, R.string.control_syncing)
 }

@@ -128,38 +128,36 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     //endregion
 
     private fun startedLogging() {
+        model.controls.clear()
         model.controls.addAll(listOf(
-                Control(R.drawable.ic_pause_black_24dp, R.string.control_pause),
-                Control(R.drawable.ic_stop_black_24dp, R.string.control_stop)))
-        model.showControls.set(true)
-        model.state.set(Control(R.drawable.ic_navigation_black_24dp, R.string.control_start))
+                Control.Pause(),
+                Control.Stop()))
+        model.state.set(Control.Start())
     }
 
     private fun pausedLogging() {
+        model.controls.clear()
         model.controls.addAll(listOf(
-                Control(R.drawable.ic_navigation_black_24dp, R.string.control_resume),
-                Control(R.drawable.ic_stop_black_24dp, R.string.control_stop)))
-        model.showControls.set(true)
-        model.state.set(Control(R.drawable.ic_pause_black_24dp, R.string.control_pause))
+                Control.Start(),
+                Control.Stop()))
+        model.state.set(Control.Pause())
     }
 
     private fun stopLogging() {
+        model.controls.clear()
         model.controls.addAll(listOf(
-                Control(R.drawable.ic_navigation_black_24dp, R.string.control_start)))
-        model.showControls.set(true)
-        model.state.set(Control(R.drawable.ic_stop_black_24dp, R.string.control_stop))
+                Control.Start()))
+        model.state.set(Control.Stop())
     }
 
     private fun refreshStatus() {
         model.controls.clear()
-        model.showControls.set(false)
-        model.state.set(Control(R.drawable.ic_sync_black_24dp, R.string.control_syncing))
+        model.state.set(Control.Sync())
     }
 
     private fun unknownState() {
         model.controls.clear()
-        model.showControls.set(false)
-        model.state.set(Control(R.drawable.ic_sync_disabled_black_24dp, R.string.control_syncing))
+        model.state.set(Control.Disconnect())
     }
 
     class LoaderCancelTask(private val model: ControlViewModel) {

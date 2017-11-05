@@ -45,7 +45,7 @@ enum class Capability(val itemName: String) {
     CAPABILITY_RECORD("gps_track_record")
 }
 
-class MessageSender(private val context: Context, private val capability: Capability, private val executorService: ExecutorService, private val queueSize: Int = 10) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
+class MessageSender(private val context: Context, private val capability: Capability, private val executorService: ExecutorService, private val queueSize: Int = 3) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
 
     private lateinit var client: GoogleApiClient
     private val messageQueue = ConcurrentLinkedQueue<WearMessage>()
@@ -121,11 +121,6 @@ class MessageSender(private val context: Context, private val capability: Capabi
 
     //region GoogleApiClient callbacks
 
-    override fun onConnectionFailed(result: ConnectionResult) {
-        connected = false
-        Timber.e("Connection failed, reason $result")
-    }
-
     override fun onConnected(bundle: Bundle?) {
         connected = true
         Wearable.CapabilityApi.addCapabilityListener(
@@ -135,17 +130,26 @@ class MessageSender(private val context: Context, private val capability: Capabi
         runMessageQueue()
     }
 
+    override fun onConnectionFailed(result: ConnectionResult) {
+        connected = false
+        Timber.e("Connection failed, reason $result")
+    }
+
     override fun onConnectionSuspended(cause: Int) {
         connected = false
         Timber.w("Connection suspended, reason $cause")
     }
 
-    override fun onCapabilityChanged(info: CapabilityInfo?) {
+    override fun onCapabilityChanged(info: CapabilityInfo) {
         Timber.w("onCapabilityChanged $info")
-        if (info != null) {
-            updateTranscriptionCapability(info)
+        updateTranscriptionCapability(info)
+        if (nodeId == null) {
+            messageSenderStatus?.isAbleToSendMessages(false)
+        } else {
+            messageSenderStatus?.isAbleToSendMessages(true)
+            runMessageQueue()
         }
-        runMessageQueue()
+
     }
 
     //endregion

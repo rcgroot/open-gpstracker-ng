@@ -27,7 +27,6 @@
             android:id="@+id/wear_control_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:enabled="@{!viewModel.showControls}"
             app:refreshing="@{viewModel.manualRefresh}"
             app:onRefreshListener="@{() -> presenter.pulledRefresh()}">
 

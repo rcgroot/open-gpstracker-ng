@@ -36,9 +36,8 @@ class ControlViewModel {
     val duration = ObservableField<String>("-")
     val distance = ObservableField<String>("-")
     val averageSpeed = ObservableField<String>("-")
-    val showControls = ObservableBoolean(false)
     val controls = ObservableArrayList<Control>()
-    val state = ObservableField<Control?>(Control(R.drawable.ic_sync_black_24dp, R.string.control_syncing))
+    val state = ObservableField<Control?>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
 }
 

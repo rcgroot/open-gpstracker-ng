@@ -90,19 +90,16 @@ class PhoneMessageListenerService : MessageListenerService() {
 
     private fun pauseLogging() {
         serviceManager.pauseGPSLogging(this)
-        messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
         respondLoggingState()
     }
 
     private fun resumeLogging() {
         serviceManager.resumeGPSLogging(this)
-        messageSender?.sendMessage(StatusMessage(STATE_RESUME))
         respondLoggingState()
     }
 
     private fun stopLogging() {
         serviceManager.stopGPSLogging(this)
-        messageSender?.sendMessage(StatusMessage(STATE_STOP))
         respondLoggingState()
     }
 
