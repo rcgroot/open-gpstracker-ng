@@ -79,12 +79,29 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     }
 
     fun didClickControl(control: Control) {
+        model.confirmAction.set(control)
+        view.startConfirmTimer()
+    }
+
+    fun didCancelControl() {
+        view.cancelConfirmTimer()
+        model.confirmAction.set(null)
+    }
+
+    fun confirmTimerFinished() {
+        val action = model.confirmAction.get()
+        model.confirmAction.set(null)
         refreshStatus()
-        when (control.stringId.get()) {
+        val actionId = action?.stringId?.get()
+        when (actionId) {
             R.string.control_start -> messageSender?.sendMessage(StatusMessage(STATE_START))
             R.string.control_pause -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
             R.string.control_resume -> messageSender?.sendMessage(StatusMessage(STATE_RESUME))
             R.string.control_stop -> messageSender?.sendMessage(StatusMessage(STATE_STOP))
+            else -> {
+                Timber.e("Failed to process selected action ${actionId}")
+                messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+            }
         }
     }
 

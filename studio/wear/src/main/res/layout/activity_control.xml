@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="presenter"
             type="nl.sogeti.android.gpstracker.v2.wear.ControlPresenter" />
@@ -23,19 +25,77 @@
         tools:context="nl.sogeti.android.gpstracker.v2.wear.ControlActivity"
         tools:deviceIds="wear">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/wear_control_refresh"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:refreshing="@{viewModel.manualRefresh}"
-            app:onRefreshListener="@{() -> presenter.pulledRefresh()}">
+            android:animateLayoutChanges="true">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/wear_control_vertical"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/wear_control_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="true" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+                android:padding="16dp"
+                app:onRefreshListener="@{() -> presenter.pulledRefresh()}"
+                app:refreshing="@{viewModel.manualRefresh}">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/wear_control_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="true" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+
+            <android.support.wear.widget.CircularProgressLayout
+                android:id="@+id/circular_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:onClick="@{() -> presenter.didCancelControl()}"
+                android:padding="4dp"
+                android:visibility="@{viewModel.confirmAction == null ? View.GONE : View.VISIBLE}"
+                app:OnTimerFinishedListener="@{() -> presenter.confirmTimerFinished()}"
+                app:backgroundColor="@color/cancel_background"
+                app:colorSchemeColors="@color/cancel_progress_circle"
+                app:layout_constraintBottom_toBottomOf="@+id/wear_control_refresh"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/wear_control_refresh"
+                app:strokeWidth="4dp">
+
+                <ImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_cross" />
+            </android.support.wear.widget.CircularProgressLayout>
+
+            <TextView
+                android:id="@+id/circular_progress_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{() -> presenter.didCancelControl()}"
+                android:padding="16dp"
+                android:text="@string/sending"
+                android:textAppearance="@style/TextAppearance.Wearable.Large"
+                android:textColor="@color/white"
+                android:visibility="@{viewModel.confirmAction == null ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@+id/circular_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/circular_progress"
+                app:layout_constraintTop_toTopOf="@+id/circular_progress" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
 
     </android.support.wear.widget.BoxInsetLayout>
 </layout>

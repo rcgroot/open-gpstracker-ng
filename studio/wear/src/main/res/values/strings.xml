@@ -5,4 +5,6 @@
     <string name="control_stop">Stop</string>
     <string name="control_resume">Resume</string>
     <string name="control_syncing">Connecting</string>
+    <string name="space"> </string>
+    <string name="sending">Sending…</string>
 </resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cancel_progress_circle">#422a2a</color>
+    <color name="cancel_background">#871414</color>
+</resources>

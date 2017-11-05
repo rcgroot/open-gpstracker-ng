@@ -44,11 +44,10 @@ private const val EXTRA_STATISTICS = "EXTRA_STATISTICS"
 private const val EXTRA_STATUS = "EXTRA_STATUS"
 
 class ControlActivity : WearableActivity(), View {
-
     private var binding: ActivityControlBinding? = null
+
     private val model = ControlViewModel()
     private var presenter: ControlPresenter = ControlPresenter(model, this)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityControlBinding>(this, R.layout.activity_control, ControlBindingComponent())
@@ -113,6 +112,15 @@ class ControlActivity : WearableActivity(), View {
 
     override fun brighter() {
         binding?.wearControlBackground?.setBackgroundColor(getColor(R.color.dark_grey))
+    }
+
+    override fun startConfirmTimer() {
+        binding?.circularProgress?.totalTime = 2000;
+        binding?.circularProgress?.startTimer()
+    }
+
+    override fun cancelConfirmTimer() {
+        binding?.circularProgress?.stopTimer()
     }
 
     //endregion

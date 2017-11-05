@@ -37,11 +37,14 @@ class ControlViewModel {
     val distance = ObservableField<String>("-")
     val averageSpeed = ObservableField<String>("-")
     val controls = ObservableArrayList<Control>()
-    val state = ObservableField<Control?>(Control.Sync())
+    val state = ObservableField<Control>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
+    val confirmAction = ObservableField<Control?>(null)
 }
 
 interface View {
     fun darken()
     fun brighter()
+    fun startConfirmTimer()
+    fun cancelConfirmTimer()
 }
