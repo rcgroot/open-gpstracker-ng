@@ -38,16 +38,16 @@ import java.util.concurrent.Executors
 
 class ControlPresenter(private val model: ControlViewModel, private val view: View) : MessageSender.MessageSenderStatus {
 
-    var messageSender: MessageSender? = null
-    var loaderCancelTask: LoaderCancelTask? = null
+    private var messageSender: MessageSender? = null
+    private var loaderCancelTask: LoaderCancelTask? = null
 
     fun start(context: Context) {
         val executorService = Executors.newFixedThreadPool(1, BackgroundThreadFactory("WearMessageSender"))
         messageSender = MessageSender(context, Capability.CAPABILITY_RECORD, executorService)
         messageSender?.start()
         messageSender?.messageSenderStatus = this
-        messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
-        refreshStatus()
+
+        refresh(8)
     }
 
     fun enterAmbient() {
@@ -71,14 +71,22 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     }
 
     fun pulledRefresh() {
-        model.manualRefresh.set(true)
-        loaderCancelTask?.shouldCancel = false
-        loaderCancelTask = LoaderCancelTask(model).schedule(3)
-        refreshStatus()
-        messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+        refresh(3)
     }
 
-    fun didClickControl(control: Control) {
+    fun didClickStartControl() {
+        didClickControl(Control.Start())
+    }
+
+    fun didClickPauseControl() {
+        didClickControl(Control.Pause())
+    }
+
+    fun didClickStopControl() {
+        didClickControl(Control.Stop())
+    }
+
+    private fun didClickControl(control: Control) {
         model.confirmAction.set(control)
         view.startConfirmTimer()
     }
@@ -86,20 +94,21 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     fun didCancelControl() {
         view.cancelConfirmTimer()
         model.confirmAction.set(null)
+        refresh(3)
     }
 
     fun confirmTimerFinished() {
         val action = model.confirmAction.get()
         model.confirmAction.set(null)
-        refreshStatus()
-        val actionId = action?.stringId?.get()
+        showRefreshStatus()
+        val actionId = action?.action?.get()
         when (actionId) {
-            R.string.control_start -> messageSender?.sendMessage(StatusMessage(STATE_START))
-            R.string.control_pause -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
-            R.string.control_resume -> messageSender?.sendMessage(StatusMessage(STATE_RESUME))
-            R.string.control_stop -> messageSender?.sendMessage(StatusMessage(STATE_STOP))
+            R.string.control_action_start -> messageSender?.sendMessage(StatusMessage(STATE_START))
+            R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
+            R.string.control_action_resume -> messageSender?.sendMessage(StatusMessage(STATE_RESUME))
+            R.string.control_action_stop -> messageSender?.sendMessage(StatusMessage(STATE_STOP))
             else -> {
-                Timber.e("Failed to process selected action ${actionId}")
+                Timber.e("Failed to process selected action $actionId")
                 messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
             }
         }
@@ -112,7 +121,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     override fun isAbleToSendMessages(isAble: Boolean) {
         if (isAble) {
             if (model.state.get()?.iconId?.get() == R.drawable.ic_sync_disabled_black_24dp) {
-                refreshStatus()
+                showRefreshStatus()
             }
         } else {
             unknownState()
@@ -132,8 +141,8 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     fun didReceiveStatus(statusMessage: StatusMessage) {
         Timber.d("Received $statusMessage")
+        loaderCancelTask?.cancel = true
         model.manualRefresh.set(false)
-        loaderCancelTask?.shouldCancel = false
         when (statusMessage.status) {
             STATE_START -> startedLogging()
             STATE_PAUSE -> pausedLogging()
@@ -144,50 +153,47 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     //endregion
 
+    private fun refresh(timeout: Int) {
+        loaderCancelTask?.cancel = true
+        loaderCancelTask = LoaderCancelTask(model).schedule(timeout)
+        model.manualRefresh.set(true)
+        showRefreshStatus()
+        messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+    }
+
     private fun startedLogging() {
-        model.controls.clear()
-        model.controls.addAll(listOf(
-                Control.Pause(),
-                Control.Stop()))
         model.state.set(Control.Start())
     }
 
     private fun pausedLogging() {
-        model.controls.clear()
-        model.controls.addAll(listOf(
-                Control.Start(),
-                Control.Stop()))
         model.state.set(Control.Pause())
     }
 
     private fun stopLogging() {
-        model.controls.clear()
-        model.controls.addAll(listOf(
-                Control.Start()))
         model.state.set(Control.Stop())
     }
 
-    private fun refreshStatus() {
-        model.controls.clear()
+    private fun showRefreshStatus() {
         model.state.set(Control.Sync())
     }
 
     private fun unknownState() {
-        model.controls.clear()
         model.state.set(Control.Disconnect())
     }
 
     class LoaderCancelTask(private val model: ControlViewModel) {
-
-        var shouldCancel = true
+        var cancel = false
 
         fun schedule(seconds: Int): LoaderCancelTask {
             Handler(Looper.getMainLooper()).postDelayed({
-                if (shouldCancel) {
+                if (!cancel) {
+                    model.state.set(Control.Disconnect())
                     model.manualRefresh.set(false)
                 }
+
             }, 1000L * seconds)
             return this
         }
+
     }
 }

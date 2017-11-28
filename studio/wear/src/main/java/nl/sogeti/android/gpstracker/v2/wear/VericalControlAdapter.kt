@@ -29,44 +29,18 @@
 package nl.sogeti.android.gpstracker.v2.wear
 
 import android.databinding.DataBindingUtil
-import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ControlBindingComponent
-import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemControlBinding
+import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemControlsBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemStatisticsBinding
 
-
-class VerticalControlAdapter(private val model: ControlViewModel, private val presenter: ControlPresenter) : RecyclerView.Adapter<VerticalViewHolder>() {
-
-    init {
-        model.controls.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<Control>>() {
-            override fun onItemRangeChanged(p0: ObservableList<Control>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeInserted(p0: ObservableList<Control>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeRemoved(p0: ObservableList<Control>?, p1: Int, p2: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onItemRangeMoved(p0: ObservableList<Control>?, p1: Int, p2: Int, p3: Int) {
-                notifyDataSetChanged()
-            }
-
-            override fun onChanged(p0: ObservableList<Control>?) {
-                notifyDataSetChanged()
-            }
-        })
-    }
+class VerticalControlAdapter(private val model: ControlViewModel, private val presenter: ControlPresenter) : RecyclerView.Adapter<VerticalControlAdapter.VerticalViewHolder>() {
 
     override fun getItemViewType(position: Int) = if (position == 0) 0 else 1
 
-    override fun getItemCount() = model.controls.size + 1
+    override fun getItemCount() = 2
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VerticalViewHolder? {
         val inflater = LayoutInflater.from(parent?.context)
@@ -76,27 +50,26 @@ class VerticalControlAdapter(private val model: ControlViewModel, private val pr
                 binding.presenter = presenter
                 VerticalViewHolder.StatisticsViewHolder(binding)
             }
-            else -> {
-                val binding = DataBindingUtil.inflate<ItemControlBinding>(inflater, R.layout.item_control, parent, false, ControlBindingComponent())
+            1 -> {
+                val binding = DataBindingUtil.inflate<ItemControlsBinding>(inflater, R.layout.item_controls, parent, false, ControlBindingComponent())
                 binding.presenter = presenter
-                VerticalViewHolder.ControlViewHolder(binding)
+                binding.viewModel = model
+                VerticalViewHolder.ControlsViewHolder(binding)
             }
+            else -> throw IllegalStateException("Unknown viewType $viewType cannot be created")
         }
     }
 
-    override fun onBindViewHolder(holder: VerticalViewHolder?, position: Int) {
-        when (holder) {
-            is VerticalViewHolder.StatisticsViewHolder -> {
-                holder.binding.viewModel = model
+    override fun onBindViewHolder(holder: VerticalViewHolder, position: Int) =
+            when (holder) {
+                is VerticalViewHolder.StatisticsViewHolder -> {
+                    holder.binding.viewModel = model
+                }
+                is VerticalViewHolder.ControlsViewHolder -> Unit
             }
-            is VerticalViewHolder.ControlViewHolder -> {
-                holder.binding.viewModel = model.controls[position - 1]
-            }
-        }
-    }
-}
 
-sealed class VerticalViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
-    class StatisticsViewHolder(val binding: ItemStatisticsBinding) : VerticalViewHolder(binding.root)
-    class ControlViewHolder(val binding: ItemControlBinding) : VerticalViewHolder(binding.root)
+    sealed class VerticalViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
+        class StatisticsViewHolder(val binding: ItemStatisticsBinding) : VerticalViewHolder(binding.root)
+        class ControlsViewHolder(val binding: ItemControlsBinding) : VerticalViewHolder(binding.root)
+    }
 }

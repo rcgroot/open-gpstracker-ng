@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.v2.wear
 
-import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 
@@ -36,7 +35,6 @@ class ControlViewModel {
     val duration = ObservableField<String>("-")
     val distance = ObservableField<String>("-")
     val averageSpeed = ObservableField<String>("-")
-    val controls = ObservableArrayList<Control>()
     val state = ObservableField<Control>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
     val confirmAction = ObservableField<Control?>(null)

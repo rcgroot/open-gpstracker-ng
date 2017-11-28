@@ -1,10 +1,24 @@
 <resources>
     <string name="app_name">OGT - Control</string>
-    <string name="control_start">Start</string>
-    <string name="control_pause">Pause</string>
-    <string name="control_stop">Stop</string>
-    <string name="control_resume">Resume</string>
-    <string name="control_syncing">Connecting</string>
+
+    <string name="control_state_started">Recording</string>
+    <string name="control_state_paused">Paused</string>
+    <string name="control_state_stopped">Stopped</string>
+    <string name="control_state_syncing">Syncing</string>
+    <string name="control_state_disconnected">Disconnected</string>
+
+    <string name="control_action_start">Start</string>
+    <string name="control_action_pause">Pause</string>
+    <string name="control_action_stop">Stop</string>
+    <string name="control_action_resume">Resume</string>
+    <string name="control_action_sync">Sync</string>
+
+    <string name="control_confirm_start">Starting</string>
+    <string name="control_confirm_pause">Pausing</string>
+    <string name="control_confirm_stop">Stopping</string>
+    <string name="control_confirm_resume">Resuming</string>
+    <string name="control_confirm_syncing">Syncing</string>
+    <string name="control_confirm_disconnecting">Disconnecting</string>
+
     <string name="space"> </string>
-    <string name="sending">Sending…</string>
 </resources>

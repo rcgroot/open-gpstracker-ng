@@ -13,4 +13,5 @@
     -->
     <dimen name="inner_frame_layout_padding">5dp</dimen>
     <dimen name="hit_padding">64dp</dimen>
+    <dimen name="mini_fab_size">58dp</dimen>
 </resources>

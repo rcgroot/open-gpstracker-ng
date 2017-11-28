@@ -62,6 +62,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:wear:$rootProject.supportLibraryVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
 
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 

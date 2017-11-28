@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="nl.sogeti.android.gpstracker.v2.wear.Control" />
+
+        <variable
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.v2.wear.ControlPresenter" />
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.v2.wear.ControlViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/controls_buttons_start"
+            android:layout_width="@dimen/mini_fab_size"
+            android:layout_height="@dimen/mini_fab_size"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> presenter.didClickStartControl()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_navigation_black_24dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/controls_buttons_stop"
+            android:layout_width="@dimen/mini_fab_size"
+            android:layout_height="@dimen/mini_fab_size"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> presenter.didClickStopControl()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_stop_black_24dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/controls_buttons_pause"
+
+            android:layout_width="@dimen/mini_fab_size"
+            android:layout_height="@dimen/mini_fab_size"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:onClick="@{() -> presenter.didClickPauseControl()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_pause_black_24dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.state.state}"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/text"
+            app:layout_constraintBottom_toTopOf="@+id/controls_buttons_stop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Recording" />
+    </android.support.constraint.ConstraintLayout>
+</layout>
