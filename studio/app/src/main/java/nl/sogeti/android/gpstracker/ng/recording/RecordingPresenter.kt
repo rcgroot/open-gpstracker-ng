@@ -105,7 +105,9 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     //region ContentController
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        readTrackSummary(contentUri)
+        if (contentController != null) {
+            readTrackSummary(contentUri)
+        }
     }
 
     private fun readTrackSummary(trackUri: Uri) {

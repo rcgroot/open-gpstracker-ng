@@ -38,6 +38,10 @@ class ControlViewModel {
     val state = ObservableField<Control>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
     val confirmAction = ObservableField<Control?>(null)
+
+    val leftControl = ObservableField<Control>(Control.Stop(false))
+    val rightControl = ObservableField<Control>(Control.Start(false))
+    val bottomControl = ObservableField<Control>(Control.Pause(false))
 }
 
 interface View {

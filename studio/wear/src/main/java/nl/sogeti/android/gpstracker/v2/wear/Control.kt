@@ -28,39 +28,39 @@
  */
 package nl.sogeti.android.gpstracker.v2.wear
 
-import android.databinding.ObservableInt
+sealed class Control(val enabled: Boolean, val iconId: Int, val action: Int, val confirm: Int, val state: Int) {
 
-sealed class Control(iconId: Int, action: Int, confirm: Int, state: Int) {
-    val iconId = ObservableInt(iconId)
-    val action = ObservableInt(action)
-    val confirm = ObservableInt(confirm)
-    val state = ObservableInt(state)
-
-    class Start : Control(
+    class Start(enabled: Boolean) : Control(enabled,
             R.drawable.ic_navigation_black_24dp,
             R.string.control_action_start,
             R.string.control_confirm_start,
             R.string.control_state_started)
 
-    class Pause : Control(
+    class Pause(enabled: Boolean) : Control(enabled,
             R.drawable.ic_pause_black_24dp,
             R.string.control_action_pause,
             R.string.control_confirm_pause,
             R.string.control_state_paused)
 
-    class Stop : Control(
+    class Resume(enabled: Boolean) : Control(enabled,
+            R.drawable.ic_navigation_black_24dp,
+            R.string.control_action_resume,
+            R.string.control_confirm_resume,
+            R.string.control_state_started)
+
+    class Stop(enabled: Boolean) : Control(enabled,
             R.drawable.ic_stop_black_24dp,
             R.string.control_action_stop,
             R.string.control_confirm_stop,
             R.string.control_state_stopped)
 
-    class Sync : Control(
+    class Sync : Control(true,
             R.drawable.ic_sync_black_24dp,
             R.string.control_action_sync,
             R.string.control_confirm_syncing,
             R.string.control_state_syncing)
 
-    class Disconnect : Control(
+    class Disconnect : Control(true,
             R.drawable.ic_sync_disabled_black_24dp,
             R.string.control_action_sync,
             R.string.control_confirm_disconnecting,

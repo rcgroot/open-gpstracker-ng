@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.v2.wear
 
 import android.content.Context
+import android.databinding.ObservableField
 import android.os.Handler
 import android.os.Looper
 import nl.renedegroot.android.concurrent.BackgroundThreadFactory
@@ -74,20 +75,10 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         refresh(3)
     }
 
-    fun didClickStartControl() {
-        didClickControl(Control.Start())
-    }
-
-    fun didClickPauseControl() {
-        didClickControl(Control.Pause())
-    }
-
-    fun didClickStopControl() {
-        didClickControl(Control.Stop())
-    }
-
-    private fun didClickControl(control: Control) {
-        model.confirmAction.set(control)
+    // Using ObservableField<Control> instead of Control due to bug:
+    // https://issuetracker.google.com/issues/69535017
+    fun didClickControl(control: ObservableField<Control>) {
+        model.confirmAction.set(control.get())
         view.startConfirmTimer()
     }
 
@@ -101,7 +92,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         val action = model.confirmAction.get()
         model.confirmAction.set(null)
         showRefreshStatus()
-        val actionId = action?.action?.get()
+        val actionId = action?.action
         when (actionId) {
             R.string.control_action_start -> messageSender?.sendMessage(StatusMessage(STATE_START))
             R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
@@ -120,7 +111,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     override fun isAbleToSendMessages(isAble: Boolean) {
         if (isAble) {
-            if (model.state.get()?.iconId?.get() == R.drawable.ic_sync_disabled_black_24dp) {
+            if (model.state.get()?.iconId == R.drawable.ic_sync_disabled_black_24dp) {
                 showRefreshStatus()
             }
         } else {
@@ -162,15 +153,24 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     }
 
     private fun startedLogging() {
-        model.state.set(Control.Start())
+        model.state.set(Control.Start(true))
+        model.leftControl.set(Control.Stop(true))
+        model.bottomControl.set(Control.Pause(true))
+        model.rightControl.set(Control.Resume(false))
     }
 
     private fun pausedLogging() {
-        model.state.set(Control.Pause())
+        model.state.set(Control.Pause(true))
+        model.leftControl.set(Control.Stop(true))
+        model.bottomControl.set(Control.Pause(false))
+        model.rightControl.set(Control.Resume(true))
     }
 
     private fun stopLogging() {
-        model.state.set(Control.Stop())
+        model.state.set(Control.Stop(true))
+        model.leftControl.set(Control.Stop(false))
+        model.bottomControl.set(Control.Pause(false))
+        model.rightControl.set(Control.Start(true))
     }
 
     private fun showRefreshStatus() {
@@ -179,6 +179,9 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     private fun unknownState() {
         model.state.set(Control.Disconnect())
+        model.leftControl.set(Control.Stop(false))
+        model.bottomControl.set(Control.Pause(false))
+        model.rightControl.set(Control.Start(false))
     }
 
     class LoaderCancelTask(private val model: ControlViewModel) {

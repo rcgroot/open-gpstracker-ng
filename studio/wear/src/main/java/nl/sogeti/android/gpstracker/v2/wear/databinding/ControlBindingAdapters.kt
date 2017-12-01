@@ -42,11 +42,15 @@ class ControlBindingAdapters {
 
     @BindingAdapter("android:src")
     fun setControl(view: ImageView, control: Control?) {
-        val id = control?.iconId?.get()
+        val id = control?.iconId
         if (id != null) {
             view.setImageResource(id)
+            view.isEnabled = control.enabled
+            view.alpha = if (control.enabled ) 1.0F else 0.5F
         } else {
             view.setImageDrawable(null)
+            view.isEnabled = false
+            view.alpha = 0.5F
         }
     }
 
