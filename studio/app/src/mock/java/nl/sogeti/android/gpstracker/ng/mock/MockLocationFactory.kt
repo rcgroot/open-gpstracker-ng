@@ -26,18 +26,15 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.mock
 
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
-import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
+import com.google.android.gms.maps.model.LatLng
+import nl.sogeti.android.gpstracker.ng.map.LocationFactory
 
-class MockPermissionChecker : PermissionChecker() {
+class MockLocationFactory : LocationFactory {
 
-    override fun checkSelfPermission(context: Context, permission: String)
-            = PackageManager.PERMISSION_GRANTED
+    override fun getLocationCoordinates(context: Context): LatLng? = MockTracksContentProvider.lastWaypoint
 
-    override fun shouldShowRequestPermissionRationale(activity: Activity, permission: String)
-            = false
+    override fun getLocationName(context: Context): String? = "Gotham"
 }

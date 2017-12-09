@@ -28,10 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.content.IntentFilter
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManager
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
@@ -40,16 +38,18 @@ import javax.inject.Named
 @Module
 class IntegrationModule {
 
-    @Provides @Named("loggingStateFilter")
-    fun loggingStateIntentFilter(): IntentFilter =
-            IntentFilter(ServiceConstants.ACTION_BROADCAST_LOGGING_STATE)
-
     @Provides
     fun serviceManagerInterface(): ServiceManagerInterface = ServiceManager()
 
-    @Provides @Named("providerAuthority")
-    fun providerAuthority(): String =
+    @Provides
+    @Named("providerAuthority")
+    fun providerAuthority() =
             nl.sogeti.android.gpstracker.integration.ContentConstants.GPS_TRACKS_AUTHORITY
+
+    @Provides
+    @Named("stateBroadcastAction")
+    fun stateBroadcastAction() =
+            nl.sogeti.android.gpstracker.integration.ServiceConstants.ACTION_BROADCAST_LOGGING_STATE
 
     @Provides
     fun permissionRequester(): PermissionRequester = PermissionRequester()

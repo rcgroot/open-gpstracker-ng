@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.map
 
+import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
@@ -99,7 +100,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //region Service connecting
 
-    override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
         if (loggingState == ServiceConstants.STATE_LOGGING) {
             recordingUri = trackUri
         } else {
@@ -107,7 +108,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         }
     }
 
-    override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
         if (loggingState == ServiceConstants.STATE_LOGGING) {
             recordingUri = trackUri
             if (trackUri != null) {

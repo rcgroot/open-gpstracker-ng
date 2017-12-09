@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.mock
 
 import android.content.ContentProvider
 import android.content.ContentResolver
@@ -43,18 +43,17 @@ import java.util.*
 
 class MockTracksContentProvider : ContentProvider() {
     override fun onCreate(): Boolean {
-        globalState.contentResolver = context.contentResolver
+        contentResolver = context.contentResolver
         return true
     }
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        Timber.v("Query on $uri")
         var cursor: Cursor? = null
-        val content = globalState.uriContent[uri]
+        val content = uriContent[uri]
         if (content != null) {
-            cursor = globalState.buildMatrixCursor(content.first, content.second)
+            cursor = buildMatrixCursor(content.first, content.second)
         } else {
-            Timber.e("Query on $uri did not match anything in global state $globalState ")
+            Timber.e("Query on $uri did not match anything in global state ${globalState} ")
         }
         return cursor
 
@@ -62,7 +61,7 @@ class MockTracksContentProvider : ContentProvider() {
 
     override fun insert(uri: Uri, simpleValues: ContentValues?): Uri? {
         Timber.v("Insert on $uri")
-        val content = globalState.uriContent[uri]
+        val content = uriContent[uri]
         val values = simpleValues ?: ContentValues()
         val id = ++idGen
         values.put(_ID, id)
@@ -77,13 +76,13 @@ class MockTracksContentProvider : ContentProvider() {
             content.second.add(row)
             context.contentResolver?.notifyChange(uri, null)
         } else {
-            Timber.e("Insert on $uri did not match anything in global state $globalState ")
+            Timber.e("Insert on $uri did not match anything in global state ${globalState} ")
         }
         val createdUri = uri.buildUpon().appendPath(id.toString()).build()
         when (uri.lastPathSegment) {
-            "tracks" -> globalState.uriContent[createdUri] = createEmptyTrackContent()
-            "segments" -> globalState.uriContent[createdUri] = createEmptySegmentContent()
-            "waypoints" -> globalState.uriContent[createdUri] = createEmptyWaypointContent()
+            "tracks" -> uriContent[createdUri] = createEmptyTrackContent()
+            "segments" -> uriContent[createdUri] = createEmptySegmentContent()
+            "waypoints" -> uriContent[createdUri] = createEmptyWaypointContent()
         }
 
         return createdUri
@@ -92,7 +91,7 @@ class MockTracksContentProvider : ContentProvider() {
     override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int {
         Timber.v("Update on $uri")
         var changed = 0
-        val content = globalState.uriContent[uri]
+        val content = uriContent[uri]
         if (content != null && values != null && content.second.size > 0) {
             val row = content.second.first()
             val columns = content.first
@@ -103,7 +102,7 @@ class MockTracksContentProvider : ContentProvider() {
             }
             context.contentResolver?.notifyChange(uri, null)
         } else {
-            Timber.e("Update on $uri did not match anything in global state $globalState ")
+            Timber.e("Update on $uri did not match anything in global state ${globalState} ")
         }
 
         return changed
@@ -111,8 +110,8 @@ class MockTracksContentProvider : ContentProvider() {
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
         Timber.v("Delete on $uri")
-        val keys = globalState.uriContent.keys.filter { it.path.startsWith(uri.path) }
-        keys.forEach { globalState.uriContent.remove(it) }
+        val keys = uriContent.keys.filter { it.path.startsWith(uri.path) }
+        keys.forEach { uriContent.remove(it) }
         var count = keys.count()
         if (uri.path.matches(Regex("/tracks/\\d+"))) {
             uri.lastPathSegment
@@ -127,18 +126,18 @@ class MockTracksContentProvider : ContentProvider() {
         if (count > 0) {
             context.contentResolver?.notifyChange(uri, null)
         } else {
-            Timber.e("Delete on $uri did not match anything in global state $globalState ")
+            Timber.e("Delete on $uri did not match anything in global state ${globalState} ")
         }
         return count
     }
 
     override fun getType(uri: Uri): String? {
-        Timber.e("getType on $uri did not match anything in global state $globalState ")
+        Timber.e("getType on $uri did not match anything in global state ${globalState} ")
         return null
     }
 
     fun reset() {
-        globalState.uriContent.clear()
+        uriContent.clear()
     }
 
     companion object globalState {

@@ -68,15 +68,15 @@ class PhoneMessageListenerService : MessageListenerService() {
         messageSender = null
     }
 
-    override fun updateStatus(event: StatusMessage) {
-        when (event.status) {
-            STATE_START -> startLogging()
-            STATE_PAUSE -> pauseLogging()
-            STATE_RESUME -> resumeLogging()
-            STATE_STOP -> stopLogging()
-            STATE_UNKNOWN -> respondLoggingState()
-        }
-    }
+    override fun updateStatus(event: StatusMessage) =
+            when (event.status) {
+                StatusMessage.Status.START -> startLogging()
+                StatusMessage.Status.PAUSE -> pauseLogging()
+                StatusMessage.Status.RESUME -> resumeLogging()
+                StatusMessage.Status.STOP -> stopLogging()
+                StatusMessage.Status.UNKNOWN -> respondLoggingState()
+            }
+
 
     override fun updateStatistics(event: StatisticsMessage) {
         // Not registered as intent filter
@@ -85,31 +85,31 @@ class PhoneMessageListenerService : MessageListenerService() {
     private fun startLogging() {
         val generatedName = nameGenerator.generateName(this, Calendar.getInstance())
         serviceManager.startGPSLogging(this, generatedName)
-        respondLoggingState()
+        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
     }
 
     private fun pauseLogging() {
         serviceManager.pauseGPSLogging(this)
-        respondLoggingState()
+        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
     }
 
     private fun resumeLogging() {
         serviceManager.resumeGPSLogging(this)
-        respondLoggingState()
+        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
     }
 
     private fun stopLogging() {
         serviceManager.stopGPSLogging(this)
-        respondLoggingState()
+        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
     }
 
     private fun respondLoggingState() {
         serviceManager.startup(this) {
             when (serviceManager.loggingState) {
-                ServiceConstants.STATE_LOGGING -> messageSender?.sendMessage(StatusMessage(STATE_START))
-                ServiceConstants.STATE_PAUSED -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
-                ServiceConstants.STATE_STOPPED -> messageSender?.sendMessage(StatusMessage(STATE_STOP))
-                ServiceConstants.STATE_UNKNOWN -> messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+                ServiceConstants.STATE_LOGGING -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
+                ServiceConstants.STATE_PAUSED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
+                ServiceConstants.STATE_STOPPED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+                ServiceConstants.STATE_UNKNOWN -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
             }
             serviceManager.shutdown(this)
         }

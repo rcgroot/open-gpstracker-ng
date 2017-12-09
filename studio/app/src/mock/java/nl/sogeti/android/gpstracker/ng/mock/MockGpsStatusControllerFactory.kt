@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.mock
 
 import android.content.Context
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController

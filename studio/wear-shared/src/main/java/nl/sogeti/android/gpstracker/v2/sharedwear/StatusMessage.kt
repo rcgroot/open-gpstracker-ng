@@ -6,21 +6,35 @@ import kotlinx.android.parcel.Parcelize
 
 const val PATH_STATUS = "/ogt-recordings-status"
 
-const val STATE_UNKNOWN = -1
-const val STATE_START = 1
-const val STATE_PAUSE = 2
-const val STATE_RESUME = 3
-const val STATE_STOP = 4
-
 private const val STATUS = "STATUS"
 
 @Parcelize
-data class StatusMessage(val status: Int): WearMessage(PATH_STATUS), Parcelable {
-    constructor(datamap: DataMap) : this(datamap.getInt(STATUS))
+data class StatusMessage(val status: Status) : WearMessage(PATH_STATUS), Parcelable {
+    constructor(dataMap: DataMap) : this(Status.valueOf(dataMap.getInt(STATUS)))
 
     override fun toDataMap(): DataMap {
         val dataMap = DataMap()
-        dataMap.putInt(STATUS, status)
+        dataMap.putInt(STATUS, status.code)
         return dataMap
+    }
+
+    enum class Status(val code: Int) {
+        UNKNOWN(-1),
+        START(1),
+        PAUSE(2),
+        RESUME(3),
+        STOP(4);
+
+        companion object {
+            @JvmStatic
+            fun valueOf(code: Int): Status =
+                    when (code) {
+                        1 -> START
+                        2 -> PAUSE
+                        3 -> RESUME
+                        4 -> STOP
+                        else -> UNKNOWN
+                    }
+        }
     }
 }

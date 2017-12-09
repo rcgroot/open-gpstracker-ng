@@ -92,12 +92,12 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
 
     //region Service connection
 
-    override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(trackUri, loggingState, name)
+    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
+        updateRecording(context, loggingState, name, trackUri)
     }
 
-    override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(trackUri, loggingState, name)
+    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
+        updateRecording(context, loggingState, name, trackUri)
     }
 
     //endregion
@@ -179,7 +179,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
         gpsStatusController = null
     }
 
-    private fun updateRecording(trackUri: Uri?, loggingState: Int, name: String?) {
+    private fun updateRecording(context: Context, loggingState: Int, name: String?, trackUri: Uri?) {
         if (trackUri != null) {
             contentController?.registerObserver(trackUri)
             viewModel.trackUri.set(trackUri)
@@ -201,13 +201,14 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             stopGpsUpdates()
         }
         when (loggingState) {
-            STATE_LOGGING -> viewModel.state.set(context.getString(R.string.state_logging))
-            STATE_PAUSED -> viewModel.state.set(context.getString(R.string.state_paused))
+            STATE_LOGGING -> viewModel.state.set(this.context.getString(R.string.state_logging))
+            STATE_PAUSED -> viewModel.state.set(this.context.getString(R.string.state_paused))
             STATE_STOPPED -> viewModel.state.set(context.getString(R.string.state_stopped))
         }
     }
 
-    inner class TrackReader internal constructor(private val context: Context, val trackUri: Uri, private val viewModel: RecordingViewModel)
+    inner class TrackReader internal constructor(
+            private val context: Context, val trackUri: Uri, private val viewModel: RecordingViewModel)
         : AsyncTask<Void, Void, Void>() {
 
         val handler = DefaultResultHandler()

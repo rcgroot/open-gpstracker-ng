@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.dagger
 
 import dagger.Component
-import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender
+import nl.sogeti.android.gpstracker.ng.mock.MockBroadcastSender
 import javax.inject.Singleton
 
 @Singleton

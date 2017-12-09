@@ -36,6 +36,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -57,11 +58,9 @@ import static nl.sogeti.android.gpstracker.integration.ContentConstants.TracksCo
 public abstract class ConnectedServicePresenter<T extends Navigation> extends ContextedPresenter<T> {
 
     @Inject
-    @Named("loggingStateFilter")
-    public IntentFilter loggingStateIntentFilter;
-
-    @Inject
     public ServiceManagerInterface serviceManager;
+    @Inject @Named("stateBroadcastAction")
+    public String stateBroadcastAction;
 
     private BroadcastReceiver loggingStateReceiver;
 
@@ -91,7 +90,7 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
                                     }
                                     int loggingState = serviceManager.getLoggingState();
                                     Timber.d("onConnect LoggerState %s %s %d", trackUri, name, loggingState);
-                                    didConnectToService(trackUri, name, loggingState);
+                                    didConnectToService(context, trackUri, name, loggingState);
                                 }
                             }
                     );
@@ -110,7 +109,7 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
         unregisterReceiver();
         loggingStateReceiver = new LoggerStateReceiver();
         Context context = getContext();
-        context.registerReceiver(loggingStateReceiver, loggingStateIntentFilter);
+        context.registerReceiver(loggingStateReceiver, new IntentFilter(stateBroadcastAction));
     }
 
     private void unregisterReceiver() {
@@ -125,9 +124,9 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
         this.serviceManager = serviceManager;
     }
 
-    public abstract void didChangeLoggingState(@Nullable Uri trackUri, @Nullable String name, int loggingState);
+    public abstract void didChangeLoggingState(@NonNull Context context, @Nullable Uri trackUri, @Nullable String name, int loggingState);
 
-    public abstract void didConnectToService(@Nullable Uri trackUri, @Nullable String name, int loggingState);
+    public abstract void didConnectToService(@NonNull Context context, @Nullable Uri trackUri, @Nullable String name, int loggingState);
 
     private class LoggerStateReceiver extends BroadcastReceiver {
         @Override
@@ -137,7 +136,7 @@ public abstract class ConnectedServicePresenter<T extends Navigation> extends Co
             String name = intent.getStringExtra(ServiceConstants.EXTRA_TRACK_NAME);
 
             Timber.d("onReceive LoggerStateReceiver %s %s %d", trackUri, name, loggingState);
-            didChangeLoggingState(trackUri, name, loggingState);
+            didChangeLoggingState(context, trackUri, name, loggingState);
         }
     }
 }

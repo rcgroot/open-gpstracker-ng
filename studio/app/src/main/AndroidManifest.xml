@@ -64,6 +64,9 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
+        <service
+            android:name="nl.sogeti.android.gpstracker.ng.wear.LoggingService"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.mock
 
 import android.content.Context
 import android.os.Handler
@@ -39,7 +39,7 @@ class MockServiceManager : ServiceManagerInterface {
     val gpsRecorder = Recorder()
 
     override fun startup(context: Context, runnable: Runnable?) {
-        globalState.started = true
+        started = true
         if (globalState.loggingState == STATE_UNKNOWN) {
             globalState.loggingState = STATE_STOPPED
         }
@@ -47,7 +47,7 @@ class MockServiceManager : ServiceManagerInterface {
     }
 
     override fun shutdown(context: Context) {
-        globalState.started = false
+        started = false
     }
 
     override fun getLoggingState(): Int = globalState.loggingState
@@ -123,13 +123,13 @@ class MockServiceManager : ServiceManagerInterface {
 
         private fun recordNewTrack(trackName: String?) {
             if (trackId > 0) trackId++ else trackId = 2
-            MockTracksContentProvider.globalState.addTrack(trackId, trackName)
+            MockTracksContentProvider.addTrack(trackId, trackName)
             recordNewSegment()
         }
 
         private fun recordNewSegment() {
             segmentId++
-            MockTracksContentProvider.globalState.addSegment(trackId, segmentId)
+            MockTracksContentProvider.addSegment(trackId, segmentId)
             recordNewWaypoint()
         }
 
@@ -139,7 +139,7 @@ class MockServiceManager : ServiceManagerInterface {
             val angularSpeed = 5.0
             val latitude = 51.2605159 + amplitude * Math.cos(Math.toRadians(waypointId.toDouble() * angularSpeed))
             val longitude = 4.2301078 + amplitude * Math.sin(Math.toRadians(waypointId.toDouble() * angularSpeed))
-            MockTracksContentProvider.globalState.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
+            MockTracksContentProvider.addWaypoint(trackId, segmentId, waypointId, latitude, longitude)
         }
     }
 }

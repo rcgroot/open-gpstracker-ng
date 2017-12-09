@@ -37,7 +37,6 @@ import android.view.View
 import android.widget.ImageView
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
-import timber.log.Timber
 
 class DrawableMatcher(val id: Int) : TypeSafeMatcher<View>() {
 

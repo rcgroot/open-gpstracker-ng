@@ -48,7 +48,10 @@ import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.utils.PermissionRequester
+import nl.sogeti.android.gpstracker.ng.wear.LoggingReceiver
+import nl.sogeti.android.gpstracker.ng.wear.LoggingService
 import nl.sogeti.android.gpstracker.ng.wear.PhoneMessageListenerService
+import nl.sogeti.android.gpstracker.ng.wear.StatisticsCollector
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -90,15 +93,21 @@ interface AppComponent {
 
     fun inject(injectable: ImportService)
 
-    fun inject(inject: ImportNotification)
+    fun inject(injectable: ImportNotification)
 
     fun inject(injectable: PhoneMessageListenerService)
+
+    fun inject(injectable: LoggingService)
+
+    fun inject(injectable: StatisticsCollector)
+
+    fun inject(injectable: LoggingReceiver)
 
     @Named("providerAuthority")
     fun providerAuthority(): String
 
     @Named("shareProviderAuthority")
-
     fun providerShareAuthority(): String
+
     fun provideUriBuilder(): Uri.Builder
 }

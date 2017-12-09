@@ -28,28 +28,28 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.content.IntentFilter
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
-import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
+import nl.sogeti.android.gpstracker.ng.mock.MockServiceManager
 import javax.inject.Named
 
 @Module
 class MockIntegrationModule {
-
-    @Provides @Named("loggingStateFilter")
-    fun loggingStateIntentFilter(): IntentFilter {
-        return IntentFilter("nl.sogeti.android.gpstracker.ng.mock.broadcast")
-    }
 
     @Provides
     fun serviceManagerInterface(): ServiceManagerInterface {
         return MockServiceManager()
     }
 
-    @Provides @Named("providerAuthority")
+    @Provides
+    @Named("providerAuthority")
     fun providerAuthority(): String {
         return "nl.sogeti.android.gpstracker.ng.mock.authority"
     }
+
+    @Provides
+    @Named("stateBroadcastAction")
+    fun stateBroadcastAction() =
+            "nl.sogeti.android.gpstracker.mock.LOGGING_STATE_CHANGED"
 }

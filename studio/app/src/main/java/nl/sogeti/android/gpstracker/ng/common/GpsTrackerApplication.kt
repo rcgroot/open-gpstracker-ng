@@ -36,6 +36,7 @@ import com.squareup.leakcanary.LeakCanary
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
 import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
 import nl.sogeti.android.gpstracker.ng.dagger.DaggerAppComponent
+import nl.sogeti.android.gpstracker.ng.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.v2.BuildConfig
 import timber.log.Timber
 
@@ -45,6 +46,7 @@ import timber.log.Timber
 open class GpsTrackerApplication : Application() {
 
     var debug = BuildConfig.DEBUG
+    private var stateReceiver: LoggingReceiver? = null // Or replace with signature protection implicit broadcast
 
     companion object {
         lateinit var appComponent: AppComponent
@@ -61,6 +63,13 @@ open class GpsTrackerApplication : Application() {
         buildAppComponent()
         setupDefaultViewBinding()
         setupAnalytics()
+        stateReceiver = LoggingReceiver()
+        stateReceiver?.register(this)
+    }
+
+    override fun onTerminate() {
+        stateReceiver?.unregister(this)
+        super.onTerminate()
     }
 
     private fun setupAnalytics() {

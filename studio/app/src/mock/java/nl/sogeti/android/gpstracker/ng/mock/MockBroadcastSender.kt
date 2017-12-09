@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.mock
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -45,8 +45,8 @@ import javax.inject.Named
 
 class MockBroadcastSender {
 
-    @field:[Inject Named("loggingStateFilter")]
-    lateinit var loggingStateIntentFilter: IntentFilter
+    @field:[Inject Named("stateBroadcastAction")]
+    lateinit var stateBroadcastAction: String
 
     init {
         MockedGpsTrackerApplication.mockAppComponent.inject(this)
@@ -70,9 +70,10 @@ class MockBroadcastSender {
 
     fun broadcastLoggingState(context: Context, state: Int, trackId: Long?, precision: Int = ServiceConstants.LOGGING_NORMAL) {
         resource.increment()
+        val loggingStateIntentFilter = IntentFilter(stateBroadcastAction)
         loggingStateIntentFilter.priority = SYSTEM_LOW_PRIORITY + 5
         context.registerReceiver(receiver, loggingStateIntentFilter)
-        val intent = Intent(loggingStateIntentFilter.getAction(0))
+        val intent = Intent(stateBroadcastAction)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, state)
         intent.putExtra(ServiceConstants.EXTRA_LOGGING_PRECISION, precision)
         trackId?.let { intent.putExtra(ServiceConstants.EXTRA_TRACK, trackUri(trackId)) }

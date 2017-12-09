@@ -59,12 +59,12 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
 
     //region Service connection
 
-    override fun didConnectToService(trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
         viewModel.state.set(loggingState)
         enableButtons()
     }
 
-    override fun didChangeLoggingState(trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
         viewModel.state.set(loggingState)
         enableButtons()
 

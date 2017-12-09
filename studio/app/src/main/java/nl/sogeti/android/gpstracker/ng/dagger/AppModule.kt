@@ -48,6 +48,7 @@ import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
+import nl.sogeti.android.gpstracker.ng.wear.StatisticsCollector
 import nl.sogeti.android.gpstracker.v2.sharedwear.MessageSenderFactory
 import java.text.SimpleDateFormat
 import java.util.*
@@ -116,4 +117,7 @@ class AppModule {
 
     @Provides
     fun executorFactory() = ExecutorFactory()
+
+    @Provides
+    fun statisticsCollector() = StatisticsCollector()
 }

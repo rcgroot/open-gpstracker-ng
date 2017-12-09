@@ -37,7 +37,7 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.*
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-class ControlPresenter(private val model: ControlViewModel, private val view: View) : MessageSender.MessageSenderStatus {
+class ControlPresenter(private val model: ControlViewModel, private val view: View) : MessageSender.MessageSenderStatusListener {
 
     private var messageSender: MessageSender? = null
     private var loaderCancelTask: LoaderCancelTask? = null
@@ -46,7 +46,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         val executorService = Executors.newFixedThreadPool(1, BackgroundThreadFactory("WearMessageSender"))
         messageSender = MessageSender(context, Capability.CAPABILITY_RECORD, executorService)
         messageSender?.start()
-        messageSender?.messageSenderStatus = this
+        messageSender?.messageSenderStatusListener = this
 
         refresh(8)
     }
@@ -60,7 +60,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     }
 
     fun stop() {
-        messageSender?.messageSenderStatus = null
+        messageSender?.messageSenderStatusListener = null
         messageSender?.stop()
         messageSender = null
     }
@@ -94,13 +94,13 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         showRefreshStatus()
         val actionId = action?.action
         when (actionId) {
-            R.string.control_action_start -> messageSender?.sendMessage(StatusMessage(STATE_START))
-            R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(STATE_PAUSE))
-            R.string.control_action_resume -> messageSender?.sendMessage(StatusMessage(STATE_RESUME))
-            R.string.control_action_stop -> messageSender?.sendMessage(StatusMessage(STATE_STOP))
+            R.string.control_action_start -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
+            R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
+            R.string.control_action_resume -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.RESUME))
+            R.string.control_action_stop -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
             else -> {
                 Timber.e("Failed to process selected action $actionId")
-                messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+                messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
             }
         }
     }
@@ -109,8 +109,8 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     //region Message sender callbacks
 
-    override fun isAbleToSendMessages(isAble: Boolean) {
-        if (isAble) {
+    override fun didConnect(connect: Boolean) {
+        if (connect) {
             if (model.state.get()?.iconId == R.drawable.ic_sync_disabled_black_24dp) {
                 showRefreshStatus()
             }
@@ -128,6 +128,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         model.averageSpeed.set(statisticsMessage.speed)
         model.duration.set(statisticsMessage.duration)
         model.distance.set(statisticsMessage.distance)
+        startedLogging()
     }
 
     fun didReceiveStatus(statusMessage: StatusMessage) {
@@ -135,9 +136,9 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         loaderCancelTask?.cancel = true
         model.manualRefresh.set(false)
         when (statusMessage.status) {
-            STATE_START -> startedLogging()
-            STATE_PAUSE -> pausedLogging()
-            STATE_STOP -> stopLogging()
+            StatusMessage.Status.START -> startedLogging()
+            StatusMessage.Status.PAUSE -> pausedLogging()
+            StatusMessage.Status.STOP -> stopLogging()
             else -> unknownState()
         }
     }
@@ -149,7 +150,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         loaderCancelTask = LoaderCancelTask(model).schedule(timeout)
         model.manualRefresh.set(true)
         showRefreshStatus()
-        messageSender?.sendMessage(StatusMessage(STATE_UNKNOWN))
+        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
     }
 
     private fun startedLogging() {

@@ -36,7 +36,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.uiautomator.UiDevice
 import android.support.v4.content.ContextCompat
-import nl.sogeti.android.gpstracker.ng.util.MockServiceManager
+import nl.sogeti.android.gpstracker.ng.mock.MockServiceManager
 import timber.log.Timber
 import java.io.File
 

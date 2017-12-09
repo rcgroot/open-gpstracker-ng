@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -161,10 +161,14 @@ class SummaryCalculator {
     }
 
     fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
-        val conversion = context.resources.getFloat(R.string.mps_to_speed)
-        val unit = context.resources.getString(R.string.speed_unit)
-        val kph = meters / seconds * conversion
+        val kph = if(seconds > 0) {
+            val conversion = context.resources.getFloat(R.string.mps_to_speed)
+            meters / seconds * conversion
+        } else {
+            0.0F
+        }
 
+        val unit = context.resources.getString(R.string.speed_unit)
         return context.getString(R.string.format_speed).format(locale, kph, unit)
     }
 

@@ -37,21 +37,22 @@ import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.Wearable
 import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ExecutorService
-
+import java.util.concurrent.Executor
 
 enum class Capability(val itemName: String) {
     CAPABILITY_CONTROL("gps_track_control"),
     CAPABILITY_RECORD("gps_track_record")
 }
 
-class MessageSender(private val context: Context, private val capability: Capability, private val executorService: ExecutorService, private val queueSize: Int = 3) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
+class MessageSender(private val context: Context, private val capability: Capability, private val executor: Executor, private val queueSize: Int = 3) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
 
     private lateinit var client: GoogleApiClient
     private val messageQueue = ConcurrentLinkedQueue<WearMessage>()
-    private var connected = false
+    private var _connected = false
+    val connected: Boolean
+        get() = _connected
     private var nodeId: String? = null
-    var messageSenderStatus: MessageSenderStatus? = null
+    var messageSenderStatusListener: MessageSenderStatusListener? = null
 
     fun start() {
         client = GoogleApiClient.Builder(context, this, this)
@@ -76,23 +77,23 @@ class MessageSender(private val context: Context, private val capability: Capabi
     }
 
     private fun runMessageQueue() {
-        executorService.execute {
-            while (connected && messageQueue.isNotEmpty()) {
+        executor.execute {
+            while (_connected && messageQueue.isNotEmpty()) {
                 checkForNode(capability)
                 if (nodeId != null) {
-                    val message = messageQueue.poll()
+                    val message: WearMessage = messageQueue.poll() ?: continue
                     val path = message.path
                     val data = message.toDataMap().toByteArray()
                     val result = Wearable.MessageApi.sendMessage(client, nodeId, path, data).await()
                     if (result.status.isSuccess) {
                         Timber.d("Successful sent message $result")
-                        messageSenderStatus?.isAbleToSendMessages(true)
+                        messageSenderStatusListener?.didConnect(true)
                     } else {
                         Timber.d("Failed to sent message $result")
-                        messageSenderStatus?.isAbleToSendMessages(false)
+                        messageSenderStatusListener?.didConnect(false)
                     }
                 } else {
-                    messageSenderStatus?.isAbleToSendMessages(false)
+                    messageSenderStatusListener?.didConnect(false)
                     Timber.d("Did not have node with capability $capability")
                     break
                 }
@@ -122,7 +123,8 @@ class MessageSender(private val context: Context, private val capability: Capabi
     //region GoogleApiClient callbacks
 
     override fun onConnected(bundle: Bundle?) {
-        connected = true
+        _connected = true
+        Timber.e("onConnected")
         Wearable.CapabilityApi.addCapabilityListener(
                 client,
                 this,
@@ -131,12 +133,12 @@ class MessageSender(private val context: Context, private val capability: Capabi
     }
 
     override fun onConnectionFailed(result: ConnectionResult) {
-        connected = false
+        _connected = false
         Timber.e("Connection failed, reason $result")
     }
 
     override fun onConnectionSuspended(cause: Int) {
-        connected = false
+        _connected = false
         Timber.w("Connection suspended, reason $cause")
     }
 
@@ -144,9 +146,9 @@ class MessageSender(private val context: Context, private val capability: Capabi
         Timber.w("onCapabilityChanged $info")
         updateTranscriptionCapability(info)
         if (nodeId == null) {
-            messageSenderStatus?.isAbleToSendMessages(false)
+            messageSenderStatusListener?.didConnect(false)
         } else {
-            messageSenderStatus?.isAbleToSendMessages(true)
+            messageSenderStatusListener?.didConnect(true)
             runMessageQueue()
         }
 
@@ -154,7 +156,7 @@ class MessageSender(private val context: Context, private val capability: Capabi
 
     //endregion
 
-    interface MessageSenderStatus {
-        fun isAbleToSendMessages(isAble: Boolean)
+    interface MessageSenderStatusListener {
+        fun didConnect(connect: Boolean)
     }
 }

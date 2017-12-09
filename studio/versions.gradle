@@ -11,7 +11,7 @@ ext {
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
-    playServicesVersion = '11.6.0'
+    playServicesVersion = '11.6.2'
     googleServicesVersion = '3.0.0'
 
     // Testing

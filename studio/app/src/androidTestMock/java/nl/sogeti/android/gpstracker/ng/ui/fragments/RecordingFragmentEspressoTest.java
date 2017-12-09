@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.Manifest;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.rule.GrantPermissionRule;
 
@@ -40,9 +39,9 @@ import org.junit.Test;
 
 import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
-import nl.sogeti.android.gpstracker.ng.util.MockBroadcastSender;
-import nl.sogeti.android.gpstracker.ng.util.MockServiceManager;
-import nl.sogeti.android.gpstracker.ng.util.MockTracksContentProvider;
+import nl.sogeti.android.gpstracker.ng.mock.MockBroadcastSender;
+import nl.sogeti.android.gpstracker.ng.mock.MockServiceManager;
+import nl.sogeti.android.gpstracker.ng.mock.MockTracksContentProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;
