@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
+ **    Author: René de Groot
  ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,11 +26,10 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.tracklist
+package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
 
-import android.content.Context
+import com.google.android.gms.wearable.DataMap
 
-interface ImportNotificationFactory {
-
-    fun createImportNotification(context: Context): ImportNotification
+abstract class WearMessage(val path: String) {
+    abstract fun toDataMap(): DataMap
 }

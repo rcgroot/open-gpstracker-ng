@@ -112,11 +112,11 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
 
     private fun startTypeImport(intent: Intent, param: (Intent?) -> Unit) {
         if (fragment is ActivityResultLambda) {
-            fragment.startActivityForResult(intent) { intent ->
-                intent?.let {
+            fragment.startActivityForResult(intent) { resultIntent ->
+                resultIntent?.let {
                     ImportTrackTypeDialogFragment().show(fragment.fragmentManager, TAG_DIALOG) { type ->
-                        intent.putExtra(KEY_META_FIELD_TRACK_TYPE, type)
-                        param(intent)
+                        resultIntent.putExtra(KEY_META_FIELD_TRACK_TYPE, type)
+                        param(resultIntent)
                     }
                 }
             }

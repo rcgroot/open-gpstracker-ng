@@ -48,6 +48,7 @@ import nl.sogeti.android.gpstracker.ng.utils.count
 import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 import nl.sogeti.android.gpstracker.v2.R
 import nl.sogeti.android.gpstracker.v2.databinding.RowTrackBinding
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -56,15 +57,14 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     private val executor = Executors.newFixedThreadPool(1, BackgroundThreadFactory("TrackListDiffer"))
     private var layoutManager: RecyclerView.LayoutManager? = null
     private val rowModels = mutableMapOf<Uri, TrackViewModel>()
-
     private var displayedTracks = listOf<Uri>()
     private var newTracks: List<Uri>? = null
     private var calculatingTracks: List<Uri>? = null
-
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
-    lateinit var calculator: SummaryCalculator
+    lateinit var statisticsFormatting: StatisticsFormatting
+
     var listener: TrackListAdapterListener? = null
     var selection: Uri? = null
         set(value) {
@@ -199,15 +199,15 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
                 viewModel.iconType.set(it.type)
                 viewModel.name.set(it.name)
-                viewModel.startDay.set(calculator.convertTimestampToStart(context, it.startTimestamp))
+                viewModel.startDay.set(statisticsFormatting.convertTimestampToStart(context, it.startTimestamp))
                 var duration = context.getString(R.string.row_duraction_default)
                 if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
-                    duration = calculator.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
+                    duration = statisticsFormatting.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
                 }
                 viewModel.duration.set(duration)
                 var distance = context.getString(R.string.row_distance_default)
                 if (it.distance > 0) {
-                    distance = calculator.convertMetersToDistance(context, it.distance)
+                    distance = statisticsFormatting.convertMetersToDistance(context, it.distance)
                 }
                 viewModel.distance.set(distance)
             }

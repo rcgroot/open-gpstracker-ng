@@ -69,11 +69,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory
     @Inject
-    lateinit var notificationFactory: ImportNotificationFactory
-
-    private val notification: ImportNotification by lazy {
-        notificationFactory.createImportNotification(context)
-    }
+    lateinit var notification: ImportNotification
 
     init {
         GpsTrackerApplication.appComponent.inject(this)

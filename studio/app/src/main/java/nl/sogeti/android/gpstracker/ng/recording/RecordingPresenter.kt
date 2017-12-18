@@ -50,6 +50,7 @@ import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readName
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
 import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
 import javax.inject.Inject
 
 class RecordingPresenter constructor(private val viewModel: RecordingViewModel) : ConnectedServicePresenter<RecordingNavigation>(), ContentController.Listener, GpsStatusController.Listener {
@@ -65,6 +66,8 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
     lateinit var calculator: SummaryCalculator
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory
+    @Inject
+    lateinit var statisticsFormatting: StatisticsFormatting
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -234,9 +237,9 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel) 
             }
             val endTime = handler.waypoints.last().last().time
             val startTime = handler.waypoints.first().first().time
-            val speed = calculator.convertMeterPerSecondsToSpeed(context, meters, milliSeconds / 1000)
-            val distance = calculator.convertMetersToDistance(context, meters)
-            val duration = calculator.convertStartEndToDuration(context, startTime, endTime)
+            val speed = statisticsFormatting.convertMeterPerSecondsToSpeed(context, meters, milliSeconds / 1000)
+            val distance = statisticsFormatting.convertMetersToDistance(context, meters)
+            val duration = statisticsFormatting.convertStartEndToDuration(context, startTime, endTime)
             val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
             viewModel.summary.set(summary)
             viewModel.name.set(handler.name)

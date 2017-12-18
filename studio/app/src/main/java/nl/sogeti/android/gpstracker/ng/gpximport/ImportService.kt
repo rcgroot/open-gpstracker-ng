@@ -49,11 +49,7 @@ private const val JOB_ID = R.menu.menu_import_export
 class ImportService : JobIntentService() {
 
     @Inject
-    lateinit var importControllerFactory: GpxImportControllerFactory
-
-    private val importController: GpxImportController by lazy {
-        importControllerFactory.createGpxImportController(this)
-    }
+    lateinit var importController: GpxImportController
 
     init {
         GpsTrackerApplication.appComponent.inject(this)

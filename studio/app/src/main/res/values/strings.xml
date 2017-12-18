@@ -86,22 +86,6 @@
     <string name="initial_time_track_name">%1$s %2$s</string>
     <string name="initial_time_location_track_name">%1$s %2$s in %3$s</string>
 
-    <plurals name="track_duration_seconds">
-        <item quantity="one">%d second</item>
-        <item quantity="other">%d seconds</item>
-    </plurals>
-    <plurals name="track_duration_minutes">
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
-    </plurals>
-    <plurals name="track_duration_hours">
-        <item quantity="one">%d hour</item>
-        <item quantity="other">%d hours</item>
-    </plurals>
-    <plurals name="track_duration_days">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
-    </plurals>
     <string name="permission_explain_need_control">Open GPS Tracker NG needs your permission to access tracks and control logging of the original Open GPS Tracker.</string>
     <string name="permission_missing_title">Missing installation</string>
     <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>

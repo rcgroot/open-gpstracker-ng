@@ -32,6 +32,7 @@ import android.content.Context
 import android.content.res.Resources
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.v2.R
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before

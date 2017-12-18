@@ -39,7 +39,6 @@ import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.gpxexport.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
-import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.utils.countResult
 import nl.sogeti.android.gpstracker.ng.utils.getString
 import nl.sogeti.android.gpstracker.ng.utils.map
@@ -49,15 +48,11 @@ import javax.inject.Inject
 class GpxImportController(private val context: Context) {
 
     @Inject
-    lateinit var gpxParserFactory: GpxParserFactory
+    lateinit var parser: GpxParser
     @Inject
-    lateinit var notificationFactory: ImportNotificationFactory
+    lateinit var notification: ImportNotification
     @Inject
     lateinit var trackTypeDescriptions: TrackTypeDescriptions
-
-    private val notification: ImportNotification by lazy {
-        notificationFactory.createImportNotification(context)
-    }
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -72,7 +67,6 @@ class GpxImportController(private val context: Context) {
     }
 
     private fun importTrack(uri: Uri, trackType: String) {
-        val parser = gpxParserFactory.createGpxParser(context)
         val defaultName = extractName(uri)
         val trackUri = parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
         trackTypeDescriptions.saveTrackType(context, trackUri, trackType)

@@ -35,8 +35,8 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.support.wearable.activity.WearableActivity
-import nl.sogeti.android.gpstracker.v2.sharedwear.StatisticsMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ActivityControlBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ControlBindingComponent
 

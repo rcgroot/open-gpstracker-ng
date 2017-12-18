@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.content.Context
+import android.app.Application
 import dagger.Module
 import dagger.Provides
 import nl.renedegroot.android.concurrent.ExecutorFactory
@@ -36,27 +36,27 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControl
 import nl.sogeti.android.gpstracker.ng.gpxexport.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportController
-import nl.sogeti.android.gpstracker.ng.gpximport.GpxImportControllerFactory
 import nl.sogeti.android.gpstracker.ng.gpximport.GpxParser
-import nl.sogeti.android.gpstracker.ng.gpximport.GpxParserFactory
 import nl.sogeti.android.gpstracker.ng.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotification
-import nl.sogeti.android.gpstracker.ng.tracklist.ImportNotificationFactory
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.tracklist.summary.TimeSpanCalculator
 import nl.sogeti.android.gpstracker.ng.wear.StatisticsCollector
-import nl.sogeti.android.gpstracker.v2.sharedwear.MessageSenderFactory
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSenderFactory
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Named
 import javax.inject.Singleton
 
+
 @Module
-class AppModule {
+class AppModule(val application: Application) {
+
 
     @Provides
     fun timeSpanCalculator() = TimeSpanCalculator()
@@ -95,22 +95,17 @@ class AppModule {
 
     @Provides
     @Named("dayFormatter")
-    fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
+    fun dayFormatter(locale: Locale) = SimpleDateFormat("EEEE", locale)
 
     @Provides
-    fun gpxParserFactory() = object : GpxParserFactory {
-        override fun createGpxParser(context: Context) = GpxParser(context)
-    }
+    fun gpxParser() = GpxParser(application)
 
     @Provides
-    fun gpxImportControllerFactory() = object : GpxImportControllerFactory {
-        override fun createGpxImportController(context: Context) = GpxImportController(context)
-    }
+    fun gpxImportController() = GpxImportController(application)
 
     @Provides
-    fun importNotificationFactory() = object : ImportNotificationFactory {
-        override fun createImportNotification(context: Context) = ImportNotification(context)
-    }
+    @Singleton
+    fun importNotification() = ImportNotification(application)
 
     @Provides
     fun messageSenderFactory() = MessageSenderFactory()
@@ -120,4 +115,7 @@ class AppModule {
 
     @Provides
     fun statisticsCollector() = StatisticsCollector()
+
+    @Provides
+    fun statisticsFormatting(locale: Locale, timeSpanUtil: TimeSpanCalculator) = StatisticsFormatting(locale, timeSpanUtil)
 }

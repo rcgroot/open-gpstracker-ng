@@ -26,11 +26,16 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.gpximport
+package nl.sogeti.android.gpstracker.v2.sharedwear.util
 
-import android.content.Context
+import android.text.format.DateUtils
+import java.util.*
 
-interface GpxParserFactory {
+class TimeSpanCalculator {
 
-    fun createGpxParser(context: Context): GpxParser
+    private var referenceTime = Calendar.getInstance()
+
+    fun getRelativeTimeSpanString(timestamp: Long): CharSequence {
+        return DateUtils.getRelativeTimeSpanString(timestamp, referenceTime.timeInMillis, DateUtils.MINUTE_IN_MILLIS)
+    }
 }

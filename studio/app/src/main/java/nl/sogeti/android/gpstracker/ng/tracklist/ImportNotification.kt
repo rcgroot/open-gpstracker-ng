@@ -30,7 +30,6 @@
 package nl.sogeti.android.gpstracker.ng.tracklist
 
 import android.annotation.TargetApi
-import android.app.Notification.PRIORITY_LOW
 import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -55,9 +54,12 @@ class ImportNotification(val context: Context) {
 
     @Inject
     lateinit var versionHelper: VersionHelper
+    private var importsToDo = 0
+
     private val notificationManager: NotificationManager by lazy {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
+
     private val builder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.notification_import_title))
@@ -79,15 +81,13 @@ class ImportNotification(val context: Context) {
             createChannel()
         }
 
-
-        importComplete = false
+        importsToDo++
         notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
     }
 
     fun onProgress(progress: Int, goal: Int) {
         builder.setPriority(NotificationCompat.PRIORITY_MIN)
                 .setProgress(goal, progress, false)
-        importComplete = false
         notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
     }
 
@@ -95,14 +95,14 @@ class ImportNotification(val context: Context) {
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentText(context.getString(R.string.notification_import_context_complete))
                 .setProgress(0, 0, false)
-        importComplete = true
+        importsToDo--
         notificationManager.notify(NOTIFICATION_IMPORT_ID, builder.build())
 
     }
 
 
     fun dismissCompletedImport() {
-        if (importComplete) {
+        if (importsToDo == 0) {
             notificationManager.cancel(NOTIFICATION_IMPORT_ID)
         }
     }
@@ -123,25 +123,22 @@ class ImportNotification(val context: Context) {
         }
     }
 
-    companion object {
-        private var importComplete = true
+    private fun NotificationCompat.Builder.setTrackListTargetIntent(context: Context): NotificationCompat.Builder {
+
+        val resultPendingIntent: PendingIntent
+        if (context.resources.getBoolean(R.bool.track_map_multi_pane)) {
+            val intent = TrackActivity.newIntent(context, true)
+            resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        } else {
+            val stackBuilder = TaskStackBuilder.create(context)
+            stackBuilder.addParentStack(TrackActivity::class.java)
+            stackBuilder.addNextIntent(Intent(context, TrackActivity::class.java))
+            stackBuilder.addNextIntent(Intent(context, TrackListActivity::class.java))
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+        setContentIntent(resultPendingIntent)
+
+        return this
     }
-}
 
-private fun NotificationCompat.Builder.setTrackListTargetIntent(context: Context): NotificationCompat.Builder {
-
-    val resultPendingIntent: PendingIntent
-    if (context.resources.getBoolean(R.bool.track_map_multi_pane)) {
-        val intent = TrackActivity.newIntent(context, true)
-        resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    } else {
-        val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addParentStack(TrackActivity::class.java)
-        stackBuilder.addNextIntent(Intent(context, TrackActivity::class.java))
-        stackBuilder.addNextIntent(Intent(context, TrackListActivity::class.java))
-        resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-    setContentIntent(resultPendingIntent)
-
-    return this
 }

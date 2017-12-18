@@ -40,7 +40,8 @@ import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.utils.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.utils.readTrack
-import nl.sogeti.android.gpstracker.v2.sharedwear.*
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.*
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -51,9 +52,9 @@ class StatisticsCollector {
     private var contentObserver: ContentObserver? = null
     private lateinit var messageSender: MessageSender
     @Inject
-    lateinit var calculator: SummaryCalculator
-    @Inject
     lateinit var messageSenderFactory: MessageSenderFactory
+    @Inject
+    lateinit var statisticsFormatting: StatisticsFormatting
 
     init {
         GpsTrackerApplication.appComponent.inject(this)
@@ -61,7 +62,7 @@ class StatisticsCollector {
 
     fun start(context: Context, trackUri: Uri) {
         this.context = context
-        messageSender = messageSenderFactory.createMessageSender(context, Capability.CAPABILITY_CONTROL, AsyncTask.SERIAL_EXECUTOR)
+        messageSender = messageSenderFactory.createMessageSender(context, MessageSender.Capability.CAPABILITY_CONTROL, AsyncTask.SERIAL_EXECUTOR)
 
         messageSender.start()
         observeUri(trackUri)
@@ -122,9 +123,9 @@ class StatisticsCollector {
                 }
                 val endTime = handler.waypoints.last().last().time
                 val startTime = handler.waypoints.first().first().time
-                val currentSpeed = calculator.convertMeterPerSecondsToSpeed(it, recentMeters, recentMilliSeconds / 1000).replace(' ', '\n')
-                val distance = calculator.convertMetersToDistance(it, meters).replace(' ', '\n')
-                val duration = calculator.convertStartEndToDuration(it, startTime, endTime).replace(' ', '\n')
+                val currentSpeed = statisticsFormatting.convertMeterPerSecondsToSpeed(it, recentMeters, recentMilliSeconds / 1000)
+                val distance = statisticsFormatting.convertMetersToDistance(it, meters)
+                val duration = statisticsFormatting.convertStartEndToDuration(it, startTime, endTime)
 
                 return StatisticsMessage(currentSpeed, distance, duration)
             }

@@ -1,13 +1,11 @@
-package nl.sogeti.android.gpstracker.v2.sharedwear
+package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import com.google.android.gms.wearable.DataMap
 import kotlinx.android.parcel.Parcelize
 
-const val PATH_STATUS = "/ogt-recordings-status"
-
-private const val STATUS = "STATUS"
-
+@SuppressLint("ParcelCreator")
 @Parcelize
 data class StatusMessage(val status: Status) : WearMessage(PATH_STATUS), Parcelable {
     constructor(dataMap: DataMap) : this(Status.valueOf(dataMap.getInt(STATUS)))
@@ -36,5 +34,11 @@ data class StatusMessage(val status: Status) : WearMessage(PATH_STATUS), Parcela
                         else -> UNKNOWN
                     }
         }
+    }
+
+    companion object {
+        const val PATH_STATUS = "/ogt-recordings-status"
+
+        private const val STATUS = "STATUS"
     }
 }

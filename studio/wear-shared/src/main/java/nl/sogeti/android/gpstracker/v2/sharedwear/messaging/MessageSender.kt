@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.v2.sharedwear
+package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
 
 import android.content.Context
 import android.os.Bundle
@@ -38,11 +38,6 @@ import com.google.android.gms.wearable.Wearable
 import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executor
-
-enum class Capability(val itemName: String) {
-    CAPABILITY_CONTROL("gps_track_control"),
-    CAPABILITY_RECORD("gps_track_record")
-}
 
 class MessageSender(private val context: Context, private val capability: Capability, private val executor: Executor, private val queueSize: Int = 3) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
 
@@ -155,6 +150,11 @@ class MessageSender(private val context: Context, private val capability: Capabi
     }
 
     //endregion
+
+    enum class Capability(val itemName: String) {
+        CAPABILITY_CONTROL("gps_track_control"),
+        CAPABILITY_RECORD("gps_track_record")
+    }
 
     interface MessageSenderStatusListener {
         fun didConnect(connect: Boolean)

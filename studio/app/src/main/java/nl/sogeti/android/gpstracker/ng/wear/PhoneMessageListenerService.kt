@@ -33,7 +33,7 @@ import nl.sogeti.android.gpstracker.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.trackedit.NameGenerator
-import nl.sogeti.android.gpstracker.v2.sharedwear.*
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.*
 import java.util.*
 import java.util.concurrent.ExecutorService
 import javax.inject.Inject
@@ -58,7 +58,7 @@ class PhoneMessageListenerService : MessageListenerService() {
 
     override fun onCreate() {
         super.onCreate()
-        messageSender = messageSenderFactory.createMessageSender(this, Capability.CAPABILITY_CONTROL, executor)
+        messageSender = messageSenderFactory.createMessageSender(this, MessageSender.Capability.CAPABILITY_CONTROL, executor)
         messageSender?.start()
     }
 
@@ -68,8 +68,8 @@ class PhoneMessageListenerService : MessageListenerService() {
         messageSender = null
     }
 
-    override fun updateStatus(event: StatusMessage) =
-            when (event.status) {
+    override fun updateStatus(status: StatusMessage) =
+            when (status.status) {
                 StatusMessage.Status.START -> startLogging()
                 StatusMessage.Status.PAUSE -> pauseLogging()
                 StatusMessage.Status.RESUME -> resumeLogging()
@@ -78,7 +78,7 @@ class PhoneMessageListenerService : MessageListenerService() {
             }
 
 
-    override fun updateStatistics(event: StatisticsMessage) {
+    override fun updateStatistics(statistics: StatisticsMessage) {
         // Not registered as intent filter
     }
 

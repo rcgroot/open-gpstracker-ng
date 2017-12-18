@@ -35,6 +35,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
 import nl.sogeti.android.gpstracker.ng.common.bindings.CommonBindingComponent
 import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
+import nl.sogeti.android.gpstracker.ng.dagger.AppModule
 import nl.sogeti.android.gpstracker.ng.dagger.DaggerAppComponent
 import nl.sogeti.android.gpstracker.ng.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.v2.BuildConfig
@@ -83,7 +84,9 @@ open class GpsTrackerApplication : Application() {
     }
 
     protected open fun buildAppComponent() {
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder()
+                .appModule(AppModule(this))
+                .build()
     }
 
     protected fun setupDebugTree() {

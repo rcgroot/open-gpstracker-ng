@@ -33,7 +33,9 @@ import android.databinding.ObservableField
 import android.os.Handler
 import android.os.Looper
 import nl.renedegroot.android.concurrent.BackgroundThreadFactory
-import nl.sogeti.android.gpstracker.v2.sharedwear.*
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSender
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
 import timber.log.Timber
 import java.util.concurrent.Executors
 
@@ -44,7 +46,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     fun start(context: Context) {
         val executorService = Executors.newFixedThreadPool(1, BackgroundThreadFactory("WearMessageSender"))
-        messageSender = MessageSender(context, Capability.CAPABILITY_RECORD, executorService)
+        messageSender = MessageSender(context, MessageSender.Capability.CAPABILITY_RECORD, executorService)
         messageSender?.start()
         messageSender?.messageSenderStatusListener = this
 
