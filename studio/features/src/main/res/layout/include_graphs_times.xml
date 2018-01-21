@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|snap|enterAlways">
+
+        <TextView
+            android:id="@+id/graph_label_date"
+            style="@style/TextAppearance.AppCompat.Small.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/graph_label_day"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/graph_label_time"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/graph_label_duration"
+            style="@style/TextAppearance.AppCompat.Small.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@string/graph_label_total"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_time"
+            app:layout_constraintLeft_toRightOf="@+id/graph_label_time"
+            app:layout_constraintRight_toLeftOf="@+id/graph_label_pause"
+            tools:text="Total" />
+
+        <TextView
+            android:id="@+id/graph_label_pause"
+            style="@style/TextAppearance.AppCompat.Small.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/graph_label_paused"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_duration"
+            app:layout_constraintLeft_toRightOf="@+id/graph_label_duration"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="Paused" />
+
+        <TextView
+            android:id="@+id/graph_label_time"
+            style="@style/TextAppearance.AppCompat.Small.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@string/graph_label_start_time"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_label_date"
+            app:layout_constraintLeft_toRightOf="@+id/graph_label_date"
+            app:layout_constraintRight_toLeftOf="@+id/graph_label_duration" />
+
+        <TextView
+            android:id="@+id/graph_value_start_day"
+            style="@style/TextAppearance.AppCompat.Medium.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.startDate}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/graph_value_start_time"
+            app:layout_constraintTop_toBottomOf="@+id/graph_label_date"
+            tools:text="30-1-17" />
+
+        <TextView
+            android:id="@+id/graph_value_start_time"
+            style="@style/TextAppearance.AppCompat.Medium.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@{viewModel.startTime}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_start_day"
+            app:layout_constraintLeft_toRightOf="@+id/graph_value_start_day"
+            app:layout_constraintRight_toLeftOf="@+id/graph_value_duration"
+            tools:text="9:54" />
+
+        <TextView
+            android:id="@+id/graph_value_duration"
+            style="@style/TextAppearance.AppCompat.Medium.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="@{viewModel.total}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_start_time"
+            app:layout_constraintLeft_toRightOf="@+id/graph_value_start_time"
+            app:layout_constraintRight_toLeftOf="@+id/graph_value_pause"
+            tools:text="1h35m" />
+
+        <TextView
+            android:id="@+id/graph_value_pause"
+            style="@style/TextAppearance.AppCompat.Medium.Inverse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:text="@{viewModel.paused}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_duration"
+            app:layout_constraintLeft_toRightOf="@+id/graph_value_duration"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="12m" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

@@ -1,1 +1,1 @@
-include ':app', ':integration', ':widgets', ':utils', ':wear', ':wear-shared'
+include ':app', ':utils', ':wear', ':wear-shared', ':service', ':base', ':features'

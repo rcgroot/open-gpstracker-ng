@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'org.jetbrains.kotlin.android.extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 androidExtensions {
     experimental = true
@@ -8,8 +9,7 @@ androidExtensions {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "$rootProject.buildToolsVersion"
-
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -24,6 +24,9 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -32,4 +35,5 @@ dependencies {
     api "com.google.android.gms:play-services-wearable:$rootProject.playServicesVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 }

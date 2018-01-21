@@ -1,0 +1,73 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    flavorDimensions "service"
+
+    productFlavors {
+        store {
+            dimension "service"
+            buildConfigField 'boolean', 'IS_EMULATED', 'false'
+            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker" ]
+        }
+        develop {
+            dimension "service"
+            buildConfigField 'boolean', 'IS_EMULATED', 'false'
+            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker.develop" ]
+        }
+        mock {
+            dimension "service"
+            buildConfigField 'boolean', 'IS_EMULATED', 'true'
+            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker.mock" ]
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project (':utils')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+
+    androidTestImplementation 'com.crittercism.dexmaker:dexmaker:1.4'
+    androidTestImplementation 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    androidTestImplementation 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
+}

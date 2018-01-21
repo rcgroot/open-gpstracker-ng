@@ -1,0 +1,38 @@
+<resources>
+
+    <string name="service_title">Open GPS Tracker</string>
+    <string name="service_gpsstatus">Logging: %1$s (%2$s with %3$d satellites)</string>
+    <string name="service_gpsnostatus">Logging: %1$s (Precision %2$s)</string>
+    <string name="service_networkstatus">Logging: %1$s (%2$s with cell tower and wifi)</string>
+    <string name="service_gpsdisabled">GPS is disabled, logging is without effect.</string>
+    <string name="service_gpsenabled">GPS is enabled, commencing logging.</string>
+    <string name="service_connectiondisabled">Network is disabled, network location logging is without effect.</string>
+    <string name="service_datadisabled">Network positioning is disabled, logging is without effect.</string>
+    <string name="service_dataenabled">Network positioning is enabled, commencing logging.</string>
+    <string name="service_gpsproblem">Receiving no location information</string>
+    <string name="customupload_failed">The last upload of track progress failed</string>
+    <string-array name="precision_choices">
+        <item>Custom</item>
+        <item>Fine</item>
+        <item>Normal</item>
+        <item>Coarse</item>
+        <item>Global network</item>
+    </string-array>
+    <string-array name="state_choices">
+        <item>Active</item>
+        <item>Paused</item>
+        <item>Stopped</item>
+    </string-array>
+    <string name="voiceover_speaking">In the last %1$d minutes covered a distance of %2$d meter</string>
+    <string name="logcontrol_start">Start tracking</string>
+    <string name="logcontrol_pause">Pause tracking</string>
+    <string name="logcontrol_resume">Resume tracking</string>
+    <string name="logcontrol_stop">Stop tracking</string>
+
+    <string name="permission_control">start and stop GPS tracking</string>
+    <string name="permission_control_description">Allows the application to control the recording
+    of GPS tracks.</string>
+    <string name="permission_history">read and write GPS recorded tracks</string>
+    <string name="permission_history_description">Allows the application to read and write stored tracks and
+    create new tracks.</string>
+</resources>

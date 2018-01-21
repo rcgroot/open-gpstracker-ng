@@ -5,6 +5,7 @@ import android.support.v7.widget.AppCompatSpinner
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.SpinnerAdapter
+import nl.sogeti.android.gpstracker.ng.base.common.bindings.CommonBindingAdapters
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock

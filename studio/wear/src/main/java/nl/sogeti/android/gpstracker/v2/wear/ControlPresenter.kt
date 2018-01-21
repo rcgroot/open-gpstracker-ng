@@ -32,7 +32,7 @@ import android.content.Context
 import android.databinding.ObservableField
 import android.os.Handler
 import android.os.Looper
-import nl.renedegroot.android.concurrent.BackgroundThreadFactory
+import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSender
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage

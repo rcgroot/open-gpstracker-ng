@@ -1,4 +1,4 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+2// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     apply from: 'versions.gradle'
 
@@ -8,11 +8,15 @@ buildscript {
         maven {
             url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
         }
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$rootProject.gradlePluginVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$rootProject.kotlinVersion"
         classpath "com.google.gms:google-services:$rootProject.googleServicesVersion"
+        classpath "io.fabric.tools:gradle:$rootProject.fabricVerion"
     }
 }
 

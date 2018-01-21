@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="permission_explain_need_control">Access to start and stop the GPS logger in Open GPS Tracker is required to continue.</string>
+    <string name="permission_explain_need_content">Access to the tracks stored in Open GPS Tracker is required to continue.</string>
+    <string name="permission_missing_title">Missing installation</string>
+    <string name="permission_missing_message">The original Open GPS Tracker is required to run this application</string>
+    <string name="permission_button_install">Install</string>
+
+</resources>

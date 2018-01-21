@@ -3,12 +3,11 @@ package nl.sogeti.android.gpstracker.ng.track
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
-import android.database.MatrixCursor
 import android.net.Uri
-import android.provider.BaseColumns._ID
 import nl.sogeti.android.gpstracker.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.features.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.rules.any

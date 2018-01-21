@@ -1,15 +1,14 @@
 package nl.sogeti.android.gpstracker.ng.rules
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
-import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
+import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
 
 class MockAppComponentTestRule : TestRule {
 
@@ -21,7 +20,7 @@ class MockAppComponentTestRule : TestRule {
             override fun evaluate() {
                 val mockUriBuilder = createMockBuilder()
                 mockAppComponent = Mockito.mock(AppComponent::class.java)
-                GpsTrackerApplication.appComponent = mockAppComponent
+                BaseGpsTrackerApplication.appComponent = mockAppComponent
                 `when`(mockAppComponent.providerAuthority()).thenReturn("mock-authority")
                 `when`(mockAppComponent.provideUriBuilder()).thenReturn(mockUriBuilder)
                 base.evaluate()

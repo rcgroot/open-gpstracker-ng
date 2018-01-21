@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 26
-    buildToolsVersion "$rootProject.buildToolsVersion"
+    buildToolsVersion '27.0.3'
     flavorDimensions "service"
 
     defaultConfig {
@@ -19,8 +19,12 @@ android {
     }
 
     productFlavors {
-        live {
+        store {
             dimension "service"
+        }
+        develop {
+            dimension "service"
+            applicationIdSuffix = ".develop"
         }
         mock {
             dimension "service"
@@ -52,6 +56,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':wear-shared')
+    implementation project(':utils')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$rootProject.kotlinVersion"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
@@ -67,5 +72,5 @@ dependencies {
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 
     compileOnly "com.google.android.wearable:wearable:$rootProject.wearableVersion"
-    compile project(path: ':utils')
+
 }

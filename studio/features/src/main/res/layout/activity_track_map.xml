@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.widget.Toolbar" />
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.ng.features.track.TrackViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/activity_track_map_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:title="@{viewModel.name}" />
+
+        <fragment
+            android:id="@+id/fragment_map"
+            android:name="nl.sogeti.android.gpstracker.ng.features.map.TrackMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            tools:layout="@layout/fragment_map" />
+
+        <fragment
+            android:id="@+id/fragment_recording"
+            android:name="nl.sogeti.android.gpstracker.ng.features.recording.RecordingFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            tools:layout="@layout/fragment_recording" />
+
+        <fragment
+            android:id="@+id/fragment_control"
+            android:name="nl.sogeti.android.gpstracker.ng.features.control.ControlFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            tools:layout="@layout/fragment_control" />
+
+    </RelativeLayout>
+</layout>

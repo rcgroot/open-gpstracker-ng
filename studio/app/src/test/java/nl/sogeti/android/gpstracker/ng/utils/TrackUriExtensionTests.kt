@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.utils
 
-import nl.sogeti.android.gpstracker.ng.common.GpsTrackerApplication
+import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -16,7 +16,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildTracksUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = tracksUri()
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -28,7 +28,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildTrackIdUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = trackUri(123L)
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -41,7 +41,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildSegmentsUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = segmentsUri(123L)
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -55,7 +55,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildSegmentIdUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = segmentUri(123L, 543L)
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -70,7 +70,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildWaypointsUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = waypointsUri(123L, 543L)
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -86,7 +86,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildTrackWaypointsUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = waypointsUri(123L)
         // Assert
         Mockito.verify(builder).scheme("content")
@@ -100,7 +100,7 @@ class TrackUriExtensionTests {
     @Test
     fun testBuildTrackMetadataUri() {
         // Act
-        val builder = GpsTrackerApplication.appComponent.provideUriBuilder()
+        val builder = BaseGpsTrackerApplication.appComponent.provideUriBuilder()
         val uri = metaDataTrackUri(123L)
         // Assert
         Mockito.verify(builder).scheme("content")

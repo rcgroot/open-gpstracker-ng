@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.dagger.AppComponent
+import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
 import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
 import org.junit.Assert.*
 import org.junit.Rule

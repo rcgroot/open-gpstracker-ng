@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter" />
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/fragment_recording_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        android:visibility="visible"
+        app:isRecording="@{viewModel.isRecording}"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/fragment_recording_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@{viewModel.state}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_recording_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:text="RECORDING" />
+
+        <TextView
+            android:id="@+id/fragment_recording_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@{viewModel.summary}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/fragment_recording_image"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_recording_title"
+            tools:text="Recording: %1$s in last 5 minutes \n with average speed %2$.0f %3$s" />
+
+        <ImageView
+            android:id="@+id/fragment_recording_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:alpha="@{viewModel.hasFix ? 1.0F : 0.5F}"
+            app:gps_signal_quality="@{viewModel.signalQuality}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/fragment_recording_satellites"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_recording_satellites"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/fragment_recording_satellites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="@{@string/fragment_recording_satellites(viewModel.currentSatellites, viewModel.maxSatellites)}"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_recording_title"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:text="4/7 sat" />
+
+        <TextView
+            android:id="@+id/fragment_recording_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="middle"
+            android:maxLines="2"
+            android:minLines="1"
+            android:text="@{viewModel.name}"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintLeft_toRightOf="@+id/fragment_recording_status"
+            app:layout_constraintRight_toLeftOf="@+id/fragment_recording_satellites"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Climbing the mountain track" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> presenter.didSelectSignal()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/fragment_recording_satellites"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

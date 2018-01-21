@@ -11,9 +11,14 @@ import timber.log.Timber
 abstract class MessageListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent?) {
-        val dataMap = DataMap.fromByteArray(messageEvent?.data)
-        Timber.d("onDataChanged($dataMap: DataEventBuffer?")
-        handleMessageEvents(messageEvent?.path, dataMap)
+        Timber.d("onDataChanged($messageEvent: MessageEvent?")
+        val data = messageEvent?.data
+        if (data != null) {
+            val dataMap = DataMap.fromByteArray(data)
+            handleMessageEvents(messageEvent?.path, dataMap)
+        } else {
+            Timber.w("onDataChanged did not contain data")
+        }
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer?) {

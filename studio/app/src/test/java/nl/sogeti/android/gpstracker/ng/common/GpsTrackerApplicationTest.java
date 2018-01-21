@@ -33,15 +33,16 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication;
 import timber.log.Timber;
 
 public class GpsTrackerApplicationTest {
 
-    private GpsTrackerApplication sut;
+    private BaseGpsTrackerApplication sut;
 
     @Before
     public void setup() {
-        sut = new GpsTrackerApplication();
+        sut = new BaseGpsTrackerApplication();
         Timber.uprootAll();
     }
 

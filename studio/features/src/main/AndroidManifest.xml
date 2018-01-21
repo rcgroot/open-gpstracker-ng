@@ -1,0 +1,56 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="nl.sogeti.android.opengpstrack.ng.features" >
+
+    <application>
+        <activity
+            android:name="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity"
+            android:label="@string/title_activity_tracks"
+            android:parentActivityName="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity" />
+        </activity>
+        <activity
+            android:name="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsActivity"
+            android:label="@string/title_activity_graphs"
+            android:parentActivityName="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
+            android:theme="@style/AppTheme" />
+
+        <provider
+            android:name="nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider"
+            android:authorities="${applicationId}.gpxshareprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <service
+            android:name="nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service android:name="nl.sogeti.android.gpstracker.ng.features.wear.PhoneMessageListenerService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:path="/ogt-recordings-status"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingService"
+            android:exported="false" />
+    </application>
+
+</manifest>
+

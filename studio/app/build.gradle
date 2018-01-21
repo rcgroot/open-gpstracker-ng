@@ -1,21 +1,12 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-
-//jacoco {
-//    toolVersion = jacocoVersion
-//}
+apply plugin: 'io.fabric'
 
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 26
-    buildToolsVersion "$rootProject.buildToolsVersion"
-    flavorDimensions "service"
-
-    dataBinding {
-        enabled = true
-    }
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "nl.sogeti.android.gpstracker.ng"
@@ -28,11 +19,19 @@ android {
         archivesBaseName = "opengpstracker-ng-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [hostName:"www.example.com"]
     }
 
+    flavorDimensions "service"
+
     productFlavors {
-        live {
+        store {
             dimension "service"
+        }
+        develop {
+            dimension "service"
+            applicationIdSuffix = ".develop"
         }
         mock {
             dimension "service"
@@ -92,29 +91,23 @@ configurations.all {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':integration')
-    implementation project(':widgets')
-    implementation project(':utils')
+    api project(':features')
+    implementation project(':service')
+    implementation project(':base')
     implementation project(':wear-shared')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
-    implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    implementation "com.google.firebase:firebase-core:$rootProject.playServicesVersion"
+    implementation("com.crashlytics.sdk.android:crashlytics:$rootProject.crashlicticsVerion@aar") {
+        transitive = true
+    }
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 
-    implementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
-    //    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
-
-    releaseImplementation "com.google.firebase:firebase-crash:$rootProject.playServicesVersion"
     mockImplementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"

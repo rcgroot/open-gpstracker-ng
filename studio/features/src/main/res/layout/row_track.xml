@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="adapter"
+            type="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter" />
+
+        <variable
+            name="viewModel"
+            type="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackViewModel" />
+    </data>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/row_track_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:onClick="@{() -> adapter.didSelectTrack(viewModel)}"
+        app:editMode="@{viewModel.editMode}"
+        card_view:cardBackgroundColor="@color/card_background"
+        card_view:cardCornerRadius="4dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <View
+                android:id="@+id/row_track_header_bg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/row_track_map"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/row_track_map"
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_marginTop="8dp"
+                android:clickable="false"
+                android:contentDescription="@string/row_track_map"
+                app:bounds="@{viewModel.completeBounds}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_icon"
+                app:liteMode="true"
+                app:mapType="normal"
+                app:polylines="@{viewModel.polylines}" />
+
+            <TextView
+                android:id="@+id/row_track_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@{viewModel.name}"
+                android:textColor="@color/card_text"
+                app:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
+                app:layout_constraintLeft_toRightOf="@+id/row_track_icon"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/row_track_icon"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                tools:text="Route to work" />
+
+            <ImageView
+                android:id="@+id/row_track_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/row_track_icon_default"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@{viewModel.iconType}" />
+
+            <TextView
+                android:id="@+id/row_track_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.startDay}"
+                android:textColor="@color/card_text"
+                app:layout_constraintLeft_toLeftOf="@+id/row_track_name"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="5 jan" />
+
+            <TextView
+                android:id="@+id/row_track_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.distance}"
+                android:textColor="@color/card_text"
+                app:layout_constraintRight_toRightOf="@+id/row_track_map"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="12km" />
+
+            <TextView
+                android:id="@+id/row_track_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{viewModel.duration}"
+                android:textColor="@color/card_text"
+                app:layout_constraintLeft_toRightOf="@+id/row_track_date"
+                app:layout_constraintRight_toLeftOf="@+id/row_track_distance"
+                app:layout_constraintTop_toBottomOf="@+id/row_track_map"
+                tools:text="1h30m" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/row_track_overflow"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:onClick="@{() -> adapter.didClickRowOptions(viewModel)}"
+                android:scaleType="center"
+                app:backgroundTint="@color/card_background"
+                app:borderWidth="0dp"
+                app:elevation="4dp"
+                app:hitPadding="@{@dimen/hit_padding}"
+                app:srcCompat="@drawable/ic_overflow"
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_icon"
+                card_view:layout_constraintRight_toRightOf="parent"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_icon"
+                card_view:layout_constraintVertical_bias="0.485" />
+
+            <Button
+                android:id="@+id/row_track_share"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onClick="@{() -> adapter.didShareTrack(viewModel)}"
+                android:text="@string/track_share"
+                android:visibility="gone"
+                app:leftDrawable='@{"ic_share_black_24dp"}'
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
+                card_view:layout_constraintLeft_toLeftOf="@+id/row_track_map"
+                card_view:layout_constraintRight_toLeftOf="@+id/row_track_edit"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_map"
+                tools:text="Share" />
+
+
+            <Button
+                android:id="@+id/row_track_edit"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onClick="@{() -> adapter.didEditTrack(viewModel)}"
+                android:text="@string/track_edit"
+                android:visibility="gone"
+                app:leftDrawable='@{"ic_mode_edit_black_24dp"}'
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
+                card_view:layout_constraintLeft_toRightOf="@+id/row_track_share"
+                card_view:layout_constraintRight_toLeftOf="@+id/row_track_delete"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_map"
+                tools:text="Share" />
+
+            <Button
+                android:id="@+id/row_track_delete"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onClick="@{() -> adapter.didDeleteTrack(viewModel)}"
+                android:text="@string/track_delete"
+                android:visibility="gone"
+                app:leftDrawable='@{"ic_delete_black_24dp"}'
+                card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
+                card_view:layout_constraintLeft_toRightOf="@+id/row_track_edit"
+                card_view:layout_constraintRight_toRightOf="@+id/row_track_map"
+                card_view:layout_constraintTop_toTopOf="@+id/row_track_map"
+                card_view:layout_constraintVertical_bias="0.0"
+                tools:text="Delete" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</layout>
