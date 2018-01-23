@@ -34,7 +34,7 @@ import android.net.Uri
 
 class TrackListViewModel {
     val tracks = ObservableField<List<Uri>>(emptyList())
-    val selectedTrack = ObservableField<Uri?>(null)
+    val selectedTrack = ObservableField<Uri?>()
 
     interface View {
         fun moveToPosition(postion: Int)

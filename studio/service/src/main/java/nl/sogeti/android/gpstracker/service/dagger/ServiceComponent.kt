@@ -1,8 +1,8 @@
 package nl.sogeti.android.gpstracker.service.dagger
 
-import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import javax.inject.Named
 
 @Component(modules = [(ServiceModule::class)])
@@ -14,8 +14,8 @@ interface ServiceComponent {
     @Named("stateBroadcastAction")
     fun stateBroadcastAction(): String
 
-    fun provideUriBuilder(): Uri.Builder
-
     fun serviceManagerInterface(): ServiceManagerInterface
+
+    fun inject(injectable: PermissionRequester)
 
 }

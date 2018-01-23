@@ -48,7 +48,9 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
 
     override fun didStart() {
         val trackUri = model.trackUri.get()
-        loadTrackName(context, trackUri)
+        trackUri?.let {
+            loadTrackName(context, trackUri)
+        }
     }
 
     override fun willStop() {
@@ -56,9 +58,11 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
 
     fun ok() {
         val trackUri = model.trackUri.get()
-        deleteTrack(context, trackUri)
-        summaryManager.removeFromCache(trackUri)
-        view.dismiss()
+        trackUri?.let {
+            deleteTrack(context, trackUri)
+            summaryManager.removeFromCache(trackUri)
+            view.dismiss()
+        }
     }
 
     fun cancel() {

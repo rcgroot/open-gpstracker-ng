@@ -153,7 +153,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     //region Row callbacks
 
     fun didSelectTrack(trackModel: TrackViewModel) {
-        listener?.didSelectTrack(trackModel.uri, trackModel.name.get())
+        listener?.didSelectTrack(trackModel.uri, trackModel.name.get() ?: "")
         trackModel.editMode.set(false)
     }
 
@@ -195,7 +195,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 viewModel.completeBounds.set(it.bounds)
                 val listOfLatLng = it.waypoints.map { it.map { it.latLng() } }
                 viewModel.waypoints.set(listOfLatLng)
-                val trackPolylineProvider = TrackPolylineProvider(viewModel.waypoints.get())
+                val trackPolylineProvider = TrackPolylineProvider(listOfLatLng)
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
                 viewModel.iconType.set(it.type)
                 viewModel.name.set(it.name)

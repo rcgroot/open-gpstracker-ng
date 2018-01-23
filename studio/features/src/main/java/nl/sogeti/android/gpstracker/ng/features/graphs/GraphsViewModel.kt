@@ -34,7 +34,7 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 
 class GraphsViewModel {
-    val trackUri = ObservableField<Uri?>(null)
+    val trackUri = ObservableField<Uri?>()
     val distance = ObservableField<String>("-")
     val time = ObservableField<String>("-")
     val speed = ObservableField<String>("-")

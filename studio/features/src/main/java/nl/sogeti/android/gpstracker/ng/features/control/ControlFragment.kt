@@ -50,7 +50,7 @@ class ControlFragment : Fragment() {
     @VisibleForTesting
     var binding: FragmentControlBinding? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentControlBinding>(inflater, R.layout.fragment_control, container, false)
         binding.viewModel = viewModel

@@ -1,7 +1,7 @@
 ext {
     // Building
-    gradlePluginVersion = '3.0.1'
-    dataBindingVersion = '3.0.1'
+    gradlePluginVersion = '3.1.0-alpha08'
+    dataBindingVersion = '3.1.0-alpha08'
 
     // App support
     supportLibraryVersion = '26.1.0'

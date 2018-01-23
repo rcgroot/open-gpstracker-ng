@@ -39,6 +39,7 @@ import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import nl.sogeti.android.gpstracker.service.R
+import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.permission.TRACKING_CONTROL
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.permission.TRACKING_HISTORY
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
@@ -69,6 +70,10 @@ class PermissionRequester {
     @Inject
     lateinit var permissionChecker: PermissionChecker
 
+    init {
+        ServiceConfiguration.serviceComponent.inject(this)
+    }
+
     fun start(fragment: Fragment, runnable: () -> Unit) {
         runnables.put(this, runnable)
         checkOpenGPSTrackerAccess(fragment)
@@ -85,29 +90,30 @@ class PermissionRequester {
     }
 
     private fun checkOpenGPSTrackerAccess(fragment: Fragment) {
-        val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
-        val install = DialogInterface.OnClickListener { _, _ -> installOpenGpsTracker(fragment.context) }
-        val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
 
-        if (serviceManager.isPackageInstalled(fragment.context)) {
-            // Installed, check permissions
-            if (hasPermission(fragment.context, TRACKING_CONTROL)
-                    && hasPermission(fragment.context, TRACKING_HISTORY)
-                    && hasPermission(fragment.context, ACCESS_FINE_LOCATION)) {
-                // Have permissions
-                didReceivePermissions()
-            } else if (canAsk(fragment.activity, TRACKING_CONTROL)
-                    && canAsk(fragment.activity, TRACKING_HISTORY)
-                    && canAsk(fragment.activity, ACCESS_FINE_LOCATION)) {
-                // Ask permissions
-                showRequest(fragment)
-            } else {
-                // Explain permissions
-                showRationale(fragment.context, startRequest, cancel)
-            }
-        } else if (!isShowingDialog) {
-            showInstallLink(fragment.context, cancel, install)
+//        val install = DialogInterface.OnClickListener { _, _ -> installOpenGpsTracker(fragment.context) }
+//        if (serviceManager.isPackageInstalled(fragment.context)) {
+
+        val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
+        val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
+        if (hasPermission(fragment.context, TRACKING_CONTROL)
+                && hasPermission(fragment.context, TRACKING_HISTORY)
+                && hasPermission(fragment.context, ACCESS_FINE_LOCATION)) {
+            // Have permissions
+            didReceivePermissions()
+        } else if (canAsk(fragment.activity, TRACKING_CONTROL)
+                && canAsk(fragment.activity, TRACKING_HISTORY)
+                && canAsk(fragment.activity, ACCESS_FINE_LOCATION)) {
+            // Ask permissions
+            showRequest(fragment)
+        } else {
+            // Explain permissions
+            showRationale(fragment.context, startRequest, cancel)
         }
+
+//        } else if (!isShowingDialog) {
+//            showInstallLink(fragment.context, cancel, install)
+//        }
     }
 
     fun onRequestPermissionsResult(fragment: Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

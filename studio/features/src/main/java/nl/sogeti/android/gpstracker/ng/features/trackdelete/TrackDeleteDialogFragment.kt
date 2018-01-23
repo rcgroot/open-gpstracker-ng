@@ -28,7 +28,7 @@ class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
 
     private var presenter: TrackDeletePresenter? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentDeleteDialogBinding>(inflater, R.layout.fragment_delete_dialog, container, false)
 
         val uri = arguments.get(ARG_URI) as Uri

@@ -37,7 +37,7 @@ class ControlViewModel {
     val averageSpeed = ObservableField<String>("-")
     val state = ObservableField<Control>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
-    val confirmAction = ObservableField<Control?>(null)
+    val confirmAction = ObservableField<Control?>()
 
     val leftControl = ObservableField<Control>(Control.Stop(false))
     val rightControl = ObservableField<Control>(Control.Start(false))

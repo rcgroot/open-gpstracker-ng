@@ -55,7 +55,7 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.fragmentTracklistList.layoutManager = LinearLayoutManager(activity)
         val itemAnimator = DefaultItemAnimator()

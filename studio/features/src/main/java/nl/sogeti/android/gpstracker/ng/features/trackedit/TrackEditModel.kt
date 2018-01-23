@@ -34,7 +34,7 @@ import android.net.Uri
 import android.widget.AdapterView.INVALID_POSITION
 
 class TrackEditModel(uri: Uri) {
-    val trackUri = ObservableField<Uri>(uri)
+    val trackUri = uri
     val name = ObservableField<String>("")
     val selectedPosition = ObservableInt(INVALID_POSITION)
     val trackTypes = TrackTypeDescriptions.allTrackTypes

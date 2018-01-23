@@ -77,7 +77,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:onClick="@{() -> presenter.ok()}"
+            android:onClick="@{() -> presenter.ok(model.trackUri, model.name)}"
             android:text="@android:string/ok"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

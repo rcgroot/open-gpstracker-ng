@@ -2,11 +2,8 @@ package nl.sogeti.android.gpstracker.ng
 
 import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.dagger.DaggerFeatureComponent
-import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureModule
-import nl.sogeti.android.gpstracker.ng.features.dagger.VersionInfoModule
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
-import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration.serviceComponent
+import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.v2.BuildConfig.*
 
 class GpsTrackerApplication : BaseGpsTrackerApplication() {
@@ -16,28 +13,34 @@ class GpsTrackerApplication : BaseGpsTrackerApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        FeatureConfiguration.setupDefaultViewBinding()
+        initModules()
+        initLoggingReceiver()
+    }
 
+    override fun onTerminate() {
+        destroyLoggingReceiver()
+        super.onTerminate()
+    }
+
+    private fun initModules() {
+        val version = VERSION_NAME
+        val buildNumber = BUILD_NUMBER.toString()
+        val gitHash = GIT_COMMIT.take(Math.min(7, GIT_COMMIT.length))
+
+        ServiceConfiguration.initServiceComponent()
+        FeatureConfiguration.initFeatureComponent(this, version, gitHash, buildNumber)
+        FeatureConfiguration.setupDefaultViewBinding()
+    }
+
+    private fun initLoggingReceiver() {
         stateReceiver = LoggingReceiver()
         stateReceiver?.register(this)
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
+    private fun destroyLoggingReceiver() {
         stateReceiver?.unregister(this)
+        stateReceiver = null
     }
 
-    private val version = VERSION_NAME
-    private val buildNumber = BUILD_NUMBER.toString()
-    private val gitHash = GIT_COMMIT.take(Math.min(7, GIT_COMMIT.length))
 
-    fun initDagger() {
-        val featureComponent = DaggerFeatureComponent.builder()
-                .appComponent(appComponent)
-                .serviceComponent(serviceComponent)
-                .featureModule(FeatureModule(applicationContext))
-                .versionInfoModule(VersionInfoModule(version, gitHash, buildNumber))
-                .build()
-        FeatureConfiguration.initBinding(featureComponent)
-    }
 }

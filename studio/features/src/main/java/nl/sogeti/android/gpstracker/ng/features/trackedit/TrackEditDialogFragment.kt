@@ -29,7 +29,7 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentEditDialogBinding>(inflater, R.layout.fragment_edit_dialog, container, false, FeaturesBindingComponent())
 
         val uri = arguments.get(ARG_URI) as Uri

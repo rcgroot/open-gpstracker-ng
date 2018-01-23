@@ -33,7 +33,7 @@ import android.net.Uri
 
 class TrackViewModel {
 
-    val trackUri: ObservableField<Uri?> = ObservableField(null)
+    val trackUri: ObservableField<Uri?> = ObservableField()
     val isEditable: Boolean
         get() = trackUri.get() != null
     val name = ObservableField("")

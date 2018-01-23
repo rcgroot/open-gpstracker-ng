@@ -33,10 +33,8 @@ import android.os.StrictMode
 import android.support.annotation.CallSuper
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.BuildConfig
-import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
-import nl.sogeti.android.gpstracker.ng.base.dagger.DaggerAppComponent
-import nl.sogeti.android.gpstracker.ng.base.dagger.AppModule
 
 import timber.log.Timber
 
@@ -47,10 +45,6 @@ open class BaseGpsTrackerApplication : Application() {
 
     var debug = BuildConfig.DEBUG
 
-    companion object {
-        lateinit var appComponent: AppComponent
-    }
-
     @CallSuper
     override fun onCreate() {
         super.onCreate()
@@ -60,7 +54,7 @@ open class BaseGpsTrackerApplication : Application() {
         }
         setupLeakCanary()
         setupDebugTree()
-        buildAppComponent()
+        BaseConfiguration.initAppComponent(this)
         setupAnalytics()
 
     }
@@ -73,12 +67,6 @@ open class BaseGpsTrackerApplication : Application() {
 
     private fun setupLeakCanary() {
         LeakCanary.install(this)
-    }
-
-    protected open fun buildAppComponent() {
-        appComponent = DaggerAppComponent.builder()
-                .appModule(AppModule(this))
-                .build()
     }
 
     protected fun setupDebugTree() {

@@ -113,8 +113,10 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
     }
 
     private fun scrollToTrack(trackUri: Uri) {
-        val postion = viewModel.tracks.get().indexOf(trackUri)
-        view.moveToPosition(postion)
+        val position = viewModel.tracks.get()?.indexOf(trackUri)
+        position?.let {
+            view.moveToPosition(position)
+        }
     }
 
     //region View (adapter) callbacks

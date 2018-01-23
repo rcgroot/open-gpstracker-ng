@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.features.gpxexport
 
 import android.content.Intent
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration.featureComponent
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
@@ -54,7 +55,7 @@ class ShareIntentFactory {
      * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
      */
     fun sharedTrackUri(trackId: Long): Uri {
-        return ServiceConfiguration.serviceComponent.provideUriBuilder()
+        return BaseConfiguration.appComponent.provideUriBuilder()
                 .scheme("content")
                 .authority(featureComponent.providerShareAuthority())
                 .appendPath(ContentConstants.Tracks.TRACKS)

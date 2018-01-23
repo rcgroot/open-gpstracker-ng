@@ -33,6 +33,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns._ID
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Segments.SEGMENTS
@@ -46,7 +47,7 @@ import timber.log.Timber
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
  */
 fun tracksUri(): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -59,7 +60,7 @@ fun tracksUri(): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
 fun trackUri(trackId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -72,7 +73,7 @@ fun trackUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
  */
 fun segmentsUri(trackId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -87,7 +88,7 @@ fun segmentsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
  */
 fun segmentUri(trackId: Long, segmentId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -103,7 +104,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -122,7 +123,7 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints/21
  */
 fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -140,7 +141,7 @@ fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
  */
 fun waypointsUri(trackId: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -153,7 +154,7 @@ fun waypointsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/ID/metadata
  */
 fun metaDataTrackUri(id: Long): Uri {
-    return ServiceConfiguration.serviceComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.provideUriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)

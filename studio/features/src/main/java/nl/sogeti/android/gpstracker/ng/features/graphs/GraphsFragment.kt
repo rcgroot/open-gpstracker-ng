@@ -56,7 +56,7 @@ class GraphsFragment : Fragment() {
         graphPresenter = GraphsPresenter()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentGraphsBinding>(inflater, R.layout.fragment_graphs, container, false)
         binding.viewModel = graphPresenter.viewModel
         binding.presenter = graphPresenter

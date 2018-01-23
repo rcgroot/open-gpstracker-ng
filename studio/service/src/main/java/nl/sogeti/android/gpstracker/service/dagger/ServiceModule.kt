@@ -25,7 +25,6 @@ class ServiceModule {
     fun stateBroadcastAction() =
             ServiceConstants.ACTION_BROADCAST_LOGGING_STATE
 
-
     @Provides
     fun permissionChecker() = PermissionChecker()
 

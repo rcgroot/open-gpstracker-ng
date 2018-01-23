@@ -57,7 +57,7 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
         super.dismiss()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentImportTracktypeDialogBinding>(inflater, R.layout.fragment_import_tracktype_dialog, container, false)
         val importTrackTypeModel = ImportTrackTypeModel()
         val importTrackTypePresenter = ImportTrackTypePresenter(importTrackTypeModel, this)

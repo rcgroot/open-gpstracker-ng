@@ -67,7 +67,7 @@ class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.Vie
     }
 
     override fun didStart() {
-        val trackUri = model.trackUri.get()
+        val trackUri = model.trackUri
 
         loadTrackTypePosition(context, trackUri)
         loadTrackName(context, trackUri)
@@ -76,9 +76,8 @@ class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.Vie
     override fun willStop() {
     }
 
-    fun ok() {
-        val trackUri = model.trackUri.get()
-        saveTrackName(context, trackUri)
+    fun ok(trackUri: Uri, trackName: String) {
+        saveTrackName(context, trackUri, trackName)
         saveTrackTypePosition(context, trackUri)
         summaryManager.removeFromCache(trackUri)
         view.dismiss()
@@ -104,8 +103,7 @@ class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.Vie
         model.name.set(trackName)
     }
 
-    private fun saveTrackName(context: Context, trackUri: Uri) {
-        val trackName = model.name.get()
+    private fun saveTrackName(context: Context, trackUri: Uri, trackName: String) {
         trackUri.updateName(context, trackName)
     }
 

@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.base.dagger
 
+import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
@@ -58,4 +59,7 @@ interface AppComponent {
 
     @Named("SystemBackgroundExecutor")
     fun executor(): Executor
+
+    fun provideUriBuilder(): Uri.Builder
+
 }

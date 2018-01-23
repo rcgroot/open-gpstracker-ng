@@ -27,7 +27,9 @@ import javax.inject.Named
 
 @FeatureScope
 @Module
-class FeatureModule(val context: Context) {
+class FeatureModule(context: Context) {
+
+    private val context = context.applicationContext
 
     @FeatureScope
     @Provides
