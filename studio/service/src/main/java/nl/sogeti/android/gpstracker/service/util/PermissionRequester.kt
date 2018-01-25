@@ -59,10 +59,12 @@ class PermissionRequester {
         private val runnables = LinkedHashMap<PermissionRequester, () -> Unit>()
         private var permissionDialog: AlertDialog? = null
         private var installDialog: AlertDialog? = null
+        private var missingDialog: AlertDialog? = null
         private var request: Array<String> = emptyArray()
 
         private val isShowingDialog: Boolean
-            get() = permissionDialog != null || installDialog != null
+            get() = arrayOf(permissionDialog, installDialog, missingDialog)
+                    .fold(false, { acc, dialog -> acc || dialog != null })
     }
 
     @Inject
@@ -128,7 +130,11 @@ class PermissionRequester {
                         && grants.contains(ACCESS_FINE_LOCATION)) {
                     didReceivePermissions()
                 } else {
-                    checkOpenGPSTrackerAccess(fragment)
+                    val missing = grantResults.indices
+                            .filter { grantResults[it] != PackageManager.PERMISSION_GRANTED }
+                            .map { permissions[it] }
+                    val ok = DialogInterface.OnClickListener { _, _ -> checkOpenGPSTrackerAccess(fragment) }
+                    showMissing(fragment.context, missing, ok)
                 }
             })
         }
@@ -167,12 +173,25 @@ class PermissionRequester {
 
     private fun showRequest(fragment: Fragment) {
         synchronized(request, {
+            permissionDialog?.dismiss()
             permissionDialog = null
             if (request.isEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 request = arrayOf(TRACKING_CONTROL, TRACKING_HISTORY, ACCESS_FINE_LOCATION)
                 fragment.requestPermissions(request, REQUEST_TRACKING_CONTROL)
             }
         })
+    }
+
+    private fun showMissing(context: Context, missing: List<String>, ok: DialogInterface.OnClickListener) {
+        if (!isShowingDialog) {
+            val permissions = missing.fold("", { description: String, permission: String -> description + ", $permission" })
+            missingDialog = AlertDialog.Builder(context)
+                    .setMessage("Missing $permissions")
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, ok)
+                    .setOnDismissListener { missingDialog = null }
+                    .show()
+        }
     }
 
     private fun installOpenGpsTracker(context: Context) {
