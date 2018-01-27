@@ -52,20 +52,12 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:311688854373:android:6a0c06d7b4f4a4f7",
+        "mobilesdk_app_id": "1:311688854373:android:91d36ac9b95579e0",
         "android_client_info": {
-          "package_name": "nl.sogeti.android.gpstracker.ng.mock"
+          "package_name": "nl.sogeti.android.gpstracker"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "311688854373-5amr030md0ibrcv9nq3h0m32h8qse2dp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "nl.sogeti.android.gpstracker.ng.mock",
-            "certificate_hash": "217fd02fa1af186c644f82c3aceb1ddccb06781d"
-          }
-        },
         {
           "client_id": "311688854373-9rl1h3mh8kgm70pm9l2vqe2vssh4p2m3.apps.googleusercontent.com",
           "client_type": 3
@@ -81,13 +73,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "311688854373-9rl1h3mh8kgm70pm9l2vqe2vssh4p2m3.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
@@ -96,9 +83,40 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:311688854373:android:3a9c586c1aeb14ea",
+        "mobilesdk_app_id": "1:311688854373:android:d9c02936e71e0442",
         "android_client_info": {
-          "package_name": "nl.sogeti.android.gpstracker.ng.develop"
+          "package_name": "nl.sogeti.android.gpstracker.mock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311688854373-9rl1h3mh8kgm70pm9l2vqe2vssh4p2m3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtVu9cndWJdpmYFmqzh87ISijzchdIALQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311688854373:android:13ed81399379b18e",
+        "android_client_info": {
+          "package_name": "nl.sogeti.android.gpstracker.develop"
         }
       },
       "oauth_client": [

@@ -30,6 +30,8 @@ package nl.sogeti.android.gpstracker.service.integration;
 
 import android.net.Uri;
 
+import nl.sogeti.android.gpstracker.service.BuildConfig;
+
 /**
  * The GPSTracking provider stores all static information about GPSTracking.
  *
@@ -40,7 +42,7 @@ public final class ContentConstants {
     /**
      * The authority of this provider: nl.sogeti.android.gpstracker
      */
-    public static final String GPS_TRACKS_AUTHORITY = "nl.sogeti.android.gpstracker";
+    public static final String GPS_TRACKS_AUTHORITY = BuildConfig.packageName;
     /**
      * The content:// style Uri for this provider, content://nl.sogeti.android.gpstracker
      */

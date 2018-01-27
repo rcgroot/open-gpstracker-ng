@@ -34,11 +34,6 @@ package nl.sogeti.android.gpstracker.service.integration;
 public class ServiceConstants {
 
     /**
-     * Package name of the application which offers the services
-     */
-    public static final String PACKAGE_ID = "nl.sogeti.android.gpstracker";
-
-    /**
      * Broadcast intent action indicating that the logger service state has changed. Includes the logging state and
      * its precision.
      * Required extra's: EXTRA_LOGGING_PRECISION and EXTRA_LOGGING_STATE
@@ -145,10 +140,5 @@ public class ServiceConstants {
         public static final String CONFIG_STOP_AT_POWER_DISCONNECT = "nl.sogeti.android.gpstracker.extra.CONFIG_STOP_AT_POWER_DISCONNECT";
         public static final String CONFIG_START_AT_DOCK = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_DOCK";
         public static final String CONFIG_STOP_AT_UNDOCK = "nl.sogeti.android.gpstracker.extra.CONFIG_STOP_AT_UNDOCK";
-    }
-
-    public static final class permission {
-        public static final String TRACKING_CONTROL = "nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL";
-        public static final String TRACKING_HISTORY = "nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY";
     }
 }

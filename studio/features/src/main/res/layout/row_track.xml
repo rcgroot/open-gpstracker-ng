@@ -157,7 +157,7 @@
                 android:onClick="@{() -> adapter.didShareTrack(viewModel)}"
                 android:text="@string/track_share"
                 android:visibility="gone"
-                app:leftDrawable='@{"ic_share_black_24dp"}'
+                app:leftDrawable='@{@drawable/ic_share_black_24dp}'
                 card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
                 card_view:layout_constraintLeft_toLeftOf="@+id/row_track_map"
                 card_view:layout_constraintRight_toLeftOf="@+id/row_track_edit"
@@ -172,7 +172,7 @@
                 android:onClick="@{() -> adapter.didEditTrack(viewModel)}"
                 android:text="@string/track_edit"
                 android:visibility="gone"
-                app:leftDrawable='@{"ic_mode_edit_black_24dp"}'
+                app:leftDrawable='@{@drawable/ic_mode_edit_black_24dp}'
                 card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
                 card_view:layout_constraintLeft_toRightOf="@+id/row_track_share"
                 card_view:layout_constraintRight_toLeftOf="@+id/row_track_delete"
@@ -186,7 +186,7 @@
                 android:onClick="@{() -> adapter.didDeleteTrack(viewModel)}"
                 android:text="@string/track_delete"
                 android:visibility="gone"
-                app:leftDrawable='@{"ic_delete_black_24dp"}'
+                app:leftDrawable='@{@drawable/ic_delete_black_24dp}'
                 card_view:layout_constraintBottom_toBottomOf="@+id/row_track_map"
                 card_view:layout_constraintLeft_toRightOf="@+id/row_track_edit"
                 card_view:layout_constraintRight_toRightOf="@+id/row_track_map"

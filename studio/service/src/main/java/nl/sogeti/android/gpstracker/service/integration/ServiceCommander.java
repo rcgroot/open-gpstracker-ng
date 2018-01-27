@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.support.annotation.NonNull;
 
+import nl.sogeti.android.gpstracker.service.BuildConfig;
+
 public class ServiceCommander {
 
     public boolean isPackageInstalled(Context context) {
@@ -25,7 +27,7 @@ public class ServiceCommander {
     @NonNull
     Intent createServiceIntent() {
         Intent intent = new Intent();
-        intent.setComponent(new ComponentName("nl.sogeti.android.gpstracker", "nl.sogeti.android.gpstracker.service.logger.GPSLoggerService"));
+        intent.setComponent(new ComponentName(BuildConfig.packageName, "nl.sogeti.android.gpstracker.service.logger.GPSLoggerService"));
         return intent;
     }
 

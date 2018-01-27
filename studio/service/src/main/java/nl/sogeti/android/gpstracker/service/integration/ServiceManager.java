@@ -41,7 +41,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
+import nl.sogeti.android.gpstracker.service.BuildConfig;
 import timber.log.Timber;
+
+import static nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission;
 
 /**
  * Class to interact with the service that tracks and logs the locations
@@ -225,7 +228,7 @@ public class ServiceManager implements ServiceManagerInterface {
                         }
                     }
                 };
-                if (ContextCompat.checkSelfPermission(context, ServiceConstants.permission.TRACKING_CONTROL) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(context, tracksPermission) == PackageManager.PERMISSION_GRANTED) {
                     context.bindService(commander.createServiceIntent(), this.mServiceConnection, Context.BIND_AUTO_CREATE);
                 } else {
                     try {

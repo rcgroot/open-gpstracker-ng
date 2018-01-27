@@ -7,15 +7,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="${controlPermission}" />
+    <uses-permission android:name="${tracksPermission}" />
 
     <permission
-        android:name="nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL"
+        android:name="${controlPermission}"
         android:description="@string/permission_control_description"
         android:label="@string/permission_control"
         android:permissionGroup="android.permission-group.LOCATION"
         android:protectionLevel="dangerous" />
     <permission
-        android:name="nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"
+        android:name="${tracksPermission}"
         android:description="@string/permission_history_description"
         android:label="@string/permission_history"
         android:permissionGroup="android.permission-group.LOCATION"
@@ -26,7 +28,7 @@
             android:name=".logger.GPSLoggerService"
             android:enabled="true"
             android:exported="true"
-            android:permission="nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL"
+            android:permission="${controlPermission}"
             android:process=":remote" />
 
         <provider
@@ -34,7 +36,7 @@
             android:authorities="${providerAuthority}"
             android:enabled="true"
             android:exported="true"
-            android:permission="nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY">
+            android:permission="${tracksPermission}">
             <grant-uri-permission android:pathPrefix="/tracks/" />
 
             <path-permission

@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.features.databinding
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.AppCompatSpinner
@@ -40,8 +41,7 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SpinnerAdapter
-import nl.sogeti.android.gpstracker.ng.base.BuildConfig
-import nl.sogeti.android.gpstracker.ng.base.R
+import nl.sogeti.android.opengpstrack.ng.features.R
 
 open class CommonBindingAdapters {
 
@@ -65,11 +65,12 @@ open class CommonBindingAdapters {
     }
 
     @BindingAdapter("leftDrawable")
-    fun setLeftDrawable(button: Button, drawableName: String?) {
-        val drawableIdentifier = button.resources.getIdentifier(drawableName, "drawable", BuildConfig.APPLICATION_ID)
-        val drawable = VectorDrawableCompat.create(button.resources, drawableIdentifier, button.context.theme) ?: return
-        drawable.setTint(ResourcesCompat.getColor(button.resources, R.color.icons, button.context.theme))
-        button.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+    fun setLeftDrawable(button: Button, drawable: Drawable?) {
+        val top = button.compoundDrawables[1]
+        val right = button.compoundDrawables[2]
+        val bottom = button.compoundDrawables[3]
+        drawable?.setTint(ResourcesCompat.getColor(button.resources, R.color.icons, button.context.theme))
+        button.setCompoundDrawablesWithIntrinsicBounds(drawable, top, right, bottom)
     }
 
     @BindingAdapter("srcCompat")
@@ -77,7 +78,8 @@ open class CommonBindingAdapters {
         val resource = attributeValue ?: return
         val tint = (imageView.tag as? Map<*, *>)?.get("tint") as? Int
         if (tint != null) {
-            val drawable = VectorDrawableCompat.create(imageView.resources, resource, imageView.context.theme) ?: return
+            val drawable = VectorDrawableCompat.create(imageView.resources, resource, imageView.context.theme)
+                    ?: return
             drawable.setTint(tint)
             imageView.setImageDrawable(drawable)
         } else {

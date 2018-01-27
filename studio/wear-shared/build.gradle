@@ -9,12 +9,11 @@ androidExtensions {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    buildToolsVersion rootProject.buildTools
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 26
-
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
     }
 
     buildTypes {

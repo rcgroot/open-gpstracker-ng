@@ -38,17 +38,13 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import nl.sogeti.android.gpstracker.service.BuildConfig.controlPermission
+import nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission
 import nl.sogeti.android.gpstracker.service.R
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.permission.TRACKING_CONTROL
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.permission.TRACKING_HISTORY
-import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.utils.PermissionChecker
 import java.util.*
 import javax.inject.Inject
-
-private const val REQUEST_TRACKING_CONTROL = 10001
-private const val INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker"
 
 /**
  * Asks for Open GPS tracker permissions
@@ -56,6 +52,9 @@ private const val INSTALL_URI = "https://play.google.com/store/apps/details?id=n
 class PermissionRequester {
 
     companion object {
+        private const val REQUEST_tracksPermission = 10001
+        private const val INSTALL_URI = "https://play.google.com/store/apps/details?id=nl.sogeti.android.gpstracker"
+
         private val runnables = LinkedHashMap<PermissionRequester, () -> Unit>()
         private var permissionDialog: AlertDialog? = null
         private var installDialog: AlertDialog? = null
@@ -67,8 +66,6 @@ class PermissionRequester {
                     .fold(false, { acc, dialog -> acc || dialog != null })
     }
 
-    @Inject
-    lateinit var serviceManager: ServiceManagerInterface
     @Inject
     lateinit var permissionChecker: PermissionChecker
 
@@ -98,13 +95,13 @@ class PermissionRequester {
 
         val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
         val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
-        if (hasPermission(fragment.context, TRACKING_CONTROL)
-                && hasPermission(fragment.context, TRACKING_HISTORY)
+        if (hasPermission(fragment.context, tracksPermission)
+                && hasPermission(fragment.context, controlPermission)
                 && hasPermission(fragment.context, ACCESS_FINE_LOCATION)) {
             // Have permissions
             didReceivePermissions()
-        } else if (canAsk(fragment.activity, TRACKING_CONTROL)
-                && canAsk(fragment.activity, TRACKING_HISTORY)
+        } else if (canAsk(fragment.activity, tracksPermission)
+                && canAsk(fragment.activity, controlPermission)
                 && canAsk(fragment.activity, ACCESS_FINE_LOCATION)) {
             // Ask permissions
             showRequest(fragment)
@@ -119,14 +116,14 @@ class PermissionRequester {
     }
 
     fun onRequestPermissionsResult(fragment: Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_TRACKING_CONTROL) {
+        if (requestCode == REQUEST_tracksPermission) {
             synchronized(request, {
                 request = emptyArray()
                 val grants = grantResults.indices
                         .filter { grantResults[it] == PackageManager.PERMISSION_GRANTED }
                         .map { permissions[it] }
-                if (grants.contains(TRACKING_CONTROL)
-                        && grants.contains(TRACKING_HISTORY)
+                if (grants.contains(tracksPermission)
+                        && grants.contains(controlPermission)
                         && grants.contains(ACCESS_FINE_LOCATION)) {
                     didReceivePermissions()
                 } else {
@@ -176,8 +173,8 @@ class PermissionRequester {
             permissionDialog?.dismiss()
             permissionDialog = null
             if (request.isEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                request = arrayOf(TRACKING_CONTROL, TRACKING_HISTORY, ACCESS_FINE_LOCATION)
-                fragment.requestPermissions(request, REQUEST_TRACKING_CONTROL)
+                request = arrayOf(tracksPermission, controlPermission, ACCESS_FINE_LOCATION)
+                fragment.requestPermissions(request, REQUEST_tracksPermission)
             }
         })
     }

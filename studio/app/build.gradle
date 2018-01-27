@@ -5,13 +5,13 @@ apply plugin: 'io.fabric'
 
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion rootProject.targetSdk
+    buildToolsVersion rootProject.buildTools
 
     defaultConfig {
-        applicationId "nl.sogeti.android.gpstracker.ng"
-        minSdkVersion 16
-        targetSdkVersion 26
+        applicationId "nl.sogeti.android.gpstracker"
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
         versionCode buildNumber
         versionName "2.0.0-SNAPSHOT"
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
@@ -19,8 +19,6 @@ android {
         archivesBaseName = "opengpstracker-ng-$versionName"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        manifestPlaceholders = [hostName:"www.example.com"]
     }
 
     flavorDimensions "service"
@@ -36,7 +34,6 @@ android {
         mock {
             dimension "service"
             applicationIdSuffix = ".mock"
-            minSdkVersion 18 // To work with uiautomator-v18
         }
     }
 
@@ -73,7 +70,7 @@ android {
         unitTests.returnDefaultValues = true
         animationsDisabled = true
     }
-    
+
     testOptions.unitTests.all {
         testLogging {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'

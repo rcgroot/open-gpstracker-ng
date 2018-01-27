@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     def buildNumber = System.getenv("BUILD_NUMBER") as Integer ?: 1
     compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    buildToolsVersion rootProject.buildTools
     flavorDimensions "service"
 
     defaultConfig {

@@ -17,7 +17,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCFvI2hkcQYtbOkbN-C3WxN76UZPT_r49M" />
+            android:value="AIzaSyCXpohTDXqsTXizcDfGglRNke4cUUunCIQ" />
     </application>
 
 </manifest>

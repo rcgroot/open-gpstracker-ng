@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion rootProject.targetSdk
+    buildToolsVersion rootProject.buildTools
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 26
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
         versionCode 1
         versionName "1.0"
     }
@@ -24,17 +24,39 @@ android {
         store {
             dimension "service"
             buildConfigField 'boolean', 'IS_EMULATED', 'false'
-            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker" ]
+            buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL"'
+            buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"'
+            buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker"'
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker",
+                    controlPermission: "nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"
+            ]
         }
         develop {
             dimension "service"
             buildConfigField 'boolean', 'IS_EMULATED', 'false'
-            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker.develop" ]
+            buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.develop.permission.TRACKING_CONTROL"'
+            buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.develop.permission.TRACKING_HISTORY"'
+            buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker.develop"'
+
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker.develop",
+                    controlPermission: "nl.sogeti.android.gpstracker.develop.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.develop.permission.TRACKING_HISTORY"
+            ]
         }
         mock {
             dimension "service"
             buildConfigField 'boolean', 'IS_EMULATED', 'true'
-            manifestPlaceholders = [ providerAuthority: "nl.sogeti.android.gpstracker.mock" ]
+            buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.mock.permission.TRACKING_CONTROL"'
+            buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.mock.permission.TRACKING_HISTORY"'
+            buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker.mock"'
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker.mock",
+                    controlPermission: "nl.sogeti.android.gpstracker.mock.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.mock.permission.TRACKING_HISTORY"
+            ]
         }
     }
 
@@ -56,8 +78,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project (':utils')
-    implementation project (':base')
+    implementation project(':utils')
+    implementation project(':base')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"

@@ -3,10 +3,10 @@
  **    Author: rene
  ** Copyright: (c) Apr 24, 2011 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
- ** Sogeti Nederland B.V.            |  No part of this file may be reproduced  
- ** Distributed Software Engineering |  or transmitted in any form or by any        
- ** Lange Dreef 17                   |  means, electronic or mechanical, for the      
- ** 4131 NJ Vianen                   |  purpose, without the express written    
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
  ** The Netherlands                  |  permission of the copyright holder.
  *------------------------------------------------------------------------------
  *
@@ -28,18 +28,16 @@
  */
 package nl.sogeti.android.gpstracker.service.logger;
 
-import android.content.ContentUris;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
+import nl.sogeti.android.gpstracker.service.BuildConfig;
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommander;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.service.BuildConfig;
 import nl.sogeti.android.gpstracker.service.linger.LingerService;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
 import timber.log.Timber;

@@ -6,7 +6,7 @@ import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.v2.BuildConfig.*
 
-class GpsTrackerApplication : BaseGpsTrackerApplication() {
+open class GpsTrackerApplication : BaseGpsTrackerApplication() {
 
     private var stateReceiver: LoggingReceiver? = null // Or replace with signature protection implicit broadcast
 
