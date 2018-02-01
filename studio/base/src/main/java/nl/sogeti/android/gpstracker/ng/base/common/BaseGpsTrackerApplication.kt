@@ -54,9 +54,7 @@ open class BaseGpsTrackerApplication : Application() {
         }
         setupLeakCanary()
         setupDebugTree()
-        BaseConfiguration.initAppComponent(this)
         setupAnalytics()
-
     }
 
     private fun setupAnalytics() {

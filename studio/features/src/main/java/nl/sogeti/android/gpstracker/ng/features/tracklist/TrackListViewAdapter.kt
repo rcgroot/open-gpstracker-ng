@@ -40,7 +40,7 @@ import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.features.util.latLng
+import nl.sogeti.android.gpstracker.ng.features.util.mapLatLng
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.utils.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
@@ -193,7 +193,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         summaryManager.collectSummaryInfo(context, viewModel.uri, {
             if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
-                val listOfLatLng = it.waypoints.map { it.map { it.latLng() } }
+                val listOfLatLng = it.waypoints.map { it.map { it.mapLatLng() } }
                 viewModel.waypoints.set(listOfLatLng)
                 val trackPolylineProvider = TrackPolylineProvider(listOfLatLng)
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)

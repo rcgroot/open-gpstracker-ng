@@ -33,6 +33,7 @@ import android.net.Uri
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory

@@ -1,0 +1,42 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="nl.sogeti.android.gpstracker.service">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="${controlPermission}" />
+    <uses-permission android:name="${tracksPermission}" />
+
+    <permission
+        android:name="${controlPermission}"
+        android:description="@string/permission_control_description"
+        android:label="@string/permission_control"
+        android:permissionGroup="android.permission-group.LOCATION"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="${tracksPermission}"
+        android:description="@string/permission_history_description"
+        android:label="@string/permission_history"
+        android:permissionGroup="android.permission-group.LOCATION"
+        android:protectionLevel="dangerous" />
+
+    <application>
+        <provider
+            android:name="nl.sogeti.android.gpstracker.service.mock.MockTracksContentProvider"
+            android:authorities="${providerAuthority}"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="${tracksPermission}">
+            <grant-uri-permission android:pathPrefix="/tracks/" />
+
+            <path-permission
+                android:path="/search_suggest_query"
+                android:readPermission="android.permission.GLOBAL_SEARCH" />
+        </provider>
+
+    </application>
+
+</manifest>

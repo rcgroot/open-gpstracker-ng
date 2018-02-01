@@ -31,8 +31,8 @@ package nl.sogeti.android.gpstracker.ng.features.map
 import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.ng.features.util.latLng
 import nl.sogeti.android.gpstracker.service.util.ResultHandler

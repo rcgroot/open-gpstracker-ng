@@ -62,6 +62,7 @@ class ControlFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         permissionRequester.start(this, { controlPresenter.start(activity) })
     }
 

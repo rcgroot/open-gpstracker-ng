@@ -46,6 +46,8 @@ class AboutFragment : DialogFragment() {
     internal val model = AboutModel()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val activity = activity ?: throw IllegalStateException("Attempting onCreateDialog outside lifecycle of fragment")
+
         var binding = DataBindingUtil.inflate<FragmentAboutBinding>(activity.layoutInflater, R.layout.fragment_about, null, false)
         binding.model = model
 

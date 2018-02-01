@@ -37,7 +37,6 @@ import android.graphics.drawable.Drawable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -50,6 +49,7 @@ import java.util.List;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng;
 import nl.sogeti.android.gpstracker.utils.CommonKt;
 import nl.sogeti.android.opengpstrack.ng.features.R;
 

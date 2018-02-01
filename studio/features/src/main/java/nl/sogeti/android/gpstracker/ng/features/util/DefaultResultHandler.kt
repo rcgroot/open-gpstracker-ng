@@ -29,8 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 import nl.sogeti.android.gpstracker.service.util.ResultHandler
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 
@@ -46,7 +46,7 @@ class DefaultResultHandler : ResultHandler {
         if (builder != null) {
             builder.build()
         } else {
-            LatLngBounds(LatLng(0.0, 0.0), LatLng(50.0, 5.0))
+            LatLngBounds(com.google.android.gms.maps.model.LatLng(0.0, 0.0), com.google.android.gms.maps.model.LatLng(50.0, 5.0))
         }
     }
     val waypoints: List<List<Waypoint>> by lazy {
@@ -62,7 +62,7 @@ class DefaultResultHandler : ResultHandler {
     }
 
     override fun addSegment() {
-        segmentsBuilder.add(mutableListOf<Waypoint>())
+        segmentsBuilder.add(mutableListOf())
     }
 
     override fun addWaypoint(waypoint: Waypoint) {
@@ -70,8 +70,12 @@ class DefaultResultHandler : ResultHandler {
         segmentsBuilder.last().add(waypoint)
         // Build a bounds for the whole track
         boundsBuilder = boundsBuilder ?: LatLngBounds.Builder()
-        boundsBuilder?.include(waypoint.latLng())
+        boundsBuilder?.include(waypoint.mapLatLng())
     }
+}
+
+fun Waypoint.mapLatLng(): com.google.android.gms.maps.model.LatLng {
+    return com.google.android.gms.maps.model.LatLng(this.latitude, this.longitude)
 }
 
 fun Waypoint.latLng(): LatLng {

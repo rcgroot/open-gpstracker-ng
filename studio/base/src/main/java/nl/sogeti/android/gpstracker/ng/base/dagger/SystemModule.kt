@@ -4,8 +4,11 @@ import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
+import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
 import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Named
@@ -32,4 +35,7 @@ class SystemModule {
 
     @Provides
     fun packageManagerFactory() = PackageManagerFactory()
+
+    @Provides
+    fun locationFactory(): LocationFactory = LocationFactoryImpl()
 }

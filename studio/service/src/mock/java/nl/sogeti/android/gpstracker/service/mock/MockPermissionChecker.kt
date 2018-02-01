@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.mock
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
+import nl.sogeti.android.gpstracker.utils.PermissionChecker
 
 class MockPermissionChecker : PermissionChecker() {
 

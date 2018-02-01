@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ **    Author: René de Groot
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,24 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.util
+package nl.sogeti.android.gpstracker.ng.base.location
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.view.WindowManager
-import android.widget.FrameLayout
-import nl.sogeti.android.gpstracker.v2.R
+import android.content.Context
 
-class TestActivity : AppCompatActivity() {
+interface LocationFactory {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val frameLayout = FrameLayout(this)
-        frameLayout.id = R.id.title
-        setContentView(frameLayout)
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-    }
+    fun getLocationCoordinates(context: Context): LatLng?
+
+    fun getLocationName(context: Context): String?
 }

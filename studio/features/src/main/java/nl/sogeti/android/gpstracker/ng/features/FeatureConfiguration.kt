@@ -14,15 +14,6 @@ object FeatureConfiguration {
 
     lateinit var featureComponent: FeatureComponent
 
-    fun initFeatureComponent(context: Context, version: String, commit: String, build: String) {
-        featureComponent = DaggerFeatureComponent.builder()
-                .appComponent(BaseConfiguration.appComponent)
-                .serviceComponent(ServiceConfiguration.serviceComponent)
-                .versionInfoModule(VersionInfoModule(version, commit, build))
-                .featureModule(FeatureModule(context))
-                .build()
-    }
-
     fun setupDefaultViewBinding() {
         val bindingComponent = FeaturesBindingComponent()
         DataBindingUtil.setDefaultComponent(bindingComponent)

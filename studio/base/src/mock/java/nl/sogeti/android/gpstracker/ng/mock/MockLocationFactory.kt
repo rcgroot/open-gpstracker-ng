@@ -26,52 +26,19 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.dagger
+package nl.sogeti.android.gpstracker.ng.mock
 
-import android.net.Uri
-import android.os.AsyncTask
-import dagger.Module
-import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import nl.sogeti.android.gpstracker.ng.map.LocationFactory
-import nl.sogeti.android.gpstracker.ng.mock.MockGpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
-import nl.sogeti.android.gpstracker.ng.mock.MockPermissionChecker
-import nl.sogeti.android.gpstracker.ng.utils.PermissionChecker
-import nl.sogeti.android.gpstracker.ng.utils.VersionHelper
-import java.util.*
-import javax.inject.Named
+import android.content.Context
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 
-@Module
-class MockSystemModule {
+class MockLocationFactory : LocationFactory {
 
-    @Provides
-    fun locale(): Locale {
-        return Locale.getDefault()
+    override fun getLocationCoordinates(context: Context): LatLng? = lastWaypoint
+
+    override fun getLocationName(context: Context): String? = "Gotham"
+
+    companion object {
+        var lastWaypoint = LatLng(52.3664734, 4.9212022)
     }
-
-    @Provides
-    fun gpsStatusControllerFactory(): GpsStatusControllerFactory {
-        return MockGpsStatusControllerFactory()
-    }
-
-    @Provides
-    fun uriBuilder() = Uri.Builder()
-
-    @Provides
-    @Named("SystemBackgroundExecutor")
-    fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
-
-    @Provides
-    fun permissionChecker(): PermissionChecker = MockPermissionChecker()
-
-    @Provides
-    fun locationFactory(): LocationFactory = MockLocationFactory()
-
-    @Provides
-    fun packageManagerFactory() = PackageManagerFactory()
-
-    @Provides
-    fun versionHelper() = VersionHelper()
 }

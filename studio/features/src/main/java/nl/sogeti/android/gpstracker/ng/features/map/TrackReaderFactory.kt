@@ -30,8 +30,8 @@ package nl.sogeti.android.gpstracker.ng.features.map
 
 import android.content.Context
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 
 class TrackReaderFactory {
 

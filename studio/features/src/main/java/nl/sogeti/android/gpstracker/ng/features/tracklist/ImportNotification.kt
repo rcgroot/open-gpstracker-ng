@@ -130,7 +130,7 @@ class ImportNotification(val context: Context) {
             stackBuilder.addParentStack(TrackActivity::class.java)
             stackBuilder.addNextIntent(Intent(context, TrackActivity::class.java))
             stackBuilder.addNextIntent(Intent(context, TrackListActivity::class.java))
-            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
         }
         setContentIntent(resultPendingIntent)
 

@@ -59,6 +59,7 @@ class TrackMapFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         binding!!.fragmentMapMapview.onStart()
         permissionRequester.start(this, {
             trackPresenter.start(activity)
@@ -84,7 +85,7 @@ class TrackMapFragment : Fragment() {
         binding!!.fragmentMapMapview.onStop()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         binding!!.fragmentMapMapview.onSaveInstanceState(outState)
     }

@@ -7,8 +7,8 @@ import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxParser
-import nl.sogeti.android.gpstracker.ng.features.map.LocationFactory
-import nl.sogeti.android.gpstracker.ng.features.map.LocationFactoryImpl
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.features.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
@@ -16,6 +16,7 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.wear.StatisticsCollector
+import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.VersionHelper
 import nl.sogeti.android.gpstracker.utils.concurrent.ExecutorFactory
@@ -83,9 +84,6 @@ class FeatureModule(context: Context) {
 
     @Provides
     fun timeSpanCalculator() = TimeSpanCalculator()
-
-    @Provides
-    fun locationFactory(): LocationFactory = LocationFactoryImpl()
 
     @Provides
     fun versionHelper() = VersionHelper()

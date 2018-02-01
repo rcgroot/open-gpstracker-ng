@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.mock
+package nl.sogeti.android.gpstracker.service.mock
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -36,21 +36,14 @@ import android.content.IntentFilter.SYSTEM_LOW_PRIORITY
 import android.os.Handler
 import android.os.Looper
 import android.support.test.espresso.idling.CountingIdlingResource
-import nl.sogeti.android.gpstracker.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.ng.common.MockedGpsTrackerApplication
-import nl.sogeti.android.gpstracker.ng.utils.trackUri
+import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
+import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
+import nl.sogeti.android.gpstracker.service.util.trackUri
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Named
 
 class MockBroadcastSender {
 
-    @field:[Inject Named("stateBroadcastAction")]
-    lateinit var stateBroadcastAction: String
-
-    init {
-        MockedGpsTrackerApplication.mockAppComponent.inject(this)
-    }
+    var stateBroadcastAction: String = ServiceConfiguration.serviceComponent.stateBroadcastAction()
 
     fun sendStartedRecording(context: Context, trackId: Long) {
         broadcastLoggingState(context, ServiceConstants.STATE_LOGGING, trackId)

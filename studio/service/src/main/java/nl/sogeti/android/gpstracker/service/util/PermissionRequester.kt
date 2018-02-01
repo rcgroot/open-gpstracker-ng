@@ -43,6 +43,7 @@ import nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission
 import nl.sogeti.android.gpstracker.service.R
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.utils.PermissionChecker
+import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 
@@ -89,33 +90,30 @@ class PermissionRequester {
     }
 
     private fun checkOpenGPSTrackerAccess(fragment: Fragment) {
-
-//        val install = DialogInterface.OnClickListener { _, _ -> installOpenGpsTracker(fragment.context) }
-//        if (serviceManager.isPackageInstalled(fragment.context)) {
-
+        val activity = fragment.activity
+                ?: throw IllegalStateException("Unable to check permission in contextless fragment")
         val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
         val cancel = DialogInterface.OnClickListener { _, _ -> cancel() }
-        if (hasPermission(fragment.context, tracksPermission)
-                && hasPermission(fragment.context, controlPermission)
-                && hasPermission(fragment.context, ACCESS_FINE_LOCATION)) {
+
+        if (hasPermission(activity as Context, tracksPermission)
+                && hasPermission(activity, controlPermission)
+                && hasPermission(activity, ACCESS_FINE_LOCATION)) {
             // Have permissions
             didReceivePermissions()
-        } else if (canAsk(fragment.activity, tracksPermission)
-                && canAsk(fragment.activity, controlPermission)
-                && canAsk(fragment.activity, ACCESS_FINE_LOCATION)) {
+        } else if (canAsk(activity, tracksPermission)
+                && canAsk(activity, controlPermission)
+                && canAsk(activity, ACCESS_FINE_LOCATION)) {
             // Ask permissions
             showRequest(fragment)
         } else {
             // Explain permissions
-            showRationale(fragment.context, startRequest, cancel)
+            showRationale(activity, startRequest, cancel)
         }
-
-//        } else if (!isShowingDialog) {
-//            showInstallLink(fragment.context, cancel, install)
-//        }
     }
 
     fun onRequestPermissionsResult(fragment: Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        val activity = fragment.activity
+                ?: throw IllegalStateException("Unable to check permission in contextless fragment")
         if (requestCode == REQUEST_tracksPermission) {
             synchronized(request, {
                 request = emptyArray()
@@ -131,7 +129,7 @@ class PermissionRequester {
                             .filter { grantResults[it] != PackageManager.PERMISSION_GRANTED }
                             .map { permissions[it] }
                     val ok = DialogInterface.OnClickListener { _, _ -> checkOpenGPSTrackerAccess(fragment) }
-                    showMissing(fragment.context, missing, ok)
+                    showMissing(activity, missing, ok)
                 }
             })
         }

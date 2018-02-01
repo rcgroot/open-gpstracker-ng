@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.features.map
+package nl.sogeti.android.gpstracker.ng.base.location
 
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
@@ -35,7 +35,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.location.LocationManager.GPS_PROVIDER
 import android.location.LocationManager.NETWORK_PROVIDER
-import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 import java.io.IOException
 import java.util.*

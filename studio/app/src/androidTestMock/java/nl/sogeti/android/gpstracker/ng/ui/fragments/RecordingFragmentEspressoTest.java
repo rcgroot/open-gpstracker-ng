@@ -40,7 +40,7 @@ import org.junit.Test;
 import nl.sogeti.android.gpstracker.ng.recording.RecordingFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.mock.MockBroadcastSender;
-import nl.sogeti.android.gpstracker.ng.mock.MockServiceManager;
+import nl.sogeti.android.gpstracker.service.mock.MockServiceManager;
 import nl.sogeti.android.gpstracker.ng.mock.MockTracksContentProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 

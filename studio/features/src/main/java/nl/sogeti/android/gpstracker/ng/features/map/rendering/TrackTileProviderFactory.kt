@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.map.rendering
 
 import android.content.Context
 import android.databinding.ObservableField
-import com.google.android.gms.maps.model.LatLng
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 
 class TrackTileProviderFactory {
 

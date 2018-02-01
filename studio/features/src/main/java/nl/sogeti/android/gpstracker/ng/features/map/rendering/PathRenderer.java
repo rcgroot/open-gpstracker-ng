@@ -36,10 +36,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.VisibleForTesting;
 
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng;
 
 class PathRenderer {
     private final static int NORMAL_PATH_SIZE = 250;

@@ -26,24 +26,36 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.common
+package nl.sogeti.android.gpstracker.ng
 
-import nl.sogeti.android.gpstracker.ng.GpsTrackerApplication
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration.appComponent
 import nl.sogeti.android.gpstracker.ng.base.dagger.AppModule
 import nl.sogeti.android.gpstracker.ng.dagger.DaggerMockAppComponent
-import nl.sogeti.android.gpstracker.ng.dagger.MockAppComponent
+import nl.sogeti.android.gpstracker.ng.dagger.MockSystemModule
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration.featureComponent
+import nl.sogeti.android.gpstracker.ng.features.dagger.DaggerFeatureComponent
+import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureModule
+import nl.sogeti.android.gpstracker.ng.features.dagger.VersionInfoModule
+import nl.sogeti.android.gpstracker.service.dagger.DaggerMockServiceComponent
+import nl.sogeti.android.gpstracker.service.dagger.MockServiceModule
+import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration.serviceComponent
 
 class MockedGpsTrackerApplication : GpsTrackerApplication() {
 
-    companion object {
-        lateinit var mockAppComponent: MockAppComponent
-    }
-
-    fun buildAppComponent() {
-        mockAppComponent = DaggerMockAppComponent.builder()
+    override fun setupModules() {
+        appComponent = DaggerMockAppComponent.builder()
                 .appModule(AppModule(this))
+                .mockSystemModule(MockSystemModule())
                 .build()
-        BaseConfiguration.appComponent = mockAppComponent
+        serviceComponent = DaggerMockServiceComponent.builder()
+                .mockServiceModule(MockServiceModule())
+                .build()
+        featureComponent = DaggerFeatureComponent.builder()
+                .appComponent(BaseConfiguration.appComponent)
+                .serviceComponent(serviceComponent)
+                .versionInfoModule(VersionInfoModule(version(), gitHash(), buildNumber()))
+                .featureModule(FeatureModule(this))
+                .build()
     }
 }

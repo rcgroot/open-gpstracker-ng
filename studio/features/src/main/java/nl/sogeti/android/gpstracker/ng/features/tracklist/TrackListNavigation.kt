@@ -76,7 +76,7 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
             // For tablet we'll opt to leave the track list on the screen instead of removing it
             // getSupportFragmentManager().popBackStack(TRANSACTION_TRACKS, POP_BACK_STACK_INCLUSIVE);
         } else {
-            fragment.activity.finish()
+            fragment.activity?.finish()
         }
     }
 
@@ -87,7 +87,8 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
             intent.type = MIME_TYPE_GENERAL
             startTypeImport(intent, param)
         } else {
-            AlertDialog.Builder(fragment.context)
+            val context = fragment.context ?: throw IllegalStateException("Attempting to run select file outside lifecycle of fragment")
+            AlertDialog.Builder(context)
                     .setTitle("Not implemented ")
                     .setMessage("This feature does not exist pre-KitKat")
                     .create()
@@ -100,7 +101,8 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             startTypeImport(intent, param)
         } else {
-            AlertDialog.Builder(fragment.context)
+            val context = fragment.context ?: throw IllegalStateException("Attempting to run select directory outside lifecycle of fragment")
+            AlertDialog.Builder(context)
                     .setTitle("Not implemented ")
                     .setMessage("This feature does not exist pre-Lollipop")
                     .create()
@@ -112,7 +114,8 @@ class TrackListNavigation(val fragment: Fragment) : Navigation {
         if (fragment is ActivityResultLambda) {
             fragment.startActivityForResult(intent) { resultIntent ->
                 resultIntent?.let {
-                    ImportTrackTypeDialogFragment().show(fragment.fragmentManager, TAG_DIALOG) { type ->
+                    val fragmentManager = fragment.fragmentManager ?: throw IllegalStateException("Attempting to run import outside lifecycle of fragment")
+                    ImportTrackTypeDialogFragment().show(fragmentManager, TAG_DIALOG) { type ->
                         resultIntent.putExtra(KEY_META_FIELD_TRACK_TYPE, type)
                         param(resultIntent)
                     }

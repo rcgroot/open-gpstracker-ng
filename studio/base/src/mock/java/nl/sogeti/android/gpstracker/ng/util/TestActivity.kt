@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,17 +26,24 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.dagger
+package nl.sogeti.android.gpstracker.ng.util
 
-import dagger.Component
-import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
-import nl.sogeti.android.gpstracker.ng.base.dagger.AppModule
-import nl.sogeti.android.gpstracker.ng.mock.MockBroadcastSender
-import javax.inject.Singleton
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
+import android.widget.FrameLayout
+import nl.sogeti.android.gpstracker.ng.base.R
 
-@Singleton
-@Component(modules = [MockIntegrationModule::class, AppModule::class, MockSystemModule::class])
-interface MockAppComponent : AppComponent {
+class TestActivity : AppCompatActivity() {
 
-    fun inject(injectable: MockBroadcastSender)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val frameLayout = FrameLayout(this)
+        frameLayout.id = R.id.title
+        setContentView(frameLayout)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+    }
 }

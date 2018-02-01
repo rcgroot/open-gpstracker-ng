@@ -26,12 +26,12 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.mock
+package nl.sogeti.android.gpstracker.service.mock
 
 import android.content.Context
 import android.os.Handler
-import nl.sogeti.android.gpstracker.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
+import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 
 class MockServiceManager : ServiceManagerInterface {
 
@@ -40,7 +40,7 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun startup(context: Context, runnable: Runnable?) {
         started = true
-        if (globalState.loggingState == STATE_UNKNOWN) {
+        if (loggingState == STATE_UNKNOWN) {
             globalState.loggingState = STATE_STOPPED
         }
         runnable?.run()
@@ -50,9 +50,9 @@ class MockServiceManager : ServiceManagerInterface {
         started = false
     }
 
-    override fun getLoggingState(): Int = globalState.loggingState
+    override fun getLoggingState(): Int = loggingState
 
-    override fun getTrackId(): Long = globalState.trackId
+    override fun getTrackId(): Long = trackId
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = STATE_LOGGING

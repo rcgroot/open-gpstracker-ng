@@ -18,7 +18,7 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
     private var binding: FragmentEditDialogBinding? = null
 
     companion object {
-        private val ARG_URI = "ARGUMENT_URI"
+        private const val ARG_URI = "ARGUMENT_URI"
         fun newInstance(uri: Uri): TrackEditDialogFragment {
             val arguments = Bundle()
             arguments.putParcelable(ARG_URI, uri)
@@ -32,7 +32,7 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentEditDialogBinding>(inflater, R.layout.fragment_edit_dialog, container, false, FeaturesBindingComponent())
 
-        val uri = arguments.get(ARG_URI) as Uri
+        val uri = arguments?.get(ARG_URI) as Uri
         val model = TrackEditModel(uri)
         val presenter = TrackEditPresenter(model, this)
         binding.model = model
@@ -47,6 +47,8 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
     override fun onStart() {
         super.onStart()
+        val activity = activity
+                ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         presenter?.start(activity)
     }
 

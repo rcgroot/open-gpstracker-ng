@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.base.dagger
 
 import android.net.Uri
 import dagger.Component
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
@@ -41,7 +42,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [(AppModule::class), (SystemModule::class)])
+@Component(modules = [AppModule::class, SystemModule::class])
 interface AppComponent {
 
     fun locale(): Locale
@@ -61,5 +62,7 @@ interface AppComponent {
     fun executor(): Executor
 
     fun provideUriBuilder(): Uri.Builder
+
+    fun locationFactory(): LocationFactory
 
 }

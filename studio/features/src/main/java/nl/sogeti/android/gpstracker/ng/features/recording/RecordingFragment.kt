@@ -54,7 +54,9 @@ class RecordingFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { presenter.start(context, RecordingNavigation()) })
+        val activity = activity
+                ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
+        permissionRequester.start(this, { presenter.start(activity, RecordingNavigation()) })
     }
 
     override fun onStop() {

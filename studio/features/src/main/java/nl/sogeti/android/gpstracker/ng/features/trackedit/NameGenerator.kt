@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.features.map.LocationFactory
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.opengpstrack.ng.features.R
 import java.text.SimpleDateFormat
 import java.util.*

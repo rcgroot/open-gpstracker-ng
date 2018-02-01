@@ -1,6 +1,6 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
- **    Author: René de Groot
+ **    Author: rene
  ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
@@ -26,15 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.mock
+package nl.sogeti.android.gpstracker.ng.dagger
 
-import android.content.Context
-import com.google.android.gms.maps.model.LatLng
-import nl.sogeti.android.gpstracker.ng.map.LocationFactory
+import dagger.Component
+import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
+import nl.sogeti.android.gpstracker.ng.base.dagger.AppModule
+import javax.inject.Singleton
 
-class MockLocationFactory : LocationFactory {
-
-    override fun getLocationCoordinates(context: Context): LatLng? = MockTracksContentProvider.lastWaypoint
-
-    override fun getLocationName(context: Context): String? = "Gotham"
-}
+@Singleton
+@Component(modules = [AppModule::class, MockSystemModule::class])
+interface MockAppComponent : AppComponent

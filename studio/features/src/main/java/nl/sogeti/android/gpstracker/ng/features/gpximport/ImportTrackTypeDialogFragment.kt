@@ -53,7 +53,10 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
     }
 
     override fun dismiss() {
-        fragmentManager.beginTransaction().remove(fragmentManager.findFragmentByTag(TAG_LAMBDA_FRAGMENT)).commit()
+        fragmentManager!!
+                .beginTransaction()
+                .remove(fragmentManager!!.findFragmentByTag(TAG_LAMBDA_FRAGMENT))
+                .commit()
         super.dismiss()
     }
 
@@ -74,6 +77,7 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
 
     override fun onStart() {
         super.onStart()
+        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         presenter?.start(activity)
     }
 

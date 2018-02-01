@@ -30,8 +30,9 @@ package nl.sogeti.android.gpstracker.ng.features.map.rendering;
 
 import android.support.annotation.VisibleForTesting;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng;
 
 /**
  * Reworked code found on OpenStreetMap Wiki and Stack Overflow
@@ -97,7 +98,8 @@ class TileProjection {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         LatLng northWest = new LatLng(tileToLatitude(y, zoom), tileToLongitude(x, zoom));
         LatLng southEast = new LatLng(tileToLatitude(y + 1, zoom), tileToLongitude(x + 1, zoom));
-        builder.include(northWest).include(southEast);
+        builder.include(new com.google.android.gms.maps.model.LatLng(northWest.getLatitude(), northWest.getLongitude()))
+                .include(new com.google.android.gms.maps.model.LatLng(southEast.getLatitude(), southEast.getLongitude()));
 
         return builder.build();
     }
@@ -125,8 +127,8 @@ class TileProjection {
      * @param worldPoint out parameter with the result
      */
     public void latLngToWorldCoordinates(LatLng latLng, Point worldPoint) {
-        worldPoint.x = origin.x + latLng.longitude * pixelsPerLonDegree;
-        double sinY = bound(Math.sin(Math.toRadians(latLng.latitude)));
+        worldPoint.x = origin.x + latLng.getLongitude() * pixelsPerLonDegree;
+        double sinY = bound(Math.sin(Math.toRadians(latLng.getLatitude())));
         worldPoint.y = origin.y + 0.5f * (Math.log((1 + sinY) / (1 - sinY)) * -pixelsPerLonRadian);
     }
 

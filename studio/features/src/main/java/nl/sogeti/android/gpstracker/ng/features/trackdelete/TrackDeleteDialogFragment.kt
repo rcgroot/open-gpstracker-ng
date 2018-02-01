@@ -31,7 +31,7 @@ class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentDeleteDialogBinding>(inflater, R.layout.fragment_delete_dialog, container, false)
 
-        val uri = arguments.get(ARG_URI) as Uri
+        val uri = arguments?.get(ARG_URI) as Uri
         val model = TrackDeleteModel(uri)
         val presenter = TrackDeletePresenter(model, this)
         binding.model = model
@@ -43,6 +43,8 @@ class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
 
     override fun onStart() {
         super.onStart()
+        val activity = activity
+                ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         presenter?.start(activity)
     }
 

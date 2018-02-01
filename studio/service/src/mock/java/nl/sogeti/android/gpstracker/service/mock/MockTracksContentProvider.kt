@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.mock
+package nl.sogeti.android.gpstracker.service.mock
 
 import android.content.ContentProvider
 import android.content.ContentResolver
@@ -35,9 +35,11 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.provider.BaseColumns._ID
-import com.google.android.gms.maps.model.LatLng
-import nl.sogeti.android.gpstracker.integration.ContentConstants.*
-import nl.sogeti.android.gpstracker.ng.utils.*
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
+import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
+import nl.sogeti.android.gpstracker.service.db.DatabaseConstants
+import nl.sogeti.android.gpstracker.service.integration.ContentConstants
+import nl.sogeti.android.gpstracker.service.util.*
 import timber.log.Timber
 import java.util.*
 
@@ -144,6 +146,10 @@ class MockTracksContentProvider : ContentProvider() {
 
         var idGen = 1000L
         var lastWaypoint: LatLng = LatLng(52.3664734, 4.9212022)
+            set(value) {
+                field = value
+                MockLocationFactory.lastWaypoint = value
+            }
 
         private var contentResolver: ContentResolver? = null
         private val uriContent = mutableMapOf<Uri, Pair<Array<String>, MutableList<MutableList<Any>>>>()
@@ -211,12 +217,12 @@ class MockTracksContentProvider : ContentProvider() {
             addContentToTrackContent(content.second, trackId, trackName)
             contentResolver?.notifyChange(trackUri, null)
             // tracks/id/metadata
-            val metaContent = Pair(arrayOf(MetaDataColumns.KEY, MetaDataColumns.VALUE), mutableListOf<MutableList<Any>>())
+            val metaContent = Pair(arrayOf(ContentConstants.MetaDataColumns.KEY, ContentConstants.MetaDataColumns.VALUE), mutableListOf<MutableList<Any>>())
             val metaUri = metaDataTrackUri(trackId)
             uriContent[metaUri] = metaContent
         }
 
-        private fun createEmptyTrackContent() = Pair(arrayOf(Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME), mutableListOf<MutableList<Any>>())
+        private fun createEmptyTrackContent() = Pair(arrayOf(DatabaseConstants.Tracks._ID, DatabaseConstants.Tracks.NAME, DatabaseConstants.Tracks.CREATION_TIME), mutableListOf<MutableList<Any>>())
 
         private fun addContentToTrackContent(content: MutableList<MutableList<Any>>, trackId: Long, trackName: String? = null) {
             content.add(mutableListOf(
@@ -243,7 +249,7 @@ class MockTracksContentProvider : ContentProvider() {
             contentResolver?.notifyChange(segmentUri, null)
         }
 
-        private fun createEmptySegmentContent() = Pair(arrayOf(Segments._ID, Segments.TRACK), mutableListOf<MutableList<Any>>())
+        private fun createEmptySegmentContent() = Pair(arrayOf(DatabaseConstants.Segments._ID, DatabaseConstants.Segments.TRACK), mutableListOf<MutableList<Any>>())
 
         private fun addContentToSegmentContent(content: MutableList<MutableList<Any>>, trackId: Long, segmentId: Long) {
             content.add(mutableListOf(
@@ -274,7 +280,7 @@ class MockTracksContentProvider : ContentProvider() {
             lastWaypoint = LatLng(latitude, longitude)
         }
 
-        private fun createEmptyWaypointContent() = Pair(arrayOf(Waypoints._ID, Waypoints.SEGMENT, Waypoints.LATITUDE, Waypoints.LONGITUDE, Waypoints.TIME), mutableListOf<MutableList<Any>>())
+        private fun createEmptyWaypointContent() = Pair(arrayOf(DatabaseConstants.Waypoints._ID, DatabaseConstants.Waypoints.SEGMENT, DatabaseConstants.Waypoints.LATITUDE, DatabaseConstants.Waypoints.LONGITUDE, DatabaseConstants.Waypoints.TIME), mutableListOf<MutableList<Any>>())
 
         private fun addContentToWaypointContent(content: MutableList<MutableList<Any>>, segmentId: Long, waypointId: Long, latitude: Double, longitude: Double, time: Long) {
             content.add(mutableListOf(waypointId, segmentId, latitude, longitude, time))

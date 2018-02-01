@@ -103,8 +103,6 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 
-    mockImplementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
-
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"

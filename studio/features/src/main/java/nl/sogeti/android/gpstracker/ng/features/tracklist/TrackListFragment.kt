@@ -70,6 +70,7 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
 
     override fun onStart() {
         super.onStart()
+        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
         permissionRequester.start(this, { trackListPresenter.start(activity, TrackListNavigation(this)) })
         setHasOptionsMenu(true)
     }

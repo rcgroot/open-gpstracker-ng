@@ -6,9 +6,9 @@ import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 open class MapBindingAdapters {
@@ -48,11 +48,11 @@ open class MapBindingAdapters {
         val CLOSE_UP = 15.0F
         if (center != null) {
             map.getMapAsync {
-                val update: CameraUpdate
-                if (it.cameraPosition.zoom < OVERVIEW || it.cameraPosition.zoom > CLOSE_UP) {
-                    update = CameraUpdateFactory.newLatLngZoom(center, CLOSE_UP)
+                val cameraFocus = com.google.android.gms.maps.model.LatLng(center.latitude, center.longitude)
+                val update = if (it.cameraPosition.zoom < OVERVIEW || it.cameraPosition.zoom > CLOSE_UP) {
+                    CameraUpdateFactory.newLatLngZoom(cameraFocus, CLOSE_UP)
                 } else {
-                    update = CameraUpdateFactory.newLatLng(center)
+                    CameraUpdateFactory.newLatLng(cameraFocus)
                 }
                 it.animateCamera(update)
             }
