@@ -75,7 +75,8 @@ class SummaryCalculator {
             Data(first.meter + second.meter, first.time + second.time)
         }
         // Text values
-        val name = trackUri.apply(context) { it.getString(ContentConstants.Tracks.NAME) } ?: "Unknown"
+        val name = trackUri.apply(context) { it.getString(ContentConstants.Tracks.NAME) }
+                ?: "Unknown"
         val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Return value

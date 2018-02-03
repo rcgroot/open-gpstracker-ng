@@ -34,5 +34,6 @@ dependencies {
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
 
 }

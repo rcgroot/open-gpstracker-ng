@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.base.dagger
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection

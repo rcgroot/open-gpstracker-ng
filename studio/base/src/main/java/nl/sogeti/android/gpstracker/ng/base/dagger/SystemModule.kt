@@ -8,7 +8,6 @@ import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
 import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Named

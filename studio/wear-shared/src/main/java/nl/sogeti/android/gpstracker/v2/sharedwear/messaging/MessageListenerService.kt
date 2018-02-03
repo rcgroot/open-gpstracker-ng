@@ -15,7 +15,7 @@ abstract class MessageListenerService : WearableListenerService() {
         val data = messageEvent?.data
         if (data != null) {
             val dataMap = DataMap.fromByteArray(data)
-            handleMessageEvents(messageEvent?.path, dataMap)
+            handleMessageEvents(messageEvent.path, dataMap)
         } else {
             Timber.w("onDataChanged did not contain data")
         }

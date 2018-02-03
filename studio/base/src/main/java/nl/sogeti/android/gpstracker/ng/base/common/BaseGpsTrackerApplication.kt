@@ -33,7 +33,6 @@ import android.os.StrictMode
 import android.support.annotation.CallSuper
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
-import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.BuildConfig
 
 import timber.log.Timber
@@ -53,12 +52,12 @@ open class BaseGpsTrackerApplication : Application() {
             return
         }
         setupLeakCanary()
-        setupDebugTree()
+        setupLogging()
         setupAnalytics()
     }
 
     private fun setupAnalytics() {
-        if (debug) {
+        if (!BuildConfig.FLAVOR.equals("mock")) {
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         }
     }
@@ -67,7 +66,7 @@ open class BaseGpsTrackerApplication : Application() {
         LeakCanary.install(this)
     }
 
-    protected fun setupDebugTree() {
+    protected fun setupLogging() {
         if (debug) {
             Timber.plant(Timber.DebugTree())
             if (StrictMode.ThreadPolicy.Builder().build() != null) {

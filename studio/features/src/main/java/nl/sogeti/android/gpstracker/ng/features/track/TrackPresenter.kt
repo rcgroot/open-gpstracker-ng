@@ -30,8 +30,8 @@ package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME

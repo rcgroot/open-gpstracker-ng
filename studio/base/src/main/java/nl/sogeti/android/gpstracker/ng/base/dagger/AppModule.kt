@@ -31,7 +31,7 @@ package nl.sogeti.android.gpstracker.ng.base.dagger
 import android.app.Application
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import java.text.SimpleDateFormat
 import java.util.*

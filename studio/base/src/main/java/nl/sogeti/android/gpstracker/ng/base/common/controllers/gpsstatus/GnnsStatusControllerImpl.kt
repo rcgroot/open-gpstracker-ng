@@ -1,9 +1,11 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
+package nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus
 
 import android.annotation.TargetApi
 import android.content.Context
 import android.location.GnssStatus
 import android.os.Build.VERSION_CODES.N
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.BaseGpsStatusControllerImpl
+import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 
 @TargetApi(N)
 class GnnsStatusControllerImpl(context: Context, listener: GpsStatusController.Listener) : BaseGpsStatusControllerImpl(context, listener) {

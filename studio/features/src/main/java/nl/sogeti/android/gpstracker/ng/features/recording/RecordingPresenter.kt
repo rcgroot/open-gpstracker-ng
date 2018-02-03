@@ -32,8 +32,8 @@ import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.AsyncTask
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory

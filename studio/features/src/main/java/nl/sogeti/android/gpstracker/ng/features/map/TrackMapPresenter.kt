@@ -35,8 +35,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter

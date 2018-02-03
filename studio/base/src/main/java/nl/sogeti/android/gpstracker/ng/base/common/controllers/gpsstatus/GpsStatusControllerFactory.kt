@@ -3,6 +3,7 @@ package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GnnsStatusControllerImpl
 
 open class GpsStatusControllerFactory {
 

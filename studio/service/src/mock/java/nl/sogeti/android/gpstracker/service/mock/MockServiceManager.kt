@@ -50,9 +50,9 @@ class MockServiceManager : ServiceManagerInterface {
         started = false
     }
 
-    override fun getLoggingState(): Int = loggingState
+    override fun getLoggingState(): Int = globalState.loggingState
 
-    override fun getTrackId(): Long = trackId
+    override fun getTrackId(): Long = globalState.trackId
 
     override fun startGPSLogging(context: Context, trackName: String?) {
         globalState.loggingState = STATE_LOGGING

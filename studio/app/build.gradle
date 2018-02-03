@@ -102,12 +102,13 @@ dependencies {
     }
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation "org.robolectric:robolectric:$rootProject.robolectricVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
-    kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
+
     androidTestMockImplementation "com.android.support.test.uiautomator:uiautomator-v18:$rootProject.uiautomator"
     androidTestImplementation "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestImplementation "com.android.support.test:rules:$rootProject.testRunnerVersion"

@@ -35,4 +35,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+
+    testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    testImplementation project(':test-utils')
 }

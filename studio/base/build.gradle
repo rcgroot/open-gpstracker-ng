@@ -19,6 +19,10 @@ android {
         enabled = true
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     flavorDimensions "service"
 
     productFlavors {
@@ -66,7 +70,9 @@ dependencies {
     kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
 
+    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation "junit:junit:$rootProject.junitVersion"
+    testImplementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
 
     androidTestImplementation "com.android.support.test:runner:$rootProject.testRunnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
