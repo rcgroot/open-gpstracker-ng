@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.service.logger;
 /**
  * Created by grootren on 13-11-15.
  */
-public class LoggingConstants {
+class LoggingConstants {
     static final long GLOBAL_INTERVAL = 300000l;
     static final float FINE_DISTANCE = 5F;
     static final long FINE_INTERVAL = 1000l;

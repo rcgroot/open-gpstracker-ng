@@ -38,7 +38,7 @@ import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 /**
  * Encapsulated persisted data used by during GPS Logging
  */
-public class LoggerPersistence {
+class LoggerPersistence {
 
     private static final String LOG_AT_BOOT = "LOG_AT_BOOT";
     private static final String LOG_AT_DOCK = "LOG_AT_DOCK";
@@ -52,11 +52,19 @@ public class LoggerPersistence {
     private static final String STREAM_BROADCAST_DISTANCE_METER = "STREAM_BROADCAST_DISTANCE_METER";
     private static final String STREAM_BROADCAST_TIME_MINUTES = "STREAM_BROADCAST_TIME_MINUTES";
     private static final String STATUS_MONITOR = "STATUS_MONITOR";
+    private final Context context;
 
-    private SharedPreferences mSharedPreferences;
+    public SharedPreferences getSharedPreferences() {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences("LoggerPersistence", Context.MODE_PRIVATE);
+        }
+        return sharedPreferences;
+    }
 
-    public LoggerPersistence(Context context) {
-        mSharedPreferences = context.getSharedPreferences("LoggerPersistence", Context.MODE_PRIVATE);
+    private SharedPreferences sharedPreferences;
+
+    LoggerPersistence(Context context) {
+        this.context = context;
     }
 
     /* ***********************
@@ -69,11 +77,11 @@ public class LoggerPersistence {
     }
 
     public int getPrecision() {
-        return mSharedPreferences.getInt(LoggingConstants.SERVICESTATE_PRECISION, ServiceConstants.LOGGING_NORMAL);
+        return getSharedPreferences().getInt(LoggingConstants.SERVICESTATE_PRECISION, ServiceConstants.LOGGING_NORMAL);
     }
 
     public float getCustomLocationIntervalMetres() {
-        return mSharedPreferences.getFloat(LOGGING_DISTANCE, 25.0f);
+        return getSharedPreferences().getFloat(LOGGING_DISTANCE, 25.0f);
     }
 
     public void setCustomLocationIntervalMetres(float intervalMetres) {
@@ -81,7 +89,7 @@ public class LoggerPersistence {
     }
 
     public long getCustomLocationIntervalSeconds() {
-        return mSharedPreferences.getLong(LOGGING_INTERVAL_SECONDS, 60L);
+        return getSharedPreferences().getLong(LOGGING_INTERVAL_SECONDS, 60L);
     }
 
     public void setCustomLocationIntervalSeconds(long interval) {
@@ -89,7 +97,7 @@ public class LoggerPersistence {
     }
 
     public boolean isSpeedChecked() {
-        return mSharedPreferences.getBoolean(SPEED_SANITY_CHECK, true);
+        return getSharedPreferences().getBoolean(SPEED_SANITY_CHECK, true);
     }
 
     public void isSpeedChecked(boolean isChecked) {
@@ -97,7 +105,7 @@ public class LoggerPersistence {
     }
 
     public boolean isStatusMonitor() {
-        return mSharedPreferences.getBoolean(STATUS_MONITOR, false);
+        return getSharedPreferences().getBoolean(STATUS_MONITOR, false);
     }
 
     public void isStatusMonitor(boolean isMonitor) {
@@ -105,7 +113,7 @@ public class LoggerPersistence {
     }
 
     public boolean getStreamBroadcast() {
-        return mSharedPreferences.getBoolean(BROADCAST_STREAM, false);
+        return getSharedPreferences().getBoolean(BROADCAST_STREAM, false);
     }
 
     public void getStreamBroadcast(boolean isBroadcast) {
@@ -117,7 +125,7 @@ public class LoggerPersistence {
     }
 
     public long getBroadcastIntervalMinutes() {
-        return mSharedPreferences.getLong(STREAM_BROADCAST_TIME_MINUTES, 1L);
+        return getSharedPreferences().getLong(STREAM_BROADCAST_TIME_MINUTES, 1L);
     }
 
     public void setBroadcastIntervalMeters(float meters) {
@@ -125,11 +133,11 @@ public class LoggerPersistence {
     }
 
     public float getBroadcastIntervalMeters() {
-        return mSharedPreferences.getFloat(STREAM_BROADCAST_DISTANCE_METER, 1L);
+        return getSharedPreferences().getFloat(STREAM_BROADCAST_DISTANCE_METER, 1L);
     }
 
     public boolean shouldLogAtBoot() {
-        return mSharedPreferences.getBoolean(LOG_AT_BOOT, false);
+        return getSharedPreferences().getBoolean(LOG_AT_BOOT, false);
     }
 
     public void shouldLogAtBoot(boolean value) {
@@ -137,7 +145,7 @@ public class LoggerPersistence {
     }
 
     public boolean shouldLogAtPowerConnected() {
-        return mSharedPreferences.getBoolean(LOG_AT_POWER_CONNECTED, false);
+        return getSharedPreferences().getBoolean(LOG_AT_POWER_CONNECTED, false);
     }
 
     public void shouldLogAtPowerConnected(boolean value) {
@@ -145,7 +153,7 @@ public class LoggerPersistence {
     }
 
     public boolean shouldLogAtPowerDisconnected() {
-        return mSharedPreferences.getBoolean(STOP_AT_POWER_DISCONNECTED, false);
+        return getSharedPreferences().getBoolean(STOP_AT_POWER_DISCONNECTED, false);
     }
 
     public void shouldLogAtPowerDisconnected(boolean value) {
@@ -153,7 +161,7 @@ public class LoggerPersistence {
     }
 
     public boolean shouldLogAtDockCar() {
-        return mSharedPreferences.getBoolean(LOG_AT_DOCK, false);
+        return getSharedPreferences().getBoolean(LOG_AT_DOCK, false);
     }
 
     public void shouldLogAtDockCar(boolean value) {
@@ -161,7 +169,7 @@ public class LoggerPersistence {
     }
 
     public boolean shouldLogAtUndockCar() {
-        return mSharedPreferences.getBoolean(STOP_AT_UNDOCK, false);
+        return getSharedPreferences().getBoolean(STOP_AT_UNDOCK, false);
     }
 
     public void shouldLogAtUndockCar(boolean value) {
@@ -178,7 +186,7 @@ public class LoggerPersistence {
     }
 
     public long getTrackId() {
-        return mSharedPreferences.getLong(LoggingConstants.SERVICESTATE_TRACKID, -1);
+        return getSharedPreferences().getLong(LoggingConstants.SERVICESTATE_TRACKID, -1);
     }
 
     public void setSegmentId(long currentSegmentId) {
@@ -186,7 +194,7 @@ public class LoggerPersistence {
     }
 
     public long getSegmentId() {
-        return mSharedPreferences.getLong(LoggingConstants.SERVICESTATE_SEGMENTID, -1);
+        return getSharedPreferences().getLong(LoggingConstants.SERVICESTATE_SEGMENTID, -1);
     }
 
     public void setDistance(float currentDistance) {
@@ -194,7 +202,7 @@ public class LoggerPersistence {
     }
 
     public float getDistance() {
-        return mSharedPreferences.getFloat(LoggingConstants.SERVICESTATE_DISTANCE, 0F);
+        return getSharedPreferences().getFloat(LoggingConstants.SERVICESTATE_DISTANCE, 0F);
     }
 
     public void setLoggingState(int currentLoggingState) {
@@ -202,7 +210,7 @@ public class LoggerPersistence {
     }
 
     public int getLoggingState() {
-        return mSharedPreferences.getInt(LoggingConstants.SERVICESTATE_STATE, ServiceConstants.STATE_STOPPED);
+        return getSharedPreferences().getInt(LoggingConstants.SERVICESTATE_STATE, ServiceConstants.STATE_STOPPED);
     }
 
     /* *****
@@ -210,19 +218,19 @@ public class LoggerPersistence {
      */
 
     private void put(String key, long value) {
-        apply(mSharedPreferences.edit().putLong(key, value));
+        apply(getSharedPreferences().edit().putLong(key, value));
     }
 
     private void put(String key, int value) {
-        apply(mSharedPreferences.edit().putInt(key, value));
+        apply(getSharedPreferences().edit().putInt(key, value));
     }
 
     private void put(String key, float value) {
-        apply(mSharedPreferences.edit().putFloat(key, value));
+        apply(getSharedPreferences().edit().putFloat(key, value));
     }
 
     private void put(String key, boolean value) {
-        apply(mSharedPreferences.edit().putBoolean(key, value));
+        apply(getSharedPreferences().edit().putBoolean(key, value));
     }
 
     private void apply(SharedPreferences.Editor editor) {

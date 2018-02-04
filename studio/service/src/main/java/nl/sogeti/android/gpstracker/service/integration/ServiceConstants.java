@@ -135,6 +135,7 @@ public class ServiceConstants {
         public static final int EXTRA_COMMAND_PAUSE = 1;
         public static final int EXTRA_COMMAND_RESUME = 2;
         public static final int EXTRA_COMMAND_STOP = 3;
+        public static final int EXTRA_COMMAND_RESTORE = 4;
         public static final String CONFIG_START_AT_BOOT = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_BOOT";
         public static final String CONFIG_START_AT_POWER_CONNECT = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_POWER_CONNECT";
         public static final String CONFIG_STOP_AT_POWER_DISCONNECT = "nl.sogeti.android.gpstracker.extra.CONFIG_STOP_AT_POWER_DISCONNECT";

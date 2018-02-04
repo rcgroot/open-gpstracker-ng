@@ -1,6 +1,9 @@
 package nl.sogeti.android.gpstracker.service.logger;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -10,8 +13,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -19,26 +22,35 @@ import java.io.IOException;
 import nl.sogeti.android.gpstracker.service.R;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
+import nl.sogeti.android.gpstracker.utils.VersionHelper;
 import timber.log.Timber;
+
+import static android.app.Notification.VISIBILITY_PUBLIC;
+import static android.app.NotificationManager.IMPORTANCE_LOW;
 
 /**
  * Manages the different notification task needed when running the logger service
  */
-public class LoggerNotification {
+class LoggerNotification {
     private static final int ID_DISABLED = R.string.service_connectiondisabled;
     private static final int ID_STATUS = R.string.service_gpsstatus;
     private static final int ID_GPS_PROBLEM = R.string.service_gpsproblem;
     private static final int SMALL_ICON = R.drawable.ic_maps_indicator_current_position;
+    private static final String NOTIFICATION_CHANNEL_ID = "logger_notification";
     private final Service service;
+
 
     int numberOfSatellites = 0;
 
-    private NotificationManagerCompat notificationManager;
+    private NotificationManager notificationManager;
     private boolean isShowingDisabled = false;
 
-    public LoggerNotification(Service service) {
+    LoggerNotification(Service service) {
         this.service = service;
-        notificationManager = NotificationManagerCompat.from(service);
+        notificationManager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (new VersionHelper().isAtLeast(Build.VERSION_CODES.O)) {
+            createChannel();
+        }
     }
 
     public void startLogging(int mPrecision, int mLoggingState, boolean mStatusMonitor, long mTrackId) {
@@ -82,7 +94,7 @@ public class LoggerNotification {
         PendingIntent contentIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(service)
+                new NotificationCompat.Builder(service, NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(SMALL_ICON)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
@@ -184,14 +196,27 @@ public class LoggerNotification {
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | SecurityException e) {
             Timber.e(e, "Problem setting data source for mediaplayer");
-        } catch (SecurityException e) {
-            Timber.e(e, "Problem setting data source for mediaplayer");
-        } catch (IllegalStateException e) {
-            Timber.e(e, "Problem with mediaplayer");
-        } catch (IOException e) {
+        } catch (IllegalStateException | IOException e) {
             Timber.e(e, "Problem with mediaplayer");
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        if (notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    service.getString(R.string.notification_operation_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setLockscreenVisibility(VISIBILITY_PUBLIC);
+            channel.setName(service.getString(R.string.notification_operation_channel_name));
+            channel.setDescription(service.getString(R.string.notification_operation_channel_description));
+            channel.enableLights(false);
+            channel.enableVibration(false);
+            channel.setImportance(IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }

@@ -50,16 +50,15 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Vector;
 
+import nl.sogeti.android.gpstracker.service.BuildConfig;
+import nl.sogeti.android.gpstracker.service.R;
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants;
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommander;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
-import nl.sogeti.android.gpstracker.service.integration.ServiceManager;
-import nl.sogeti.android.gpstracker.service.BuildConfig;
-import nl.sogeti.android.gpstracker.service.R;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
 import timber.log.Timber;
 
-public class GPSListener implements LocationListener, GpsStatus.Listener {
+class GPSListener implements LocationListener, GpsStatus.Listener {
 
     /**
      * <code>MAX_REASONABLE_SPEED</code> is about 324 kilometer per hour or 201
@@ -117,7 +116,7 @@ public class GPSListener implements LocationListener, GpsStatus.Listener {
     private String mProvider;
     private PowerManager mPowerManager;
 
-    public GPSListener(GPSLoggerService gpsLoggerService, ServiceCommander serviceCommander, LoggerPersistence persistence, LoggerNotification loggerNotification, PowerManager powerManager) {
+    GPSListener(GPSLoggerService gpsLoggerService, ServiceCommander serviceCommander, LoggerPersistence persistence, LoggerNotification loggerNotification, PowerManager powerManager) {
         mService = gpsLoggerService;
         this.serviceCommander = serviceCommander;
         mPersistence = persistence;
@@ -131,10 +130,6 @@ public class GPSListener implements LocationListener, GpsStatus.Listener {
         mLoggingState = ServiceConstants.STATE_STOPPED;
         mStartNextSegment = false;
         mLocationManager = (LocationManager) mService.getSystemService(Context.LOCATION_SERVICE);
-        mSpeedSanityCheck = mPersistence.isSpeedChecked();
-        mStreamBroadcast = mPersistence.getStreamBroadcast();
-
-        crashRestoreState();
     }
 
     public void onDestroy() {
@@ -391,7 +386,7 @@ public class GPSListener implements LocationListener, GpsStatus.Listener {
             Timber.e(String.format("Storing location without Logging (%b) or track (%d,%d).", isLogging(), mTrackId, mSegmentId));
             return;
         } else {
-            Timber.e(String.format("Storing location track/segment (%d,%d).", mTrackId, mSegmentId));
+            Timber.i(String.format("Storing location track/segment (%d,%d).", mTrackId, mSegmentId));
         }
         ContentValues args = new ContentValues();
 
@@ -522,11 +517,13 @@ public class GPSListener implements LocationListener, GpsStatus.Listener {
         Timber.d("Save GPS Listen State()");
     }
 
-    private synchronized void crashRestoreState() {
+    void crashRestoreState() {
+        mSpeedSanityCheck = mPersistence.isSpeedChecked();
+        mStreamBroadcast = mPersistence.getStreamBroadcast();
         mPrecision = mPersistence.getPrecision();
         mDistance = mPersistence.getDistance();
-
         int previousState = mPersistence.getLoggingState();
+
         if (previousState == ServiceConstants.STATE_LOGGING || previousState == ServiceConstants.STATE_PAUSED) {
             Timber.d("Load GPS Listen State()");
             mLoggerNotification.startLogging(mPrecision, mLoggingState, mStatusMonitor, mTrackId);
@@ -670,8 +667,7 @@ public class GPSListener implements LocationListener, GpsStatus.Listener {
         if (!allProviders.contains(provider)) {
             if (allProviders.size() > 0) {
                 provider = allProviders.get(0);
-            }
-            else {
+            } else {
                 provider = null;
             }
         }

@@ -155,6 +155,9 @@ public class GPSLoggerService extends LingerService {
 
     private void executeCommandIntent(Intent intent) {
         switch (intent.getIntExtra(ServiceConstants.Commands.COMMAND, -1)) {
+            case ServiceConstants.Commands.EXTRA_COMMAND_RESTORE:
+                mGPSListener.crashRestoreState();
+                break;
             case ServiceConstants.Commands.EXTRA_COMMAND_START:
                 String trackName = null;
                 if (intent.hasExtra(ServiceConstants.EXTRA_TRACK_NAME)) {
@@ -196,6 +199,10 @@ public class GPSLoggerService extends LingerService {
         LoggerPersistence persistence = new LoggerPersistence(this);
         mGPSListener = new GPSListener(this, new ServiceCommander(), persistence, mLoggerNotification, new PowerManager(this));
         mGPSListener.onCreate();
+        Intent restoreIntent = new Intent();
+        restoreIntent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESTORE);
+        onStartCommand(restoreIntent, 0, 0);
+
     }
 
     @Override

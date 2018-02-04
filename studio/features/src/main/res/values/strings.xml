@@ -30,8 +30,6 @@
     */
 -->
 <resources>
-    <string name="app_name">Open GPS Tracker NG</string>
-
     <!--Map list screen -->
     <string name="action_list">List tracks</string>
     <string name="action_about">About</string>

@@ -35,4 +35,6 @@
     <string name="permission_history">read and write GPS recorded tracks</string>
     <string name="permission_history_description">Allows the application to read and write stored tracks and
     create new tracks.</string>
+    <string name="notification_operation_channel_name">Open GPS Tracker GPS logger operations</string>
+    <string name="notification_operation_channel_description">A separate process that records your GPS track</string>
 </resources>

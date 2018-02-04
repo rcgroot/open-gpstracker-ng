@@ -57,7 +57,7 @@ open class BaseGpsTrackerApplication : Application() {
     }
 
     private fun setupAnalytics() {
-        if (!BuildConfig.FLAVOR.equals("mock")) {
+        if (BuildConfig.FLAVOR.equals("mock")) {
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         }
     }

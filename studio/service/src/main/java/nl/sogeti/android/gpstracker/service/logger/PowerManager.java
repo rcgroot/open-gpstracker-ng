@@ -4,7 +4,7 @@ import android.content.Context;
 
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 
-public class PowerManager {
+class PowerManager {
 
     private static final String TAG = "WakeLockTag";
     private final Context mContext;

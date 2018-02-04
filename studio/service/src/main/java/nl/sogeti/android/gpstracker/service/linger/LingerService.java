@@ -54,7 +54,7 @@ public abstract class LingerService extends Service {
 
     private final class ServiceHandler extends Handler {
 
-        public ServiceHandler(Looper looper) {
+        ServiceHandler(Looper looper) {
             super(looper);
         }
 
