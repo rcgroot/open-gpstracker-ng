@@ -31,6 +31,7 @@
 -->
 <resources>
     <!--Map list screen -->
+    <string name="title_activity_track">Track</string>
     <string name="action_list">List tracks</string>
     <string name="action_about">About</string>
     <string name="action_edit">Edit details</string>

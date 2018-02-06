@@ -9,7 +9,7 @@ android {
     flavorDimensions "service"
 
     defaultConfig {
-        applicationId "nl.sogeti.android.gpstracker.ng"
+        applicationId "nl.sogeti.android.gpstracker"
         targetSdkVersion 26
         minSdkVersion 23
         versionCode buildNumber

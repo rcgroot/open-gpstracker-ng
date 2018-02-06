@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.sogeti.android.opengpstrack.ng.features" >
+    package="nl.sogeti.android.opengpstrack.ng.features">
 
     <application>
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_track"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

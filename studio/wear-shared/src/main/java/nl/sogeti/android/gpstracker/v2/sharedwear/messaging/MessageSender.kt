@@ -29,36 +29,40 @@
 package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
 
 import android.content.Context
-import android.os.Bundle
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.wearable.CapabilityApi
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.Wearable
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.trying
 import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executor
 
-class MessageSender(private val context: Context, private val capability: Capability, private val executor: Executor, private val queueSize: Int = 3) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, CapabilityApi.CapabilityListener {
 
-    private lateinit var client: GoogleApiClient
+class MessageSender(
+        private val context: Context,
+        private val capability: Capability,
+        private val executor: Executor,
+        private val queueSize: Int = 3)
+    :
+        CapabilityClient.OnCapabilityChangedListener {
+
     private val messageQueue = ConcurrentLinkedQueue<WearMessage>()
-    private var _connected = false
     val connected: Boolean
-        get() = _connected
-    private var nodeId: String? = null
+        get() = recentNodes?.isNotEmpty() ?: false
+    private var recentNodes by trying {
+        val capabilityInfo = Tasks.await(Wearable.getCapabilityClient(context).getCapability(capability.itemName, CapabilityClient.FILTER_REACHABLE))
+        findCapabilityNodeId(capabilityInfo)
+    }
     var messageSenderStatusListener: MessageSenderStatusListener? = null
 
     fun start() {
-        client = GoogleApiClient.Builder(context, this, this)
-                .addApi(Wearable.API)
-                .build()
-        client.connect()
+        startNodeIdCapabilityListener()
     }
 
     fun stop() {
-        Wearable.CapabilityApi.removeCapabilityListener(client, this, capability.itemName)
-        client.disconnect()
+        stopNodeIdCapabilityListener()
     }
 
     fun sendMessage(message: WearMessage) {
@@ -73,83 +77,59 @@ class MessageSender(private val context: Context, private val capability: Capabi
 
     private fun runMessageQueue() {
         executor.execute {
-            while (_connected && messageQueue.isNotEmpty()) {
-                checkForNode(capability)
-                if (nodeId != null) {
+            val currentNode = recentNodes
+            if (currentNode != null) {
+                while (messageQueue.isNotEmpty()) {
                     val message: WearMessage = messageQueue.poll() ?: continue
                     val path = message.path
                     val data = message.toDataMap().toByteArray()
-                    val result = Wearable.MessageApi.sendMessage(client, nodeId, path, data).await()
-                    if (result.status.isSuccess) {
-                        Timber.d("Successful sent message $result")
+                    try {
+                        val results = currentNode.map {
+                            Tasks.await(Wearable.getMessageClient(context).sendMessage(it, path, data))
+                        }
+                        Timber.d("Successful sent message $results")
                         messageSenderStatusListener?.didConnect(true)
-                    } else {
-                        Timber.d("Failed to sent message $result")
+                    } catch (e: ApiException) {
+                        Timber.d(e, "Failed to sent message")
                         messageSenderStatusListener?.didConnect(false)
+                        break
                     }
-                } else {
-                    messageSenderStatusListener?.didConnect(false)
-                    Timber.d("Did not have node with capability $capability")
-                    break
                 }
+            } else {
+                messageSenderStatusListener?.didConnect(false)
+                Timber.d("Did not have node with capability $capability")
             }
         }
     }
 
-    private fun checkForNode(receiver: Capability) {
-        if (nodeId == null) {
-            val capabilityResult = Wearable.CapabilityApi
-                    .getCapability(client,
-                            receiver.itemName,
-                            CapabilityApi.FILTER_REACHABLE)
-                    .await()
-            updateTranscriptionCapability(capabilityResult.capability)
-        }
-    }
-
-    private fun updateTranscriptionCapability(info: CapabilityInfo) {
-        val node = info.nodes.firstOrNull {
-            it.isNearby
-        }
-
-        nodeId = node?.id ?: info.nodes.lastOrNull()?.id
-    }
-
-    //region GoogleApiClient callbacks
-
-    override fun onConnected(bundle: Bundle?) {
-        _connected = true
-        Timber.e("onConnected")
-        Wearable.CapabilityApi.addCapabilityListener(
-                client,
-                this,
-                capability.itemName)
-        runMessageQueue()
-    }
-
-    override fun onConnectionFailed(result: ConnectionResult) {
-        _connected = false
-        Timber.e("Connection failed, reason $result")
-    }
-
-    override fun onConnectionSuspended(cause: Int) {
-        _connected = false
-        Timber.w("Connection suspended, reason $cause")
+    private fun startNodeIdCapabilityListener() {
+        Wearable.getCapabilityClient(context).addListener(this, capability.itemName)
     }
 
     override fun onCapabilityChanged(info: CapabilityInfo) {
         Timber.w("onCapabilityChanged $info")
-        updateTranscriptionCapability(info)
-        if (nodeId == null) {
+        val currentNearbyNodes = findCapabilityNodeId(info)
+        this.recentNodes = currentNearbyNodes
+
+        if (currentNearbyNodes.isNotEmpty()) {
             messageSenderStatusListener?.didConnect(false)
         } else {
             messageSenderStatusListener?.didConnect(true)
             runMessageQueue()
         }
-
     }
 
-    //endregion
+    private fun stopNodeIdCapabilityListener() {
+        Wearable.getCapabilityClient(context).removeListener(this)
+    }
+
+    private fun findCapabilityNodeId(capabilityInfo: CapabilityInfo): List<String> {
+        val nearbyNodes = capabilityInfo.nodes.filter {
+            it.isNearby
+        }
+
+        return nearbyNodes.map { it.id }
+    }
 
     enum class Capability(val itemName: String) {
         CAPABILITY_CONTROL("gps_track_control"),
