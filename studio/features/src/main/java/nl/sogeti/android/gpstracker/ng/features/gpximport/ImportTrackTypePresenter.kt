@@ -31,10 +31,9 @@ package nl.sogeti.android.gpstracker.ng.features.gpximport
 import android.view.View
 import android.widget.AdapterView
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 
-class ImportTrackTypePresenter(private val model: ImportTrackTypeModel, private val view: ImportTrackTypeModel.View) : ContextedPresenter<Navigation>() {
+class ImportTrackTypePresenter(private val model: ImportTrackTypeModel, private val view: ImportTrackTypeModel.View) : ContextedPresenter() {
 
     var resultLambda: (String) -> Unit = {}
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {

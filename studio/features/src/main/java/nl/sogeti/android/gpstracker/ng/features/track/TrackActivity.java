@@ -52,7 +52,8 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     private static final String ARG_SHOW_TRACKS = "ARG_SHOW_TRACKS";
 
     private final TrackViewModel viewModel = new TrackViewModel();
-    private final TrackPresenter presenter = new TrackPresenter(viewModel, this);
+    private final TrackNavigator navigation = new TrackNavigator(this);
+    private final TrackPresenter presenter = new TrackPresenter(viewModel, this, navigation);
     private boolean startWithOpenTracks;
 
     @NotNull
@@ -84,8 +85,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     @Override
     protected void onStart() {
         super.onStart();
-        TrackNavigator navigation = new TrackNavigator(this);
-        presenter.start(this, navigation);
+        presenter.start(this);
         if (startWithOpenTracks) {
             navigation.showTrackSelection();
         }

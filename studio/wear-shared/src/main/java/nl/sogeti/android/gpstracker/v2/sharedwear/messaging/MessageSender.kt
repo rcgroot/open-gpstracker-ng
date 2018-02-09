@@ -52,8 +52,12 @@ class MessageSender(
     val connected: Boolean
         get() = recentNodes?.isNotEmpty() ?: false
     private var recentNodes by trying {
-        val capabilityInfo = Tasks.await(Wearable.getCapabilityClient(context).getCapability(capability.itemName, CapabilityClient.FILTER_REACHABLE))
-        findCapabilityNodeId(capabilityInfo)
+        try {
+            val capabilityInfo = Tasks.await(Wearable.getCapabilityClient(context).getCapability(capability.itemName, CapabilityClient.FILTER_REACHABLE))
+            findCapabilityNodeId(capabilityInfo)
+        } catch (exception: ApiException) {
+            emptyList<String>()
+        }
     }
     var messageSenderStatusListener: MessageSenderStatusListener? = null
 

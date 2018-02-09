@@ -60,9 +60,6 @@
 
     <!--Track list screen -->
     <string name="title_activity_tracks">Track list</string>
-    <string name="row_start_default">--</string>
-    <string name="row_duraction_default">--</string>
-    <string name="row_distance_default">--</string>
     <string name="row_track_icon_default">Default activity</string>
     <string name="row_track_map">Overview map</string>
     <string name="fragment_tracks_exporter_title">OGT Exporter</string>

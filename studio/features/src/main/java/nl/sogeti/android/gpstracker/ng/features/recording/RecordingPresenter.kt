@@ -53,8 +53,8 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel) :
-        ConnectedServicePresenter<RecordingNavigation>(), ContentController.Listener, GpsStatusController.Listener {
+class RecordingPresenter constructor(private val viewModel: RecordingViewModel, private val navigation: RecordingNavigation) :
+        ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
     private var gpsStatusController: GpsStatusController? = null
     internal var executingReader: TrackReader? = null

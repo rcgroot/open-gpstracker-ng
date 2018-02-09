@@ -45,7 +45,6 @@ import javax.inject.Named;
 import kotlin.jvm.functions.Function1;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter;
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation;
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
 import nl.sogeti.android.gpstracker.utils.ContentProviderExtensionsKt;
@@ -57,7 +56,7 @@ import static nl.sogeti.android.gpstracker.service.integration.ContentConstants.
  * Base class for presenters that source data from the IPC / Intent with
  * the original Open GPS Tracker app.
  */
-public abstract class ConnectedServicePresenter<T extends Navigation> extends ContextedPresenter<T> {
+public abstract class ConnectedServicePresenter extends ContextedPresenter {
 
     @Inject
     public ServiceManagerInterface serviceManager;

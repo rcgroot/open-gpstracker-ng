@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.databinding
 
 import android.databinding.DataBindingComponent
 import nl.sogeti.android.gpstracker.ng.features.control.ControlBindingAdapters
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraphBindings
 import nl.sogeti.android.gpstracker.ng.features.map.bindings.MapBindingAdapters
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingBindingAdapters
@@ -38,31 +39,21 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.TracksBindingAdapters
 
 class FeaturesBindingComponent : DataBindingComponent {
 
-    override fun getMapBindingAdapters(): MapBindingAdapters {
-        return MapBindingAdapters()
-    }
+    override fun getGraphLabelsBindings() = GraphLabelsBindings()
 
-    override fun getLineGraphBindings(): LineGraphBindings {
-        return LineGraphBindings()
-    }
+    override fun getMapBindingAdapters(): MapBindingAdapters = MapBindingAdapters()
 
-    override fun getCommonBindingAdapters(): CommonBindingAdapters {
-        return CommonBindingAdapters()
-    }
+    override fun getLineGraphBindings(): LineGraphBindings = LineGraphBindings()
 
-    override fun getRecordingBindingAdapters(): RecordingBindingAdapters {
-        return RecordingBindingAdapters()
-    }
+    override fun getCommonBindingAdapters(): CommonBindingAdapters = CommonBindingAdapters()
 
-    override fun getControlBindingAdapters(): ControlBindingAdapters {
-        return ControlBindingAdapters()
-    }
+    override fun getRecordingBindingAdapters(): RecordingBindingAdapters =
+            RecordingBindingAdapters()
 
-    override fun getTracksBindingAdapters(): TracksBindingAdapters {
-        return TracksBindingAdapters()
-    }
+    override fun getControlBindingAdapters(): ControlBindingAdapters = ControlBindingAdapters()
 
-    override fun getTrackTypesBindingAdapters(): TrackTypesBindingAdapters {
-        return TrackTypesBindingAdapters()
-    }
+    override fun getTracksBindingAdapters(): TracksBindingAdapters = TracksBindingAdapters()
+
+    override fun getTrackTypesBindingAdapters(): TrackTypesBindingAdapters =
+            TrackTypesBindingAdapters()
 }

@@ -2,7 +2,6 @@ package nl.sogeti.android.gpstracker.ng.features.util
 
 import android.content.Context
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -46,7 +45,7 @@ class ContextedPresenterTest {
         sut.context
     }
 
-    class MyContextedPresenter : ContextedPresenter<Navigation>() {
+    class MyContextedPresenter : ContextedPresenter() {
         var willStop = false
         var didStart = false
 

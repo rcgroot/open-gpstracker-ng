@@ -29,9 +29,9 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
@@ -53,7 +53,7 @@ import javax.inject.Named
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
-class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View) : ContextedPresenter<TrackListNavigation>(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
+class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListViewModel.View, val navigation: TrackListNavigation) : ContextedPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     private var contentController: ContentController? = null
     @Inject
@@ -154,7 +154,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.startGpxFileSelection({ intent ->
             val uri = intent?.data
             uri?.let {
-                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE) ?: VALUE_TYPE_DEFAULT
+                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE)
+                        ?: VALUE_TYPE_DEFAULT
                 ImportService.importFile(context, uri, trackType)
             }
         })
@@ -165,7 +166,8 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
         navigation.startGpxDirectorySelection { intent ->
             val uri = intent?.data
             uri?.let {
-                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE) ?: VALUE_TYPE_DEFAULT
+                val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE)
+                        ?: VALUE_TYPE_DEFAULT
                 ImportService.importDirectory(context, uri, trackType)
             }
         }

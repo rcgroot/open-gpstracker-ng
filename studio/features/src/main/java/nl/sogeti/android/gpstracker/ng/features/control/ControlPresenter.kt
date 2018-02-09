@@ -32,7 +32,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
@@ -48,7 +47,7 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 import javax.inject.Named
 
-class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter<Navigation>() {
+class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter() {
     @Inject
     lateinit var nameGenerator: NameGenerator
     @Inject

@@ -2,7 +2,6 @@ package nl.sogeti.android.gpstracker.ng.features.util
 
 import android.content.Context
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.service.integration.ServiceManager
 import org.junit.Before
 import org.junit.Rule

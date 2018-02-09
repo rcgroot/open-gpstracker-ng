@@ -58,6 +58,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+    implementation "android.arch.lifecycle:viewmodel:$rootProject.archComponentsVerion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.google.firebase:firebase-core:$rootProject.playServicesVersion"

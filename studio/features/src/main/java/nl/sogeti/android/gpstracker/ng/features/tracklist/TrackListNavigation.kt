@@ -34,7 +34,6 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GENERAL
@@ -48,7 +47,7 @@ import nl.sogeti.android.gpstracker.utils.VersionHelper
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class TrackListNavigation(val fragment: Fragment) : Navigation {
+class TrackListNavigation(val fragment: Fragment) {
 
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory

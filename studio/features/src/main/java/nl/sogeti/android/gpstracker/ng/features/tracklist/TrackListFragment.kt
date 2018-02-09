@@ -45,7 +45,7 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistB
 class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.View {
 
     private val viewModel = TrackListViewModel()
-    private val trackListPresenter = TrackListPresenter(viewModel, this)
+    private val trackListPresenter = TrackListPresenter(viewModel, this, TrackListNavigation(this))
     private var permissionRequester = PermissionRequester()
     private var binding: FragmentTracklistBinding? = null
 
@@ -71,7 +71,7 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
     override fun onStart() {
         super.onStart()
         val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        permissionRequester.start(this, { trackListPresenter.start(activity, TrackListNavigation(this)) })
+        permissionRequester.start(this, { trackListPresenter.start(activity) })
         setHasOptionsMenu(true)
     }
 

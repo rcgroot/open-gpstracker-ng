@@ -200,12 +200,12 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 viewModel.iconType.set(it.type)
                 viewModel.name.set(it.name)
                 viewModel.startDay.set(statisticsFormatting.convertTimestampToStart(context, it.startTimestamp))
-                var duration = context.getString(R.string.row_duraction_default)
+                var duration = context.getString(R.string.empty_dash)
                 if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
                     duration = statisticsFormatting.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
                 }
                 viewModel.duration.set(duration)
-                var distance = context.getString(R.string.row_distance_default)
+                var distance = context.getString(R.string.empty_dash)
                 if (it.distance > 0) {
                     distance = statisticsFormatting.convertMetersToDistance(context, it.distance)
                 }

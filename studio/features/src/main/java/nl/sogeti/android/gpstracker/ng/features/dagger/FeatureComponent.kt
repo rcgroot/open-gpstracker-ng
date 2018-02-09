@@ -6,6 +6,7 @@ import nl.sogeti.android.gpstracker.ng.features.about.AboutModel
 import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
@@ -57,5 +58,6 @@ interface FeatureComponent {
     fun inject(loggingService: LoggingService)
     fun inject(phoneMessageListenerService: PhoneMessageListenerService)
     fun inject(statisticsCollector: StatisticsCollector)
+    fun inject(graphLabelsBindings: GraphLabelsBindings)
 
 }

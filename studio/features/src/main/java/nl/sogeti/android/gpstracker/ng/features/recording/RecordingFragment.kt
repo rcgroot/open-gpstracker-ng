@@ -41,7 +41,7 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentRecordingB
 class RecordingFragment : Fragment() {
 
     private val viewModel = RecordingViewModel(null)
-    private val presenter = RecordingPresenter(viewModel)
+    private val presenter = RecordingPresenter(viewModel, RecordingNavigation())
     private var permissionRequester = PermissionRequester()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +56,7 @@ class RecordingFragment : Fragment() {
         super.onStart()
         val activity = activity
                 ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        permissionRequester.start(this, { presenter.start(activity, RecordingNavigation()) })
+        permissionRequester.start(this, { presenter.start(activity) })
     }
 
     override fun onStop() {

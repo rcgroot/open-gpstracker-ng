@@ -36,14 +36,13 @@ import android.widget.AdapterView.INVALID_POSITION
 import android.widget.ImageView
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.service.util.updateName
 import javax.inject.Inject
 
-class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter<Navigation>() {
+class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter() {
 
     @Inject
     lateinit var summaryManager: SummaryManager

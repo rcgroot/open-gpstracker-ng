@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.features.about.AboutFragment
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsActivity
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsFragment
@@ -17,7 +16,7 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity
 import nl.sogeti.android.opengpstrack.ng.features.R
 import timber.log.Timber
 
-class TrackNavigator(val activity: FragmentActivity): Navigation {
+class TrackNavigator(val activity: FragmentActivity){
 
     init {
         FeatureConfiguration.featureComponent.inject(this)

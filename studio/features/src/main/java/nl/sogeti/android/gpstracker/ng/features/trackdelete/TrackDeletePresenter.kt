@@ -31,13 +31,12 @@ package nl.sogeti.android.gpstracker.ng.features.trackdelete
 import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.service.util.readName
 import javax.inject.Inject
 
-class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteModel.View) : ContextedPresenter<Navigation>() {
+class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteModel.View) : ContextedPresenter() {
 
     @Inject
     lateinit var summaryManager: SummaryManager

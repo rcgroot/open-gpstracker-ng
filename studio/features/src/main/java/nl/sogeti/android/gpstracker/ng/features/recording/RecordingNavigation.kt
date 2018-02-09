@@ -32,13 +32,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AlertDialog
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class RecordingNavigation : Navigation {
+class RecordingNavigation {
 
     @Inject
     lateinit var packageManagerFactory: PackageManagerFactory

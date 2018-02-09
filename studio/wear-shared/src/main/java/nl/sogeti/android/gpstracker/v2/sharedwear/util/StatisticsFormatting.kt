@@ -24,9 +24,12 @@ class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil:
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
                 context.getString(R.string.format_small_100_meters).format(locale, meters / convert)
             }
-            else -> {
+            meters > 0 -> {
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
                 context.getString(R.string.format_small_meters).format(locale, meters / convert)
+            }
+            else -> {
+                context.getString(R.string.empty_dash)
             }
         }
         return distance
@@ -44,6 +47,9 @@ class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil:
     }
 
     fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
+        if (endTimestamp == 0L) {
+            return context.getString(R.string.empty_dash)
+        }
         val msPerMinute = 1000L * 60L
         val msPerHour = msPerMinute * 60L
         val msPerDay = msPerHour * 24L
@@ -76,15 +82,14 @@ class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil:
     }
 
     fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
-        val kph = if (seconds > 0) {
+        return if (seconds > 0 && meters > 0) {
             val conversion = context.resources.getFloat(R.string.mps_to_speed)
-            meters / seconds * conversion
+            val kph = meters / seconds * conversion
+            val unit = context.resources.getString(R.string.speed_unit)
+            context.getString(R.string.format_speed).format(locale, kph, unit)
         } else {
-            0.0F
+            context.getString(R.string.empty_dash)
         }
-
-        val unit = context.resources.getString(R.string.speed_unit)
-        return context.getString(R.string.format_speed).format(locale, kph, unit)
     }
 
     fun convertTimestampToDate(context: Context, startTimestamp: Long): String {

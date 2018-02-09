@@ -1,7 +1,7 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-alpha01'
-    dataBindingVersion = '3.2.0-alpha01'
+    gradlePluginVersion = '3.2.0-alpha02'
+    dataBindingVersion = '3.2.0-alpha02'
     buildTools = '27.0.3'
     minSdk = 21
     targetSdk = 27
@@ -17,6 +17,7 @@ ext {
     googleServicesVersion = '3.1.0'
     fabricVerion = '1.24.4'
     crashlicticsVerion = '2.7.1'
+    archComponentsVerion = '1.1.0'
 
     // Testing
     leakcanaryVersion = '1.5'

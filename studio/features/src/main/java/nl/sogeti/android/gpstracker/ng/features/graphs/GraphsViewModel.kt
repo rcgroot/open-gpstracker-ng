@@ -35,16 +35,16 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 
 class GraphsViewModel {
     val trackUri = ObservableField<Uri?>()
-    val distance = ObservableField<String>("-")
-    val time = ObservableField<String>("-")
-    val speed = ObservableField<String>("-")
     val waypoints = ObservableField<String>("-")
-    val startDate = ObservableField<String>("-")
-    val startTime = ObservableField<String>("-")
-    val total = ObservableField<String>("-")
-    val paused = ObservableField<String>("-")
-    val speedAtTimeData = ObservableField<List<GraphPoint>>(emptyList<GraphPoint>())
+    val speedAtTimeData = ObservableField<List<GraphPoint>>(emptyList())
     val speedValueDescription = ObservableField<LineGraph.ValueDescriptor>(object : LineGraph.ValueDescriptor {})
-    val altitudeAtTimeData = ObservableField<List<GraphPoint>>(emptyList<GraphPoint>())
-    val altitudeValueDescription = ObservableField<LineGraph.ValueDescriptor>(object : LineGraph.ValueDescriptor {})
+
+    val startDate = ObservableField<Long>(0L)
+    val startTime = ObservableField<Long>(0L)
+    val time = ObservableField<Long>(0L)
+    val paused = ObservableField<Long>(0)
+
+    val total = ObservableField<Long>(0L)
+    val distance = ObservableField<String>("-")
+    val speed = ObservableField<String>("-")
 }

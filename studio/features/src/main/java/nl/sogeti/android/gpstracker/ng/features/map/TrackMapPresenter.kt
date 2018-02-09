@@ -34,7 +34,6 @@ import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.Navigation
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
@@ -50,7 +49,7 @@ import nl.sogeti.android.gpstracker.utils.getLong
 import nl.sogeti.android.gpstracker.utils.getString
 import javax.inject.Inject
 
-class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter<Navigation>(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
+class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
 
     private var started = false
     private var executingReader: TrackReader? = null
