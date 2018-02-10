@@ -42,4 +42,23 @@ class GraphLabelsBindings {
             textView.text = statisticsFormatting.convertStartEndToDuration(textView.context, 0L, timeStamp)
         }
     }
+
+    @BindingAdapter("distance")
+    fun setDistance(textView: TextView, distance: Float?) {
+        if (distance== null || distance <= 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatting.convertMetersToDistance(textView.context, distance)
+        }
+    }
+
+    @BindingAdapter("speed")
+    fun setSpeed(textView: TextView, speed: Float?) {
+        if (speed == null || speed <= 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed)
+
+        }
+    }
 }

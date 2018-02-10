@@ -45,6 +45,6 @@ class GraphsViewModel {
     val paused = ObservableField<Long>(0)
 
     val total = ObservableField<Long>(0L)
-    val distance = ObservableField<String>("-")
-    val speed = ObservableField<String>("-")
+    val distance = ObservableField<Float>(0F)
+    val speed = ObservableField<Float>(0F)
 }

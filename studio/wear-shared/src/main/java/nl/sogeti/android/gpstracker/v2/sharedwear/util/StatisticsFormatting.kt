@@ -81,15 +81,19 @@ class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil:
         return duration
     }
 
-    fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
-        return if (seconds > 0 && meters > 0) {
+    fun convertMeterPerSecondsToSpeed(context: Context, speed: Float): String {
+        return if (speed > 0) {
             val conversion = context.resources.getFloat(R.string.mps_to_speed)
-            val kph = meters / seconds * conversion
+            val kph = speed * conversion
             val unit = context.resources.getString(R.string.speed_unit)
             context.getString(R.string.format_speed).format(locale, kph, unit)
         } else {
             context.getString(R.string.empty_dash)
         }
+    }
+
+    fun convertMeterPerSecondsToSpeed(context: Context, meters: Float, seconds: Long): String {
+        return convertMeterPerSecondsToSpeed(context, meters / seconds)
     }
 
     fun convertTimestampToDate(context: Context, startTimestamp: Long): String {

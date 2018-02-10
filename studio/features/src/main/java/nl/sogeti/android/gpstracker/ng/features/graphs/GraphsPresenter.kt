@@ -93,9 +93,9 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
 
     private fun setTrack(trackUri: Uri) {
         viewModel.trackUri.set(trackUri)
-        viewModel.distance.set("-")
+        viewModel.distance.set(0F)
         viewModel.time.set(0L)
-        viewModel.speed.set("-")
+        viewModel.speed.set(0F)
         viewModel.waypoints.set("-")
         viewModel.startDate.set(0L)
         viewModel.startTime.set(0L)
@@ -122,12 +122,11 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         val pausedTime = (summary.stopTimestamp - summary.startTimestamp) - summary.trackedPeriod
         viewModel.paused.set(pausedTime)
 
-        val distance = statisticsFormatting.convertMetersToDistance(context, summary.distance)
-        viewModel.distance.set(distance)
+        viewModel.distance.set(summary.distance)
 
         viewModel.total.set(summary.stopTimestamp - summary.startTimestamp)
-
-        val speed = statisticsFormatting.convertMeterPerSecondsToSpeed(context, summary.distance, summary.trackedPeriod / 1000)
+        val seconds = summary.trackedPeriod / 1000F
+        val speed = if(seconds > 0) summary.distance / seconds else 0F
         viewModel.speed.set(speed)
     }
 

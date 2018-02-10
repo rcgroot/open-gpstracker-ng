@@ -37,6 +37,7 @@ import com.google.android.gms.wearable.Wearable
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.trying
 import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
 
 
@@ -50,12 +51,12 @@ class MessageSender(
 
     private val messageQueue = ConcurrentLinkedQueue<WearMessage>()
     val connected: Boolean
-        get() = recentNodes?.isNotEmpty() ?: false
-    private var recentNodes by trying {
+        get() = recentNodes.isNotEmpty()
+    private var recentNodes: List<String> by trying {
         try {
             val capabilityInfo = Tasks.await(Wearable.getCapabilityClient(context).getCapability(capability.itemName, CapabilityClient.FILTER_REACHABLE))
             findCapabilityNodeId(capabilityInfo)
-        } catch (exception: ApiException) {
+        } catch (exception: ExecutionException) {
             emptyList<String>()
         }
     }
@@ -82,7 +83,7 @@ class MessageSender(
     private fun runMessageQueue() {
         executor.execute {
             val currentNode = recentNodes
-            if (currentNode != null) {
+            if (currentNode.isNotEmpty()) {
                 while (messageQueue.isNotEmpty()) {
                     val message: WearMessage = messageQueue.poll() ?: continue
                     val path = message.path
