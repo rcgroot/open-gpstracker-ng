@@ -4,7 +4,6 @@
     <application>
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
-            android:label="@string/title_activity_track"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,17 +1,27 @@
-def env = System.getenv();
+def env = System.getenv()
 
 android {
     signingConfigs {
-        release {
-            storeFile file(env["storeFile"])
-            storePassword env["storePassword"]
-            keyAlias env["keyAlias"]
-            keyPassword env["keyPassword"]
+        debug {
+            storeFile file("../debug.keystore")
         }
     }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
+}
+
+if (System.getenv().containsKey("storeFile")) {
+    android {
+        signingConfigs {
+            release {
+                storeFile file(env["storeFile"])
+                storePassword env["storePassword"]
+                keyAlias env["keyAlias"]
+                keyPassword env["keyPassword"]
+            }
+        }
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }

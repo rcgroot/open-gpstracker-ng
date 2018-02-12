@@ -32,9 +32,7 @@ android {
         }
     }
 
-    if (System.getenv().containsKey("storeFile")) {
-        apply from: '../signing.gradle'
-    }
+    apply from: '../signing.gradle'
 
     buildTypes {
         release {
