@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 
 import nl.sogeti.android.gpstracker.service.BuildConfig;
 
+import static nl.sogeti.android.gpstracker.service.logger.LoggingConstants.FINE_DISTANCE;
+import static nl.sogeti.android.gpstracker.service.logger.LoggingConstants.FINE_INTERVAL;
+
 public class ServiceCommander {
 
     public boolean isPackageInstalled(Context context) {
@@ -21,6 +24,9 @@ public class ServiceCommander {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_START);
         intent.putExtra(ServiceConstants.EXTRA_TRACK_NAME, trackName);
+        intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, FINE_INTERVAL);
+        intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, FINE_DISTANCE);
+        intent.putExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, true);
         context.startService(intent);
     }
 
