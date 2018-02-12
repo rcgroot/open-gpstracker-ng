@@ -29,6 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.base.dagger
 
 import android.app.Application
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
@@ -51,5 +52,9 @@ class AppModule(val application: Application) {
     @Provides
     @Named("dayFormatter")
     fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
+
+
+    @Provides
+    fun applicationContext(): Context = application
 
 }

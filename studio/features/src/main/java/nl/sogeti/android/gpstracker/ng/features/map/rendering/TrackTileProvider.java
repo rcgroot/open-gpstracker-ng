@@ -117,8 +117,8 @@ public class TrackTileProvider implements TileProvider {
     private void waypointsDidChange() {
         pathRenderer = new PathRenderer(tileSize, strokeWidth, waypoints.get(), startBitmap, endBitmap);
         if (titleOverLay != null) {
-            //Like: executeOnUiThread { titleOverLay.clearTileCache() }
-            CommonKt.executeOnUiThread(new Function0<Unit>() {
+            //Like: onMainThread { titleOverLay.clearTileCache() }
+            CommonKt.onMainThread(new Function0<Unit>() {
                 @Override
                 public Unit invoke() {
                     titleOverLay.clearTileCache();

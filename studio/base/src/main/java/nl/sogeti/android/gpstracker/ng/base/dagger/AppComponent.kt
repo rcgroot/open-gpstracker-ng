@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.base.dagger
 
+import android.content.Context
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
@@ -61,5 +62,7 @@ interface AppComponent {
     fun provideUriBuilder(): Uri.Builder
 
     fun locationFactory(): LocationFactory
+
+    fun applicationContext(): Context
 
 }

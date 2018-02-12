@@ -32,7 +32,9 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.utils.concurrent.ExecutorFactory
+import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.*
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -50,6 +52,8 @@ class PhoneMessageListenerService : MessageListenerService() {
     lateinit var serviceManager: ServiceManagerInterface
     private val executor: ExecutorService
     private var messageSender: MessageSender? = null
+    @Inject
+    lateinit var statisticsCollector: StatisticsCollector
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -105,13 +109,16 @@ class PhoneMessageListenerService : MessageListenerService() {
 
     private fun respondLoggingState() {
         serviceManager.startup(this) {
-            when (serviceManager.loggingState) {
-                ServiceConstants.STATE_LOGGING -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
-                ServiceConstants.STATE_PAUSED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
-                ServiceConstants.STATE_STOPPED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
-                ServiceConstants.STATE_UNKNOWN -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
+            ofMainThread {
+                when (serviceManager.loggingState) {
+                    ServiceConstants.STATE_LOGGING -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
+                    ServiceConstants.STATE_PAUSED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
+                    ServiceConstants.STATE_STOPPED -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+                    ServiceConstants.STATE_UNKNOWN -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
+                }
+                statisticsCollector.sendLatest(trackUri(serviceManager.trackId))
+                serviceManager.shutdown(this)
             }
-            serviceManager.shutdown(this)
         }
     }
 }

@@ -28,13 +28,22 @@
  */
 package nl.sogeti.android.gpstracker.utils
 
+import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 
-fun executeOnUiThread(item: () -> Unit) {
+fun onMainThread(item: () -> Unit) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         item()
     } else {
         Handler(Looper.getMainLooper()).post(item)
+    }
+}
+
+fun ofMainThread(item: () -> Unit) {
+    if (Looper.myLooper() != Looper.getMainLooper()) {
+        item()
+    } else {
+        AsyncTask.execute(item)
     }
 }

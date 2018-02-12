@@ -50,63 +50,67 @@ import javax.inject.Inject
 
 class StatisticsCollector {
 
-    private var context: Context? = null
-    private var contentObserver: ContentObserver? = null
-    private var messageSender: MessageSender? = null
+    @Inject
+    lateinit var context: Context
     @Inject
     lateinit var messageSenderFactory: MessageSenderFactory
     @Inject
     lateinit var statisticsFormatting: StatisticsFormatting
+    private var trackUri: Uri? = null
+    private var contentObserver: ContentObserver? = null
+    private val messageSender: MessageSender by lazy {
+        val messageSender = messageSenderFactory.createMessageSender(context, MessageSender.Capability.CAPABILITY_CONTROL, AsyncTask.SERIAL_EXECUTOR)
+        messageSender.start()
+        messageSender
+    }
     val isStarted
-        get() = context != null
+        get() = contentObserver != null
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    fun start(context: Context, trackUri: Uri?) {
-        this.context = context
-        if (messageSender == null) {
-            messageSender = messageSenderFactory.createMessageSender(context, MessageSender.Capability.CAPABILITY_CONTROL, AsyncTask.SERIAL_EXECUTOR)
-            messageSender?.start()
-        }
-
-        if (trackUri != null) {
-            observeUri(messageSender!!, trackUri)
-        }
+    fun start(trackUri: Uri?) {
+        this.trackUri = trackUri
+        observeUri()
     }
 
     fun pause() {
-        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
+        messageSender.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
     }
 
     fun stop() {
         unObserveUri()
-        messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
-        messageSender?.stop()
+        messageSender.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+        messageSender.stop()
     }
 
-    private fun observeUri(messageSender: MessageSender, trackUri: Uri) {
+    fun sendLatest(trackUri: Uri) {
+        if (messageSender.connected) {
+            val message = collectStatistics(trackUri)
+            if (message != null) {
+                messageSender.sendMessage(message)
+            }
+        } else {
+            Timber.d("No peer for Wear statistics")
+        }
+    }
+
+    private fun observeUri() {
+        val trackUri = trackUri ?: return
         val handlerThread = HandlerThread("WearContentObserver", Process.THREAD_PRIORITY_BACKGROUND)
         handlerThread.start()
         val handler = Handler(handlerThread.looper)
         val contentObserver = object : ContentObserver(handler) {
             override fun onChange(selfChange: Boolean) {
-                if (messageSender.connected) {
-                    val message = collectStatistics(trackUri)
-                    if (message != null) {
-                        messageSender.sendMessage(message)
-                    }
-                } else {
-                    Timber.d("No peer for Wear statistics")
-                }
+                sendLatest(trackUri)
             }
         }
-        context?.contentResolver?.registerContentObserver(trackUri, true, contentObserver)
+        context.contentResolver?.registerContentObserver(trackUri, true, contentObserver)
     }
 
     private fun collectStatistics(trackUri: Uri): StatisticsMessage? {
-        context?.let {
+        context.let {
             val recent = Date().time - ONE_MINUTE
             val handler = DefaultResultHandler()
             trackUri.readTrack(it, handler)
@@ -142,7 +146,7 @@ class StatisticsCollector {
 
     private fun unObserveUri() {
         if (contentObserver != null) {
-            context?.contentResolver?.unregisterContentObserver(contentObserver)
+            context.contentResolver?.unregisterContentObserver(contentObserver)
         }
     }
 

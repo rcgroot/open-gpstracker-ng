@@ -35,7 +35,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
-import nl.sogeti.android.gpstracker.utils.executeOnUiThread
+import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistBinding
 
@@ -109,7 +109,7 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
     //region View contract
 
     override fun moveToPosition(position: Int) {
-        executeOnUiThread { binding?.fragmentTracklistList?.layoutManager?.scrollToPosition(position) }
+        onMainThread { binding?.fragmentTracklistList?.layoutManager?.scrollToPosition(position) }
     }
 
     //endregion

@@ -45,7 +45,7 @@ import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoin
 import nl.sogeti.android.gpstracker.utils.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.utils.count
-import nl.sogeti.android.gpstracker.utils.executeOnUiThread
+import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.RowTrackBinding
@@ -91,7 +91,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 calculatingTracks?.let {
                     val diffResult = DiffUtil.calculateDiff(TrackDiffer(displayedTracks, it))
 
-                    executeOnUiThread {
+                    onMainThread {
                         displayedTracks = it
                         diffResult.dispatchUpdatesTo(this)
                         calculatingTracks = null

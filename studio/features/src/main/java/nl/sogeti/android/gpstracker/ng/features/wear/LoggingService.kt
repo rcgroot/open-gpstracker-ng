@@ -51,7 +51,7 @@ class LoggingService : Service() {
         val state = intent?.getStringExtra(STATE)
 
         if (!statisticsCollector.isStarted) {
-            statisticsCollector.start(this, trackUri)
+            statisticsCollector.start(trackUri)
         }
 
         if (state != null) {
