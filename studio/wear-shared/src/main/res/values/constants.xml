@@ -8,9 +8,9 @@
     <item name="m_to_small_distance" type="string">1.0</item>
     <item name="m_to_big_distance" type="string">1000.0</item>
 
-    <string name="format_small_meters">%.1f M</string>
-    <string name="format_small_100_meters">%.0f M</string>
-    <string name="format_big_kilometer">%.2f KM</string>
-    <string name="format_big_100_kilometer">%.0f KM</string>
+    <string name="format_small_meters">%.1f meter</string>
+    <string name="format_small_100_meters">%.0f meter</string>
+    <string name="format_big_kilometer">%.2f kilometer</string>
+    <string name="format_big_100_kilometer">%.0f kilometer</string>
 
 </resources>
