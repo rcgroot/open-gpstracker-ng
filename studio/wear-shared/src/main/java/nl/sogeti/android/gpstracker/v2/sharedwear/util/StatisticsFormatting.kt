@@ -7,26 +7,26 @@ import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
 import java.util.*
 
-class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil: TimeSpanCalculator) {
+class StatisticsFormatting(private val timeSpanUtil: TimeSpanCalculator) {
 
     fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
         distance = when {
             meters >= 100000 -> {
                 val convert = context.resources.getFloat(R.string.m_to_big_distance)
-                context.getString(R.string.format_big_100_kilometer).format(locale, meters / convert)
+                context.getString(R.string.format_big_100_kilometer).format(Locale.getDefault(), meters / convert)
             }
             meters >= 1000 -> {
                 val convert = context.resources.getFloat(R.string.m_to_big_distance)
-                context.getString(R.string.format_big_kilometer).format(locale, meters / convert)
+                context.getString(R.string.format_big_kilometer).format(Locale.getDefault(), meters / convert)
             }
             meters >= 100 -> {
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
-                context.getString(R.string.format_small_100_meters).format(locale, meters / convert)
+                context.getString(R.string.format_small_100_meters).format(Locale.getDefault(), meters / convert)
             }
             meters > 0 -> {
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
-                context.getString(R.string.format_small_meters).format(locale, meters / convert)
+                context.getString(R.string.format_small_meters).format(Locale.getDefault(), meters / convert)
             }
             else -> {
                 context.getString(R.string.empty_dash)
@@ -86,7 +86,7 @@ class StatisticsFormatting(private val locale: Locale, private val timeSpanUtil:
             val conversion = context.resources.getFloat(R.string.mps_to_speed)
             val kph = speed * conversion
             val unit = context.resources.getString(R.string.speed_unit)
-            context.getString(R.string.format_speed).format(locale, kph, unit)
+            context.getString(R.string.format_speed).format(Locale.getDefault(), kph, unit)
         } else {
             context.getString(R.string.empty_dash)
         }

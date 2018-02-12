@@ -31,9 +31,17 @@ package nl.sogeti.android.gpstracker.v2.wear.databinding
 import android.databinding.BindingAdapter
 import android.support.v4.widget.SwipeRefreshLayout
 import android.widget.ImageView
+import android.widget.TextView
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import nl.sogeti.android.gpstracker.v2.wear.Control
+import nl.sogeti.android.gpstracker.v2.wear.R
 
-class ControlBindingAdapters {
+class WearBindingAdapters {
+
+    private val statisticsFormatting by lazy {
+        StatisticsFormatting(TimeSpanCalculator())
+    }
 
     @BindingAdapter("android:src")
     fun setImageResource(imageView: ImageView, resId: Int) {
@@ -46,7 +54,7 @@ class ControlBindingAdapters {
         if (id != null) {
             view.setImageResource(id)
             view.isEnabled = control.enabled
-            view.alpha = if (control.enabled ) 1.0F else 0.5F
+            view.alpha = if (control.enabled) 1.0F else 0.5F
         } else {
             view.setImageDrawable(null)
             view.isEnabled = false
@@ -57,5 +65,33 @@ class ControlBindingAdapters {
     @BindingAdapter("enabled")
     fun setEnables(view: SwipeRefreshLayout, enabled: Boolean) {
         view.isEnabled = enabled
+    }
+
+    @BindingAdapter("duration")
+    fun setDuration(textView: TextView, timeStamp: Long?) {
+        if (timeStamp == null || timeStamp <= 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatting.convertStartEndToDuration(textView.context, 0L, timeStamp)
+        }
+    }
+
+    @BindingAdapter("distance")
+    fun setDistance(textView: TextView, distance: Float?) {
+        if (distance == null || distance <= 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatting.convertMetersToDistance(textView.context, distance)
+        }
+    }
+
+    @BindingAdapter("speed")
+    fun setSpeed(textView: TextView, speed: Float?) {
+        if (speed == null || speed <= 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed)
+
+        }
     }
 }

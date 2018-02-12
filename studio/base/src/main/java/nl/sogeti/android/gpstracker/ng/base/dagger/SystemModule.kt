@@ -8,17 +8,11 @@ import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactoryImpl
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Named
 
 @Module
 class SystemModule {
-
-    @Provides
-    fun locale(): Locale {
-        return Locale.getDefault()
-    }
 
     @Provides
     fun gpsStatusControllerFactory(): GpsStatusControllerFactory {

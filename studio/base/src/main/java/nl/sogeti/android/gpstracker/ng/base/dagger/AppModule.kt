@@ -50,6 +50,6 @@ class AppModule(val application: Application) {
 
     @Provides
     @Named("dayFormatter")
-    fun dayFormatter(locale: Locale) = SimpleDateFormat("EEEE", locale)
+    fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
 
 }

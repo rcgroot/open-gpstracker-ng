@@ -10,7 +10,7 @@
 
     <string name="format_small_meters">%.1f M</string>
     <string name="format_small_100_meters">%.0f M</string>
-    <string name="format_big_kilometer">%.1f KM</string>
+    <string name="format_big_kilometer">%.2f KM</string>
     <string name="format_big_100_kilometer">%.0f KM</string>
 
 </resources>

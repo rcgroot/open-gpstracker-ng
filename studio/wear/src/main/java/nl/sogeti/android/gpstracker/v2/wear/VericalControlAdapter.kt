@@ -32,7 +32,7 @@ import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.v2.wear.databinding.ControlBindingComponent
+import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemControlsBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemStatisticsBinding
 
@@ -46,12 +46,12 @@ class VerticalControlAdapter(private val model: ControlViewModel, private val pr
         val inflater = LayoutInflater.from(parent?.context)
         return when (viewType) {
             0 -> {
-                val binding = DataBindingUtil.inflate<ItemStatisticsBinding>(inflater, R.layout.item_statistics, parent, false, ControlBindingComponent())
+                val binding = DataBindingUtil.inflate<ItemStatisticsBinding>(inflater, R.layout.item_statistics, parent, false, WearBindingComponent())
                 binding.presenter = presenter
                 VerticalViewHolder.StatisticsViewHolder(binding)
             }
             1 -> {
-                val binding = DataBindingUtil.inflate<ItemControlsBinding>(inflater, R.layout.item_controls, parent, false, ControlBindingComponent())
+                val binding = DataBindingUtil.inflate<ItemControlsBinding>(inflater, R.layout.item_controls, parent, false, WearBindingComponent())
                 binding.presenter = presenter
                 binding.viewModel = model
                 VerticalViewHolder.ControlsViewHolder(binding)

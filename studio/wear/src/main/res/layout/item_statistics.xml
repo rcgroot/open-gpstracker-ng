@@ -47,7 +47,6 @@
                 android:id="@+id/wear_control_top_title"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:text="@{viewModel.averageSpeed}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Wearable.Large"
                 android:textColor="@color/text"
@@ -55,7 +54,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:speed="@{viewModel.averageSpeed}" />
 
 
             <TextView
@@ -64,10 +64,10 @@
                 android:layout_height="0dp"
                 android:layout_marginEnd="4dp"
                 android:layout_marginTop="8dp"
-                android:text="@{viewModel.distance}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Wearable.Large"
                 android:textColor="@color/text"
+                app:distance="@{viewModel.distance}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/wear_control_right_title"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -79,10 +79,10 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="4dp"
-                android:text="@{viewModel.duration}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Wearable.Large"
                 android:textColor="@color/text"
+                app:duration="@{viewModel.duration}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/wear_control_top_title"
                 app:layout_constraintStart_toEndOf="@+id/wear_control_left_title"

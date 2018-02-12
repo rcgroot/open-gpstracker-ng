@@ -38,7 +38,7 @@ import android.support.wearable.activity.WearableActivity
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ActivityControlBinding
-import nl.sogeti.android.gpstracker.v2.wear.databinding.ControlBindingComponent
+import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 
 private const val EXTRA_STATISTICS = "EXTRA_STATISTICS"
 private const val EXTRA_STATUS = "EXTRA_STATUS"
@@ -50,7 +50,7 @@ class ControlActivity : WearableActivity(), View {
     private var presenter: ControlPresenter = ControlPresenter(model, this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityControlBinding>(this, R.layout.activity_control, ControlBindingComponent())
+        val binding = DataBindingUtil.setContentView<ActivityControlBinding>(this, R.layout.activity_control, WearBindingComponent())
         this.binding = binding
         binding.presenter = presenter
         binding.viewModel = model
@@ -115,7 +115,7 @@ class ControlActivity : WearableActivity(), View {
     }
 
     override fun startConfirmTimer() {
-        binding?.circularProgress?.totalTime = 2000;
+        binding?.circularProgress?.totalTime = 2000
         binding?.circularProgress?.startTimer()
     }
 
