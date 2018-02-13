@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalcula
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.util.Waypoint
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
 class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
@@ -49,19 +49,19 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
     @Inject
     lateinit var calculator: SummaryCalculator
     @Inject
-    lateinit var statisticsFormatting: StatisticsFormatting
+    lateinit var statisticsFormatter: StatisticsFormatter
     @Inject
     lateinit var trackSelection: TrackSelection
     val viewModel = GraphsViewModel()
 
-    class SpeedValuesDescriptor(val statisticsFormatting: StatisticsFormatting) : LineGraph.ValueDescriptor {
+    class SpeedValuesDescriptor(val statisticsFormatter: StatisticsFormatter) : LineGraph.ValueDescriptor {
         override fun describeYvalue(context: Context, yValue: Float): String {
             // Y value speed in the graph is meter per millisecond
-            return statisticsFormatting.convertMeterPerSecondsToSpeed(context, yValue * 1000f, 1)
+            return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue * 1000f, 1)
         }
 
         override fun describeXvalue(context: Context, xValue: Float): String {
-            return statisticsFormatting.convertStartEndToDuration(context, 0, xValue.toLong())
+            return statisticsFormatter.convertStartEndToDuration(context, 0, xValue.toLong())
         }
     }
 
@@ -101,7 +101,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         viewModel.startTime.set(0L)
         viewModel.total.set(0L)
         viewModel.paused.set(0L)
-        viewModel.speedValueDescription.set(SpeedValuesDescriptor(statisticsFormatting))
+        viewModel.speedValueDescription.set(SpeedValuesDescriptor(statisticsFormatter))
         summaryManager.collectSummaryInfo(context, trackUri) {
             fillSummaryNumbers(it)
             fillSpeedToTimeGraph(it)

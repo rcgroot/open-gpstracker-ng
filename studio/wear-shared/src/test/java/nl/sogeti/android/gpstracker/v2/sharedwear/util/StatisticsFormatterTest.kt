@@ -13,7 +13,7 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 import java.util.*
 
-class StatisticsFormattingTest {
+class StatisticsFormatterTest {
 
     private val SIX_SECONDS = 6 * 1000L
     private val FIVE_MINUTES = ((5 * 60) + 4) * 1000L
@@ -30,11 +30,11 @@ class StatisticsFormattingTest {
     lateinit var timeSpanCalculator: TimeSpanCalculator
     var locale = Locale.US
     var referenceDate = Calendar.getInstance()!!
-    lateinit var sut: StatisticsFormatting
+    lateinit var sut: StatisticsFormatter
 
     @Before
     fun setup() {
-        val sut = StatisticsFormatting(locale, timeSpanCalculator)
+        val sut = StatisticsFormatter(locale, timeSpanCalculator)
         this.sut = sut
 
         Mockito.`when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
@@ -250,7 +250,7 @@ class StatisticsFormattingTest {
     @Test
     fun testMPStoOneKMP() {
         // Arrange
-        sut = StatisticsFormatting(Locale.GERMAN, timeSpanCalculator)
+        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F, 3600)
         // Assert
@@ -260,7 +260,7 @@ class StatisticsFormattingTest {
     @Test
     fun testMPStoTenKMP() {
         // Arrange
-        sut = StatisticsFormatting(Locale.GERMAN, timeSpanCalculator)
+        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 3600)
         // Assert
@@ -271,7 +271,7 @@ class StatisticsFormattingTest {
     @Test
     fun testMPStoThreeKMP() {
         // Arrange
-        sut = StatisticsFormatting(Locale.GERMAN, timeSpanCalculator)
+        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 10800)
         // Assert

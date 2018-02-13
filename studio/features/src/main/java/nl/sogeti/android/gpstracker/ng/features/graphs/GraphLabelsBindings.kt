@@ -3,14 +3,14 @@ package nl.sogeti.android.gpstracker.ng.features.graphs
 import android.databinding.BindingAdapter
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
 class GraphLabelsBindings {
 
     @Inject
-    lateinit var statisticsFormatting: StatisticsFormatting
+    lateinit var statisticsFormatter: StatisticsFormatter
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -21,7 +21,7 @@ class GraphLabelsBindings {
         if (timeStamp == null || timeStamp == 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertTimestampToDate(textView.context, timeStamp)
+            textView.text = statisticsFormatter.convertTimestampToDate(textView.context, timeStamp)
         }
     }
 
@@ -30,7 +30,7 @@ class GraphLabelsBindings {
         if (timeStamp == null || timeStamp == 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertTimestampToTime(textView.context, timeStamp)
+            textView.text = statisticsFormatter.convertTimestampToTime(textView.context, timeStamp)
         }
     }
 
@@ -39,7 +39,7 @@ class GraphLabelsBindings {
         if (timeStamp == null || timeStamp <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertStartEndToDuration(textView.context, 0L, timeStamp)
+            textView.text = statisticsFormatter.convertStartEndToDuration(textView.context, 0L, timeStamp)
         }
     }
 
@@ -48,7 +48,7 @@ class GraphLabelsBindings {
         if (distance== null || distance <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertMetersToDistance(textView.context, distance)
+            textView.text = statisticsFormatter.convertMetersToDistance(textView.context, distance)
         }
     }
 
@@ -57,7 +57,7 @@ class GraphLabelsBindings {
         if (speed == null || speed <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed)
+            textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed)
 
         }
     }

@@ -18,7 +18,7 @@ import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.VersionHelper
 import nl.sogeti.android.gpstracker.utils.concurrent.ExecutorFactory
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSenderFactory
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import javax.inject.Named
 
@@ -73,7 +73,7 @@ class FeatureModule(context: Context) {
     fun permissionRequester(): PermissionRequester = PermissionRequester()
 
     @Provides
-    fun statisticsFormatting(timeSpanUtil: TimeSpanCalculator) = StatisticsFormatting(timeSpanUtil)
+    fun statisticsFormatting(timeSpanUtil: TimeSpanCalculator) = StatisticsFormatter(timeSpanUtil)
 
     @Provides
     fun messageSenderFactory() = MessageSenderFactory()

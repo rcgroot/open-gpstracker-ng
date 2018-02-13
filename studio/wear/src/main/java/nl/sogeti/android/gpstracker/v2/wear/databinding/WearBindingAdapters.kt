@@ -32,7 +32,7 @@ import android.databinding.BindingAdapter
 import android.support.v4.widget.SwipeRefreshLayout
 import android.widget.ImageView
 import android.widget.TextView
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import nl.sogeti.android.gpstracker.v2.wear.Control
 import nl.sogeti.android.gpstracker.v2.wear.R
@@ -40,7 +40,7 @@ import nl.sogeti.android.gpstracker.v2.wear.R
 class WearBindingAdapters {
 
     private val statisticsFormatting by lazy {
-        StatisticsFormatting(TimeSpanCalculator())
+        StatisticsFormatter(TimeSpanCalculator())
     }
 
     @BindingAdapter("android:src")

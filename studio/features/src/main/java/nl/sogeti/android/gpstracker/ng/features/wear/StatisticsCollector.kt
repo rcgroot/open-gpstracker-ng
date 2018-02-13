@@ -43,7 +43,7 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSender
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSenderFactory
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class StatisticsCollector {
     @Inject
     lateinit var messageSenderFactory: MessageSenderFactory
     @Inject
-    lateinit var statisticsFormatting: StatisticsFormatting
+    lateinit var statisticsFormatter: StatisticsFormatter
     private var trackUri: Uri? = null
     private var contentObserver: ContentObserver? = null
     private val messageSender: MessageSender by lazy {

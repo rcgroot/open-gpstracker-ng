@@ -7,7 +7,7 @@ import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
 import java.util.*
 
-class StatisticsFormatting(private val timeSpanUtil: TimeSpanCalculator) {
+class StatisticsFormatter(private val timeSpanUtil: TimeSpanCalculator) {
 
     fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String

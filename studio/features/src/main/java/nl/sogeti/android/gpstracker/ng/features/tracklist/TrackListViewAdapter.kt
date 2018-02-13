@@ -46,7 +46,7 @@ import nl.sogeti.android.gpstracker.utils.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.utils.count
 import nl.sogeti.android.gpstracker.utils.onMainThread
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatting
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.RowTrackBinding
 import java.util.concurrent.Executors
@@ -63,7 +63,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
-    lateinit var statisticsFormatting: StatisticsFormatting
+    lateinit var statisticsFormatter: StatisticsFormatter
 
     var listener: TrackListAdapterListener? = null
     var selection: Uri? = null
@@ -199,15 +199,15 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
                 viewModel.iconType.set(it.type)
                 viewModel.name.set(it.name)
-                viewModel.startDay.set(statisticsFormatting.convertTimestampToStart(context, it.startTimestamp))
+                viewModel.startDay.set(statisticsFormatter.convertTimestampToStart(context, it.startTimestamp))
                 var duration = context.getString(R.string.empty_dash)
                 if (it.startTimestamp in 1..(it.stopTimestamp - 1)) {
-                    duration = statisticsFormatting.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
+                    duration = statisticsFormatter.convertStartEndToDuration(context, it.startTimestamp, it.stopTimestamp)
                 }
                 viewModel.duration.set(duration)
                 var distance = context.getString(R.string.empty_dash)
                 if (it.distance > 0) {
-                    distance = statisticsFormatting.convertMetersToDistance(context, it.distance)
+                    distance = statisticsFormatter.convertMetersToDistance(context, it.distance)
                 }
                 viewModel.distance.set(distance)
             }
