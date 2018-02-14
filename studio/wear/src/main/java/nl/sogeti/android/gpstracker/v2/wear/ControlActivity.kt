@@ -127,6 +127,10 @@ class ControlActivity : WearableActivity(), View {
         binding?.wearControlVertical?.smoothScrollToPosition(1)
     }
 
+    override fun showStatistics() {
+        binding?.wearControlVertical?.smoothScrollToPosition(0)
+    }
+
     //endregion
 
     companion object {

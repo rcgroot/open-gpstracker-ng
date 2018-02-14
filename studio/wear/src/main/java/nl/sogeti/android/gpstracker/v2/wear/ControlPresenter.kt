@@ -100,10 +100,19 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
         showRefreshStatus()
         val actionId = action?.action
         when (actionId) {
-            R.string.control_action_start -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
+            R.string.control_action_start -> {
+                messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
+                view.showStatistics()
+            }
             R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
-            R.string.control_action_resume -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.RESUME))
-            R.string.control_action_stop -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+            R.string.control_action_resume -> {
+                messageSender?.sendMessage(StatusMessage(StatusMessage.Status.RESUME))
+                view.showStatistics()
+            }
+            R.string.control_action_stop -> {
+                messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+                view.showStatistics()
+            }
             else -> {
                 Timber.e("Failed to process selected action $actionId")
                 messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))

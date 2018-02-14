@@ -50,4 +50,5 @@ interface View {
     fun startConfirmTimer()
     fun cancelConfirmTimer()
     fun showControls()
+    fun showStatistics()
 }
