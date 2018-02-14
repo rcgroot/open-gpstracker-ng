@@ -69,6 +69,10 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     //region View callbacks
 
+    fun onClickControl() {
+        view.showControls()
+    }
+
     fun onClickSummary() {
         view.brighter()
     }

@@ -238,7 +238,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
             val startTime = handler.waypoints.first().first().time
             val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, meters, milliSeconds / 1000)
             val distance = statisticsFormatter.convertMetersToDistance(context, meters)
-            val duration = statisticsFormatter.convertStartEndToDuration(context, startTime, endTime)
+            val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
             val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
             viewModel.summary.set(summary)
             viewModel.name.set(handler.name)

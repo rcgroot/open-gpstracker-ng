@@ -49,4 +49,5 @@ interface View {
     fun brighter()
     fun startConfirmTimer()
     fun cancelConfirmTimer()
+    fun showControls()
 }

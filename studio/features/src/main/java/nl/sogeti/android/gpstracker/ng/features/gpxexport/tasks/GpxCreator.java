@@ -161,12 +161,12 @@ public class GpxCreator {
                 serializer.text("\n");
                 serializer.startTag("", "metadata");
                 serializer.text("\n");
-                serializer.startTag("", "time");
+                serializer.startTag("", "timeSpan");
                 Date time = new Date(trackCursor.getLong(2));
                 synchronized (ZULU_DATE_FORMAT) {
                     serializer.text(ZULU_DATE_FORMAT.format(time));
                 }
-                serializer.endTag("", "time");
+                serializer.endTag("", "timeSpan");
                 serializer.text("\n");
                 serializer.endTag("", "metadata");
             }
@@ -203,12 +203,12 @@ public class GpxCreator {
                         serializer.text(Double.toString(waypointCursor.getDouble(2)));
                         serializer.endTag("", "ele");
                         serializer.text("\n");
-                        serializer.startTag("", "time");
+                        serializer.startTag("", "timeSpan");
                         Date time = new Date(waypointCursor.getLong(3));
                         synchronized (ZULU_DATE_FORMAT) {
                             serializer.text(ZULU_DATE_FORMAT.format(time));
                         }
-                        serializer.endTag("", "time");
+                        serializer.endTag("", "timeSpan");
                     }
                     if (waypointCursor != null) {
                         waypointCursor.close();
@@ -296,12 +296,12 @@ public class GpxCreator {
                     serializer.text(Double.toString(waypointsCursor.getDouble(3)));
                     serializer.endTag("", "ele");
                     serializer.text("\n");
-                    serializer.startTag("", "time");
+                    serializer.startTag("", "timeSpan");
                     Date time = new Date(waypointsCursor.getLong(2));
                     synchronized (ZULU_DATE_FORMAT) {
                         serializer.text(ZULU_DATE_FORMAT.format(time));
                     }
-                    serializer.endTag("", "time");
+                    serializer.endTag("", "timeSpan");
                     serializer.text("\n");
                     serializer.startTag("", "extensions");
 

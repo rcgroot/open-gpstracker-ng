@@ -7,26 +7,26 @@ import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
 import java.util.*
 
-class StatisticsFormatter(private val timeSpanUtil: TimeSpanCalculator) {
+class StatisticsFormatter(private val localeProvider: LocaleProvider, private val timeSpanUtil: TimeSpanCalculator) {
 
     fun convertMetersToDistance(context: Context, meters: Float): String {
         val distance: String
         distance = when {
             meters >= 100000 -> {
                 val convert = context.resources.getFloat(R.string.m_to_big_distance)
-                context.getString(R.string.format_big_100_kilometer).format(Locale.getDefault(), meters / convert)
+                context.getString(R.string.format_big_100_kilometer).format(localeProvider.getLocale(), meters / convert)
             }
             meters >= 1000 -> {
                 val convert = context.resources.getFloat(R.string.m_to_big_distance)
-                context.getString(R.string.format_big_kilometer).format(Locale.getDefault(), meters / convert)
+                context.getString(R.string.format_big_kilometer).format(localeProvider.getLocale(), meters / convert)
             }
             meters >= 100 -> {
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
-                context.getString(R.string.format_small_100_meters).format(Locale.getDefault(), meters / convert)
+                context.getString(R.string.format_small_100_meters).format(localeProvider.getLocale(), meters / convert)
             }
             meters > 0 -> {
                 val convert = context.resources.getFloat(R.string.m_to_small_distance)
-                context.getString(R.string.format_small_meters).format(Locale.getDefault(), meters / convert)
+                context.getString(R.string.format_small_meters).format(localeProvider.getLocale(), meters / convert)
             }
             else -> {
                 context.getString(R.string.empty_dash)
@@ -46,15 +46,33 @@ class StatisticsFormatter(private val timeSpanUtil: TimeSpanCalculator) {
         return start.toString()
     }
 
-    fun convertStartEndToDuration(context: Context, startTimestamp: Long, endTimestamp: Long): String {
-        if (endTimestamp == 0L) {
+
+    fun convertSpanToCompactDuration(context: Context, msDuration: Long): String {
+        if (msDuration == 0L) {
             return context.getString(R.string.empty_dash)
         }
-        val msPerMinute = 1000L * 60L
-        val msPerHour = msPerMinute * 60L
-        val msPerDay = msPerHour * 24L
-        val msPerSecond = 1000L
-        val msDuration = endTimestamp - startTimestamp
+        val days = (msDuration / msPerDay).toInt()
+        val hours = ((msDuration - (days * msPerDay)) / msPerHour).toInt()
+        val minutes = ((msDuration - (days * msPerDay) - (hours * msPerHour)) / msPerMinute).toInt()
+        val seconds = ((msDuration - (days * msPerDay) - (hours * msPerHour) - (minutes * msPerMinute)) / msPerSecond).toInt()
+
+        val result = if (days > 0) {
+            context.getString(R.string.days_compact, days, hours)
+        } else {
+            if (hours > 0) {
+                context.getString(R.string.hours_compact, hours, minutes)
+            } else {
+                context.getString(R.string.minutes_compact, minutes, seconds)
+            }
+        }
+
+        return result
+    }
+
+    fun convertSpanDescriptiveDuration(context: Context, msDuration: Long): String {
+        if (msDuration == 0L) {
+            return context.getString(R.string.empty_dash)
+        }
         val days = (msDuration / msPerDay).toInt()
         val hours = ((msDuration - (days * msPerDay)) / msPerHour).toInt()
         val minutes = ((msDuration - (days * msPerDay) - (hours * msPerHour)) / msPerMinute).toInt()
@@ -86,7 +104,7 @@ class StatisticsFormatter(private val timeSpanUtil: TimeSpanCalculator) {
             val conversion = context.resources.getFloat(R.string.mps_to_speed)
             val kph = speed * conversion
             val unit = context.resources.getString(R.string.speed_unit)
-            context.getString(R.string.format_speed).format(Locale.getDefault(), kph, unit)
+            context.getString(R.string.format_speed).format(localeProvider.getLocale(), kph, unit)
         } else {
             context.getString(R.string.empty_dash)
         }
@@ -110,5 +128,12 @@ class StatisticsFormatter(private val timeSpanUtil: TimeSpanCalculator) {
     private fun Resources.getFloat(@StringRes resourceId: Int): Float {
         val stringValue = this.getString(resourceId)
         return stringValue.toFloat()
+    }
+
+    companion object {
+        private const val msPerMinute = 1000L * 60L
+        private const val msPerHour = msPerMinute * 60L
+        private const val msPerDay = msPerHour * 24L
+        private const val msPerSecond = 1000L
     }
 }

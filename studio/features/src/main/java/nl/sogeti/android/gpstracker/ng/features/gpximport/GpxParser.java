@@ -66,7 +66,7 @@ public class GpxParser {
     private static final String TRACK_ELEMENT = "trkpt";
     private static final String SEGMENT_ELEMENT = "trkseg";
     private static final String NAME_ELEMENT = "name";
-    private static final String TIME_ELEMENT = "time";
+    private static final String TIME_ELEMENT = "timeSpan";
     private static final String ELEVATION_ELEMENT = "ele";
     private static final String COURSE_ELEMENT = "course";
     private static final String ACCURACY_ELEMENT = "accuracy";
@@ -111,7 +111,7 @@ public class GpxParser {
                     throw new ParseException("Unable to parse dateTime " + text + " of length " + length, 0);
             }
         } catch (ParseException e) {
-            Timber.w(e, "Failed to parse a time-date");
+            Timber.w(e, "Failed to parse a timeSpan-date");
         }
 
         return dateTime;

@@ -30,8 +30,11 @@ package nl.sogeti.android.gpstracker.v2.wear.databinding
 
 import android.databinding.BindingAdapter
 import android.support.v4.widget.SwipeRefreshLayout
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.widget.ImageView
 import android.widget.TextView
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.LocaleProvider
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import nl.sogeti.android.gpstracker.v2.wear.Control
@@ -40,7 +43,7 @@ import nl.sogeti.android.gpstracker.v2.wear.R
 class WearBindingAdapters {
 
     private val statisticsFormatting by lazy {
-        StatisticsFormatter(TimeSpanCalculator())
+        StatisticsFormatter(LocaleProvider(), TimeSpanCalculator())
     }
 
     @BindingAdapter("android:src")
@@ -72,7 +75,9 @@ class WearBindingAdapters {
         if (timeStamp == null || timeStamp <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertStartEndToDuration(textView.context, 0L, timeStamp)
+            textView.text = statisticsFormatting.convertSpanToCompactDuration(textView.context, timeStamp)
+                    .replace(' ', '\n')
+                    .asSmallLetterSpans()
         }
     }
 
@@ -82,6 +87,8 @@ class WearBindingAdapters {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
             textView.text = statisticsFormatting.convertMetersToDistance(textView.context, distance)
+                    .replace(' ', '\n')
+                    .asSmallLetterSpans()
         }
     }
 
@@ -91,7 +98,28 @@ class WearBindingAdapters {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
             textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed)
+                    .replace(' ', '\n')
+                    .asSmallLetterSpans()
 
         }
+    }
+
+    fun String.asSmallLetterSpans(): SpannableString {
+        val spannable = SpannableString(this)
+        var start : Int? = null
+        for (i in 0 until this.length) {
+            if (!this[i].isDigit() && start == null) {
+                start = i
+            }
+            if (this[i].isDigit() && start != null) {
+                spannable.setSpan(RelativeSizeSpan(0.5f), start, i, 0)
+                start = null
+            }
+        }
+        if (start != null) {
+            spannable.setSpan(RelativeSizeSpan(0.5f), start, this.length, 0)
+        }
+
+        return spannable
     }
 }

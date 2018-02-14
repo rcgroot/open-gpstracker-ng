@@ -17,77 +17,79 @@
 
     </data>
 
-    <android.support.wear.widget.BoxInsetLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/box_inset_layout_padding"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="@{() -> presenter.onClickSummary()}"
+        android:padding="@dimen/inner_frame_layout_padding"
+        app:boxedEdges="all"
         tools:context="nl.sogeti.android.gpstracker.v2.wear.ControlActivity"
         tools:deviceIds="wear">
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:onClick="@{() -> presenter.onClickSummary()}"
-            android:padding="@dimen/inner_frame_layout_padding"
-            app:boxedEdges="all">
+        <ImageView
+            android:id="@+id/wear_control_status"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:onClick="@{() -> presenter.onClickControl()}"
+            android:src="@{viewModel.state}"
+            android:tint="@color/status_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/wear_control_status"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@{viewModel.state}"
-                android:tint="@color/status_icon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/wear_control_top_title"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Wearable.Large"
-                android:textColor="@color/text"
-                app:layout_constraintBottom_toTopOf="@+id/wear_control_left_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:speed="@{viewModel.averageSpeed}" />
+        <TextView
+            android:id="@+id/wear_control_top_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/text"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toTopOf="@+id/wear_control_left_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:speed="@{viewModel.averageSpeed}" />
 
 
-            <TextView
-                android:id="@+id/wear_control_left_title"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="8dp"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Wearable.Large"
-                android:textColor="@color/text"
-                app:distance="@{viewModel.distance}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/wear_control_right_title"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/wear_control_top_title"
-                app:layout_constraintTop_toBottomOf="@+id/wear_control_top_title" />
+        <TextView
+            android:id="@+id/wear_control_left_title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/text"
+            android:textSize="28sp"
+            app:distance="@{viewModel.distance}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wear_control_top_title"
+            tools:text="277" />
 
-            <TextView
-                android:id="@+id/wear_control_right_title"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="4dp"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.Wearable.Large"
-                android:textColor="@color/text"
-                app:duration="@{viewModel.duration}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/wear_control_top_title"
-                app:layout_constraintStart_toEndOf="@+id/wear_control_left_title"
-                app:layout_constraintTop_toTopOf="@+id/wear_control_left_title" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.wear.widget.BoxInsetLayout>
+        <TextView
+            android:id="@+id/wear_control_right_title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Wearable.Large"
+            android:textColor="@color/text"
+            android:textSize="28sp"
+            app:duration="@{viewModel.duration}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/wear_control_left_title"
+            tools:text="1i23i" />
+    </android.support.constraint.ConstraintLayout>
 </layout>
 

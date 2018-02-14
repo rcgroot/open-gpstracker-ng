@@ -137,7 +137,7 @@ class LineGraph : View {
         belowLinePaint.isAntiAlias = true
         unitTextSideMargin = textPaint.textHeight() + valueTextPaint.textHeight()
         if (isInEditMode) {
-            xUnit = "time"
+            xUnit = "timeSpan"
             yUnit = "speed"
             data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 10F),
                     GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 13F))

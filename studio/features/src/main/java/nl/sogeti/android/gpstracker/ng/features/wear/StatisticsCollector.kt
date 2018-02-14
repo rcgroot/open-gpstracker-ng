@@ -135,7 +135,7 @@ class StatisticsCollector {
                 }
                 val endTime = handler.waypoints.last().last().time
                 val startTime = handler.waypoints.first().first().time
-                val currentMpS = recentMeters / recentMilliSeconds / 1000
+                val currentMpS = recentMeters / (recentMilliSeconds / 1000F)
                 val duration = endTime - startTime
                 return StatisticsMessage(currentMpS, meters, duration)
             }

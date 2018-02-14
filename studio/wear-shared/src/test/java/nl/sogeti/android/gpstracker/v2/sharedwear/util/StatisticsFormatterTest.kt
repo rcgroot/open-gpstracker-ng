@@ -10,6 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnit
 import java.util.*
 
@@ -28,13 +29,14 @@ class StatisticsFormatterTest {
     lateinit var resources: Resources
     @Mock
     lateinit var timeSpanCalculator: TimeSpanCalculator
-    var locale = Locale.US
+    @Mock
+    lateinit var localeProvider: LocaleProvider
     var referenceDate = Calendar.getInstance()!!
     lateinit var sut: StatisticsFormatter
 
     @Before
     fun setup() {
-        val sut = StatisticsFormatter(locale, timeSpanCalculator)
+        val sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         this.sut = sut
 
         Mockito.`when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
@@ -100,7 +102,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertOneSecond() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, SIX_SECONDS / 6L)
+        val duration = sut.convertSpanDescriptiveDuration(context, SIX_SECONDS / 6L)
         //
         assertThat(duration, CoreMatchers.`is`("1 second"))
     }
@@ -108,7 +110,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertSeconds() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, SIX_SECONDS)
+        val duration = sut.convertSpanDescriptiveDuration(context, SIX_SECONDS)
         //
         assertThat(duration, CoreMatchers.`is`("6 seconds"))
     }
@@ -116,7 +118,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertOneMinute() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, FIVE_MINUTES / 5L + SIX_SECONDS)
+        val duration = sut.convertSpanDescriptiveDuration(context, FIVE_MINUTES / 5L + SIX_SECONDS)
         //
         assertThat(duration, CoreMatchers.`is`("1 minute"))
     }
@@ -124,7 +126,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertMinutes() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, FIVE_MINUTES + SIX_SECONDS)
+        val duration = sut.convertSpanDescriptiveDuration(context, FIVE_MINUTES + SIX_SECONDS)
         //
         assertThat(duration, CoreMatchers.`is`("5 minutes"))
     }
@@ -132,7 +134,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertHoursAndMinutes() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS + FIVE_MINUTES)
+        val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS + FIVE_MINUTES)
         //
         assertThat(duration, CoreMatchers.`is`("2 hours 5 minutes"))
     }
@@ -140,7 +142,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertOneHour() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS / 2L)
+        val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS / 2L)
         //
         assertThat(duration, CoreMatchers.`is`("1 hour"))
     }
@@ -148,7 +150,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertOnyHours() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, TWO_HOURS)
+        val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS)
         //
         assertThat(duration, CoreMatchers.`is`("2 hours"))
     }
@@ -157,7 +159,7 @@ class StatisticsFormatterTest {
     @Test
     fun testConvertDaysAndHours() {
         // Act
-        val duration = sut.convertStartEndToDuration(context, 0, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
+        val duration = sut.convertSpanDescriptiveDuration(context, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
         //
         assertThat(duration, CoreMatchers.`is`("3 days 2 hours"))
     }
@@ -250,7 +252,8 @@ class StatisticsFormatterTest {
     @Test
     fun testMPStoOneKMP() {
         // Arrange
-        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
+        `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
+        sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F, 3600)
         // Assert
@@ -260,7 +263,8 @@ class StatisticsFormatterTest {
     @Test
     fun testMPStoTenKMP() {
         // Arrange
-        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
+        `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
+        sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 3600)
         // Assert
@@ -271,7 +275,7 @@ class StatisticsFormatterTest {
     @Test
     fun testMPStoThreeKMP() {
         // Arrange
-        sut = StatisticsFormatter(Locale.GERMAN, timeSpanCalculator)
+        sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 10800)
         // Assert

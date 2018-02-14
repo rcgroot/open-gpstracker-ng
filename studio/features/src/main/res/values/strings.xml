@@ -104,7 +104,7 @@
     <string name="graph_label_distance">Distance</string>
     <string name="graph_label_points">Points</string>
     <string name="graph_label_speed">Speed</string>
-    <string name="graph_label_time">Time</string>
+    <string name="graph_label_time">Duration</string>
     <string name="graph_label_altitude">Altitude</string>
     <string name="menu_item_export">Export to directory</string>
     <string name="menu_item_import">Import from directory</string>

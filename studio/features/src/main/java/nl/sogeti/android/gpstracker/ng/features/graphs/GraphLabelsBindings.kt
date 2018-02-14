@@ -34,12 +34,21 @@ class GraphLabelsBindings {
         }
     }
 
+    @BindingAdapter("timeSpan")
+    fun setTimeSpan(textView: TextView, timeStamp: Long?) {
+        if (timeStamp == null || timeStamp == 0L) {
+            textView.text = textView.context.getText(R.string.empty_dash)
+        } else {
+            textView.text = statisticsFormatter.convertTimestampToTime(textView.context, timeStamp)
+        }
+    }
+
     @BindingAdapter("duration")
     fun setDuration(textView: TextView, timeStamp: Long?) {
         if (timeStamp == null || timeStamp <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatter.convertStartEndToDuration(textView.context, 0L, timeStamp)
+            textView.text = statisticsFormatter.convertSpanDescriptiveDuration(textView.context, timeStamp)
         }
     }
 

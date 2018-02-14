@@ -113,7 +113,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_distance"
             app:layout_constraintLeft_toRightOf="@+id/graph_value_distance"
             app:layout_constraintRight_toLeftOf="@+id/graph_value_start_time"
-            app:time="@{viewModel.time}"
+            app:duration="@{viewModel.duration}"
             tools:text="1h23m" />
 
     </android.support.constraint.ConstraintLayout>

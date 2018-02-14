@@ -61,7 +61,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         }
 
         override fun describeXvalue(context: Context, xValue: Float): String {
-            return statisticsFormatter.convertStartEndToDuration(context, 0, xValue.toLong())
+            return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
         }
     }
 
@@ -94,12 +94,11 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
     private fun setTrack(trackUri: Uri) {
         viewModel.trackUri.set(trackUri)
         viewModel.distance.set(0F)
-        viewModel.time.set(0L)
+        viewModel.timeSpan.set(0L)
         viewModel.speed.set(0F)
         viewModel.waypoints.set("-")
-        viewModel.startDate.set(0L)
         viewModel.startTime.set(0L)
-        viewModel.total.set(0L)
+        viewModel.duration.set(0L)
         viewModel.paused.set(0L)
         viewModel.speedValueDescription.set(SpeedValuesDescriptor(statisticsFormatter))
         summaryManager.collectSummaryInfo(context, trackUri) {
@@ -115,18 +114,15 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
 
     private fun fillSummaryNumbers(summary: Summary) {
         viewModel.waypoints.set(summary.count.toString())
-        viewModel.startDate.set(summary.startTimestamp)
         viewModel.startTime.set(summary.startTimestamp)
-        viewModel.time.set(summary.trackedPeriod)
-
         val pausedTime = (summary.stopTimestamp - summary.startTimestamp) - summary.trackedPeriod
         viewModel.paused.set(pausedTime)
-
         viewModel.distance.set(summary.distance)
+        viewModel.duration.set(summary.trackedPeriod)
+        viewModel.timeSpan.set(summary.stopTimestamp - summary.startTimestamp)
 
-        viewModel.total.set(summary.stopTimestamp - summary.startTimestamp)
         val seconds = summary.trackedPeriod / 1000F
-        val speed = if(seconds > 0) summary.distance / seconds else 0F
+        val speed = if (seconds > 0) summary.distance / seconds else 0F
         viewModel.speed.set(speed)
     }
 
@@ -180,7 +176,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         return list
     }
 
-    inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
+    private inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
         val list = mutableListOf<R>()
         for (i in 0..this.count() - 2) {
             list.add(0, delta(this[i], this[i + 1]))

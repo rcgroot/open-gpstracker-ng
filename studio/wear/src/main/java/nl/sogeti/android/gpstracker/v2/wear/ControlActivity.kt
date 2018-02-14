@@ -123,6 +123,10 @@ class ControlActivity : WearableActivity(), View {
         binding?.circularProgress?.stopTimer()
     }
 
+    override fun showControls() {
+        binding?.wearControlVertical?.smoothScrollToPosition(1)
+    }
+
     //endregion
 
     companion object {

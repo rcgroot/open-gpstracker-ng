@@ -39,12 +39,11 @@ class GraphsViewModel {
     val speedAtTimeData = ObservableField<List<GraphPoint>>(emptyList())
     val speedValueDescription = ObservableField<LineGraph.ValueDescriptor>(object : LineGraph.ValueDescriptor {})
 
-    val startDate = ObservableField<Long>(0L)
     val startTime = ObservableField<Long>(0L)
-    val time = ObservableField<Long>(0L)
+    val timeSpan = ObservableField<Long>(0L)
     val paused = ObservableField<Long>(0)
 
-    val total = ObservableField<Long>(0L)
+    val duration = ObservableField<Long>(0L)
     val distance = ObservableField<Float>(0F)
     val speed = ObservableField<Float>(0F)
 }
