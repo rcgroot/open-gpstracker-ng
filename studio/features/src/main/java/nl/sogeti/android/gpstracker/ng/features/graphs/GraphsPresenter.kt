@@ -128,60 +128,37 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
 
     private fun calculateSpeedGraph(waypoints: List<List<Waypoint>>, start: Long, stop: Long): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
-        val slots = 500
-        val slotSize = (stop - start) / slots
         waypoints.forEach {
             list.add(GraphPoint((it.first().time - start).toFloat(), 0f))
-            val points = calculateSpeedGraphSegment(it, start, slotSize)
+            val points = calculateSpeedGraphSegment(it, start)
             list.addAll(points)
+            list.add(GraphPoint((it.last().time - start).toFloat(), 0f))
         }
 
         return list
     }
 
-    data class Delta(val time: Float, val duration: Long, val distance: Float)
-
-    fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long, slotSize: Long): List<GraphPoint> {
+    fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
-        var duration = 0f
-        var distance = 0f
-        var time = 0f
 
         val outArray = floatArrayOf(0.0F)
         val deltas = waypoints.forDelta { first, second ->
             val deltaDuration = second.time - first.time
             val deltaDistance = calculator.distance(first, second, outArray)
-            Delta((second.time - start).toFloat(), deltaDuration, deltaDistance)
+            Delta(first.time, second.time, deltaDistance / deltaDuration)
         }
+        fun Long.toX() = (this - start).toFloat()
         deltas.forEach {
-            if (duration < slotSize) {
-                duration += it.duration
-                distance += it.distance
-                time = it.time
-            } else {
-                val x = time
-                val y = distance / duration
-                list.add(GraphPoint(x, y))
-                duration = 0f
-                distance = 0f
-            }
-        }
-
-        if (duration != 0f) {
-            val x = time
-            val y = distance / duration
-            list.add(GraphPoint(x, y))
+            list.add(GraphPoint(it.startTime.toX(), it.speed))
+            list.add(GraphPoint(it.endTime.toX(), it.speed))
         }
 
         return list
     }
 
-    private inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
-        val list = mutableListOf<R>()
-        for (i in 0..this.count() - 2) {
-            list.add(0, delta(this[i], this[i + 1]))
-        }
+    data class Delta(val startTime: Long, val endTime: Long, val speed: Float)
+}
 
-        return list
-    }
+inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
+    return (0 until count() - 1).map { delta(this[it], this[it + 1]) }
 }

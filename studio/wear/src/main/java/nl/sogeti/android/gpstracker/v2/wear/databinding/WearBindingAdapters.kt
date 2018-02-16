@@ -104,7 +104,7 @@ class WearBindingAdapters {
         }
     }
 
-    fun String.asSmallLetterSpans(): SpannableString {
+    private fun String.asSmallLetterSpans(): SpannableString {
         val spannable = SpannableString(this)
         var start : Int? = null
         for (i in 0 until this.length) {

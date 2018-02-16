@@ -45,7 +45,7 @@ class TrackPresenterTest {
     @Before
     fun setUp() {
         viewModel = TrackViewModel()
-        sut = TrackPresenter(viewModel, view)
+        sut = TrackPresenter(viewModel, view, navigation)
         `when`(trackSelection.trackUri).thenReturn(trackUri)
         `when`(trackSelection.trackName).thenReturn("selected")
         sut.trackSelection = trackSelection
@@ -75,7 +75,7 @@ class TrackPresenterTest {
     @Test
     fun testOptionSelected() {
         // Arrange
-        sut.start(context, navigation)
+        sut.start(context)
         // Act
         sut.onListOptionSelected()
         // Assert
@@ -85,7 +85,7 @@ class TrackPresenterTest {
     @Test
     fun testAboutSelected() {
         // Arrange
-        sut.start(context, navigation)
+        sut.start(context)
         // Act
         sut.onAboutOptionSelected()
         // Assert
@@ -96,7 +96,7 @@ class TrackPresenterTest {
     fun testEditSelected() {
         // Arrange
         viewModel.trackUri.set(trackUri)
-        sut.start(context, navigation)
+        sut.start(context)
         // Act
         sut.onEditOptionSelected()
         // Assert

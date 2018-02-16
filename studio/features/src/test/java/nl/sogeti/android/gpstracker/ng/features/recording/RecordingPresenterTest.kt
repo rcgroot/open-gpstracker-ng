@@ -50,12 +50,14 @@ class RecordingPresenterTest {
     lateinit var context: Context
     @Mock
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
+    @Mock
+    lateinit var navigation: RecordingNavigation
     lateinit var sut: RecordingPresenter
 
     @Before
     fun setUp() {
         viewModel = RecordingViewModel(uri)
-        sut = RecordingPresenter(viewModel)
+        sut = RecordingPresenter(viewModel, navigation)
         sut.serviceManager = serviceManager
         `when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
         sut.contentControllerFactory = contentControllerFactory

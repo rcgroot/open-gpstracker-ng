@@ -56,7 +56,7 @@ class ConnectedServicePresenterTest {
         verify(mockContext).unregisterReceiver(ArgumentMatchers.any())
     }
 
-    class MyConnectedServicePresenter : ConnectedServicePresenter<Navigation>() {
+    class MyConnectedServicePresenter : ConnectedServicePresenter() {
 
         var state = -1
         var uri: Uri? = null

@@ -75,7 +75,7 @@ class TrackListPresenterTest {
     @Before
     fun setUp() {
         viewModel = TrackListViewModel()
-        sut = TrackListPresenter(viewModel, view)
+        sut = TrackListPresenter(viewModel, view, navigation)
         sut.trackSelection = trackSelection
         sut.contentControllerFactory = contentControllerFactory
         sut.summaryManager = summaryManager
@@ -108,7 +108,7 @@ class TrackListPresenterTest {
     fun testTrackSelection() {
         // Arrange
         val selectedUri = mock(Uri::class.java)
-        sut.start(context, navigation)
+        sut.start(context)
         // Act
         sut.didSelectTrack(selectedUri, "testname")
         // Assert

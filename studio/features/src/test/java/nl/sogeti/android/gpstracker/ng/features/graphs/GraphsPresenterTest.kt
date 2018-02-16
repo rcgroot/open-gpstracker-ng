@@ -70,8 +70,33 @@ class GraphsPresenterTest {
         // Prepare
         val waypoints = listOf(wayPoint1, wayPoint2)
         // Execute
-        val points = sut.calculateSpeedGraphSegment(waypoints, start, 30000)
+        val points = sut.calculateSpeedGraphSegment(waypoints, start)
         // Assert
-        assertThat(points.count(), `is`(1))
+        assertThat(points.count(), `is`(2))
+    }
+
+    @Test
+    fun forEmptyDelta() {
+        // Act
+        val result = listOf<Int>().forDelta { x, y -> x + y }
+        // Assert
+        assertThat(result, `is`(emptyList()))
+    }
+
+    @Test
+    fun forTwoDelta() {
+        // Act
+        val result = listOf(1,2).forDelta { x, y -> x + y }
+        // Assert
+        assertThat(result, `is`(listOf(3)))
+    }
+
+
+    @Test
+    fun forSixDelta() {
+        // Act
+        val result = listOf(1,2,3,4,5,6).forDelta { x, y -> x + y }
+        // Assert
+        assertThat(result, `is`(listOf(3,5,7,9,11)))
     }
 }
