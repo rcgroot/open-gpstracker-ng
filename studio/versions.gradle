@@ -1,7 +1,7 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-alpha02'
-    dataBindingVersion = '3.2.0-alpha02'
+    gradlePluginVersion = '3.2.0-alpha03'
+    dataBindingVersion = '3.2.0-alpha03'
     buildTools = '27.0.3'
     minSdk = 21
     targetSdk = 27

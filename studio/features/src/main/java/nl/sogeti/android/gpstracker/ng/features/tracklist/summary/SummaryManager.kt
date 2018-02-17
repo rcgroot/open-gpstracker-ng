@@ -51,6 +51,8 @@ class SummaryManager {
     var activeCount = 0
     @Inject
     lateinit var calculator: SummaryCalculator
+    @Inject
+    lateinit var context: Context
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -84,7 +86,7 @@ class SummaryManager {
     /**
      * Collects summary data from the meta table.
      */
-    fun collectSummaryInfo(context: Context, trackUri: Uri,
+    fun collectSummaryInfo(trackUri: Uri,
                            callbackSummary: (Summary) -> Unit) {
         val executor = executor ?: return
         executor.submit({
@@ -96,17 +98,17 @@ class SummaryManager {
                 if (trackCount == cacheCount) {
                     callbackSummary(cacheHit)
                 } else {
-                    executeTrackCalculation(context, trackUri, callbackSummary)
+                    executeTrackCalculation(trackUri, callbackSummary)
                 }
             } else {
-                executeTrackCalculation(context, trackUri, callbackSummary)
+                executeTrackCalculation(trackUri, callbackSummary)
             }
         })
     }
 
-    fun executeTrackCalculation(context: Context, trackUri: Uri, callbackSummary: (Summary) -> Unit) {
+    fun executeTrackCalculation(trackUri: Uri, callbackSummary: (Summary) -> Unit) {
         if (isRunning()) {
-            val summary = calculator.calculateSummary(context, trackUri)
+            val summary = calculator.calculateSummary(trackUri)
             if (isRunning()) {
                 summaryCache.put(trackUri, summary)
                 callbackSummary(summary)

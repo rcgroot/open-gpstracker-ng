@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -53,7 +54,7 @@ class GraphsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        graphPresenter = GraphsPresenter()
+        graphPresenter = ViewModelProviders.of(this).get(GraphsPresenter::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -66,8 +67,7 @@ class GraphsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        permissionRequester.start(this, { graphPresenter.start(activity) })
+        permissionRequester.start(this, { graphPresenter.start() })
     }
 
     override fun onStop() {

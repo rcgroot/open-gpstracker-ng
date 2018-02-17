@@ -28,9 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
@@ -42,7 +42,7 @@ import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
-class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
+class GraphsPresenter : ViewModel(), TrackSelection.Listener {
 
     @Inject
     lateinit var summaryManager: SummaryManager
@@ -52,6 +52,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
     lateinit var statisticsFormatter: StatisticsFormatter
     @Inject
     lateinit var trackSelection: TrackSelection
+
     val viewModel = GraphsViewModel()
 
     class SpeedValuesDescriptor(val statisticsFormatter: StatisticsFormatter) : LineGraph.ValueDescriptor {
@@ -69,7 +70,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun didStart() {
+    fun start() {
         trackSelection.addListener(this)
         summaryManager.start()
         val trackUri = trackSelection.trackUri
@@ -78,7 +79,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         }
     }
 
-    override fun willStop() {
+    fun stop() {
         trackSelection.removeListener(this)
         summaryManager.stop()
     }
@@ -101,7 +102,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
         viewModel.duration.set(0L)
         viewModel.paused.set(0L)
         viewModel.speedValueDescription.set(SpeedValuesDescriptor(statisticsFormatter))
-        summaryManager.collectSummaryInfo(context, trackUri) {
+        summaryManager.collectSummaryInfo(trackUri) {
             fillSummaryNumbers(it)
             fillSpeedToTimeGraph(it)
         }
@@ -147,6 +148,7 @@ class GraphsPresenter : ContextedPresenter(), TrackSelection.Listener {
             val deltaDistance = calculator.distance(first, second, outArray)
             Delta(first.time, second.time, deltaDistance / deltaDuration)
         }
+
         fun Long.toX() = (this - start).toFloat()
         deltas.forEach {
             list.add(GraphPoint(it.startTime.toX(), it.speed))

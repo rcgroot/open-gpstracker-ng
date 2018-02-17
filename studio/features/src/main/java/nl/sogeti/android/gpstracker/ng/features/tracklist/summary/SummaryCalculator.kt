@@ -45,12 +45,14 @@ class SummaryCalculator {
 
     @Inject
     lateinit var trackTypeDescriptions: TrackTypeDescriptions
+    @Inject
+    lateinit var context: Context
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    fun calculateSummary(context: Context, trackUri: Uri): Summary {
+    fun calculateSummary(trackUri: Uri): Summary {
         // Calculate
         val handler = DefaultResultHandler()
         trackUri.readTrack(context, handler)
