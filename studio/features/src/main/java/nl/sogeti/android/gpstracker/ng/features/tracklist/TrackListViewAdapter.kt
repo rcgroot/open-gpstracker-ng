@@ -190,7 +190,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     private fun willDisplayTrack(context: Context, viewModel: TrackViewModel) {
-        summaryManager.collectSummaryInfo(context, viewModel.uri, {
+        summaryManager.collectSummaryInfo(viewModel.uri, {
             if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
                 val listOfLatLng = it.waypoints.map { it.map { it.mapLatLng() } }

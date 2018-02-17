@@ -38,7 +38,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.STATE_LOGGING
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 import org.hamcrest.CoreMatchers.`is`

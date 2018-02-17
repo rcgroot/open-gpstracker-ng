@@ -35,7 +35,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import javax.inject.Named

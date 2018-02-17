@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
@@ -177,7 +177,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     //region Track selection listening
 
-    override fun onTrackSelection(trackUri: Uri, name: String) {
+    override fun onTrackSelection(trackUri: Uri, trackName: String) {
         viewModel.selectedTrack.set(trackUri)
     }
 

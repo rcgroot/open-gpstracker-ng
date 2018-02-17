@@ -39,7 +39,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.util.trackUri
@@ -93,9 +93,9 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //region Track selection
 
-    override fun onTrackSelection(trackUri: Uri, name: String) {
+    override fun onTrackSelection(trackUri: Uri, trackName: String) {
         viewModel.trackUri.set(trackUri)
-        viewModel.name.set(name)
+        viewModel.name.set(trackName)
         contentController?.registerObserver(trackUri)
         startReadingTrack(trackUri)
     }

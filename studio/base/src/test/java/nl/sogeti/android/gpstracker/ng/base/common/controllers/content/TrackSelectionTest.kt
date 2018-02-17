@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.base.common.controllers.content
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import org.hamcrest.core.Is.`is`
 import org.junit.Assert
 import org.junit.Before

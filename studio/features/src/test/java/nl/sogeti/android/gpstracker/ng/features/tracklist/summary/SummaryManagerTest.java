@@ -143,7 +143,7 @@ public class SummaryManagerTest {
         sut.stop();
 
         // Execute
-        sut.collectSummaryInfo(mockContext, uri, new Function1<Summary, Unit>() {
+        sut.collectSummaryInfo(uri, new Function1<Summary, Unit>() {
             @Override
             public Unit invoke(Summary summary) {
                 callback.add(summary);
@@ -163,7 +163,7 @@ public class SummaryManagerTest {
         Uri uri = mock(Uri.class);
 
         // Execute
-        sut.executeTrackCalculation(mockContext, uri, new Function1<Summary, Unit>() {
+        sut.executeTrackCalculation(uri, new Function1<Summary, Unit>() {
             @Override
             public Unit invoke(Summary summary) {
                 callback.add(summary);

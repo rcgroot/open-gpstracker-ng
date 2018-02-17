@@ -35,7 +35,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.util.tracksUri
 import org.junit.Before
 import org.junit.Rule

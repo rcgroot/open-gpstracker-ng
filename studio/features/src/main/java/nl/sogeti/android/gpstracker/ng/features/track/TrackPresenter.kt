@@ -33,7 +33,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.utils.apply
 import nl.sogeti.android.gpstracker.utils.getString
@@ -92,10 +92,10 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     //region TrackSelection
 
-    override fun onTrackSelection(trackUri: Uri, name: String) {
+    override fun onTrackSelection(trackUri: Uri, trackName: String) {
         viewModel.trackUri.set(trackUri)
         contentController?.registerObserver(trackUri)
-        showName(name)
+        showName(trackName)
     }
 
     //endregion

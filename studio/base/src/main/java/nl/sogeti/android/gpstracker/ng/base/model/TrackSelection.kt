@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.model
+package nl.sogeti.android.gpstracker.ng.base.model
 
 import android.net.Uri
 
@@ -56,7 +56,7 @@ class TrackSelection {
     }
 
     interface Listener {
-        fun onTrackSelection(trackUri: Uri, name: String)
+        fun onTrackSelection(trackUri: Uri, trackName: String)
     }
 
 }

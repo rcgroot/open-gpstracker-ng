@@ -28,72 +28,41 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
-import android.arch.lifecycle.ViewModel
-import android.content.Context
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.Summary
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.model.TrackSelection
-import nl.sogeti.android.gpstracker.service.util.Waypoint
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
-class GraphsPresenter : ViewModel(), TrackSelection.Listener {
+class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
 
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
-    lateinit var calculator: SummaryCalculator
-    @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
-    @Inject
-    lateinit var trackSelection: TrackSelection
-
-    val viewModel = GraphsViewModel()
-
-    class SpeedValuesDescriptor(val statisticsFormatter: StatisticsFormatter) : LineGraph.ValueDescriptor {
-        override fun describeYvalue(context: Context, yValue: Float): String {
-            // Y value speed in the graph is meter per millisecond
-            return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue * 1000f, 1)
-        }
-
-        override fun describeXvalue(context: Context, xValue: Float): String {
-            return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
-        }
-    }
+    internal val viewModel = GraphsViewModel()
+    //    private val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
+    private val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
+        resetTrack()
     }
 
-    fun start() {
-        trackSelection.addListener(this)
+    override fun onStart() {
         summaryManager.start()
-        val trackUri = trackSelection.trackUri
-        if (trackUri != null) {
-            setTrack(trackUri)
-        }
     }
 
-    fun stop() {
-        trackSelection.removeListener(this)
+    override fun onStop() {
         summaryManager.stop()
     }
 
-    //region TrackSelection.Listener
+    //region update
 
-    override fun onTrackSelection(trackUri: Uri, name: String) {
-        setTrack(trackUri)
-    }
-
-    //endregion
-
-    private fun setTrack(trackUri: Uri) {
-        viewModel.trackUri.set(trackUri)
+    private fun resetTrack() {
         viewModel.distance.set(0F)
         viewModel.timeSpan.set(0L)
         viewModel.speed.set(0F)
@@ -101,16 +70,14 @@ class GraphsPresenter : ViewModel(), TrackSelection.Listener {
         viewModel.startTime.set(0L)
         viewModel.duration.set(0L)
         viewModel.paused.set(0L)
-        viewModel.speedValueDescription.set(SpeedValuesDescriptor(statisticsFormatter))
+    }
+
+    override fun onTrackUpdate(trackUri: Uri, name: String) {
+        viewModel.trackUri.set(trackUri)
         summaryManager.collectSummaryInfo(trackUri) {
             fillSummaryNumbers(it)
             fillSpeedToTimeGraph(it)
         }
-    }
-
-    private fun fillSpeedToTimeGraph(it: Summary) {
-        val graphPoints = calculateSpeedGraph(it.waypoints, it.startTimestamp, it.stopTimestamp)
-        viewModel.speedAtTimeData.set(graphPoints)
     }
 
     private fun fillSummaryNumbers(summary: Summary) {
@@ -127,40 +94,9 @@ class GraphsPresenter : ViewModel(), TrackSelection.Listener {
         viewModel.speed.set(speed)
     }
 
-    private fun calculateSpeedGraph(waypoints: List<List<Waypoint>>, start: Long, stop: Long): List<GraphPoint> {
-        val list = mutableListOf<GraphPoint>()
-        waypoints.forEach {
-            list.add(GraphPoint((it.first().time - start).toFloat(), 0f))
-            val points = calculateSpeedGraphSegment(it, start)
-            list.addAll(points)
-            list.add(GraphPoint((it.last().time - start).toFloat(), 0f))
-        }
-
-        return list
+    private fun fillSpeedToTimeGraph(it: Summary) {
+        viewModel.speedAtTimeData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
+        viewModel.speedValueDescription.set(graphDataProvider.valueDescriptor)
     }
-
-    fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long): List<GraphPoint> {
-        val list = mutableListOf<GraphPoint>()
-
-        val outArray = floatArrayOf(0.0F)
-        val deltas = waypoints.forDelta { first, second ->
-            val deltaDuration = second.time - first.time
-            val deltaDistance = calculator.distance(first, second, outArray)
-            Delta(first.time, second.time, deltaDistance / deltaDuration)
-        }
-
-        fun Long.toX() = (this - start).toFloat()
-        deltas.forEach {
-            list.add(GraphPoint(it.startTime.toX(), it.speed))
-            list.add(GraphPoint(it.endTime.toX(), it.speed))
-        }
-
-        return list
-    }
-
-    data class Delta(val startTime: Long, val endTime: Long, val speed: Float)
 }
 
-inline fun <T, R> List<T>.forDelta(delta: (T, T) -> R): List<R> {
-    return (0 until count() - 1).map { delta(this[it], this[it + 1]) }
-}

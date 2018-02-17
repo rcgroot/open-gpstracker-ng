@@ -6,7 +6,9 @@ import nl.sogeti.android.gpstracker.ng.features.about.AboutModel
 import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphDistanceTimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedTimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
@@ -21,6 +23,7 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingService
 import nl.sogeti.android.gpstracker.ng.features.wear.PhoneMessageListenerService
@@ -36,7 +39,6 @@ interface FeatureComponent {
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
 
-    fun inject(graphsPresenter: GraphsPresenter)
     fun inject(graphsPresenter: TrackEditPresenter)
     fun inject(trackNavigator: TrackNavigator)
     fun inject(trackPresenter: TrackPresenter)
@@ -59,5 +61,9 @@ interface FeatureComponent {
     fun inject(phoneMessageListenerService: PhoneMessageListenerService)
     fun inject(statisticsCollector: StatisticsCollector)
     fun inject(graphLabelsBindings: GraphLabelsBindings)
+    fun inject(abstractTrackPresenter: AbstractTrackPresenter)
+    fun inject(graphsPresenter: GraphsPresenter)
+    fun inject(graphSpeedTimeProvider: GraphSpeedTimeDataProvider)
+    fun inject(graphDistanceTimeDataProvider: GraphDistanceTimeDataProvider)
 
 }

@@ -32,6 +32,7 @@ import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.service.util.Waypoint
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.Before
@@ -41,15 +42,17 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnit
 
-class GraphsPresenterTest {
+class GraphSpeedTimeProviderTest {
 
-    lateinit var sut: GraphsPresenter
+    lateinit var sut: GraphSpeedTimeDataProvider
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()!!
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
     @Mock
     lateinit var calculator: SummaryCalculator
+    @Mock
+    lateinit var statisticsFormatter: StatisticsFormatter
 
     val gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
     val start = 1497243484247L
@@ -60,8 +63,9 @@ class GraphsPresenterTest {
 
     @Before
     fun setUp() {
-        sut = GraphsPresenter()
+        sut = GraphSpeedTimeDataProvider()
         sut.calculator = calculator
+        sut.statisticsFormatter = statisticsFormatter
         `when`(calculator.distance(any(), any(), any())).thenReturn(313.37338f)
     }
 
@@ -78,7 +82,7 @@ class GraphsPresenterTest {
     @Test
     fun forEmptyDelta() {
         // Act
-        val result = listOf<Int>().forDelta { x, y -> x + y }
+        val result = listOf<Int>().toDeltas { x, y -> x + y }
         // Assert
         assertThat(result, `is`(emptyList()))
     }
@@ -86,7 +90,7 @@ class GraphsPresenterTest {
     @Test
     fun forTwoDelta() {
         // Act
-        val result = listOf(1,2).forDelta { x, y -> x + y }
+        val result = listOf(1, 2).toDeltas { x, y -> x + y }
         // Assert
         assertThat(result, `is`(listOf(3)))
     }
@@ -95,8 +99,8 @@ class GraphsPresenterTest {
     @Test
     fun forSixDelta() {
         // Act
-        val result = listOf(1,2,3,4,5,6).forDelta { x, y -> x + y }
+        val result = listOf(1, 2, 3, 4, 5, 6).toDeltas { x, y -> x + y }
         // Assert
-        assertThat(result, `is`(listOf(3,5,7,9,11)))
+        assertThat(result, `is`(listOf(3, 5, 7, 9, 11)))
     }
 }
