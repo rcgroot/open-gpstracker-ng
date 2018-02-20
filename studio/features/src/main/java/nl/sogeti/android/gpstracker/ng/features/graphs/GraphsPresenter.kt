@@ -44,8 +44,7 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
     internal val viewModel = GraphsViewModel()
-    //    private val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
-    private val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
+
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -95,6 +94,8 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     }
 
     private fun fillSpeedToTimeGraph(it: Summary) {
+        //    private val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
+        val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
         viewModel.speedAtTimeData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
         viewModel.speedValueDescription.set(graphDataProvider.valueDescriptor)
     }
