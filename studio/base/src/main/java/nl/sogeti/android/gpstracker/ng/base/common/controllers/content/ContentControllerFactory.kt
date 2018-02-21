@@ -1,11 +1,12 @@
 package nl.sogeti.android.gpstracker.ng.base.common.controllers.content
 
 import android.content.Context
+import javax.inject.Inject
 
 
-class ContentControllerFactory {
+class ContentControllerFactory @Inject constructor(private val context: Context) {
 
-    fun createContentController(context: Context, listener: ContentController.Listener): ContentController {
+    fun createContentController(listener: ContentController.Listener): ContentController {
         return ContentController(context, listener)
     }
 }

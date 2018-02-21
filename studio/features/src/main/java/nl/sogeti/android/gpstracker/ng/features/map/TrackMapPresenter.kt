@@ -77,7 +77,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         started = true
         trackSelection.addListener(this)
         makeTrackSelection()
-        contentController = contentControllerFactory.createContentController(context, this)
+        contentController = contentControllerFactory.createContentController(this)
         contentController?.registerObserver(viewModel.trackUri.get())
         addTilesToMap()
     }

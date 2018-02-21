@@ -160,7 +160,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     //region Private
 
     private fun startContentUpdates() {
-        contentController = contentControllerFactory.createContentController(context, this)
+        contentController = contentControllerFactory.createContentController(this)
         contentController?.registerObserver(viewModel.trackUri.get())
     }
 

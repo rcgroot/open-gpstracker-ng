@@ -55,7 +55,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     override fun didStart() {
         trackSelection.addListener(this)
-        contentController = contentControllerFactory.createContentController(context, this)
+        contentController = contentControllerFactory.createContentController(this)
         trackSelection.trackUri?.let {
             onTrackSelection(it, trackSelection.trackName)
         }

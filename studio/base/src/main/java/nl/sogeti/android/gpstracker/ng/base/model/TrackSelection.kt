@@ -29,8 +29,11 @@
 package nl.sogeti.android.gpstracker.ng.base.model
 
 import android.net.Uri
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class TrackSelection {
+@Singleton
+class TrackSelection @Inject constructor() {
 
     var trackUri: Uri? = null
         private set

@@ -42,17 +42,9 @@ import javax.inject.Singleton
 @Module
 class AppModule(val application: Application) {
 
-    @Singleton
-    @Provides
-    fun trackSelection() = TrackSelection()
-
-    @Provides
-    fun contentControllerFactory() = ContentControllerFactory()
-
     @Provides
     @Named("dayFormatter")
     fun dayFormatter() = SimpleDateFormat("EEEE", Locale.getDefault())
-
 
     @Provides
     fun applicationContext(): Context = application

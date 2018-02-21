@@ -31,6 +31,7 @@ package nl.sogeti.android.gpstracker.ng.features.tracklist
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
@@ -39,7 +40,6 @@ import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
@@ -78,7 +78,7 @@ class TrackListPresenter(val viewModel: TrackListViewModel, val view: TrackListV
 
     override fun didStart() {
         trackSelection.addListener(this)
-        contentController = contentControllerFactory.createContentController(context, this)
+        contentController = contentControllerFactory.createContentController(this)
         contentController?.registerObserver(tracksUri())
         summaryManager.start()
         addTracksToModel()
