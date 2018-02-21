@@ -8,4 +8,6 @@ interface GraphDataProvider {
 
     fun calculateGraphPoints(waypoints: List<List<Waypoint>>): List<GraphPoint>
     val valueDescriptor: LineGraph.ValueDescriptor
+    val xLabel: Int
+    val yLabel: Int
 }

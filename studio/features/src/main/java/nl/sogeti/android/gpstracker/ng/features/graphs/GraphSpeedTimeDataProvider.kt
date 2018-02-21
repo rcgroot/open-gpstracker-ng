@@ -7,14 +7,22 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
+import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
 class GraphDistanceTimeDataProvider : LineGraph.ValueDescriptor, GraphDataProvider {
 
     @Inject
     lateinit var calculator: SummaryCalculator
+
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
+
+    override val yLabel: Int
+        get() = R.string.graph_label_speed
+
+    override val xLabel: Int
+        get() = R.string.graph_label_distance
 
     init {
         FeatureConfiguration.featureComponent.inject(this)

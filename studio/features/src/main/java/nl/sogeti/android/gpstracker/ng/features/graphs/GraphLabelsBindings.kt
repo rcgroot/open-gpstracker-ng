@@ -1,8 +1,11 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import android.databinding.BindingAdapter
+import android.support.annotation.IntegerRes
+import android.support.annotation.StringRes
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
@@ -69,5 +72,15 @@ class GraphLabelsBindings {
             textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed)
 
         }
+    }
+
+    @BindingAdapter("x_unit")
+    fun setXUnit(graph: LineGraph, @StringRes id: Int) {
+        graph.xUnit = graph.context.getString(id)
+    }
+
+    @BindingAdapter("y_unit")
+    fun setYUnit(graph: LineGraph, @StringRes id: Int) {
+        graph.yUnit = graph.context.getString(id)
     }
 }

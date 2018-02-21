@@ -39,11 +39,11 @@ import javax.inject.Inject
 
 class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
 
+    internal val viewModel = GraphsViewModel()
     @Inject
     lateinit var summaryManager: SummaryManager
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
-    internal val viewModel = GraphsViewModel()
 
 
     init {
@@ -94,10 +94,12 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     }
 
     private fun fillSpeedToTimeGraph(it: Summary) {
-        //    private val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
-        val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
-        viewModel.speedAtTimeData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
-        viewModel.speedValueDescription.set(graphDataProvider.valueDescriptor)
+        val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
+//        val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
+        viewModel.graphData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
+        viewModel.xLabel.set(graphDataProvider.xLabel)
+        viewModel.yLabel.set(graphDataProvider.yLabel)
+        viewModel.graphLabels.set(graphDataProvider.valueDescriptor)
     }
 }
 

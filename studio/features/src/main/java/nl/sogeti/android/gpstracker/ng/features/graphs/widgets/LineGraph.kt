@@ -60,12 +60,12 @@ class LineGraph : View {
             field = value
             invalidate()
         }
-    var description = object : ValueDescriptor {}
+    var yUnit = ""
         set(value) {
             field = value
             invalidate()
         }
-    var yUnit = ""
+    var description = object : ValueDescriptor {}
         set(value) {
             field = value
             invalidate()
@@ -154,13 +154,13 @@ class LineGraph : View {
     }
 
     fun appyStyle(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.LineGraphStyle, 0, 0)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.LineGraph, 0, 0)
         try {
-            xUnit = ta.getString(R.styleable.LineGraphStyle_x_unit) ?: xUnit
-            yUnit = ta.getString(R.styleable.LineGraphStyle_y_unit) ?: yUnit
-            topGradientColor = ta.getColor(R.styleable.LineGraphStyle_top_gradient, topGradientColor)
-            bottomGradientColor = ta.getColor(R.styleable.LineGraphStyle_bottom_gradient, bottomGradientColor)
-            lineColor = ta.getColor(R.styleable.LineGraphStyle_line_color, lineColor)
+            xUnit = ta.getString(R.styleable.LineGraph_x_unit) ?: xUnit
+            yUnit = ta.getString(R.styleable.LineGraph_y_unit) ?: yUnit
+            topGradientColor = ta.getColor(R.styleable.LineGraph_top_gradient, topGradientColor)
+            bottomGradientColor = ta.getColor(R.styleable.LineGraph_bottom_gradient, bottomGradientColor)
+            lineColor = ta.getColor(R.styleable.LineGraph_line_color, lineColor)
         } finally {
             ta.recycle()
         }

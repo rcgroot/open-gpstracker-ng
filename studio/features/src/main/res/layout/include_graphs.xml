@@ -24,11 +24,11 @@
                 android:layout_height="240dp"
                 android:layout_margin="8dp"
                 android:background="@color/primary_light"
-                app:data="@{viewModel.speedAtTimeData}"
+                app:data="@{viewModel.graphData}"
                 app:line_color="@color/primary_text"
-                app:value_description="@{viewModel.speedValueDescription}"
-                app:x_unit="@string/graph_label_time"
-                app:y_unit="@string/graph_label_speed" />
+                app:value_description="@{viewModel.graphLabels}"
+                app:x_unit="@{viewModel.xLabel}"
+                app:y_unit="@{viewModel.yLabel}" />
 
         </LinearLayout>
 
