@@ -45,12 +45,14 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
 
-    private var graphDataProvider: GraphDataProvider = GraphSpeedOverTimeDataProvider()
+    private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
         resetTrack()
+        graphDataProvider = GraphSpeedOverTimeDataProvider()
+        viewModel.durationSelected.set(true)
     }
 
     override fun onStart() {
@@ -65,12 +67,16 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
 
     fun didSelectDistance() {
         graphDataProvider = GraphSpeedOVerDistanceDataProvider()
+        viewModel.distanceSelected.set(true)
+        viewModel.durationSelected.set(false)
         trackSummary?.let { fillGraphWithSummary(it) }
     }
 
 
     fun didSelectTime() {
         graphDataProvider = GraphSpeedOverTimeDataProvider()
+        viewModel.distanceSelected.set(false)
+        viewModel.durationSelected.set(true)
         trackSummary?.let { fillGraphWithSummary(it) }
     }
     //endregion

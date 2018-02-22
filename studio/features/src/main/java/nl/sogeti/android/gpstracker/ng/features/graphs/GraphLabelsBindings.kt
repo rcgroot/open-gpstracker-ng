@@ -1,8 +1,8 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import android.databinding.BindingAdapter
-import android.support.annotation.IntegerRes
 import android.support.annotation.StringRes
+import android.view.View
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
@@ -57,7 +57,7 @@ class GraphLabelsBindings {
 
     @BindingAdapter("distance")
     fun setDistance(textView: TextView, distance: Float?) {
-        if (distance== null || distance <= 0L) {
+        if (distance == null || distance <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
             textView.text = statisticsFormatter.convertMetersToDistance(textView.context, distance)
@@ -83,4 +83,10 @@ class GraphLabelsBindings {
     fun setYUnit(graph: LineGraph, @StringRes id: Int) {
         graph.yUnit = graph.context.getString(id)
     }
+
+    @BindingAdapter("activated")
+    fun setActivated(view: View, activated: Boolean?) {
+        view.isActivated = activated ?: false
+    }
+
 }

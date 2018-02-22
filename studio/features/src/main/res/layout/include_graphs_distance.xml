@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         app:layout_scrollFlags="scroll|snap|enterAlways">
 
-        <View
+        <ImageView
             android:id="@+id/distance_selection"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -27,12 +27,14 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{() -> presenter.didSelectDistance()}"
-            app:layout_constraintBottom_toBottomOf="@+id/graph_value_distance"
+            android:src="@drawable/activated_selector"
+            app:activated="@{viewModel.distanceSelected}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/graph_label_distance"
-            app:layout_constraintStart_toStartOf="@+id/graph_label_distance"
-            app:layout_constraintTop_toTopOf="@+id/graph_label_distance" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <View
+        <ImageView
             android:id="@+id/time_selection"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -40,10 +42,12 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{() -> presenter.didSelectTime()}"
-            app:layout_constraintBottom_toBottomOf="@+id/graph_value_time"
+            android:src="@drawable/activated_selector"
+            app:activated="@{viewModel.durationSelected}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/graph_label_time"
-            app:layout_constraintStart_toStartOf="@+id/graph_label_time"
-            app:layout_constraintTop_toTopOf="@+id/graph_label_time" />
+            app:layout_constraintStart_toEndOf="@+id/graph_label_distance"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/graph_label_distance"

@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
@@ -46,6 +47,9 @@ class GraphsViewModel {
     val duration = ObservableField<Long>(0L)
     val distance = ObservableField<Float>(0F)
     val speed = ObservableField<Float>(0F)
+
+    val distanceSelected = ObservableBoolean(false)
+    val durationSelected = ObservableBoolean(false)
 
     val graphData = ObservableField<List<GraphPoint>>(emptyList())
     val graphLabels = ObservableField<LineGraph.ValueDescriptor>(object : LineGraph.ValueDescriptor {})
