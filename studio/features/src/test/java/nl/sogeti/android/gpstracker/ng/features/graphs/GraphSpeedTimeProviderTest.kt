@@ -44,7 +44,7 @@ import org.mockito.junit.MockitoJUnit
 
 class GraphSpeedTimeProviderTest {
 
-    lateinit var sut: GraphSpeedTimeDataProvider
+    lateinit var sut: GraphSpeedOverTimeDataProvider
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()!!
     @get:Rule
@@ -63,7 +63,7 @@ class GraphSpeedTimeProviderTest {
 
     @Before
     fun setUp() {
-        sut = GraphSpeedTimeDataProvider()
+        sut = GraphSpeedOverTimeDataProvider()
         sut.calculator = calculator
         sut.statisticsFormatter = statisticsFormatter
         `when`(calculator.distance(any(), any(), any())).thenReturn(313.37338f)

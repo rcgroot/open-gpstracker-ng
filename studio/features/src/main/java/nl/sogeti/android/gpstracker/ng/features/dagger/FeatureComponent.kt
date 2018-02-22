@@ -6,9 +6,9 @@ import nl.sogeti.android.gpstracker.ng.features.about.AboutModel
 import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
-import nl.sogeti.android.gpstracker.ng.features.graphs.GraphDistanceTimeDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedOVerDistanceDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
-import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedTimeDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedOverTimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
@@ -63,7 +63,7 @@ interface FeatureComponent {
     fun inject(graphLabelsBindings: GraphLabelsBindings)
     fun inject(abstractTrackPresenter: AbstractTrackPresenter)
     fun inject(graphsPresenter: GraphsPresenter)
-    fun inject(graphSpeedTimeProvider: GraphSpeedTimeDataProvider)
-    fun inject(graphDistanceTimeDataProvider: GraphDistanceTimeDataProvider)
+    fun inject(graphSpeedOverTimeProvider: GraphSpeedOverTimeDataProvider)
+    fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
 
 }

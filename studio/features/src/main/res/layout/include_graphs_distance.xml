@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="presenter"
+            type="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter" />
+
+        <variable
             name="viewModel"
             type="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsViewModel" />
     </data>
@@ -14,6 +18,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_scrollFlags="scroll|snap|enterAlways">
+
+        <View
+            android:id="@+id/distance_selection"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> presenter.didSelectDistance()}"
+            app:layout_constraintBottom_toBottomOf="@+id/graph_value_distance"
+            app:layout_constraintEnd_toEndOf="@+id/graph_label_distance"
+            app:layout_constraintStart_toStartOf="@+id/graph_label_distance"
+            app:layout_constraintTop_toTopOf="@+id/graph_label_distance" />
+
+        <View
+            android:id="@+id/time_selection"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> presenter.didSelectTime()}"
+            app:layout_constraintBottom_toBottomOf="@+id/graph_value_time"
+            app:layout_constraintEnd_toEndOf="@+id/graph_label_time"
+            app:layout_constraintStart_toStartOf="@+id/graph_label_time"
+            app:layout_constraintTop_toTopOf="@+id/graph_label_time" />
 
         <TextView
             android:id="@+id/graph_label_distance"
@@ -110,10 +140,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            app:duration="@{viewModel.duration}"
             app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_distance"
             app:layout_constraintLeft_toRightOf="@+id/graph_value_distance"
             app:layout_constraintRight_toLeftOf="@+id/graph_value_start_time"
-            app:duration="@{viewModel.duration}"
             tools:text="1h23m" />
 
     </android.support.constraint.ConstraintLayout>

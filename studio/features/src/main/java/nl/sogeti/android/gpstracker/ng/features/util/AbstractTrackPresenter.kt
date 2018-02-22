@@ -70,8 +70,9 @@ abstract class AbstractTrackPresenter : ViewModel(), TrackSelection.Listener, Co
         }
     }
 
+    abstract fun onStart()
+
     abstract fun onTrackUpdate(trackUri: Uri, name: String)
 
-    abstract fun onStart()
     abstract fun onStop()
 }

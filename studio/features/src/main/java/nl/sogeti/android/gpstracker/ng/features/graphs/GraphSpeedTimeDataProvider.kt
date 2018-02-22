@@ -10,7 +10,7 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class GraphDistanceTimeDataProvider : LineGraph.ValueDescriptor, GraphDataProvider {
+class GraphSpeedOVerDistanceDataProvider : LineGraph.ValueDescriptor, GraphDataProvider {
 
     @Inject
     lateinit var calculator: SummaryCalculator

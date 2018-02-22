@@ -45,6 +45,8 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
 
+    private var graphDataProvider: GraphDataProvider = GraphSpeedOverTimeDataProvider()
+    private var trackSummary: Summary? = null
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -58,6 +60,20 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     override fun onStop() {
         summaryManager.stop()
     }
+
+    //region View callbacks
+
+    fun didSelectDistance() {
+        graphDataProvider = GraphSpeedOVerDistanceDataProvider()
+        trackSummary?.let { fillGraphWithSummary(it) }
+    }
+
+
+    fun didSelectTime() {
+        graphDataProvider = GraphSpeedOverTimeDataProvider()
+        trackSummary?.let { fillGraphWithSummary(it) }
+    }
+    //endregion
 
     //region update
 
@@ -74,8 +90,9 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     override fun onTrackUpdate(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
         summaryManager.collectSummaryInfo(trackUri) {
+            trackSummary = it
             fillSummaryNumbers(it)
-            fillSpeedToTimeGraph(it)
+            fillGraphWithSummary(it)
         }
     }
 
@@ -93,9 +110,7 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
         viewModel.speed.set(speed)
     }
 
-    private fun fillSpeedToTimeGraph(it: Summary) {
-        val graphDataProvider: GraphDataProvider = GraphSpeedTimeDataProvider()
-//        val graphDataProvider: GraphDataProvider = GraphDistanceTimeDataProvider()
+    private fun fillGraphWithSummary(it: Summary) {
         viewModel.graphData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
         viewModel.xLabel.set(graphDataProvider.xLabel)
         viewModel.yLabel.set(graphDataProvider.yLabel)

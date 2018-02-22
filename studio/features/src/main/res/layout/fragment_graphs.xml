@@ -32,6 +32,7 @@
 
             <include
                 layout="@layout/include_graphs_distance"
+                bind:presenter="@{presenter}"
                 bind:viewModel="@{viewModel}" />
 
         </android.support.design.widget.AppBarLayout>
