@@ -29,9 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.features.recording
 
 import android.content.Context
-import android.location.Location
 import android.net.Uri
-import android.os.AsyncTask
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
@@ -44,11 +42,10 @@ import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.sig
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.low
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.medium
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.none
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.service.util.readName
-import nl.sogeti.android.gpstracker.service.util.readTrack
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
@@ -57,7 +54,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
         ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
     private var gpsStatusController: GpsStatusController? = null
-    internal var executingReader: TrackReader? = null
     @Inject
     lateinit var contentControllerFactory: ContentControllerFactory
     private var contentController: ContentController? = null
@@ -67,15 +63,24 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     lateinit var packageManagerFactory: PackageManagerFactory
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
+    @Inject
+    lateinit var summaryManager: SummaryManager
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
+    }
+
+    override fun didStart() {
+        super.didStart()
+        summaryManager.start()
+
     }
 
     override fun willStop() {
         super.willStop()
         stopContentUpdates()
         stopGpsUpdates()
+        summaryManager.stop()
     }
 
     //region View
@@ -113,12 +118,15 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     }
 
     private fun readTrackSummary(trackUri: Uri) {
-        var executingReader = this.executingReader
-        if (executingReader == null || executingReader.trackUri != trackUri) {
-            executingReader?.cancel(true)
-            executingReader = TrackReader(context, trackUri, viewModel)
-            executingReader.execute()
-            this.executingReader = executingReader
+        summaryManager.collectSummaryInfo(trackUri) {
+            val endTime = it.waypoints.last().last().time
+            val startTime = it.waypoints.first().first().time
+            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance, it.trackedPeriod / 1000)
+            val distance = statisticsFormatter.convertMetersToDistance(context, it.distance)
+            val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
+            val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
+            viewModel.summary.set(summary)
+            viewModel.name.set(it.name)
         }
     }
 
@@ -206,50 +214,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
             STATE_LOGGING -> viewModel.state.set(this.context.getString(R.string.state_logging))
             STATE_PAUSED -> viewModel.state.set(this.context.getString(R.string.state_paused))
             STATE_STOPPED -> viewModel.state.set(context.getString(R.string.state_stopped))
-        }
-    }
-
-    inner class TrackReader internal constructor(
-            private val context: Context, val trackUri: Uri, private val viewModel: RecordingViewModel)
-        : AsyncTask<Void, Void, Void>() {
-
-        val handler = DefaultResultHandler()
-
-        override fun doInBackground(vararg p: Void): Void? {
-            trackUri.readTrack(context, handler)
-
-            if (handler.waypoints.isEmpty()) {
-                return null
-            }
-
-            var milliSeconds = 0L
-            var meters = 0.0F
-            val results = FloatArray(1)
-            handler.waypoints.forEach {
-                for (i in 1..it.lastIndex) {
-                    val w1 = it[i - 1]
-                    val w2 = it[i]
-                    Location.distanceBetween(w1.latitude, w1.longitude, w2.latitude, w2.longitude, results)
-                    meters += results.first()
-                    milliSeconds += w2.time - w1.time
-                }
-            }
-            val endTime = handler.waypoints.last().last().time
-            val startTime = handler.waypoints.first().first().time
-            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, meters, milliSeconds / 1000)
-            val distance = statisticsFormatter.convertMetersToDistance(context, meters)
-            val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
-            val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
-            viewModel.summary.set(summary)
-            viewModel.name.set(handler.name)
-
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
-            if (executingReader == this) {
-                executingReader = null
-            }
         }
     }
 

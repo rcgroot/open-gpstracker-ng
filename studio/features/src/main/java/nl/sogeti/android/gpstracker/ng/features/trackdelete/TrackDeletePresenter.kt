@@ -32,7 +32,7 @@ import android.content.Context
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.service.util.readName
 import javax.inject.Inject
 

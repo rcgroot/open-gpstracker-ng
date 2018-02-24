@@ -34,7 +34,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.view.View
 import android.widget.AdapterView
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

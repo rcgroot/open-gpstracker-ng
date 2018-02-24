@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.features.tracklist.summary
+package nl.sogeti.android.gpstracker.ng.features.summary
 
 import android.content.Context
 import android.location.Location
@@ -59,34 +59,41 @@ class SummaryCalculator {
         val startTimestamp = handler.waypoints.firstOrNull()?.firstOrNull()?.time ?: 0L
         val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
 
-        data class Data(val meter: Float, val time: Long)
-
-        fun reduce(waypoints: List<Waypoint>): Data {
-            var meters = 0.0F
-            var time = 0L
-            val outArray = floatArrayOf(0.0F)
-            for (i in 0 until waypoints.lastIndex) {
-                meters += distance(waypoints[i], waypoints[i + 1], outArray)
-                time += waypoints[i + 1].time - waypoints[i].time
+        val outArray = floatArrayOf(0.0F)
+        val deltas = handler.waypoints.map {
+            it.mapIndexed { index, rhs ->
+                val lhs = if (index > 0) it[index - 1] else rhs
+                val meters = distance(lhs, rhs, outArray)
+                val miliseconds = rhs.time - lhs.time
+                Summary.Delta(rhs.time, meters, miliseconds)
             }
-
-            return Data(meters, time)
+        }
+        var distance = 0F
+        var trackedPeriod = 0L
+        deltas.forEach {
+            it.forEach {
+                distance += it.meters
+                trackedPeriod += it.duration
+            }
         }
 
-        val sum = handler.waypoints.map { reduce(it) }.fold(Data(0.0F, 0)) { first, second ->
-            Data(first.meter + second.meter, first.time + second.time)
-        }
         // Text values
         val name = trackUri.apply(context) { it.getString(ContentConstants.Tracks.NAME) }
                 ?: "Unknown"
         val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
 
         // Return value
-        val summary = Summary(trackUri = trackUri, name = name, type = trackType.drawableId,
-                startTimestamp = startTimestamp, stopTimestamp = endTimestamp,
-                trackedPeriod = sum.time, distance = sum.meter, bounds = handler.bounds, waypoints = handler.waypoints)
 
-        return summary
+        return Summary(trackUri = trackUri,
+                deltas = deltas,
+                name = name,
+                type = trackType.drawableId,
+                startTimestamp = startTimestamp,
+                stopTimestamp = endTimestamp,
+                trackedPeriod = trackedPeriod,
+                distance = distance,
+                bounds = handler.bounds,
+                waypoints = handler.waypoints)
     }
 
     fun distance(first: Waypoint, second: Waypoint, outArray: FloatArray): Float {

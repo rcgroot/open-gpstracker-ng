@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  **     Ident: Sogeti Smart Mobile Solutions
  **    Author: rene
- ** Copyright: (c) 2016 Sogeti Nederland B.V. All Rights Reserved.
+ ** Copyright: (c) 2017 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
  ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
  ** Distributed Software Engineering |  or transmitted in any form or by any
@@ -26,21 +26,8 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.features.tracklist.summary
+package nl.sogeti.android.gpstracker.ng.features.summary
 
-import android.net.Uri
-import com.google.android.gms.maps.model.LatLngBounds
-import nl.sogeti.android.gpstracker.service.util.Waypoint
+class SummaryCalculatorTest {
 
-data class Summary(val trackUri: Uri,
-                   val name: String,
-                   val type: Int,
-                   val startTimestamp: Long,
-                   val stopTimestamp: Long,
-                   val trackedPeriod: Long,
-                   val distance: Float,
-                   val bounds: LatLngBounds,
-                   val waypoints: List<List<Waypoint>>) {
-    val count: Int
-        get() = waypoints.fold(0, { count, list -> count + list.size })
 }

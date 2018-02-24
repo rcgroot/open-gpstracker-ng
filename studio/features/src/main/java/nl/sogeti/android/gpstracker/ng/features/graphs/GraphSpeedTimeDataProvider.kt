@@ -4,7 +4,8 @@ import android.content.Context
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
+import nl.sogeti.android.gpstracker.ng.features.summary.Summary
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -28,8 +29,8 @@ class GraphSpeedOVerDistanceDataProvider : LineGraph.ValueDescriptor, GraphDataP
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun calculateGraphPoints(waypoints: List<List<Waypoint>>): List<GraphPoint> {
-        return calculateSpeedGraph(waypoints)
+    override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
+        return calculateSpeedGraph(summary.waypoints)
     }
 
     override val valueDescriptor: LineGraph.ValueDescriptor

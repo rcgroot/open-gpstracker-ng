@@ -11,8 +11,8 @@ import nl.sogeti.android.gpstracker.ng.features.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.wear.StatisticsCollector
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.VersionHelper

@@ -21,8 +21,8 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListNavigation
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingService

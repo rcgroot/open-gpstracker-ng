@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import nl.renedegroot.android.test.utils.any
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter

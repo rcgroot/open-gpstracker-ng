@@ -37,7 +37,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.service.util.updateName
 import javax.inject.Inject

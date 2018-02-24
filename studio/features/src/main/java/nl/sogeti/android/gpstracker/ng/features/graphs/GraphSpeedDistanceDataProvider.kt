@@ -4,7 +4,8 @@ import android.content.Context
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
-import nl.sogeti.android.gpstracker.ng.features.tracklist.summary.SummaryCalculator
+import nl.sogeti.android.gpstracker.ng.features.summary.Summary
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -28,8 +29,8 @@ class GraphSpeedOverTimeDataProvider : LineGraph.ValueDescriptor, GraphDataProvi
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun calculateGraphPoints(waypoints: List<List<Waypoint>>): List<GraphPoint> {
-        return calculateSpeedGraph(waypoints)
+    override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
+        return calculateSpeedGraph(summary.deltas)
     }
 
     override val valueDescriptor: LineGraph.ValueDescriptor
@@ -44,12 +45,11 @@ class GraphSpeedOverTimeDataProvider : LineGraph.ValueDescriptor, GraphDataProvi
         return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
     }
 
-    private fun calculateSpeedGraph(waypoints: List<List<Waypoint>>): List<GraphPoint> {
+    private fun calculateSpeedGraph(waypoints: List<List<Summary.Delta>>): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
-        val start = waypoints.first().first().time
         waypoints.forEach {
-            list.add(GraphPoint((it.first().time - start).toFloat(), 0f))
-            val points = calculateSpeedGraphSegment(it, start)
+            list.add(GraphPoint((it.first().time).toFloat(), 0f))
+            val points = calculateSpeedGraphSegment(it)
             list.addAll(points)
             list.add(GraphPoint((it.last().time - start).toFloat(), 0f))
         }
