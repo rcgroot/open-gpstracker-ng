@@ -105,11 +105,12 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     private fun fillSummaryNumbers(summary: Summary) {
         viewModel.waypoints.set(summary.count.toString())
         viewModel.startTime.set(summary.startTimestamp)
-        val pausedTime = (summary.stopTimestamp - summary.startTimestamp) - summary.trackedPeriod
+        val total = summary.stopTimestamp - summary.startTimestamp
+        val pausedTime = total - summary.trackedPeriod
         viewModel.paused.set(pausedTime)
         viewModel.distance.set(summary.distance)
         viewModel.duration.set(summary.trackedPeriod)
-        viewModel.timeSpan.set(summary.stopTimestamp - summary.startTimestamp)
+        viewModel.timeSpan.set(total)
 
         val seconds = summary.trackedPeriod / 1000F
         val speed = if (seconds > 0) summary.distance / seconds else 0F
@@ -117,7 +118,7 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     }
 
     private fun fillGraphWithSummary(it: Summary) {
-        viewModel.graphData.set(graphDataProvider.calculateGraphPoints(it.waypoints))
+        viewModel.graphData.set(graphDataProvider.calculateGraphPoints(it))
         viewModel.xLabel.set(graphDataProvider.xLabel)
         viewModel.yLabel.set(graphDataProvider.yLabel)
         viewModel.graphLabels.set(graphDataProvider.valueDescriptor)

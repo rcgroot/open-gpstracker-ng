@@ -178,6 +178,7 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
     val name = this.apply(context, projection = listOf(NAME)) { it.getString(NAME) }
     handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
+    var latestTime = 0L
     segmentsUri.map(context, projection = listOf(_ID)) {
         val segmentId = it.getLong(0)
         handler.addSegment()
@@ -187,8 +188,13 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
             if (lat != null && lon != null && time != null) {
-                val waypoint = Waypoint(latitude = lat, longitude = lon, time = time)
-                handler.addWaypoint(waypoint)
+                if (time > latestTime) {
+                    val waypoint = Waypoint(latitude = lat, longitude = lon, time = time)
+                    latestTime = time
+                    handler.addWaypoint(waypoint)
+                } else {
+                    Timber.e("Found recorded waypoint newer then previous")
+                }
             }
         })
     }

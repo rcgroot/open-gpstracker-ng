@@ -74,7 +74,7 @@ class GraphSpeedTimeProviderTest {
         // Prepare
         val waypoints = listOf(wayPoint1, wayPoint2)
         // Execute
-        val points = sut.calculateSpeedGraphSegment(waypoints, start)
+        val points = sut.calculateSegment(waypoints, start)
         // Assert
         assertThat(points.count(), `is`(2))
     }

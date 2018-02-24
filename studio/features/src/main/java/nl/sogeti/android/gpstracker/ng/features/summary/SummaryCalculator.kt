@@ -60,19 +60,19 @@ class SummaryCalculator {
         val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
 
         val outArray = floatArrayOf(0.0F)
+        var totalDistance = 0F
         val deltas = handler.waypoints.map {
             it.mapIndexed { index, rhs ->
                 val lhs = if (index > 0) it[index - 1] else rhs
                 val meters = distance(lhs, rhs, outArray)
-                val miliseconds = rhs.time - lhs.time
-                Summary.Delta(rhs.time, meters, miliseconds)
+                totalDistance += meters
+                val milliseconds = rhs.time - lhs.time
+                Summary.Delta(rhs.time, totalDistance, meters, milliseconds)
             }
         }
-        var distance = 0F
         var trackedPeriod = 0L
         deltas.forEach {
             it.forEach {
-                distance += it.meters
                 trackedPeriod += it.duration
             }
         }
@@ -91,7 +91,7 @@ class SummaryCalculator {
                 startTimestamp = startTimestamp,
                 stopTimestamp = endTimestamp,
                 trackedPeriod = trackedPeriod,
-                distance = distance,
+                distance = totalDistance,
                 bounds = handler.bounds,
                 waypoints = handler.waypoints)
     }

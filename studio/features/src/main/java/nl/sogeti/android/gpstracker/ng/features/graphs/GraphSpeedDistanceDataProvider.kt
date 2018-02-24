@@ -6,7 +6,6 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
-import nl.sogeti.android.gpstracker.service.util.Waypoint
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
@@ -30,51 +29,51 @@ class GraphSpeedOverTimeDataProvider : LineGraph.ValueDescriptor, GraphDataProvi
     }
 
     override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
-        return calculateSpeedGraph(summary.deltas)
+        val list = if (summary.deltas.firstOrNull()?.firstOrNull() != null) {
+            calculateTrack(summary.deltas)
+        } else {
+            listOf()
+        }
+
+        return list
     }
 
     override val valueDescriptor: LineGraph.ValueDescriptor
         get() = this
 
     override fun describeYvalue(context: Context, yValue: Float): String {
-        // Y value speed in the graph is meter per millisecond
-        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue * 1000f, 1)
+        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue, 1)
     }
 
     override fun describeXvalue(context: Context, xValue: Float): String {
         return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
     }
 
-    private fun calculateSpeedGraph(waypoints: List<List<Summary.Delta>>): List<GraphPoint> {
+    private fun calculateTrack(waypoints: List<List<Summary.Delta>>): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
+        val baseTime = waypoints.first().first().time
+        fun Long.toX() = (this - baseTime).toFloat()
         waypoints.forEach {
-            list.add(GraphPoint((it.first().time).toFloat(), 0f))
-            val points = calculateSpeedGraphSegment(it)
+            val points = calculateSegment(it, baseTime)
+            list.add(GraphPoint(it.first().time.toX(), 0f))
             list.addAll(points)
-            list.add(GraphPoint((it.last().time - start).toFloat(), 0f))
+            list.add(GraphPoint(it.last().time.toX(), 0f))
         }
 
         return list
     }
 
-    fun calculateSpeedGraphSegment(waypoints: List<Waypoint>, start: Long): List<GraphPoint> {
+    fun calculateSegment(deltas: List<Summary.Delta>, baseTime: Long): List<GraphPoint> {
         val list = mutableListOf<GraphPoint>()
-
-        val outArray = floatArrayOf(0.0F)
-        val deltas = waypoints.toDeltas { first, second ->
-            val deltaDuration = second.time - first.time
-            val deltaDistance = calculator.distance(first, second, outArray)
-            Delta(first.time, second.time, deltaDistance / deltaDuration)
-        }
-
-        fun Long.toX() = (this - start).toFloat()
+        fun Long.toX() = (this - baseTime).toFloat()
         deltas.forEach {
-            list.add(GraphPoint(it.startTime.toX(), it.speed))
-            list.add(GraphPoint(it.endTime.toX(), it.speed))
+            val speed = it.meters / (it.duration / 1000F)
+            if (speed >= 0F) {
+                list.add(GraphPoint((it.time - it.duration).toX(), speed))
+                list.add(GraphPoint(it.time.toX(), speed))
+            }
         }
-
         return list
     }
 
-    data class Delta(val startTime: Long, val endTime: Long, val speed: Float)
 }
