@@ -40,6 +40,10 @@ fun onMainThread(item: () -> Unit) {
     }
 }
 
+fun postMainThread(item: () -> Unit) {
+    Handler(Looper.getMainLooper()).post(item)
+}
+
 fun ofMainThread(item: () -> Unit) {
     if (Looper.myLooper() != Looper.getMainLooper()) {
         item()

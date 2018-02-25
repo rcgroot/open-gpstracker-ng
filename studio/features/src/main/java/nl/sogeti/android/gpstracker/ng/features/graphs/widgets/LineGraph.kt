@@ -34,6 +34,8 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import nl.sogeti.android.gpstracker.utils.ofMainThread
+import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class LineGraph : View {
@@ -173,7 +175,7 @@ class LineGraph : View {
         this.sectionHeight = (h - unitTextSideMargin - graphSideMargin) / 4f
         this.sectionWidth = (w - unitTextSideMargin - graphSideMargin) / 4f
         clearCachedPoints()
-        fillePointsCache()
+        fillPointsCache()
         createLineShader()
     }
 
@@ -191,7 +193,10 @@ class LineGraph : View {
 
     private fun drawGraphLine(canvas: Canvas) {
         if (cachedPoints == null) {
-            fillePointsCache()
+            cachedPoints = listOf()
+            ofMainThread {
+                fillPointsCache()
+            }
         }
         // Gradient below
         linePath.reset()
@@ -231,7 +236,7 @@ class LineGraph : View {
 
     private fun drawText(canvas: Canvas) {
         if (cachedPoints == null) {
-            fillePointsCache()
+            fillPointsCache()
         }
         val x1 = description.describeXvalue(context, minX)
         val x2 = description.describeXvalue(context, (minX + maxX) / 2)
@@ -268,19 +273,21 @@ class LineGraph : View {
     private var minX: Float = 0f
     private var maxX: Float = 1f
 
-    private fun fillePointsCache() {
+    private fun fillPointsCache() {
         minY = data.minBy { it.y }?.y ?: 0f
         maxY = data.maxBy { it.y }?.y ?: 100f
-        val sorted = data.sortedBy { it.x }
-        minX = sorted.firstOrNull()?.x ?: 0f
-        maxX = sorted.lastOrNull()?.x ?: 100f
+        minX = data.firstOrNull()?.x ?: 0f
+        maxX = data.lastOrNull()?.x ?: 100f
         fun convertDataToPoint(point: GraphPoint): PointF {
             val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)
             val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
             return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
         }
 
-        cachedPoints = sorted.map { convertDataToPoint(it) }
+        onMainThread {
+            cachedPoints = data.map { convertDataToPoint(it) }
+            invalidate()
+        }
     }
 
     private fun clearCachedPoints() {

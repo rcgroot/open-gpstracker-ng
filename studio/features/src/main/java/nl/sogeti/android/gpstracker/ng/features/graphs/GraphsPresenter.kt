@@ -34,6 +34,8 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
+import nl.sogeti.android.gpstracker.utils.ofMainThread
+import nl.sogeti.android.gpstracker.utils.postMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
@@ -47,6 +49,7 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
 
     private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
+    private var runningSelection = false
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -66,18 +69,33 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     //region View callbacks
 
     fun didSelectDistance() {
-        graphDataProvider = GraphSpeedOVerDistanceDataProvider()
+        if (runningSelection || viewModel.distanceSelected.get())
+            return
+        runningSelection = true
         viewModel.distanceSelected.set(true)
         viewModel.durationSelected.set(false)
-        trackSummary?.let { fillGraphWithSummary(it) }
+        ofMainThread {
+            graphDataProvider = GraphSpeedOVerDistanceDataProvider()
+            trackSummary?.let { fillGraphWithSummary(it) }
+            postMainThread {
+                runningSelection = false
+            }
+        }
     }
 
-
     fun didSelectTime() {
-        graphDataProvider = GraphSpeedOverTimeDataProvider()
+        if (runningSelection || viewModel.durationSelected.get())
+            return
+        runningSelection = true
         viewModel.distanceSelected.set(false)
         viewModel.durationSelected.set(true)
-        trackSummary?.let { fillGraphWithSummary(it) }
+        ofMainThread {
+            graphDataProvider = GraphSpeedOverTimeDataProvider()
+            trackSummary?.let { fillGraphWithSummary(it) }
+            postMainThread {
+                runningSelection = false
+            }
+        }
     }
     //endregion
 
