@@ -69,7 +69,7 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
     }
 
     private fun loadTrackName(context: Context, trackUri: Uri) {
-        val trackName = trackUri.readName(context)
+        val trackName = trackUri.readName()
         model.name.set(trackName)
     }
 

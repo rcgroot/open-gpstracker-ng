@@ -196,7 +196,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
             if (name != null) {
                 viewModel.name.set(name)
             } else {
-                viewModel.name.set(trackUri.readName(context))
+                viewModel.name.set(trackUri.readName())
             }
         }
 

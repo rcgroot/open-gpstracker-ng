@@ -1,5 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.base.dagger
 
+import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
@@ -31,4 +33,7 @@ class SystemModule {
 
     @Provides
     fun locationFactory(): LocationFactory = LocationFactoryImpl()
+
+    @Provides
+    fun contentResolver(application: Context): ContentResolver = application.contentResolver
 }

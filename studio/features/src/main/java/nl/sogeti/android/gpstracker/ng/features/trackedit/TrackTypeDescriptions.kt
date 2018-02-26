@@ -28,14 +28,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
-import android.content.Context
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.util.metaDataTrackUri
 import nl.sogeti.android.gpstracker.service.util.updateCreateMetaData
-import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.gpstracker.utils.apply
 import nl.sogeti.android.gpstracker.utils.getString
+import nl.sogeti.android.opengpstrack.ng.features.R
 
 class TrackTypeDescriptions {
 
@@ -72,21 +72,21 @@ class TrackTypeDescriptions {
         return trackType ?: defaultType
     }
 
-    fun loadTrackType(context: Context, trackUri: Uri): TrackType {
+    fun loadTrackType(trackUri: Uri): TrackType {
         val trackId: Long = trackUri.lastPathSegment.toLong()
         val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(KEY_META_FIELD_TRACK_TYPE))
-        val contentType = metaDataTrackUri(trackId).apply(context, selectionPair = typeSelection) { it.getString(ContentConstants.MetaDataColumns.VALUE) }
+        val contentType = metaDataTrackUri(trackId).apply(BaseConfiguration.appComponent.applicationContext(), selectionPair = typeSelection) { it.getString(ContentConstants.MetaDataColumns.VALUE) }
 
         return trackTypeForContentType(contentType)
     }
 
-    fun saveTrackType(context: Context, trackUri: Uri, trackType: TrackType) {
-        saveTrackType(context, trackUri, trackType.contentValue)
+    fun saveTrackType(trackUri: Uri, trackType: TrackType) {
+        saveTrackType(trackUri, trackType.contentValue)
     }
 
-    fun saveTrackType(context: Context, trackUri: Uri, trackType: String) {
+    fun saveTrackType(trackUri: Uri, trackType: String) {
         val trackId: Long = trackUri.lastPathSegment.toLong()
-        metaDataTrackUri(trackId).updateCreateMetaData(context, KEY_META_FIELD_TRACK_TYPE, trackType)
+        metaDataTrackUri(trackId).updateCreateMetaData(KEY_META_FIELD_TRACK_TYPE, trackType)
     }
 
     data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String)

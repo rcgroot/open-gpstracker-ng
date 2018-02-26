@@ -29,7 +29,7 @@ class MockAppComponentTestRule : TestRule {
                 val mockUriBuilder = createMockBuilder()
                 mockAppComponent = Mockito.mock(AppComponent::class.java)
                 BaseConfiguration.appComponent = mockAppComponent
-                `when`(mockAppComponent.provideUriBuilder()).thenReturn(mockUriBuilder)
+                `when`(mockAppComponent.uriBuilder()).thenReturn(mockUriBuilder)
 
                 mockServiceComponent = Mockito.mock(ServiceComponent::class.java)
                 ServiceConfiguration.serviceComponent = mockServiceComponent

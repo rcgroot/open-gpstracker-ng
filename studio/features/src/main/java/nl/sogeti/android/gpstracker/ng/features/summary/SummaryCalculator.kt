@@ -55,7 +55,7 @@ class SummaryCalculator {
     fun calculateSummary(trackUri: Uri): Summary {
         // Calculate
         val handler = DefaultResultHandler()
-        trackUri.readTrack(context, handler)
+        trackUri.readTrack(handler)
         val startTimestamp = handler.waypoints.firstOrNull()?.firstOrNull()?.time ?: 0L
         val endTimestamp = handler.waypoints.lastOrNull()?.lastOrNull()?.time ?: 0L
 
@@ -80,7 +80,7 @@ class SummaryCalculator {
         // Text values
         val name = trackUri.apply(context) { it.getString(ContentConstants.Tracks.NAME) }
                 ?: "Unknown"
-        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
+        val trackType = trackTypeDescriptions.loadTrackType(trackUri)
 
         // Return value
 

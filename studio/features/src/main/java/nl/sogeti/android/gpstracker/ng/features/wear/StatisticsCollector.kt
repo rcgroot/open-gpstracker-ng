@@ -113,7 +113,7 @@ class StatisticsCollector {
         context.let {
             val recent = Date().time - ONE_MINUTE
             val handler = DefaultResultHandler()
-            trackUri.readTrack(it, handler)
+            trackUri.readTrack(handler)
             if (handler.waypoints.isNotEmpty()) {
                 var milliSeconds = 0L
                 var meters = 0.0F

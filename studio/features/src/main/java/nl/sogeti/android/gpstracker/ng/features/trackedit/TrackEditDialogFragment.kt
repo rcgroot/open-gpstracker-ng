@@ -1,6 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.databinding.Observable
+import android.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -13,7 +16,6 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentEditDialog
 
 class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
-    private var model: TrackEditModel? = null
     private var presenter: TrackEditPresenter? = null
     private var binding: FragmentEditDialogBinding? = null
 
@@ -33,23 +35,26 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
         val binding = DataBindingUtil.inflate<FragmentEditDialogBinding>(inflater, R.layout.fragment_edit_dialog, container, false, FeaturesBindingComponent())
 
         val uri = arguments?.get(ARG_URI) as Uri
-        val model = TrackEditModel(uri)
-        val presenter = TrackEditPresenter(model, this)
-        binding.model = model
+        val presenter = ViewModelProviders.of(this, TrackEditPresenter.newFactory(uri)).get(TrackEditPresenter::class.java)
+        binding.model = presenter.model
         binding.presenter = presenter
         binding.spinner.onItemSelectedListener = presenter.onItemSelectedListener
-        this.model = model
         this.presenter = presenter
         this.binding = binding
+        presenter.model.dismissed.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                if (sender is ObservableBoolean && sender.get()) {
+                    dismiss()
+                }
+            }
+        })
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        val activity = activity
-                ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        presenter?.start(activity)
+        presenter?.start()
     }
 
     override fun onStop() {

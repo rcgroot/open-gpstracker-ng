@@ -69,7 +69,7 @@ class GpxImportController(private val context: Context) {
     private fun importTrack(uri: Uri, trackType: String) {
         val defaultName = extractName(uri)
         val trackUri = parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
-        trackTypeDescriptions.saveTrackType(context, trackUri, trackType)
+        trackTypeDescriptions.saveTrackType(trackUri, trackType)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.service.util
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns._ID
@@ -47,7 +46,7 @@ import timber.log.Timber
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
  */
 fun tracksUri(): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -60,7 +59,7 @@ fun tracksUri(): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
  */
 fun trackUri(trackId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -73,7 +72,7 @@ fun trackUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments
  */
 fun segmentsUri(trackId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -88,7 +87,7 @@ fun segmentsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2
  */
 fun segmentUri(trackId: Long, segmentId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -104,7 +103,7 @@ fun segmentUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints
  */
 fun waypointsUri(trackId: Long, segmentId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -123,7 +122,7 @@ fun waypointsUri(trackId: Long, segmentId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/segments/2/waypoints/21
  */
 fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -141,7 +140,7 @@ fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
  */
 fun waypointsUri(trackId: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -154,7 +153,7 @@ fun waypointsUri(trackId: Long): Uri {
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/ID/metadata
  */
 fun metaDataTrackUri(id: Long): Uri {
-    return BaseConfiguration.appComponent.provideUriBuilder()
+    return BaseConfiguration.appComponent.uriBuilder()
             .scheme("content")
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
@@ -166,24 +165,22 @@ fun metaDataTrackUri(id: Long): Uri {
 /**
  * Loop through the complete track, its segments, its waypoints and callback the results
  *
- * @param context context through which to access the resources
  * @param handler callback for results
  * @param waypointSelection selection query split in text with ?-placeholders and the parameters.
  */
-fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: Pair<String, List<String>>? = null) {
+fun Uri.readTrack(handler: ResultHandler, waypointSelection: Pair<String, List<String>>? = null) {
     if (ServiceConfiguration.serviceComponent.providerAuthority() != this.authority) {
         return
     }
-
-    val name = this.apply(context, projection = listOf(NAME)) { it.getString(NAME) }
+    val name = this.apply(BaseConfiguration.appComponent.applicationContext(), projection = listOf(NAME)) { it.getString(NAME) }
     handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
     var latestTime = 0L
-    segmentsUri.map(context, projection = listOf(_ID)) {
+    segmentsUri.map(BaseConfiguration.appComponent.applicationContext(), projection = listOf(_ID)) {
         val segmentId = it.getLong(0)
         handler.addSegment()
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
-        waypointsUri.map(context, waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
+        waypointsUri.map(BaseConfiguration.appComponent.applicationContext(), waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
             val lat = it.getDouble(LATITUDE)
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
@@ -204,24 +201,22 @@ fun Uri.readTrack(context: Context, handler: ResultHandler, waypointSelection: P
  * Build up a total of type T by applying a operation to
  * each waypoint pair along the track.
  *
- * @param context context through which to access the resources
  * @param operation increase the total T with each waypoint pair
  * @param selectionPair waypoint selection query split in text with ?-placeholders and the parameters
  */
-fun <T> Uri.traverseTrack(context: Context,
-                          operation: (T?, Waypoint, Waypoint) -> T,
+fun <T> Uri.traverseTrack(operation: (T?, Waypoint, Waypoint) -> T,
                           selectionPair: Pair<String, List<String>>? = null): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     Timber.v("$this with selection $selection on $selectionArgs")
     val segmentsUri = this.append(SEGMENTS)
-    val segments = segmentsUri.map(context) { it.getLong(ContentConstants.Segments._ID)!! }
+    val segments = segmentsUri.map(BaseConfiguration.appComponent.applicationContext()) { it.getLong(ContentConstants.Segments._ID)!! }
     var result: T? = null
     for (segmentId in segments) {
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
         var cursor: Cursor? = null
         try {
-            cursor = context.contentResolver.query(waypointsUri, null, selection, selectionArgs, null)
+            cursor = BaseConfiguration.appComponent.contentResolver().query(waypointsUri, null, selection, selectionArgs, null)
             if (cursor != null && cursor.moveToFirst()) {
                 var first = buildWaypoint(cursor)
                 var second: Waypoint
@@ -250,23 +245,24 @@ fun buildWaypoint(cursor: Cursor): Waypoint {
             altitude = cursor.getDouble(ALTITUDE) ?: 0.0)
 }
 
-fun Uri.updateName(context: Context, name: String) {
+fun Uri.updateName(name: String) {
     val values = ContentValues()
     values.put(ContentConstants.TracksColumns.NAME, name)
-    context.contentResolver.update(this, values, null, null)
+    BaseConfiguration.appComponent.contentResolver().update(this, values, null, null)
 }
 
-fun Uri.readName(context: Context): String {
-    return this.apply(context) { it.getString(ContentConstants.TracksColumns.NAME) } ?: ""
+fun Uri.readName(): String {
+    return this.apply(BaseConfiguration.appComponent.applicationContext()) { it.getString(ContentConstants.TracksColumns.NAME) }
+            ?: ""
 }
 
-fun Uri.updateCreateMetaData(context: Context, key: String, value: String) {
+fun Uri.updateCreateMetaData(key: String, value: String) {
     val values = ContentValues()
     values.put(ContentConstants.MetaDataColumns.KEY, key)
     values.put(ContentConstants.MetaDataColumns.VALUE, value)
-    val changed = context.contentResolver.update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
+    val changed = BaseConfiguration.appComponent.contentResolver().update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
     if (changed == 0) {
-        context.contentResolver.insert(this, values)
+        BaseConfiguration.appComponent.contentResolver().insert(this, values)
     }
 }
 

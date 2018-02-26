@@ -33,13 +33,13 @@ import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.postMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
-class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
+class GraphsPresenter : AbstractSelectedTrackPresenter(), TrackSelection.Listener {
 
     internal val viewModel = GraphsViewModel()
     @Inject
@@ -59,11 +59,13 @@ class GraphsPresenter : AbstractTrackPresenter(), TrackSelection.Listener {
     }
 
     override fun onStart() {
+        super.onStart()
         summaryManager.start()
     }
 
     override fun onStop() {
         summaryManager.stop()
+        super.onStop()
     }
 
     //region View callbacks

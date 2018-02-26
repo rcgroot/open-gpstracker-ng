@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
@@ -38,9 +39,10 @@ class TrackEditModel(uri: Uri) {
     val name = ObservableField<String>("")
     val selectedPosition = ObservableInt(INVALID_POSITION)
     val trackTypes = TrackTypeDescriptions.allTrackTypes
-
+    val dismissed = ObservableBoolean(false)
 
     interface View {
         fun dismiss()
+
     }
 }

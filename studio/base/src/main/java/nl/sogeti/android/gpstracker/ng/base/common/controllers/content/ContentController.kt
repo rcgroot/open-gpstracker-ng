@@ -27,13 +27,14 @@ class ContentController(private val context: Context, private val listener: List
         fun register(uri: Uri?) {
             unregister()
             registeredUri = uri
-            if (uri != null) {
+            if (uri != null && uri.lastPathSegment != NO_CONTENT_ID.toString()) {
                 context.contentResolver.registerContentObserver(uri, true, this)
             }
         }
 
         fun unregister() {
-            if (registeredUri != null) {
+            val uri = registeredUri
+            if (uri != null && uri.lastPathSegment != NO_CONTENT_ID.toString()) {
                 context.contentResolver.unregisterContentObserver(contentObserver)
                 registeredUri = null
             }
@@ -47,5 +48,9 @@ class ContentController(private val context: Context, private val listener: List
 
     interface Listener {
         fun onChangeUriContent(contentUri: Uri, changesUri: Uri)
+    }
+
+    companion object {
+        const val NO_CONTENT_ID = -1L
     }
 }

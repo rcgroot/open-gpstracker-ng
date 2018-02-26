@@ -48,7 +48,7 @@ class TrackReader(private var context: Context, internal val trackUri: Uri, priv
     override fun doInBackground(vararg p: Void): ResultHandler? {
         val handler = DefaultResultHandler()
         if (isCancelled) return null
-        trackUri.readTrack(context, handler)
+        trackUri.readTrack(handler)
         if (isCancelled) return null
         val points = handler.waypoints.map { it.map { it.latLng() } }
         val name = handler.name ?: ""

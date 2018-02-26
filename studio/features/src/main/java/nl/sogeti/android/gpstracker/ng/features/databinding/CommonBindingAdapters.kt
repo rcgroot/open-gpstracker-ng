@@ -97,13 +97,6 @@ open class CommonBindingAdapters {
         view.adapter = adapter
     }
 
-    @BindingAdapter("selection")
-    fun setSelected(spinner: AppCompatSpinner, selection: Int) {
-        if (spinner.adapter != null && spinner.selectedItemPosition != selection) {
-            spinner.setSelection(selection)
-        }
-    }
-
 //    @BindingAdapter("bind:selection", "bind:selectionAttrChanged", requireAll = false)
 //    fun setSelected(spinner: AppCompatSpinner, selection: Int, selectionAttrChanged: InverseBindingListener) {
 //        if (spinner.selectedItemPosition != selection) {

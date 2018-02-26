@@ -28,26 +28,30 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
-import android.content.Context
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.INVALID_POSITION
 import android.widget.ImageView
 import android.widget.TextView
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.service.util.updateName
 import javax.inject.Inject
 
-class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.View) : ContextedPresenter() {
+class TrackEditPresenter(trackUri: Uri) : AbstractTrackPresenter(trackUri) {
 
     @Inject
     lateinit var summaryManager: SummaryManager
+
     @Inject
     lateinit var trackTypeDescriptions: TrackTypeDescriptions
+
+    val model = TrackEditModel(trackUri)
 
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {
         object : AdapterView.OnItemSelectedListener {
@@ -65,46 +69,50 @@ class TrackEditPresenter(val model: TrackEditModel, val view: TrackEditModel.Vie
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun didStart() {
-        val trackUri = model.trackUri
-
-        loadTrackTypePosition(context, trackUri)
-        loadTrackName(context, trackUri)
-    }
-
-    override fun willStop() {
+    override fun onChange() {
+        loadTrackTypePosition(trackUri)
+        loadTrackName(trackUri)
     }
 
     fun ok(trackUri: Uri, trackName: String) {
-        saveTrackName(context, trackUri, trackName)
-        saveTrackTypePosition(context, trackUri)
+        saveTrackName(trackUri, trackName)
+        saveTrackTypePosition(trackUri)
         summaryManager.removeFromCache(trackUri)
-        view.dismiss()
+        model.dismissed.set(true)
     }
 
     fun cancel() {
-        view.dismiss()
+        model.dismissed.set(true)
     }
 
-    private fun saveTrackTypePosition(it: Context, trackUri: Uri) {
-        val trackType = model.trackTypes[model.selectedPosition.get()]
-        trackTypeDescriptions.saveTrackType(it, trackUri, trackType)
+    private fun loadTrackName(trackUri: Uri) {
+        val trackName = trackUri.readName()
+        model.name.set(trackName)
     }
 
-    private fun loadTrackTypePosition(context: Context, trackUri: Uri) {
-        val trackType = trackTypeDescriptions.loadTrackType(context, trackUri)
+    private fun loadTrackTypePosition(trackUri: Uri) {
+        val trackType = trackTypeDescriptions.loadTrackType(trackUri)
         val position = model.trackTypes.indexOfFirst { it == trackType }
         model.selectedPosition.set(position)
     }
 
-    private fun loadTrackName(context: Context, trackUri: Uri) {
-        val trackName = trackUri.readName(context)
-        model.name.set(trackName)
+    private fun saveTrackName(trackUri: Uri, trackName: String) {
+        trackUri.updateName(trackName)
     }
 
-    private fun saveTrackName(context: Context, trackUri: Uri, trackName: String) {
-        trackUri.updateName(context, trackName)
+    private fun saveTrackTypePosition(trackUri: Uri) {
+        val trackType = model.trackTypes[model.selectedPosition.get()]
+        trackTypeDescriptions.saveTrackType(trackUri, trackType)
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)
+
+    companion object {
+
+        fun newFactory(uri: Uri) =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel?> create(modelClass: Class<T>): T = TrackEditPresenter(uri) as T
+                }
+
+    }
 }
