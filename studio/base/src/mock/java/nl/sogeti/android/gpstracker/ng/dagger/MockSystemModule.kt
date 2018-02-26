@@ -34,7 +34,6 @@ import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.mock.MockGpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
 import java.util.*
@@ -61,7 +60,7 @@ class MockSystemModule {
     fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
 
     @Provides
-    fun packageManagerFactory() = PackageManagerFactory()
+    fun packageManager(): PackageManager = PackageManager()
 
     @Provides
     fun locationFactory(): LocationFactory = MockLocationFactory()

@@ -36,11 +36,7 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.service.util.readName
-import nl.sogeti.android.gpstracker.service.util.trackUri
-import nl.sogeti.android.gpstracker.service.util.updateName
-import nl.sogeti.android.gpstracker.service.util.waypointsUri
-import nl.sogeti.android.gpstracker.utils.apply
+import nl.sogeti.android.gpstracker.service.util.*
 import nl.sogeti.android.opengpstrack.ng.features.R
 import java.util.*
 import java.util.concurrent.Executor
@@ -146,7 +142,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         }
 
         val waypointsUri = waypointsUri(trackId)
-        val firstWaypointId = waypointsUri.apply(context) { it.getLong(0) } ?: -1L
+        val firstWaypointId = waypointsUri.apply { it.getLong(0) } ?: -1L
         if (firstWaypointId == -1L) {
             context.contentResolver.delete(trackUri(trackId), null, null)
         }

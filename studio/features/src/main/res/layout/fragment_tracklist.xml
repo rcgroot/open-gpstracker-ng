@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
+            app:focusPosition="@{viewModel.focusPosition}"
             app:selected="@{viewModel.selectedTrack}"
             app:tracks="@{viewModel.tracks}"
             app:tracksListener="@{presenter}" />

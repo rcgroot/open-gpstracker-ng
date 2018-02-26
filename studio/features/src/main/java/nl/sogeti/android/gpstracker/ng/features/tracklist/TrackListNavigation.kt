@@ -28,13 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GENERAL
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportTrackTypeDialogFragment
@@ -50,7 +50,7 @@ import javax.inject.Inject
 class TrackListNavigation(val fragment: Fragment) {
 
     @Inject
-    lateinit var packageManagerFactory: PackageManagerFactory
+    lateinit var packageManager: PackageManager
     @Inject
     lateinit var versionHelper: VersionHelper
 
@@ -59,15 +59,17 @@ class TrackListNavigation(val fragment: Fragment) {
     }
 
     fun showTrackDeleteDialog(track: Uri) {
-        TrackDeleteDialogFragment.newInstance(track).show(fragment.fragmentManager, TAG_DIALOG)
+        TrackDeleteDialogFragment.newInstance(track)
+                .show(fragment.fragmentManager, TAG_DIALOG)
     }
 
     fun showTrackEditDialog(trackUri: Uri) {
-        TrackEditDialogFragment.newInstance(trackUri).show(fragment.fragmentManager, TAG_DIALOG)
+        TrackEditDialogFragment.newInstance(trackUri)
+                .show(fragment.fragmentManager, TAG_DIALOG)
     }
 
-    fun showIntentChooser(intent: Intent, text: CharSequence) {
-        fragment.startActivity(Intent.createChooser(intent, text))
+    fun showIntentChooser(intent: Intent, @StringRes text: Int) {
+        fragment.startActivity(Intent.createChooser(intent, fragment.getString(text)))
     }
 
     fun finishTrackSelection() {
@@ -86,7 +88,8 @@ class TrackListNavigation(val fragment: Fragment) {
             intent.type = MIME_TYPE_GENERAL
             startTypeImport(intent, param)
         } else {
-            val context = fragment.context ?: throw IllegalStateException("Attempting to run select file outside lifecycle of fragment")
+            val context = fragment.context
+                    ?: throw IllegalStateException("Attempting to run select file outside lifecycle of fragment")
             AlertDialog.Builder(context)
                     .setTitle("Not implemented ")
                     .setMessage("This feature does not exist pre-KitKat")
@@ -100,7 +103,8 @@ class TrackListNavigation(val fragment: Fragment) {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             startTypeImport(intent, param)
         } else {
-            val context = fragment.context ?: throw IllegalStateException("Attempting to run select directory outside lifecycle of fragment")
+            val context = fragment.context
+                    ?: throw IllegalStateException("Attempting to run select directory outside lifecycle of fragment")
             AlertDialog.Builder(context)
                     .setTitle("Not implemented ")
                     .setMessage("This feature does not exist pre-Lollipop")
@@ -113,7 +117,8 @@ class TrackListNavigation(val fragment: Fragment) {
         if (fragment is ActivityResultLambda) {
             fragment.startActivityForResult(intent) { resultIntent ->
                 resultIntent?.let {
-                    val fragmentManager = fragment.fragmentManager ?: throw IllegalStateException("Attempting to run import outside lifecycle of fragment")
+                    val fragmentManager = fragment.fragmentManager
+                            ?: throw IllegalStateException("Attempting to run import outside lifecycle of fragment")
                     ImportTrackTypeDialogFragment().show(fragmentManager, TAG_DIALOG) { type ->
                         resultIntent.putExtra(KEY_META_FIELD_TRACK_TYPE, type)
                         param(resultIntent)
@@ -123,7 +128,8 @@ class TrackListNavigation(val fragment: Fragment) {
         }
     }
 
-    fun showInstallHintForOGTExporterApp(context: Context) {
+    fun showInstallHintForOGTExporterApp() {
+        val context = fragment.context ?: return
         AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_tracks_exporter_title)
                 .setMessage(R.string.fragment_tracks_exporter_body)
@@ -135,11 +141,10 @@ class TrackListNavigation(val fragment: Fragment) {
                 .show()
     }
 
-    fun openExternalOGTExporterApp(context: Context) {
-        val packageManager = packageManagerFactory.createPackageManager(context)
+    fun openExternalOGTExporterApp() {
         val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        context.startActivity(intent)
+        fragment.startActivity(intent)
     }
 
     companion object {

@@ -26,13 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.utils
+package nl.sogeti.android.gpstracker.service.util
 
 import android.content.ContentUris
-import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import timber.log.Timber
 
 /* **
@@ -99,20 +99,18 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
  * Apply a single operation to a cursor on the all items in a Uri
  * to build a list
  *
- * @param context context through which to access the resources
  * @param operation the operation to execute
  * @param projection optional projection
  * @param selection optional selection, query string with parameter arguments listed
  *
  * @return List of T consisting of operation results, empty when there are no rows
  */
-fun <T> Uri.map(context: Context,
-                selection: Pair<String, List<String>>? = null,
+fun <T> Uri.map(selection: Pair<String, List<String>>? = null,
                 projection: List<String>? = null,
                 operation: (Cursor) -> T): List<T> {
     val result = mutableListOf<T>()
 
-    this.apply(context, selection, projection) {
+    this.apply(selection, projection) {
         do {
             result.add(operation(it))
         } while (it.moveToNext())
@@ -124,15 +122,13 @@ fun <T> Uri.map(context: Context,
 /**
  * Apply a single operation to a cursor on the first row of a Uri
  *
- * @param context context through which to access the resources
  * @param operation the operation to execute
  * @param projection optional projection
  * @param selectionPair optional selection
  *
  * @return Null or T when the operation was applied to the first row of the cursor
  */
-fun <T> Uri.apply(context: Context,
-                  selectionPair: Pair<String, List<String>>? = null,
+fun <T> Uri.apply(selectionPair: Pair<String, List<String>>? = null,
                   projection: List<String>? = null,
                   operation: (Cursor) -> T?): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
@@ -140,7 +136,7 @@ fun <T> Uri.apply(context: Context,
     var result: T? = null
     var cursor: Cursor? = null
     try {
-        cursor = context.contentResolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
+        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection?.toTypedArray(), selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
         } else {
@@ -161,14 +157,14 @@ fun Uri.append(id: Long): Uri {
     return ContentUris.withAppendedId(this, id)
 }
 
-fun Uri.count(context: Context, selectionPair: Pair<String, List<String>>? = null): Int {
+fun Uri.count(selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
         val projection = arrayOf("count(*) AS count")
-        cursor = context.contentResolver.query(this, projection, selection, selectionArgs, null)
+        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection, selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.getInt(0)
         } else {
@@ -181,14 +177,14 @@ fun Uri.count(context: Context, selectionPair: Pair<String, List<String>>? = nul
     return result
 }
 
-fun Uri.countResult(context: Context, projection: Array<String> = arrayOf(BaseColumns._ID),
+fun Uri.countResult(projection: Array<String> = arrayOf(BaseColumns._ID),
                     selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
-        cursor = context.contentResolver.query(this, projection, selection, selectionArgs, null)
+        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection, selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.count
         } else {

@@ -20,6 +20,7 @@
         android:background="@color/windowBackground"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
+        app:focusPosition="@{viewModel.focusPosition}"
         app:selected="@{viewModel.selectedTrack}"
         app:tracks="@{viewModel.tracks}"
         app:tracksListener="@{presenter}" />

@@ -30,13 +30,13 @@ package nl.sogeti.android.gpstracker.ng.base.dagger
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import javax.inject.Named
@@ -52,8 +52,6 @@ interface AppComponent {
 
     fun gpsStatusControllerFactory(): GpsStatusControllerFactory
 
-    fun packageManagerFactory() = PackageManagerFactory()
-
     @Named("dayFormatter")
     fun dayFormatter(): SimpleDateFormat
 
@@ -68,4 +66,5 @@ interface AppComponent {
 
     fun contentResolver(): ContentResolver
 
+    fun packageManager(): PackageManager
 }

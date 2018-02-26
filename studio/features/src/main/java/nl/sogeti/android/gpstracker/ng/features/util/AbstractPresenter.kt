@@ -5,7 +5,7 @@ import android.support.annotation.CallSuper
 
 abstract class AbstractPresenter : ViewModel() {
     private var started = false
-    private var dirty = false
+    private var dirty = true
 
     fun start() {
         started = true

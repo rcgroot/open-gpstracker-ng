@@ -33,20 +33,16 @@ import android.net.Uri
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.service.util.trackUri
-import nl.sogeti.android.gpstracker.service.util.tracksUri
-import nl.sogeti.android.gpstracker.utils.apply
-import nl.sogeti.android.gpstracker.utils.getLong
-import nl.sogeti.android.gpstracker.utils.getString
+import nl.sogeti.android.gpstracker.service.util.*
 import javax.inject.Inject
 
 class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
@@ -184,7 +180,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         if (selectedTrack != null && selectedTrack.lastPathSegment != "-1") {
             onTrackSelection(selectedTrack, trackSelection.trackName)
         } else {
-            val lastTrack = tracksUri().apply(context) { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
+            val lastTrack = tracksUri().apply { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
             if (lastTrack?.first != null) {
                 val trackId = lastTrack.first!!
                 val lastTrackUri = trackUri(trackId)

@@ -29,12 +29,12 @@
 package nl.sogeti.android.gpstracker.ng.features.recording
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.common.controllers.packagemanager.PackageManagerFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation.Companion.GPS_STATUS_PACKAGE_NAME
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
@@ -60,7 +60,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     @Inject
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
     @Inject
-    lateinit var packageManagerFactory: PackageManagerFactory
+    lateinit var packageManager: PackageManager
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
     @Inject
@@ -86,7 +86,6 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     //region View
 
     fun didSelectSignal() {
-        val packageManager = packageManagerFactory.createPackageManager(context)
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
         if (intent == null) {
             navigation.showInstallHintForGpsStatusApp(context)

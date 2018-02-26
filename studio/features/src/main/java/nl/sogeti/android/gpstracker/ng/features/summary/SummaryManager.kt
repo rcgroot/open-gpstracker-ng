@@ -33,9 +33,9 @@ import android.net.Uri
 import android.os.Build
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
-import nl.sogeti.android.gpstracker.utils.append
+import nl.sogeti.android.gpstracker.service.util.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
-import nl.sogeti.android.gpstracker.utils.count
+import nl.sogeti.android.gpstracker.service.util.count
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -93,7 +93,7 @@ class SummaryManager {
             val cacheHit = summaryCache[trackUri]
             if (cacheHit != null) {
                 val trackWaypointsUri = trackUri.append(WAYPOINTS)
-                val trackCount = trackWaypointsUri.count(context)
+                val trackCount = trackWaypointsUri.count()
                 val cacheCount = cacheHit.count
                 if (trackCount == cacheCount) {
                     callbackSummary(cacheHit)

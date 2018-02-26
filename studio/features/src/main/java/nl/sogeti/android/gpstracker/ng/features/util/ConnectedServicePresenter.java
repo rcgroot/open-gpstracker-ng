@@ -43,11 +43,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import kotlin.jvm.functions.Function1;
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter;
+import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface;
+import nl.sogeti.android.gpstracker.service.util.ContentProviderExtensionsKt;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
-import nl.sogeti.android.gpstracker.utils.ContentProviderExtensionsKt;
 import timber.log.Timber;
 
 import static nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME;
@@ -83,7 +83,7 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
                                     String name = null;
                                     if (trackId > 0) {
                                         trackUri = TrackUriExtensionKt.trackUri(trackId);
-                                        name = ContentProviderExtensionsKt.apply(trackUri, context, null, null, new Function1<Cursor, String>() {
+                                        name = ContentProviderExtensionsKt.apply(trackUri, null, null, new Function1<Cursor, String>() {
                                             @Override
                                             public String invoke(Cursor cursor) {
                                                 return ContentProviderExtensionsKt.getString(cursor, NAME);

@@ -39,7 +39,6 @@ import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Segment
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.WaypointsColumns.*
-import nl.sogeti.android.gpstracker.utils.*
 import timber.log.Timber
 
 /**
@@ -172,15 +171,15 @@ fun Uri.readTrack(handler: ResultHandler, waypointSelection: Pair<String, List<S
     if (ServiceConfiguration.serviceComponent.providerAuthority() != this.authority) {
         return
     }
-    val name = this.apply(BaseConfiguration.appComponent.applicationContext(), projection = listOf(NAME)) { it.getString(NAME) }
+    val name = this.apply(projection = listOf(NAME)) { it.getString(NAME) }
     handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
     var latestTime = 0L
-    segmentsUri.map(BaseConfiguration.appComponent.applicationContext(), projection = listOf(_ID)) {
+    segmentsUri.map(projection = listOf(_ID)) {
         val segmentId = it.getLong(0)
         handler.addSegment()
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
-        waypointsUri.map(BaseConfiguration.appComponent.applicationContext(), waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
+        waypointsUri.map(waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
             val lat = it.getDouble(LATITUDE)
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
@@ -210,7 +209,7 @@ fun <T> Uri.traverseTrack(operation: (T?, Waypoint, Waypoint) -> T,
     val selection = selectionPair?.first
     Timber.v("$this with selection $selection on $selectionArgs")
     val segmentsUri = this.append(SEGMENTS)
-    val segments = segmentsUri.map(BaseConfiguration.appComponent.applicationContext()) { it.getLong(ContentConstants.Segments._ID)!! }
+    val segments = segmentsUri.map{ it.getLong(ContentConstants.Segments._ID)!! }
     var result: T? = null
     for (segmentId in segments) {
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
@@ -252,7 +251,7 @@ fun Uri.updateName(name: String) {
 }
 
 fun Uri.readName(): String {
-    return this.apply(BaseConfiguration.appComponent.applicationContext()) { it.getString(ContentConstants.TracksColumns.NAME) }
+    return this.apply{ it.getString(ContentConstants.TracksColumns.NAME) }
             ?: ""
 }
 

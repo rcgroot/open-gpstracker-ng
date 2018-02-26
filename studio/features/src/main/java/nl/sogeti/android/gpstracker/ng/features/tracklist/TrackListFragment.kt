@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
@@ -35,17 +36,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
-import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistBinding
 
 /**
  * Sets up display and selection of tracks in a list style
  */
-class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.View {
+class TrackListFragment : ActivityResultLambdaFragment() {
 
-    private val viewModel = TrackListViewModel()
-    private val trackListPresenter = TrackListPresenter(viewModel, this, TrackListNavigation(this))
+    lateinit var presenter: TrackListPresenter
     private var permissionRequester = PermissionRequester()
     private var binding: FragmentTracklistBinding? = null
 
@@ -55,14 +54,20 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = ViewModelProviders.of(this).get(TrackListPresenter::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
         binding.fragmentTracklistList.layoutManager = LinearLayoutManager(activity)
         val itemAnimator = DefaultItemAnimator()
         itemAnimator.supportsChangeAnimations = false
         binding.fragmentTracklistList.itemAnimator = itemAnimator
-        binding.viewModel = viewModel
-        binding.presenter = trackListPresenter
+        binding.presenter = presenter
+        binding.viewModel = presenter.viewModel
+        presenter.navigation = TrackListNavigation(this)
         this.binding = binding
 
         return binding.root
@@ -70,21 +75,21 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
 
     override fun onStart() {
         super.onStart()
-        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        permissionRequester.start(this, { trackListPresenter.start(activity) })
+        permissionRequester.start(this, { presenter.start() })
         setHasOptionsMenu(true)
     }
 
     override fun onStop() {
         super.onStop()
         setHasOptionsMenu(false)
-        trackListPresenter.stop()
+        presenter.stop()
         permissionRequester.stop()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        presenter.navigation = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -96,25 +101,18 @@ class TrackListFragment : ActivityResultLambdaFragment(), TrackListViewModel.Vie
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
             when {
                 item.itemId == R.id.menu_item_export -> {
-                    trackListPresenter.didSelectExportToDirectory()
+                    presenter.didSelectExportToDirectory()
                     true
                 }
                 item.itemId == R.id.menu_item_import -> {
-                    trackListPresenter.didSelectImportFromDirectory()
+                    presenter.didSelectImportFromDirectory()
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
             }
 
-    //region View contract
-
-    override fun moveToPosition(position: Int) {
-        onMainThread { binding?.fragmentTracklistList?.layoutManager?.scrollToPosition(position) }
-    }
-
-    //endregion
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
+
 }

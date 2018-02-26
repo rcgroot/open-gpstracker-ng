@@ -29,13 +29,11 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.databinding.ObservableField
+import android.databinding.ObservableInt
 import android.net.Uri
 
 class TrackListViewModel {
     val tracks = ObservableField<List<Uri>>(emptyList())
     val selectedTrack = ObservableField<Uri?>()
-
-    interface View {
-        fun moveToPosition(position: Int)
-    }
+    val focusPosition = ObservableInt(-1)
 }

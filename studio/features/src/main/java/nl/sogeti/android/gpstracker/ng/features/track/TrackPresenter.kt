@@ -31,12 +31,12 @@ package nl.sogeti.android.gpstracker.ng.features.track
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
-import nl.sogeti.android.gpstracker.utils.apply
-import nl.sogeti.android.gpstracker.utils.getString
+import nl.sogeti.android.gpstracker.service.util.apply
+import nl.sogeti.android.gpstracker.service.util.getString
 import javax.inject.Inject
 
 class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View, private val navigation: TrackNavigator) : ContextedPresenter(), TrackSelection.Listener, ContentController.Listener {
@@ -103,7 +103,7 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
     //region Content watching
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        val name = contentUri.apply(context) { it.getString(NAME) }
+        val name = contentUri.apply { it.getString(NAME) }
         name?.let {
             showName(it)
         }

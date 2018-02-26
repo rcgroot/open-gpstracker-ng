@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import nl.sogeti.android.gpstracker.utils.postMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 import timber.log.Timber
 
@@ -73,6 +74,13 @@ open class TracksBindingAdapters {
                 edit.visibility = GONE
                 delete.visibility = GONE
             }
+        }
+    }
+
+    @BindingAdapter("focusPosition")
+    fun setFocusPosition(list: RecyclerView, position: Int?) {
+        if (position != null && position > 0) {
+            postMainThread { list.layoutManager.scrollToPosition(position) }
         }
     }
 }

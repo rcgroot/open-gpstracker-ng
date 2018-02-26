@@ -35,6 +35,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v4.app.JobIntentService
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -45,6 +46,8 @@ class ImportService : JobIntentService() {
 
     @Inject
     lateinit var importController: GpxImportController
+    @Inject
+    lateinit var context: Context
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -57,19 +60,19 @@ class ImportService : JobIntentService() {
         private const val EXTRA_DIRECTORY = "GPX_DIRECTORY_URI"
         private val JOB_ID = R.menu.menu_import_export
 
-        fun importFile(context: Context, uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
+        fun importFile(uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
             val work = Intent()
             work.putExtra(EXTRA_FILE, uri)
             work.putExtra(EXTRA_TYPE, trackType)
-            enqueueWork(context, ImportService::class.java, JOB_ID, work)
+            enqueueWork(BaseConfiguration.appComponent.applicationContext(), ImportService::class.java, JOB_ID, work)
         }
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        fun importDirectory(context: Context, uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
+        fun importDirectory(uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
             val work = Intent()
             work.putExtra(EXTRA_DIRECTORY, uri)
             work.putExtra(EXTRA_TYPE, trackType)
-            enqueueWork(context, ImportService::class.java, JOB_ID, work)
+            enqueueWork(BaseConfiguration.appComponent.applicationContext(), ImportService::class.java, JOB_ID, work)
         }
     }
 
