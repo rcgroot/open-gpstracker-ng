@@ -29,12 +29,14 @@
 package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.databinding.ObservableField
+import android.databinding.ObservableInt
 import android.net.Uri
 
 class TrackViewModel {
 
     val trackUri: ObservableField<Uri?> = ObservableField()
+    val name = ObservableField("")
+    val trackIcon = ObservableInt(-1)
     val isEditable: Boolean
         get() = trackUri.get() != null
-    val name = ObservableField("")
 }

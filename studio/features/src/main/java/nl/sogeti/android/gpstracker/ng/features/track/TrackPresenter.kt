@@ -30,12 +30,17 @@ package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
+import javax.inject.Inject
 
 class TrackPresenter : AbstractSelectedTrackPresenter() {
 
     var navigation: TrackNavigator? = null
     val viewModel = TrackViewModel()
+
+    @Inject
+    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -46,6 +51,7 @@ class TrackPresenter : AbstractSelectedTrackPresenter() {
     override fun onTrackUpdate(trackUri: Uri, name: String) {
         viewModel.trackUri.set(trackUri)
         viewModel.name.set(name)
+        viewModel.trackIcon.set(trackTypeDescriptions.loadTrackType(trackUri).drawableId)
     }
 
     //endregion

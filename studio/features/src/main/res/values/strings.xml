@@ -56,7 +56,7 @@
     <string name="activity_track_map_edit">Edit track</string>
 
     <!--About screen-->
-    <string name="about_version">Version %1$s (%2$s, build %3$d)</string>
+    <string name="about_version">Version %1$s (%2$s, build %3$s)</string>
 
     <!--Track list screen -->
     <string name="title_activity_tracks">Track list</string>
