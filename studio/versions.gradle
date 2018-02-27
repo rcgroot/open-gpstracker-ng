@@ -9,7 +9,7 @@ ext {
     // App support
     supportLibraryVersion = '27.0.2'
     kotlinVersion = '1.2.21'
-    wearableVersion = '2.1.0'
+    wearableVersion = '2.2.0'
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'

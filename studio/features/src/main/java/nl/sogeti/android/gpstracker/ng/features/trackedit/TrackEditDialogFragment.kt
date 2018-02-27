@@ -2,7 +2,6 @@ package nl.sogeti.android.gpstracker.ng.features.trackedit
 
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
-import android.databinding.Observable
 import android.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentEditDialogBinding
 
@@ -41,13 +41,11 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
         binding.spinner.onItemSelectedListener = presenter.onItemSelectedListener
         this.presenter = presenter
         this.binding = binding
-        presenter.model.dismissed.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                if (sender is ObservableBoolean && sender.get()) {
-                    dismiss()
-                }
+        presenter.model.dismissed.observe { sender ->
+            if (sender is ObservableBoolean && sender.get()) {
+                dismiss()
             }
-        })
+        }
 
         return binding.root
     }

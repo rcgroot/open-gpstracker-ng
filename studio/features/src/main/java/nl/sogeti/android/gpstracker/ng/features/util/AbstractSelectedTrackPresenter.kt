@@ -13,7 +13,7 @@ abstract class AbstractSelectedTrackPresenter : AbstractTrackPresenter(trackUri(
     @Inject
     lateinit var trackSelection: TrackSelection
 
-    private lateinit var trackName: String
+    private var trackName = ""
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -36,6 +36,7 @@ abstract class AbstractSelectedTrackPresenter : AbstractTrackPresenter(trackUri(
     }
 
     final override fun onChange() {
+        super.onChange()
         onTrackUpdate(trackUri, trackName)
     }
 

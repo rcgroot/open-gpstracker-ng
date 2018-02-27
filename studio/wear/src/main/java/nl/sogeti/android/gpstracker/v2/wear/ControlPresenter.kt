@@ -39,29 +39,31 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
 import timber.log.Timber
 import java.util.concurrent.Executors
 
-class ControlPresenter(private val model: ControlViewModel, private val view: View) : MessageSender.MessageSenderStatusListener {
+class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, MessageSender.MessageSenderStatusListener {
 
+    val viewModel = ControlViewModel()
     private var messageSender: MessageSender? = null
     private var loaderCancelTask: LoaderCancelTask? = null
 
-    fun start(context: Context) {
+    init {
         val executorService = Executors.newFixedThreadPool(1, BackgroundThreadFactory("WearMessageSender"))
-        messageSender = MessageSender(context, MessageSender.Capability.CAPABILITY_RECORD, executorService)
+        messageSender = MessageSender(applicationContext, MessageSender.Capability.CAPABILITY_RECORD, executorService)
         messageSender?.start()
         messageSender?.messageSenderStatusListener = this
 
-        refresh(8)
+        refresh(16)
     }
 
     fun enterAmbient() {
-        view.darken()
+        viewModel.ambient.set(true)
     }
 
     fun exitAmbient() {
-        view.brighter()
+        viewModel.ambient.set(false)
     }
 
-    fun stop() {
+    override fun onCleared(){
+        super.onCleared()
         messageSender?.messageSenderStatusListener = null
         messageSender?.stop()
         messageSender = null
@@ -70,11 +72,11 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     //region View callbacks
 
     fun onClickControl() {
-        view.showControls()
+        viewModel.scrollToPage.set(0)
     }
 
     fun onClickSummary() {
-        view.brighter()
+        viewModel.ambient.set(false)
     }
 
     fun pulledRefresh() {
@@ -84,34 +86,32 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
     // Using ObservableField<Control> instead of Control due to bug:
     // https://issuetracker.google.com/issues/69535017
     fun didClickControl(control: ObservableField<Control>) {
-        model.confirmAction.set(control.get())
-        view.startConfirmTimer()
+        viewModel.confirmAction.set(control.get())
     }
 
     fun didCancelControl() {
-        view.cancelConfirmTimer()
-        model.confirmAction.set(null)
+        viewModel.confirmAction.set(null)
         refresh(3)
     }
 
     fun confirmTimerFinished() {
-        val action = model.confirmAction.get()
-        model.confirmAction.set(null)
+        val action = viewModel.confirmAction.get()
+        viewModel.confirmAction.set(null)
         showRefreshStatus()
         val actionId = action?.action
         when (actionId) {
             R.string.control_action_start -> {
                 messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
-                view.showStatistics()
+                viewModel.scrollToPage.set(1)
             }
             R.string.control_action_pause -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
             R.string.control_action_resume -> {
                 messageSender?.sendMessage(StatusMessage(StatusMessage.Status.RESUME))
-                view.showStatistics()
+                viewModel.scrollToPage.set(1)
             }
             R.string.control_action_stop -> {
                 messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
-                view.showStatistics()
+                viewModel.scrollToPage.set(1)
             }
             else -> {
                 Timber.e("Failed to process selected action $actionId")
@@ -126,7 +126,7 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     override fun didConnect(connect: Boolean) {
         if (connect) {
-            if (model.state.get()?.iconId == R.drawable.ic_sync_disabled_black_24dp) {
+            if (viewModel.state.get()?.iconId == R.drawable.ic_sync_disabled_black_24dp) {
                 showRefreshStatus()
             }
         } else {
@@ -140,16 +140,16 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     fun didReceiveStatistics(statisticsMessage: StatisticsMessage) {
         Timber.d("Received $statisticsMessage")
-        model.averageSpeed.set(statisticsMessage.speed)
-        model.duration.set(statisticsMessage.duration)
-        model.distance.set(statisticsMessage.distance)
+        viewModel.averageSpeed.set(statisticsMessage.speed)
+        viewModel.duration.set(statisticsMessage.duration)
+        viewModel.distance.set(statisticsMessage.distance)
         startedLogging()
     }
 
     fun didReceiveStatus(statusMessage: StatusMessage) {
         Timber.d("Received $statusMessage")
         loaderCancelTask?.cancel = true
-        model.manualRefresh.set(false)
+        viewModel.manualRefresh.set(false)
         when (statusMessage.status) {
             StatusMessage.Status.START -> startedLogging()
             StatusMessage.Status.PAUSE -> pausedLogging()
@@ -162,42 +162,42 @@ class ControlPresenter(private val model: ControlViewModel, private val view: Vi
 
     private fun refresh(timeout: Int) {
         loaderCancelTask?.cancel = true
-        loaderCancelTask = LoaderCancelTask(model).schedule(timeout)
-        model.manualRefresh.set(true)
+        loaderCancelTask = LoaderCancelTask(viewModel).schedule(timeout)
+        viewModel.manualRefresh.set(true)
         showRefreshStatus()
         messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
     }
 
     private fun startedLogging() {
-        model.state.set(Control.Start(true))
-        model.leftControl.set(Control.Stop(true))
-        model.bottomControl.set(Control.Pause(true))
-        model.rightControl.set(Control.Resume(false))
+        viewModel.state.set(Control.Start(true))
+        viewModel.leftControl.set(Control.Stop(true))
+        viewModel.bottomControl.set(Control.Pause(true))
+        viewModel.rightControl.set(Control.Resume(false))
     }
 
     private fun pausedLogging() {
-        model.state.set(Control.Pause(true))
-        model.leftControl.set(Control.Stop(true))
-        model.bottomControl.set(Control.Pause(false))
-        model.rightControl.set(Control.Resume(true))
+        viewModel.state.set(Control.Pause(true))
+        viewModel.leftControl.set(Control.Stop(true))
+        viewModel.bottomControl.set(Control.Pause(false))
+        viewModel.rightControl.set(Control.Resume(true))
     }
 
     private fun stopLogging() {
-        model.state.set(Control.Stop(true))
-        model.leftControl.set(Control.Stop(false))
-        model.bottomControl.set(Control.Pause(false))
-        model.rightControl.set(Control.Start(true))
+        viewModel.state.set(Control.Stop(true))
+        viewModel.leftControl.set(Control.Stop(false))
+        viewModel.bottomControl.set(Control.Pause(false))
+        viewModel.rightControl.set(Control.Start(true))
     }
 
     private fun showRefreshStatus() {
-        model.state.set(Control.Sync())
+        viewModel.state.set(Control.Sync())
     }
 
     private fun unknownState() {
-        model.state.set(Control.Disconnect())
-        model.leftControl.set(Control.Stop(false))
-        model.bottomControl.set(Control.Pause(false))
-        model.rightControl.set(Control.Start(false))
+        viewModel.state.set(Control.Disconnect())
+        viewModel.leftControl.set(Control.Stop(false))
+        viewModel.bottomControl.set(Control.Pause(false))
+        viewModel.rightControl.set(Control.Start(false))
     }
 
     class LoaderCancelTask(private val model: ControlViewModel) {

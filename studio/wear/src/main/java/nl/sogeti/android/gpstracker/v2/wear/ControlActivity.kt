@@ -31,35 +31,61 @@ package nl.sogeti.android.gpstracker.v2.wear
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.databinding.ObservableBoolean
+import android.databinding.ObservableField
+import android.databinding.ObservableInt
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.support.wearable.activity.WearableActivity
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ActivityControlBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 
 private const val EXTRA_STATISTICS = "EXTRA_STATISTICS"
 private const val EXTRA_STATUS = "EXTRA_STATUS"
 
-class ControlActivity : WearableActivity(), View {
+class ControlActivity : WearableActivity() {
     private var binding: ActivityControlBinding? = null
 
-    private val model = ControlViewModel()
-    private var presenter: ControlPresenter = ControlPresenter(model, this)
+    private lateinit var presenter: ControlPresenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        presenter = HolderFragment.of(this, ControlPresenter::class.java)
+        presenter.viewModel.ambient.observe { sender ->
+            if (sender is ObservableBoolean && sender.get()) {
+                darken()
+            } else if (sender is ObservableBoolean && !sender.get()) {
+                brighter()
+            }
+        }
+        presenter.viewModel.confirmAction.observe { sender ->
+            if (sender is ObservableField<*> && sender.get() != null) {
+                startConfirmTimer()
+            } else if (sender is ObservableField<*> && sender.get() == null) {
+                cancelConfirmTimer()
+            }
+        }
+        presenter.viewModel.scrollToPage.observe { sender ->
+            if (sender is ObservableInt) {
+                binding?.wearControlVertical?.smoothScrollToPosition(sender.get())
+            }
+        }
+
         val binding = DataBindingUtil.setContentView<ActivityControlBinding>(this, R.layout.activity_control, WearBindingComponent())
         this.binding = binding
         binding.presenter = presenter
-        binding.viewModel = model
-        binding.wearControlVertical.adapter = VerticalControlAdapter(model, presenter)
+        binding.viewModel = presenter.viewModel
+        binding.wearControlVertical.adapter = VerticalControlAdapter(presenter.viewModel, presenter)
         binding.wearControlVertical.layoutManager = LinearLayoutManager(this)
         val pagerSnapHelper = PagerSnapHelper()
         pagerSnapHelper.attachToRecyclerView(binding.wearControlVertical)
-        // Enables Always-on
-        setAmbientEnabled()
+
+        setAmbientEnabled() // Enables Always-on
 
         if (savedInstanceState == null) {
             handleIntent(intent)
@@ -79,11 +105,6 @@ class ControlActivity : WearableActivity(), View {
         handleIntent(intent)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.start(this)
-    }
-
     override fun onEnterAmbient(ambientDetails: Bundle?) {
         super.onEnterAmbient(ambientDetails)
         presenter.enterAmbient()
@@ -94,11 +115,6 @@ class ControlActivity : WearableActivity(), View {
         presenter.exitAmbient()
     }
 
-    override fun onStop() {
-        super.onStop()
-        presenter.stop()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         binding = null
@@ -106,29 +122,21 @@ class ControlActivity : WearableActivity(), View {
 
     //region View
 
-    override fun darken() {
+    fun darken() {
         binding?.wearControlBackground?.setBackgroundColor(getColor(R.color.black))
     }
 
-    override fun brighter() {
+    fun brighter() {
         binding?.wearControlBackground?.setBackgroundColor(getColor(R.color.dark_grey))
     }
 
-    override fun startConfirmTimer() {
+    fun startConfirmTimer() {
         binding?.circularProgress?.totalTime = 2000
         binding?.circularProgress?.startTimer()
     }
 
-    override fun cancelConfirmTimer() {
+    fun cancelConfirmTimer() {
         binding?.circularProgress?.stopTimer()
-    }
-
-    override fun showControls() {
-        binding?.wearControlVertical?.smoothScrollToPosition(1)
-    }
-
-    override fun showStatistics() {
-        binding?.wearControlVertical?.smoothScrollToPosition(0)
     }
 
     //endregion

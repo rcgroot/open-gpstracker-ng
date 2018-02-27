@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.features.gpximport
 
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
-import android.databinding.Observable
 import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -39,6 +38,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.utils.FragmentResultLambda
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentImportTracktypeDialogBinding
 
@@ -73,13 +73,11 @@ class ImportTrackTypeDialogFragment : DialogFragment() {
         val importTrackTypePresenter = ImportTrackTypePresenter()
         binding.presenter = importTrackTypePresenter
         binding.model = presenter.model
-        presenter.model.dismiss.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                if (sender is ObservableBoolean && sender.get()) {
-                    dismiss()
-                }
+        presenter.model.dismiss.observe { sender ->
+            if (sender is ObservableBoolean && sender.get()) {
+                dismiss()
             }
-        })
+        }
         binding.fragmentImporttracktypeSpinner.onItemSelectedListener = importTrackTypePresenter.onItemSelectedListener
         if (targetFragment is FragmentResultLambda<*>) {
             importTrackTypePresenter.resultLambda = (targetFragment as FragmentResultLambda<String>).resultLambda

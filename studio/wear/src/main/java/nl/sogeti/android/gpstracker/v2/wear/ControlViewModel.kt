@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.v2.wear
 
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import android.databinding.ObservableInt
 
 class ControlViewModel {
     val duration = ObservableField<Long>(0L)
@@ -42,13 +43,7 @@ class ControlViewModel {
     val leftControl = ObservableField<Control>(Control.Stop(false))
     val rightControl = ObservableField<Control>(Control.Start(false))
     val bottomControl = ObservableField<Control>(Control.Pause(false))
-}
 
-interface View {
-    fun darken()
-    fun brighter()
-    fun startConfirmTimer()
-    fun cancelConfirmTimer()
-    fun showControls()
-    fun showStatistics()
+    val ambient = ObservableBoolean(false)
+    val scrollToPage = ObservableInt(0)
 }
