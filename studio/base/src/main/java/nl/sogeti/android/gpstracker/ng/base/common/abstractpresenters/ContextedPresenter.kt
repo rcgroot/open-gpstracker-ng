@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common.abstractpresenters
+package nl.sogeti.android.gpstracker.ng.base.common.abstractpresenters
 
 import android.content.Context
 import timber.log.Timber

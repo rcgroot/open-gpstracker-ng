@@ -43,7 +43,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import kotlin.jvm.functions.Function1;
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter;
+import nl.sogeti.android.gpstracker.ng.base.common.abstractpresenters.ContextedPresenter;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface;
 import nl.sogeti.android.gpstracker.service.util.ContentProviderExtensionsKt;

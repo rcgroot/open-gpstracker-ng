@@ -28,15 +28,22 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
-import android.content.Context
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.content.ContentResolver
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.service.util.readName
 import javax.inject.Inject
 
-class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteModel.View) : ContextedPresenter() {
+class TrackDeletePresenter(trackUri: Uri) : AbstractTrackPresenter(trackUri) {
+
+    val viewModel = TrackDeleteModel(trackUri)
+
+    @Inject
+    lateinit var contentResolver: ContentResolver
 
     @Inject
     lateinit var summaryManager: SummaryManager
@@ -45,35 +52,42 @@ class TrackDeletePresenter(val model: TrackDeleteModel, val view: TrackDeleteMod
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun didStart() {
-        val trackUri = model.trackUri.get()
+
+    override fun onChange() {
+        super.onChange()
+        val trackUri = viewModel.trackUri.get()
         trackUri?.let {
-            loadTrackName(context, trackUri)
+            loadTrackName(trackUri)
         }
     }
 
-    override fun willStop() {
-    }
-
     fun ok() {
-        val trackUri = model.trackUri.get()
+        val trackUri = viewModel.trackUri.get()
         trackUri?.let {
-            deleteTrack(context, trackUri)
+            deleteTrack(trackUri)
             summaryManager.removeFromCache(trackUri)
-            view.dismiss()
+            viewModel.dismiss.set(true)
         }
     }
 
     fun cancel() {
-        view.dismiss()
+        viewModel.dismiss.set(true)
     }
 
-    private fun loadTrackName(context: Context, trackUri: Uri) {
+    private fun loadTrackName(trackUri: Uri) {
         val trackName = trackUri.readName()
-        model.name.set(trackName)
+        viewModel.name.set(trackName)
     }
 
-    private fun deleteTrack(context: Context, trackUri: Uri) {
-        context.contentResolver.delete(trackUri, null, null)
+    private fun deleteTrack(trackUri: Uri) {
+        contentResolver.delete(trackUri, null, null)
+    }
+
+    companion object {
+
+        fun newFactory(uri: Uri) =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel?> create(modelClass: Class<T>): T = TrackDeletePresenter(uri) as T
+                }
     }
 }

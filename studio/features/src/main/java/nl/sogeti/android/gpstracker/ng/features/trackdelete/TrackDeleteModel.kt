@@ -28,14 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.net.Uri
 
 class TrackDeleteModel(uri: Uri) {
     val trackUri = ObservableField<Uri>(uri)
     val name = ObservableField<String>("")
-
-    interface View {
-        fun dismiss()
-    }
+    val dismiss = ObservableBoolean(false)
 }

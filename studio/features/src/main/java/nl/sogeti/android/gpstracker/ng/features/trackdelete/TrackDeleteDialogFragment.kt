@@ -1,6 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.databinding.Observable
+import android.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -10,7 +13,41 @@ import android.view.ViewGroup
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentDeleteDialogBinding
 
-class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
+class TrackDeleteDialogFragment : DialogFragment() {
+
+    lateinit var presenter: TrackDeletePresenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val uri = arguments?.get(ARG_URI) as Uri
+        presenter = ViewModelProviders.of(this, TrackDeletePresenter.newFactory(uri)).get(TrackDeletePresenter::class.java)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = DataBindingUtil.inflate<FragmentDeleteDialogBinding>(inflater, R.layout.fragment_delete_dialog, container, false)
+        binding.model = presenter.viewModel
+        binding.presenter = presenter
+        presenter.viewModel.dismiss.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                if (sender is ObservableBoolean && sender.get())
+                    dismiss()
+            }
+        })
+        this.presenter = presenter
+
+        return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.start()
+    }
+
+    override fun onStop() {
+        presenter.stop()
+        super.onStop()
+    }
+
 
     companion object {
 
@@ -24,32 +61,5 @@ class TrackDeleteDialogFragment : DialogFragment(), TrackDeleteModel.View {
 
             return fragment
         }
-    }
-
-    private var presenter: TrackDeletePresenter? = null
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentDeleteDialogBinding>(inflater, R.layout.fragment_delete_dialog, container, false)
-
-        val uri = arguments?.get(ARG_URI) as Uri
-        val model = TrackDeleteModel(uri)
-        val presenter = TrackDeletePresenter(model, this)
-        binding.model = model
-        binding.presenter = presenter
-        this.presenter = presenter
-
-        return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val activity = activity
-                ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        presenter?.start(activity)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter?.stop()
     }
 }

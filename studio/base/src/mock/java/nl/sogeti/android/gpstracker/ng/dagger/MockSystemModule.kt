@@ -28,6 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.dagger
 
+import android.content.ContentResolver
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
@@ -60,8 +63,11 @@ class MockSystemModule {
     fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
 
     @Provides
-    fun packageManager(): PackageManager = PackageManager()
+    fun packageManager(application: Context): PackageManager = application.packageManager
 
     @Provides
     fun locationFactory(): LocationFactory = MockLocationFactory()
+
+    @Provides
+    fun contentResolver(application: Context): ContentResolver = application.contentResolver
 }

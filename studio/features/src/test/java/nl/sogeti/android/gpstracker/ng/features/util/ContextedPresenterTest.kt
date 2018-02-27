@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
+import nl.sogeti.android.gpstracker.ng.base.common.abstractpresenters.ContextedPresenter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule

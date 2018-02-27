@@ -70,6 +70,7 @@ class TrackEditPresenter(trackUri: Uri) : AbstractTrackPresenter(trackUri) {
     }
 
     override fun onChange() {
+        super.onChange()
         loadTrackTypePosition(trackUri)
         loadTrackName(trackUri)
     }
