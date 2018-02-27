@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.gpximport
 
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableInt
 import android.widget.AdapterView
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
@@ -35,8 +36,5 @@ import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 class ImportTrackTypeModel {
     val selectedPosition = ObservableInt(AdapterView.INVALID_POSITION)
     val trackTypes = TrackTypeDescriptions.allTrackTypes
-
-    interface View {
-        fun dismiss()
-    }
+    val dismiss = ObservableBoolean(false)
 }

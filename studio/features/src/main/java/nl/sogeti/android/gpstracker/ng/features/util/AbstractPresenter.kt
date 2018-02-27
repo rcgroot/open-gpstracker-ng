@@ -30,10 +30,12 @@ abstract class AbstractPresenter : ViewModel() {
         checkUpdate()
     }
 
-    abstract fun onChange()
-
     @CallSuper
     open fun onStart() {
+    }
+
+    @CallSuper
+    open fun onChange() {
     }
 
     @CallSuper

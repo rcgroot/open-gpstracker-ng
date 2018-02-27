@@ -30,12 +30,15 @@ package nl.sogeti.android.gpstracker.ng.features.gpximport
 
 import android.view.View
 import android.widget.AdapterView
-import nl.sogeti.android.gpstracker.ng.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
 
-class ImportTrackTypePresenter(private val model: ImportTrackTypeModel, private val view: ImportTrackTypeModel.View) : ContextedPresenter() {
+class ImportTrackTypePresenter : AbstractPresenter() {
+
+    val model = ImportTrackTypeModel()
 
     var resultLambda: (String) -> Unit = {}
+
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {
         object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -48,14 +51,8 @@ class ImportTrackTypePresenter(private val model: ImportTrackTypeModel, private 
         }
     }
 
-    override fun didStart() {
-    }
-
-    override fun willStop() {
-    }
-
     fun ok() {
-        view.dismiss()
+        model.dismiss.set(true)
         val i = model.selectedPosition.get()
         val trackType = if (i == AdapterView.INVALID_POSITION) {
             TrackTypeDescriptions.allTrackTypes[0].contentValue
@@ -66,6 +63,6 @@ class ImportTrackTypePresenter(private val model: ImportTrackTypeModel, private 
     }
 
     fun cancel() {
-        view.dismiss()
+        model.dismiss.set(true)
     }
 }

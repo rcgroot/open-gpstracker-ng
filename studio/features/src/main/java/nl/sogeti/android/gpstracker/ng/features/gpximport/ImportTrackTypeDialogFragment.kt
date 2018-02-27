@@ -28,7 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.gpximport
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.databinding.Observable
+import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
@@ -39,9 +42,9 @@ import nl.sogeti.android.gpstracker.utils.FragmentResultLambda
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentImportTracktypeDialogBinding
 
-class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.View {
+class ImportTrackTypeDialogFragment : DialogFragment() {
 
-    private var presenter: ImportTrackTypePresenter? = null
+    private lateinit var presenter: ImportTrackTypePresenter
 
     fun show(manager: FragmentManager, tag: String, resultLambda: (String) -> Unit) {
         val lambdaHolder = FragmentResultLambda<String>()
@@ -60,12 +63,23 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
         super.dismiss()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = ViewModelProviders.of(this).get(ImportTrackTypePresenter::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentImportTracktypeDialogBinding>(inflater, R.layout.fragment_import_tracktype_dialog, container, false)
-        val importTrackTypeModel = ImportTrackTypeModel()
-        val importTrackTypePresenter = ImportTrackTypePresenter(importTrackTypeModel, this)
+        val importTrackTypePresenter = ImportTrackTypePresenter()
         binding.presenter = importTrackTypePresenter
-        binding.model = importTrackTypeModel
+        binding.model = presenter.model
+        presenter.model.dismiss.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                if (sender is ObservableBoolean && sender.get()) {
+                    dismiss()
+                }
+            }
+        })
         binding.fragmentImporttracktypeSpinner.onItemSelectedListener = importTrackTypePresenter.onItemSelectedListener
         if (targetFragment is FragmentResultLambda<*>) {
             importTrackTypePresenter.resultLambda = (targetFragment as FragmentResultLambda<String>).resultLambda
@@ -77,8 +91,7 @@ class ImportTrackTypeDialogFragment : DialogFragment(), ImportTrackTypeModel.Vie
 
     override fun onStart() {
         super.onStart()
-        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        presenter?.start(activity)
+        presenter?.start()
     }
 
     override fun onStop() {
