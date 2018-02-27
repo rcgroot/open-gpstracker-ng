@@ -24,12 +24,12 @@ class ConnectedServicePresenterTest {
     @Mock
     lateinit var mockContext: Context
 
-    lateinit var sut: MyConnectedServicePresenter
+    lateinit var sut: TestConnectedServicePresenter
 
     @Before
     fun setUp() {
 
-        sut = MyConnectedServicePresenter()
+        sut = TestConnectedServicePresenter()
         sut.serviceManager = mockServiceManager
     }
 
@@ -56,7 +56,7 @@ class ConnectedServicePresenterTest {
         verify(mockContext).unregisterReceiver(ArgumentMatchers.any())
     }
 
-    class MyConnectedServicePresenter : ConnectedServicePresenter() {
+    class TestConnectedServicePresenter : ConnectedServicePresenter() {
 
         var state = -1
         var uri: Uri? = null

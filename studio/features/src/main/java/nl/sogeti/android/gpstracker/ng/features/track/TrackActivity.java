@@ -28,9 +28,11 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -45,15 +47,14 @@ import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingCompo
 import nl.sogeti.android.opengpstrack.ng.features.R;
 import nl.sogeti.android.opengpstrack.ng.features.databinding.ActivityTrackMapBinding;
 
-public class TrackActivity extends AppCompatActivity implements TrackViewModel.View {
+public class TrackActivity extends AppCompatActivity {
 
     private static final String KEY_SELECTED_TRACK_URI = "KEY_SELECTED_TRACK_URI";
     private static final String KEY_SELECTED_TRACK_NAME = "KEY_SELECTED_TRACK_NAME";
     private static final String ARG_SHOW_TRACKS = "ARG_SHOW_TRACKS";
 
-    private final TrackViewModel viewModel = new TrackViewModel();
     private final TrackNavigator navigation = new TrackNavigator(this);
-    private final TrackPresenter presenter = new TrackPresenter(viewModel, this, navigation);
+    private TrackPresenter presenter;
     private boolean startWithOpenTracks;
 
     @NotNull
@@ -70,22 +71,35 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map, new FeaturesBindingComponent());
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
-        binding.setViewModel(viewModel);
-        if (savedInstanceState == null) {
+        presenter = ViewModelProviders.of(this).get(TrackPresenter.class);
+        presenter.setNavigation(navigation);
+        presenter.getViewModel().getName().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                invalidateOptionsMenu();
+            }
+        });
+        binding.setViewModel(presenter.getViewModel());
+        if (savedInstanceState == null)
+
+        {
             startWithOpenTracks = getIntent().getBooleanExtra(ARG_SHOW_TRACKS, false);
-        } else {
+        } else
+
+        {
             startWithOpenTracks = false;
             Uri uri = savedInstanceState.getParcelable(KEY_SELECTED_TRACK_URI);
             String name = savedInstanceState.getString(KEY_SELECTED_TRACK_NAME);
-            viewModel.getTrackUri().set(uri);
-            viewModel.getName().set(name);
+            presenter.getViewModel().getTrackUri().set(uri);
+            presenter.getViewModel().getName().set(name);
         }
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.start(this);
+        presenter.start();
         if (startWithOpenTracks) {
             navigation.showTrackSelection();
         }
@@ -100,8 +114,8 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_SELECTED_TRACK_URI, viewModel.getTrackUri().get());
-        outState.putString(KEY_SELECTED_TRACK_NAME, viewModel.getName().get());
+        outState.putParcelable(KEY_SELECTED_TRACK_URI, presenter.getViewModel().getTrackUri().get());
+        outState.putString(KEY_SELECTED_TRACK_NAME, presenter.getViewModel().getName().get());
     }
 
     //region Context menu
@@ -119,7 +133,7 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_edit).setEnabled(viewModel.isEditable());
+        menu.findItem(R.id.action_edit).setEnabled(presenter.getViewModel().isEditable());
 
         return true;
     }
@@ -144,15 +158,6 @@ public class TrackActivity extends AppCompatActivity implements TrackViewModel.V
         }
 
         return consumed;
-    }
-
-    //endregion
-
-    //region View contract
-
-    @Override
-    public void showTrackName(@NotNull String name) {
-        invalidateOptionsMenu();
     }
 
     //endregion

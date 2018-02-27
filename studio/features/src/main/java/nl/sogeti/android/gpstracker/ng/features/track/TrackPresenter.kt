@@ -29,23 +29,13 @@
 package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.base.common.abstractpresenters.ContextedPresenter
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
-import nl.sogeti.android.gpstracker.service.util.apply
-import nl.sogeti.android.gpstracker.service.util.getString
-import javax.inject.Inject
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 
-class TrackPresenter(private val viewModel: TrackViewModel, private val view: TrackViewModel.View, private val navigation: TrackNavigator) : ContextedPresenter(), TrackSelection.Listener, ContentController.Listener {
+class TrackPresenter : AbstractSelectedTrackPresenter() {
 
-    private var contentController: ContentController? = null
-    @Inject
-    lateinit var trackSelection: TrackSelection
-    @Inject
-    lateinit var contentControllerFactory: ContentControllerFactory
+    var navigation: TrackNavigator? = null
+    val viewModel = TrackViewModel()
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -53,69 +43,30 @@ class TrackPresenter(private val viewModel: TrackViewModel, private val view: Tr
 
     //region Presenter context
 
-    override fun didStart() {
-        trackSelection.addListener(this)
-        contentController = contentControllerFactory.createContentController(this)
-        trackSelection.trackUri?.let {
-            onTrackSelection(it, trackSelection.trackName)
-        }
-    }
-
-    override fun willStop() {
-        trackSelection.removeListener(this)
-        contentController?.unregisterObserver()
-        contentController = null
+    override fun onTrackUpdate(trackUri: Uri, name: String) {
+        viewModel.trackUri.set(trackUri)
+        viewModel.name.set(name)
     }
 
     //endregion
 
-    //region View
+    //region View callbacks
 
     fun onListOptionSelected() {
-        navigation.showTrackSelection()
+        navigation?.showTrackSelection()
     }
 
     fun onAboutOptionSelected() {
-        navigation.showAboutDialog()
+        navigation?.showAboutDialog()
     }
 
     fun onEditOptionSelected() {
         val trackUri = viewModel.trackUri.get()
-        trackUri?.let { navigation.showTrackEditDialog(it) }
+        trackUri?.let { navigation?.showTrackEditDialog(it) }
     }
 
     fun onGraphsOptionSelected() {
-        navigation.showGraphs()
-    }
-
-    //endregion
-
-    //region TrackSelection
-
-    override fun onTrackSelection(trackUri: Uri, trackName: String) {
-        viewModel.trackUri.set(trackUri)
-        contentController?.registerObserver(trackUri)
-        showName(trackName)
-    }
-
-    //endregion
-
-    //region Content watching
-
-    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        val name = contentUri.apply { it.getString(NAME) }
-        name?.let {
-            showName(it)
-        }
-    }
-
-    //endregion
-
-    //region Private
-
-    private fun showName(name: String) {
-        viewModel.name.set(name)
-        view.showTrackName(name)
+        navigation?.showGraphs()
     }
 
     //endregion

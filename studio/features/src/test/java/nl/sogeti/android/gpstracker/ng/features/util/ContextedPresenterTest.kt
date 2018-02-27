@@ -21,7 +21,7 @@ class ContextedPresenterTest {
     @Test
     fun start() {
         // Prepare
-        val sut = MyContextedPresenter()
+        val sut = TestContextedPresenter()
 
         // Execute
         sut.start(mockContext)
@@ -34,7 +34,7 @@ class ContextedPresenterTest {
     @Test(expected = IllegalStateException::class)
     fun stop() {
         // Prepare
-        val sut = MyContextedPresenter()
+        val sut = TestContextedPresenter()
         sut.start(mockContext)
 
         // Execute
@@ -45,7 +45,7 @@ class ContextedPresenterTest {
         sut.context
     }
 
-    class MyContextedPresenter : ContextedPresenter() {
+    class TestContextedPresenter : ContextedPresenter() {
         var willStop = false
         var didStart = false
 

@@ -37,8 +37,4 @@ class TrackViewModel {
     val isEditable: Boolean
         get() = trackUri.get() != null
     val name = ObservableField("")
-
-    interface View {
-        fun showTrackName(name: String)
-    }
 }
