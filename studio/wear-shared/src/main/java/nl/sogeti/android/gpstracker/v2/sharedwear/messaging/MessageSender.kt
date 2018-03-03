@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.Wearable
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.WearMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.trying
 import timber.log.Timber
 import java.util.concurrent.ConcurrentLinkedQueue

@@ -39,10 +39,11 @@ import android.os.Process
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.service.util.readTrack
+import nl.sogeti.android.gpstracker.v2.sharedwear.datasync.DataSender
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSender
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSenderFactory
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import timber.log.Timber
 import java.util.*
@@ -52,36 +53,51 @@ class StatisticsCollector {
 
     @Inject
     lateinit var context: Context
+
     @Inject
     lateinit var messageSenderFactory: MessageSenderFactory
+
+    @Inject
+    lateinit var dataSender: DataSender
+
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
-    private var trackUri: Uri? = null
+
+    var trackUri: Uri? = null
+
     private var contentObserver: ContentObserver? = null
+
     private val messageSender: MessageSender by lazy {
         val messageSender = messageSenderFactory.createMessageSender(context, MessageSender.Capability.CAPABILITY_CONTROL, AsyncTask.SERIAL_EXECUTOR)
         messageSender.start()
         messageSender
     }
-    val isStarted
-        get() = contentObserver != null
+
+    private var lastKnown = StatusMessage.Status.UNKNOWN
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    fun start(trackUri: Uri?) {
-        this.trackUri = trackUri
+    fun start() {
+        if (lastKnown == StatusMessage.Status.PAUSE) {
+            dataSender.updateMessage(StatusMessage(StatusMessage.Status.RESUME))
+        } else {
+            dataSender.updateMessage(StatusMessage(StatusMessage.Status.START))
+        }
+        lastKnown = StatusMessage.Status.START
         observeUri()
     }
 
     fun pause() {
-        messageSender.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
+        lastKnown = StatusMessage.Status.PAUSE
+        dataSender.updateMessage(StatusMessage(StatusMessage.Status.PAUSE))
     }
 
     fun stop() {
+        lastKnown = StatusMessage.Status.STOP
         unObserveUri()
-        messageSender.sendMessage(StatusMessage(StatusMessage.Status.STOP))
+        dataSender.updateMessage(StatusMessage(StatusMessage.Status.STOP))
         messageSender.stop()
     }
 
@@ -89,7 +105,7 @@ class StatisticsCollector {
         if (messageSender.connected) {
             val message = collectStatistics(trackUri)
             if (message != null) {
-                messageSender.sendMessage(message)
+                dataSender.updateMessage(message, true)
             }
         } else {
             Timber.d("No peer for Wear statistics")
@@ -101,12 +117,19 @@ class StatisticsCollector {
         val handlerThread = HandlerThread("WearContentObserver", Process.THREAD_PRIORITY_BACKGROUND)
         handlerThread.start()
         val handler = Handler(handlerThread.looper)
-        val contentObserver = object : ContentObserver(handler) {
+        unObserveUri()
+        contentObserver = object : ContentObserver(handler) {
             override fun onChange(selfChange: Boolean) {
                 sendLatest(trackUri)
             }
         }
         context.contentResolver?.registerContentObserver(trackUri, true, contentObserver)
+    }
+
+    private fun unObserveUri() {
+        if (contentObserver != null) {
+            context.contentResolver?.unregisterContentObserver(contentObserver)
+        }
     }
 
     private fun collectStatistics(trackUri: Uri): StatisticsMessage? {
@@ -142,12 +165,6 @@ class StatisticsCollector {
         }
 
         return null
-    }
-
-    private fun unObserveUri() {
-        if (contentObserver != null) {
-            context.contentResolver?.unregisterContentObserver(contentObserver)
-        }
     }
 
     companion object {

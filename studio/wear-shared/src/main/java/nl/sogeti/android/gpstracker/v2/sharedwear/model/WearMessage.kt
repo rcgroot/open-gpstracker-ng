@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
+package nl.sogeti.android.gpstracker.v2.sharedwear.model
 
 import com.google.android.gms.wearable.DataMap
 

@@ -19,23 +19,15 @@ import nl.sogeti.android.gpstracker.v2.BuildConfig.*
 
 open class GpsTrackerApplication : BaseGpsTrackerApplication() {
 
-    private var stateReceiver: LoggingReceiver? = null // Or replace with signature protection implicit broadcast
-
     override fun onCreate() {
         super.onCreate()
 
         setupModules()
         setupDataBinding()
-        setupLoggingReceiver()
     }
 
     private fun setupDataBinding() {
         FeatureConfiguration.setupDefaultViewBinding()
-    }
-
-    override fun onTerminate() {
-        destroyLoggingReceiver()
-        super.onTerminate()
     }
 
     open fun setupModules() {
@@ -59,16 +51,5 @@ open class GpsTrackerApplication : BaseGpsTrackerApplication() {
     internal fun buildNumber() = BUILD_NUMBER.toString()
 
     internal fun gitHash() = GIT_COMMIT.take(Math.min(7, GIT_COMMIT.length))
-
-    private fun setupLoggingReceiver() {
-        stateReceiver = LoggingReceiver()
-        stateReceiver?.register(this)
-    }
-
-    private fun destroyLoggingReceiver() {
-        stateReceiver?.unregister(this)
-        stateReceiver = null
-    }
-
 
 }

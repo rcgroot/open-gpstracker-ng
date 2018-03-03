@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.v2.sharedwear.messaging
+package nl.sogeti.android.gpstracker.v2.sharedwear.model
 
 import android.annotation.SuppressLint
 import android.os.Parcelable

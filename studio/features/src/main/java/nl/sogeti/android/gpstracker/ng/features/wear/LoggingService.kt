@@ -47,27 +47,30 @@ class LoggingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val trackUri: Uri? = intent?.getParcelableExtra(TRACK)
-        val state = intent?.getStringExtra(STATE)
-
-        if (!statisticsCollector.isStarted) {
-            statisticsCollector.start(trackUri)
-        }
-
-        if (state != null) {
-            when (state) {
-                PAUSE -> statisticsCollector.pause()
-                STOP -> stopSelf()
-            }
-
-        }
+        updateTrack(intent)
+        updateLoggingState(intent)
 
         return START_REDELIVER_INTENT
     }
 
     override fun onDestroy() {
-        statisticsCollector.stop()
         super.onDestroy()
+        statisticsCollector.stop()
+    }
+
+    private fun updateLoggingState(intent: Intent?) {
+        val state = intent?.getStringExtra(STATE)
+        when (state) {
+            START -> statisticsCollector.start()
+            PAUSE -> statisticsCollector.pause()
+            STOP -> stopSelf()
+            null -> stopSelf()
+        }
+    }
+
+    private fun updateTrack(intent: Intent?) {
+        val trackUri: Uri? = intent?.getParcelableExtra(TRACK)
+        statisticsCollector.trackUri = trackUri
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -76,6 +79,7 @@ class LoggingService : Service() {
 
         private const val TRACK = "WearLoggingService_Track"
         private const val STATE = "WearLoggingService_State"
+        private const val START = "WearLoggingService_State_Started"
         private const val PAUSE = "WearLoggingService_State_Paused"
         private const val STOP = "WearLoggingService_State_Stopped"
 
@@ -83,17 +87,14 @@ class LoggingService : Service() {
         fun createStartedIntent(context: Context, trackUri: Uri): Intent {
             val intent = Intent(context, LoggingService::class.java)
             intent.putExtra(TRACK, trackUri)
+            intent.putExtra(STATE, START)
             return intent
         }
 
         @JvmStatic
-        fun createStopIntent(context: Context): Intent {
-            return Intent(context, LoggingService::class.java)
-        }
-
-        @JvmStatic
-        fun createPausedIntent(context: Context): Intent {
+        fun createPausedIntent(context: Context, trackUri: Uri): Intent {
             val intent = Intent(context, LoggingService::class.java)
+            intent.putExtra(TRACK, trackUri)
             intent.putExtra(STATE, PAUSE)
             return intent
         }

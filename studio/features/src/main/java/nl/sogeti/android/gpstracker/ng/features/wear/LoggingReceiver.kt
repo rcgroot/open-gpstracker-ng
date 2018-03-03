@@ -57,26 +57,16 @@ class LoggingReceiver : BroadcastReceiver() {
 
     private fun onStateReceive(context: Context, intent: Intent) {
         val state = intent.getIntExtra(EXTRA_LOGGING_STATE, STATE_UNKNOWN)
-
-        when (state) {
-            STATE_LOGGING -> if (intent.hasExtra(EXTRA_TRACK)) {
-                val trackUri: Uri = intent.getParcelableExtra(EXTRA_TRACK)
-                context.startService(LoggingService.createStartedIntent(context, trackUri))
-            } else {
-                Timber.e("Failed to handle state change $intent")
+        if (intent.hasExtra(EXTRA_TRACK)) {
+            val trackUri: Uri = intent.getParcelableExtra(EXTRA_TRACK)
+            when (state) {
+                STATE_LOGGING -> context.startService(LoggingService.createStartedIntent(context, trackUri))
+                STATE_PAUSED -> context.startService(LoggingService.createPausedIntent(context, trackUri))
+                STATE_STOPPED -> context.startService(LoggingService.createStoppedIntent(context))
             }
-            STATE_PAUSED -> context.startService(LoggingService.createPausedIntent(context))
-            STATE_STOPPED -> context.startService(LoggingService.createStoppedIntent(context))
-            else -> context.stopService(LoggingService.createStopIntent(context))
-
+        } else {
+            Timber.e("Failed to handle state change $intent")
+            context.stopService(LoggingService.createStoppedIntent(context))
         }
-    }
-
-    fun register(context: Context) {
-        context.registerReceiver(this, IntentFilter(stateAction))
-    }
-
-    fun unregister(context: Context) {
-        context.unregisterReceiver(this)
     }
 }

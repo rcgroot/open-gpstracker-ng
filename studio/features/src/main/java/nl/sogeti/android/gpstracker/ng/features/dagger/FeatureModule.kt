@@ -9,14 +9,15 @@ import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxParser
 import nl.sogeti.android.gpstracker.ng.features.map.TrackReaderFactory
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
-import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
-import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.features.wear.StatisticsCollector
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.VersionHelper
 import nl.sogeti.android.gpstracker.utils.concurrent.ExecutorFactory
+import nl.sogeti.android.gpstracker.v2.sharedwear.datasync.DataSender
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSenderFactory
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.LocaleProvider
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
@@ -74,10 +75,13 @@ class FeatureModule(context: Context) {
     fun permissionRequester(): PermissionRequester = PermissionRequester()
 
     @Provides
-    fun statisticsFormatting(timeSpanUtil: TimeSpanCalculator) = StatisticsFormatter(LocaleProvider(),  timeSpanUtil)
+    fun statisticsFormatting(timeSpanUtil: TimeSpanCalculator) = StatisticsFormatter(LocaleProvider(), timeSpanUtil)
 
     @Provides
     fun messageSenderFactory() = MessageSenderFactory()
+
+    @Provides
+    fun dataSender() = DataSender(context)
 
     @Provides
     fun timeSpanCalculator() = TimeSpanCalculator()

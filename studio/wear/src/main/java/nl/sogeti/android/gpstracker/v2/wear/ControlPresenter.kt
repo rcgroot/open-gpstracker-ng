@@ -34,8 +34,8 @@ import android.os.Handler
 import android.os.Looper
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageSender
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage
 import timber.log.Timber
 import java.util.concurrent.Executors
 
@@ -62,7 +62,7 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
         viewModel.ambient.set(false)
     }
 
-    override fun onCleared(){
+    override fun onCleared() {
         super.onCleared()
         messageSender?.messageSenderStatusListener = null
         messageSender?.stop()
@@ -140,10 +140,10 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
 
     fun didReceiveStatistics(statisticsMessage: StatisticsMessage) {
         Timber.d("Received $statisticsMessage")
+        resumedLogging()
         viewModel.averageSpeed.set(statisticsMessage.speed)
         viewModel.duration.set(statisticsMessage.duration)
         viewModel.distance.set(statisticsMessage.distance)
-        startedLogging()
     }
 
     fun didReceiveStatus(statusMessage: StatusMessage) {
@@ -152,6 +152,7 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
         viewModel.manualRefresh.set(false)
         when (statusMessage.status) {
             StatusMessage.Status.START -> startedLogging()
+            StatusMessage.Status.RESUME -> resumedLogging()
             StatusMessage.Status.PAUSE -> pausedLogging()
             StatusMessage.Status.STOP -> stopLogging()
             else -> unknownState()
@@ -169,10 +170,10 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
     }
 
     private fun startedLogging() {
-        viewModel.state.set(Control.Start(true))
-        viewModel.leftControl.set(Control.Stop(true))
-        viewModel.bottomControl.set(Control.Pause(true))
-        viewModel.rightControl.set(Control.Resume(false))
+        resumedLogging()
+        viewModel.averageSpeed.set(0F)
+        viewModel.distance.set(0F)
+        viewModel.duration.set(0L)
     }
 
     private fun pausedLogging() {
@@ -180,6 +181,13 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
         viewModel.leftControl.set(Control.Stop(true))
         viewModel.bottomControl.set(Control.Pause(false))
         viewModel.rightControl.set(Control.Resume(true))
+    }
+
+    private fun resumedLogging() {
+        viewModel.state.set(Control.Start(true))
+        viewModel.leftControl.set(Control.Stop(true))
+        viewModel.bottomControl.set(Control.Pause(true))
+        viewModel.rightControl.set(Control.Resume(false))
     }
 
     private fun stopLogging() {

@@ -3,10 +3,10 @@
  **    Author: rene
  ** Copyright: (c) Apr 24, 2011 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
- ** Sogeti Nederland B.V.            |  No part of this file may be reproduced  
- ** Distributed Software Engineering |  or transmitted in any form or by any        
- ** Lange Dreef 17                   |  means, electronic or mechanical, for the      
- ** 4131 NJ Vianen                   |  purpose, without the express written    
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
  ** The Netherlands                  |  permission of the copyright holder.
  *------------------------------------------------------------------------------
  *
@@ -117,17 +117,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void vacuum() {
-        new Thread() {
-            @Override
-            public void run() {
-                SQLiteDatabase sqldb = getWritableDatabase();
-                sqldb.execSQL("VACUUM");
-            }
-        }.start();
-
-    }
-
     int bulkInsertWaypoint(long trackId, long segmentId, ContentValues[] valuesArray) {
         if (trackId < 0 || segmentId < 0) {
             throw new IllegalArgumentException("Track and segments may not the less then 0.");
@@ -181,11 +170,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long waypointId = sqldb.insert(Waypoints.WAYPOINTS, null, args);
 
-        ContentResolver resolver = this.mContext.getContentResolver();
         Uri notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/waypoints");
-        resolver.notifyChange(notifyUri, null);
+        notifyUri(notifyUri);
 
-        //      Log.d( TAG, "Waypoint stored: "+notifyUri);
         return waypointId;
     }
 
@@ -214,13 +201,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long mediaId = sqldb.insert(Media.MEDIA, null, args);
 
-        ContentResolver resolver = this.mContext.getContentResolver();
         Uri notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/waypoints/" +
                 waypointId + "/media");
-        resolver.notifyChange(notifyUri, null);
-        //      Log.d( TAG, "Notify: "+notifyUri );
-        resolver.notifyChange(Media.MEDIA_URI, null);
-        //      Log.d( TAG, "Notify: "+Media.CONTENT_URI );
+        notifyUri(notifyUri);
+        notifyUri(Media.MEDIA_URI);
 
         return mediaId;
     }
@@ -284,8 +268,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/metadata");
         }
-        resolver.notifyChange(notifyUri, null);
-        resolver.notifyChange(MetaData.METADATA_URI, null);
+        notifyUri(notifyUri);
+        notifyUri(MetaData.METADATA_URI);
 
         return metaDataId;
     }
@@ -345,9 +329,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        ContentResolver resolver = this.mContext.getContentResolver();
-        resolver.notifyChange(Tracks.TRACKS_URI, null);
-        resolver.notifyChange(ContentUris.withAppendedId(Tracks.TRACKS_URI, trackId), null);
+        notifyUri(Tracks.TRACKS_URI);
+        final Uri notifyUri = ContentUris.withAppendedId(Tracks.TRACKS_URI, trackId);
+        notifyUri(notifyUri);
 
         return affected;
     }
@@ -372,9 +356,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         affected += sqldb.delete(MetaData.METADATA, MetaData.TRACK + "= ? AND " + MetaData.SEGMENT + "= ?",
                 new String[]{String.valueOf(trackId), String.valueOf(segmentId)});
 
-        ContentResolver resolver = this.mContext.getContentResolver();
-        resolver.notifyChange(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId), null);
-        resolver.notifyChange(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments"), null);
+        notifyUri(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId));
+        notifyUri(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments"));
 
         return affected;
     }
@@ -405,22 +388,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         int affected = sqldb.delete(MetaData.METADATA, MetaData._ID + "= ?", new String[]{String.valueOf(metadataId)});
 
-        ContentResolver resolver = this.mContext.getContentResolver();
         Uri notifyUri;
         if (trackId >= 0 && segmentId >= 0 && waypointId >= 0) {
             notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/waypoints/" +
                     waypointId + "/media");
-            resolver.notifyChange(notifyUri, null);
+            notifyUri(notifyUri);
         }
         if (trackId >= 0 && segmentId >= 0) {
             notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/media");
-            resolver.notifyChange(notifyUri, null);
+            notifyUri(notifyUri);
         }
         notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/media");
-        resolver.notifyChange(notifyUri, null);
-        resolver.notifyChange(ContentUris.withAppendedId(Media.MEDIA_URI, metadataId), null);
+        notifyUri(notifyUri);
+        notifyUri = ContentUris.withAppendedId(Media.MEDIA_URI, metadataId);
+        notifyUri(notifyUri);
 
         return affected;
+    }
+
+    private void notifyUri(Uri notifyUri) {
+        ContentResolver resolver = this.mContext.getContentResolver();
+        resolver.notifyChange(notifyUri, null);
+        Timber.d("notifyChange(" + notifyUri + ")");
     }
 
     /**
@@ -457,11 +446,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Uri notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/waypoints/" +
                 waypointId + "/media");
         resolver.notifyChange(notifyUri, null);
+
         notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/media");
-        resolver.notifyChange(notifyUri, null);
+        notifyUri(notifyUri);
+
         notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/media");
-        resolver.notifyChange(notifyUri, null);
-        resolver.notifyChange(ContentUris.withAppendedId(Media.MEDIA_URI, mediaId), null);
+        notifyUri(notifyUri);
+
+        notifyUri = ContentUris.withAppendedId(Media.MEDIA_URI, mediaId);
+        notifyUri(notifyUri);
 
         return affected;
     }
@@ -476,9 +469,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase mDb = getWritableDatabase();
         updates = mDb.update(Tracks.TRACKS, args, whereclause, null);
 
-        ContentResolver resolver = this.mContext.getContentResolver();
         Uri notifyUri = ContentUris.withAppendedId(Tracks.TRACKS_URI, trackId);
-        resolver.notifyChange(notifyUri, null);
+        notifyUri(notifyUri);
 
         return updates;
     }
@@ -486,7 +478,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Insert a key/value pair as meta-data for a track and optionally narrow the
      * scope by segment or segment/waypoint
-     *
      */
     int updateMetaData(long trackId, long segmentId, long waypointId, long metadataId, String selection, String[]
             selectionArgs, String value) {
@@ -519,7 +510,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             int updates = sqldb.update(MetaData.METADATA, args, whereclause, whereParams);
 
-            ContentResolver resolver = this.mContext.getContentResolver();
             Uri notifyUri;
             if (trackId >= 0 && segmentId >= 0 && waypointId >= 0) {
                 notifyUri = Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments/" + segmentId + "/waypoints/" +
@@ -532,8 +522,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 notifyUri = Uri.withAppendedPath(MetaData.METADATA_URI, "" + metadataId);
             }
 
-            resolver.notifyChange(notifyUri, null);
-            resolver.notifyChange(MetaData.METADATA_URI, null);
+            notifyUri(notifyUri);
+            notifyUri(MetaData.METADATA_URI);
 
             return updates;
         }
@@ -541,7 +531,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Move to a fresh track with a new first segment for this track
-     *
      */
     long toNextTrack(String name) {
         long currentTime = new Date().getTime();
@@ -552,15 +541,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqldb = getWritableDatabase();
         long trackId = sqldb.insert(Tracks.TRACKS, null, args);
 
-        ContentResolver resolver = this.mContext.getContentResolver();
-        resolver.notifyChange(Tracks.TRACKS_URI, null);
+        notifyUri(Tracks.TRACKS_URI);
 
         return trackId;
     }
 
     /**
      * Moves to a fresh segment to which waypoints can be connected
-     *
      */
     long toNextSegment(long trackId) {
         SQLiteDatabase sqldb = getWritableDatabase();
@@ -569,8 +556,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         args.put(Segments.TRACK, trackId);
         long segmentId = sqldb.insert(Segments.SEGMENTS, null, args);
 
-        ContentResolver resolver = this.mContext.getContentResolver();
-        resolver.notifyChange(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments"), null);
+        notifyUri(Uri.withAppendedPath(Tracks.TRACKS_URI, trackId + "/segments"));
 
         return segmentId;
     }

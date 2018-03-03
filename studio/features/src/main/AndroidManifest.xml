@@ -26,6 +26,12 @@
             android:parentActivityName="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
             android:theme="@style/AppTheme" />
 
+        <receiver android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver">
+            <intent-filter>
+                <action android:name="nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider"
             android:authorities="${applicationId}.gpxshareprovider"

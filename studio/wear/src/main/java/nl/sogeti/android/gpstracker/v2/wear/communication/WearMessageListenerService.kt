@@ -2,8 +2,8 @@ package nl.sogeti.android.gpstracker.v2.wear.communication
 
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.MessageListenerService
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatisticsMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage
 import nl.sogeti.android.gpstracker.v2.wear.ControlActivity
 
 class WearMessageListenerService : MessageListenerService() {
