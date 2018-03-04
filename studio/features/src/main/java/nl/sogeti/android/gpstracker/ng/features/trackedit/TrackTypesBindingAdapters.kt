@@ -6,28 +6,23 @@ import nl.sogeti.android.gpstracker.ng.features.databinding.CommonBindingAdapter
 
 class TrackTypesBindingAdapters : CommonBindingAdapters() {
 
-    @BindingAdapter("trackTypes")
-    fun setTrackTypes(spinner: AppCompatSpinner, trackTypes: List<TrackTypeDescriptions.TrackType>) {
+    @BindingAdapter("trackTypes", "selection", requireAll = false)
+    fun setTrackTypes(spinner: AppCompatSpinner,
+                      trackTypes: List<TrackTypeDescriptions.TrackType>?,
+                      selection: Int?) {
         val viewAdapter: TrackTypeSpinnerAdapter
         if (spinner.adapter is TrackTypeSpinnerAdapter) {
             viewAdapter = spinner.adapter as TrackTypeSpinnerAdapter
-            viewAdapter.trackTypes = trackTypes
+            viewAdapter.trackTypes = trackTypes ?: listOf()
         } else {
-            viewAdapter = TrackTypeSpinnerAdapter(spinner.context, trackTypes)
+            viewAdapter = TrackTypeSpinnerAdapter(spinner.context, trackTypes ?: listOf())
             spinner.adapter = viewAdapter
-            val tag = spinner.tag
-            if (tag is Int) {
-                spinner.setSelection(tag)
-            }
         }
-    }
 
-    @BindingAdapter("selection")
-    fun setSelected(spinner: AppCompatSpinner, selection: Int) {
-        if (spinner.adapter != null && spinner.selectedItemPosition != selection) {
+        if (selection != null) {
             spinner.setSelection(selection)
         } else {
-            spinner.tag = selection
+            spinner.setSelection(AppCompatSpinner.INVALID_POSITION)
         }
     }
 }

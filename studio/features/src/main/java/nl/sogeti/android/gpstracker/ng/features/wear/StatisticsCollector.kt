@@ -81,9 +81,9 @@ class StatisticsCollector {
 
     fun start() {
         if (lastKnown == StatusMessage.Status.PAUSE) {
-            dataSender.updateMessage(StatusMessage(StatusMessage.Status.RESUME))
+            dataSender.updateMessage(StatusMessage(StatusMessage.Status.RESUME), true)
         } else {
-            dataSender.updateMessage(StatusMessage(StatusMessage.Status.START))
+            dataSender.updateMessage(StatusMessage(StatusMessage.Status.START), true)
         }
         lastKnown = StatusMessage.Status.START
         observeUri()
@@ -91,13 +91,13 @@ class StatisticsCollector {
 
     fun pause() {
         lastKnown = StatusMessage.Status.PAUSE
-        dataSender.updateMessage(StatusMessage(StatusMessage.Status.PAUSE))
+        dataSender.updateMessage(StatusMessage(StatusMessage.Status.PAUSE), true)
     }
 
     fun stop() {
         lastKnown = StatusMessage.Status.STOP
         unObserveUri()
-        dataSender.updateMessage(StatusMessage(StatusMessage.Status.STOP))
+        dataSender.updateMessage(StatusMessage(StatusMessage.Status.STOP), true)
         messageSender.stop()
     }
 

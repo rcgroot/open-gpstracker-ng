@@ -140,7 +140,6 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
 
     fun didReceiveStatistics(statisticsMessage: StatisticsMessage) {
         Timber.d("Received $statisticsMessage")
-        resumedLogging()
         viewModel.averageSpeed.set(statisticsMessage.speed)
         viewModel.duration.set(statisticsMessage.duration)
         viewModel.distance.set(statisticsMessage.distance)

@@ -39,82 +39,24 @@ class ControlBindingAdapters : CommonBindingAdapters() {
     }
 
     private fun showNoButtons(left: FloatingActionButton, right: FloatingActionButton) {
-        if (left.visible) {
-            val leftAnimation = moveLeftUnderRight(left, right)
-            moveRightOutView(right).setDuration(leftAnimation.duration)
-        }
-        else {
-            moveRightOutView(right)
-        }
+        left.animate()
+                .alpha(0F)
+        right.animate()
+                .alpha(0F)
     }
 
     private fun showAllButtons(left: FloatingActionButton, right: FloatingActionButton) {
-        if (right.visible && left.invisible) {
-            moveLeftToOriginalLocation(left)
-        }
-        else if (right.invisible && left.invisible) {
-            val rightAnimation = moveRightInView(right)
-            moveLeftToOriginalLocation(left).setStartDelay(rightAnimation.duration)
-        }
+        left.animate()
+                .alpha(1F)
+        right.animate()
+                .alpha(1F)
     }
 
     private fun showOnlyRightButton(left: FloatingActionButton, right: FloatingActionButton) {
-        if (left.visible && right.visible) {
-            moveLeftUnderRight(left, right)
-        }
-        else if(left.invisible) {
-            moveRightInView(right)
-        }
-    }
-
-    /**
-     * Pre-condition: Invisible Right
-     * Post-condition: Visible Right
-     */
-    private fun moveRightOutView(right: FloatingActionButton): ViewPropertyAnimator {
-        right.pivotX = right.width / 2.0F
-        right.pivotY = right.height / 2.0F
-        val animation = right.animate().scaleX(0.000001F).scaleY(0.000001F).withEndAction { right.visibility = View.GONE }
-
-        return animation
-    }
-
-    /**
-     * Pre-condition: Invisible Right
-     * Post-condition: Visible Right
-     */
-    private fun moveRightInView(right: FloatingActionButton): ViewPropertyAnimator {
-        right.pivotX = right.width / 2.0F
-        right.pivotY = right.height / 2.0F
-        right.scaleX = 0.000001F
-        right.scaleY = 0.000001F
-        right.visibility = View.VISIBLE
-        val animation = right.animate().scaleX(1.0F).scaleY(1.0F)
-
-        return animation
-    }
-
-    /**
-     * Pre-condition: Visible right over left
-     * Post-condition: Visible left
-     */
-    private fun moveLeftToOriginalLocation(left: FloatingActionButton): ViewPropertyAnimator {
-        left.visibility = View.VISIBLE
-        val animation = left.animate().translationX(0f)
-
-        return animation
-    }
-
-    /**
-     * Pre-condition: Visible right
-     * Post-condition: Gone left
-     */
-    private fun moveLeftUnderRight(left: FloatingActionButton, right: FloatingActionButton): ViewPropertyAnimator {
-        right.bringToFront()
-        val distance = right.x - left.x
-        val animation = left.animate().translationX(distance).withEndAction { left.visibility = View.GONE }
-
-        return animation
+        left.animate()
+                .alpha(0F)
+        right.animate()
+                .alpha(1F)
     }
 
     private fun cancelAnimations(left: FloatingActionButton, right: FloatingActionButton) {

@@ -33,26 +33,26 @@ import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
+import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphValueDescriptor
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class GraphsViewModel {
     val trackUri = ObservableField<Uri?>()
-    val waypoints = ObservableField<String>("-")
 
     val startTime = ObservableField<Long>(0L)
     val timeSpan = ObservableField<Long>(0L)
     val paused = ObservableField<Long>(0)
 
-    val duration = ObservableField<Long>(0L)
     val distance = ObservableField<Float>(0F)
+    val duration = ObservableField<Long>(0L)
     val speed = ObservableField<Float>(0F)
+    val waypoints = ObservableField<String>("-")
 
     val distanceSelected = ObservableBoolean(false)
     val durationSelected = ObservableBoolean(false)
 
     val graphData = ObservableField<List<GraphPoint>>(emptyList())
-    val graphLabels = ObservableField<LineGraph.ValueDescriptor>(object : LineGraph.ValueDescriptor {})
+    val graphLabels = ObservableField<GraphValueDescriptor>(object : GraphValueDescriptor {})
     val xLabel = ObservableInt(R.string.graph_label_time)
     val yLabel = ObservableInt(R.string.graph_label_speed)
 }

@@ -10,7 +10,7 @@ open class LineGraphBindings {
     }
 
     @BindingAdapter("value_description")
-    fun setValueDescription(view: LineGraph, descriptor: LineGraph.ValueDescriptor?) {
-        view.description = descriptor ?: object : LineGraph.ValueDescriptor {}
+    fun setValueDescription(view: LineGraph, descriptor: GraphValueDescriptor?) {
+        view.description = descriptor ?: object : GraphValueDescriptor {}
     }
 }

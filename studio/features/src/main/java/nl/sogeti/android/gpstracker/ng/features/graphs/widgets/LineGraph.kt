@@ -40,16 +40,6 @@ import nl.sogeti.android.opengpstrack.ng.features.R
 
 class LineGraph : View {
 
-    interface ValueDescriptor {
-        fun describeXvalue(context: Context, xValue: Float): String {
-            return ""
-        }
-
-        fun describeYvalue(context: Context, yValue: Float): String {
-            return ""
-        }
-    }
-
     @Size(multiple = 2)
     var data: List<GraphPoint> = listOf()
         set(value) {
@@ -67,7 +57,7 @@ class LineGraph : View {
             field = value
             invalidate()
         }
-    var description = object : ValueDescriptor {}
+    var description = object : GraphValueDescriptor {}
         set(value) {
             field = value
             invalidate()
@@ -143,7 +133,7 @@ class LineGraph : View {
             yUnit = "speed"
             data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 10F),
                     GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 13F))
-            description = object : ValueDescriptor {
+            description = object : GraphValueDescriptor {
                 override fun describeXvalue(context: Context, xValue: Float): String {
                     return "X value"
                 }

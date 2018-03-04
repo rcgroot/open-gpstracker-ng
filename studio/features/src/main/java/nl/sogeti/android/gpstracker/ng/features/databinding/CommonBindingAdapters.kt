@@ -34,13 +34,11 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.AppCompatSpinner
 import android.view.TouchDelegate
 import android.view.View
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.SpinnerAdapter
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 open class CommonBindingAdapters {
@@ -90,11 +88,6 @@ open class CommonBindingAdapters {
     @BindingAdapter("url")
     fun setUrl(webView: WebView, url: String) {
         webView.loadUrl(url)
-    }
-
-    @BindingAdapter("adapter")
-    fun setAdapter(view: AppCompatSpinner, adapter: SpinnerAdapter) {
-        view.adapter = adapter
     }
 
 //    @BindingAdapter("bind:selection", "bind:selectionAttrChanged", requireAll = false)

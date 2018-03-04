@@ -83,10 +83,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:time="@{viewModel.startTime}"
             app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_start_day"
             app:layout_constraintLeft_toRightOf="@+id/graph_value_start_day"
             app:layout_constraintRight_toLeftOf="@+id/graph_value_duration"
+            app:time="@{viewModel.startTime}"
             tools:text="9:54" />
 
         <TextView
@@ -95,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:duration="@{viewModel.duration}"
+            app:duration="@{viewModel.timeSpan}"
             app:layout_constraintBaseline_toBaselineOf="@+id/graph_value_start_time"
             app:layout_constraintLeft_toRightOf="@+id/graph_value_start_time"
             app:layout_constraintRight_toLeftOf="@+id/graph_value_pause"

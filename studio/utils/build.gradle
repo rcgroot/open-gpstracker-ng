@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.targetSdk
@@ -20,10 +19,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
@@ -31,9 +26,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-
 }

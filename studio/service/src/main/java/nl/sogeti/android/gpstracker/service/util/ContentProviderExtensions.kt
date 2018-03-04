@@ -139,8 +139,6 @@ fun <T> Uri.apply(selectionPair: Pair<String, List<String>>? = null,
         cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection?.toTypedArray(), selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
-        } else {
-            Timber.w("Uri $this apply operation didn't have results")
         }
     } finally {
         cursor?.close()

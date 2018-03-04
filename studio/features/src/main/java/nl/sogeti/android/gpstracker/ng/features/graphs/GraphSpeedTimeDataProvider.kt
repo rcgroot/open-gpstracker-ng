@@ -3,17 +3,13 @@ package nl.sogeti.android.gpstracker.ng.features.graphs
 import android.content.Context
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraph
+import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphValueDescriptor
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
-import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class GraphSpeedOVerDistanceDataProvider : LineGraph.ValueDescriptor, GraphDataProvider {
-
-    @Inject
-    lateinit var calculator: SummaryCalculator
+class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
 
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
@@ -32,7 +28,7 @@ class GraphSpeedOVerDistanceDataProvider : LineGraph.ValueDescriptor, GraphDataP
         return calculateTrack(summary.deltas)
     }
 
-    override val valueDescriptor: LineGraph.ValueDescriptor
+    override val valueDescriptor: GraphValueDescriptor
         get() = this
 
     override fun describeYvalue(context: Context, yValue: Float): String {

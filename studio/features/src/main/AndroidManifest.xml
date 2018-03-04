@@ -26,7 +26,9 @@
             android:parentActivityName="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
             android:theme="@style/AppTheme" />
 
-        <receiver android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver">
+        <receiver
+            android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED" />
             </intent-filter>
