@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.service.logger;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -58,6 +59,7 @@ import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
 import timber.log.Timber;
 
+@SuppressLint("MissingPermission")
 class GPSListener implements LocationListener, GpsStatus.Listener {
 
     /**
@@ -165,7 +167,6 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Timber.d("onStatusChanged( String " + provider + ", int " + status + ", Bundle " + extras + " )");
         if (status == LocationProvider.OUT_OF_SERVICE) {
             Timber.e(String.format("Provider %s changed to status %d", provider, status));
         }
@@ -439,9 +440,10 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
             boolean distanceBroadcast = minDistance > 0 && mBroadcastDistance >= minDistance;
             boolean timeBroadcast = minTime > 0 && passedTime >= minTime;
             if (distanceBroadcast && timeBroadcast) {
-                Timber.d("Broadcasting intent" + intent);
                 mBroadcastDistance = 0;
                 mLastTimeBroadcast = nowTime;
+                Timber.d("Broadcasting logged location " + intent.getAction());
+                intent.setPackage(BuildConfig.packageName);
                 mService.sendBroadcast(intent, "android.permission.ACCESS_FINE_LOCATION");
             }
         }
@@ -650,7 +652,9 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
         broadcast.putExtra(ServiceConstants.EXTRA_LOGGING_STATE, mLoggingState);
         Uri uri = TrackUriExtensionKt.trackUri(mTrackId);
         broadcast.putExtra(ServiceConstants.EXTRA_TRACK, uri);
-        mService.getApplicationContext().sendBroadcast(broadcast);
+        Timber.d("Broadcasting logging state " + broadcast.getAction());
+        broadcast.setPackage(BuildConfig.packageName);
+        mService.sendBroadcast(broadcast, BuildConfig.controlPermission);
     }
 
     /**
