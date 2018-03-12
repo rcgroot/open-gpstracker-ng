@@ -100,7 +100,7 @@ class NameGeneratorTest {
         val now = mock(Calendar::class.java)
         `when`(now.get(Calendar.HOUR_OF_DAY)).thenReturn(21)
         `when`(format.format(any())).thenReturn("Sunday")
-        `when`(locationFactory.getLocationName(context)).thenReturn("Amsterdam")
+        `when`(locationFactory.getLocationName()).thenReturn("Amsterdam")
         // Act
         val name = sut.generateName(context, now)
         // Assert

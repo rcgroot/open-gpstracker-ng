@@ -32,29 +32,21 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.ContentResolver
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.service.util.readName
 import javax.inject.Inject
 
-class TrackDeletePresenter(trackUri: Uri) : AbstractTrackPresenter(trackUri) {
+class TrackDeletePresenter @Inject constructor(
+        val contentResolver: ContentResolver,
+        val summaryManager: SummaryManager,
+        contentController: ContentController) : AbstractTrackPresenter(contentController) {
 
-    val viewModel = TrackDeleteModel(trackUri)
-
-    @Inject
-    lateinit var contentResolver: ContentResolver
-
-    @Inject
-    lateinit var summaryManager: SummaryManager
-
-    init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
-
+    lateinit var viewModel: TrackDeleteModel
 
     override fun onChange() {
-        super.onChange()
         val trackUri = viewModel.trackUri.get()
         trackUri?.let {
             loadTrackName(trackUri)
@@ -83,11 +75,17 @@ class TrackDeletePresenter(trackUri: Uri) : AbstractTrackPresenter(trackUri) {
         contentResolver.delete(trackUri, null, null)
     }
 
+    @Suppress("UNCHECKED_CAST")
     companion object {
 
         fun newFactory(uri: Uri) =
                 object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel?> create(modelClass: Class<T>): T = TrackDeletePresenter(uri) as T
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        val presenter = FeatureConfiguration.featureComponent.trackDeletePresenter()
+                        presenter.viewModel = TrackDeleteModel(uri)
+                        presenter.trackUri = uri
+                        return presenter as T
+                    }
                 }
     }
 }

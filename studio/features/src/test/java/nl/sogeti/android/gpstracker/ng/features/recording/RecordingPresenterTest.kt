@@ -1,10 +1,10 @@
 package nl.sogeti.android.gpstracker.ng.features.recording
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
@@ -12,11 +12,12 @@ import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.sig
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.low
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.medium
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.none
+import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceManager
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert
 import org.junit.Before
@@ -29,7 +30,7 @@ import org.mockito.junit.MockitoJUnit
 
 class RecordingPresenterTest {
 
-    private lateinit var viewModel: RecordingViewModel
+    lateinit var sut: RecordingPresenter
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
     @get:Rule
@@ -45,24 +46,23 @@ class RecordingPresenterTest {
     @Mock
     lateinit var trackUri: Uri
     @Mock
-    lateinit var contentControllerFactory: ContentControllerFactory
-    @Mock
     lateinit var context: Context
     @Mock
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
     @Mock
     lateinit var navigation: RecordingNavigation
-    lateinit var sut: RecordingPresenter
+    @Mock
+    lateinit var packageManager: PackageManager
+    @Mock
+    lateinit var statisticsFormatter: StatisticsFormatter
+    @Mock
+    lateinit var summaryManager: SummaryManager
 
     @Before
     fun setUp() {
-        viewModel = RecordingViewModel(uri)
-        sut = RecordingPresenter(viewModel, navigation)
+        sut = RecordingPresenter(navigation, contentController, gpsStatusControllerFactory, packageManager, statisticsFormatter, summaryManager)
         sut.serviceManager = serviceManager
-        `when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
-        sut.contentControllerFactory = contentControllerFactory
         `when`(gpsStatusControllerFactory.createGpsStatusController(any(), any())).thenReturn(gpsStatusController)
-        sut.gpsStatusControllerFactory = gpsStatusControllerFactory
     }
 
     @Test
@@ -84,9 +84,9 @@ class RecordingPresenterTest {
         // Act
         sut.didConnectToService(context, uri, "mockTrack", ServiceConstants.STATE_LOGGING)
         // Assert
-        Assert.assertThat(viewModel.isRecording.get(), `is`(true))
-        Assert.assertThat(viewModel.name.get(), `is`("mockTrack"))
-        Assert.assertThat(viewModel.trackUri.get(), `is`(uri))
+        Assert.assertThat(sut.viewModel.isRecording.get(), `is`(true))
+        Assert.assertThat(sut.viewModel.name.get(), `is`("mockTrack"))
+        Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
@@ -96,9 +96,9 @@ class RecordingPresenterTest {
         // Act
         sut.didConnectToService(context, uri, "paused", ServiceConstants.STATE_PAUSED)
         // Assert
-        Assert.assertThat(viewModel.isRecording.get(), `is`(true))
-        Assert.assertThat(viewModel.name.get(), `is`("paused"))
-        Assert.assertThat(viewModel.trackUri.get(), `is`(uri))
+        Assert.assertThat(sut.viewModel.isRecording.get(), `is`(true))
+        Assert.assertThat(sut.viewModel.name.get(), `is`("paused"))
+        Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
@@ -108,9 +108,9 @@ class RecordingPresenterTest {
         // Act
         sut.didConnectToService(context, uri, "stopped", ServiceConstants.STATE_STOPPED)
         // Assert
-        Assert.assertThat(viewModel.isRecording.get(), `is`(false))
-        Assert.assertThat(viewModel.name.get(), `is`("stopped"))
-        Assert.assertThat(viewModel.trackUri.get(), `is`(uri))
+        Assert.assertThat(sut.viewModel.isRecording.get(), `is`(false))
+        Assert.assertThat(sut.viewModel.name.get(), `is`("stopped"))
+        Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
@@ -120,9 +120,9 @@ class RecordingPresenterTest {
         // Act
         sut.didChangeLoggingState(context, uri, "mockTrack", ServiceConstants.STATE_STOPPED)
         // Assert
-        Assert.assertThat(viewModel.isRecording.get(), `is`(false))
-        Assert.assertThat(viewModel.name.get(), `is`("mockTrack"))
-        Assert.assertThat(viewModel.trackUri.get(), `is`(uri))
+        Assert.assertThat(sut.viewModel.isRecording.get(), `is`(false))
+        Assert.assertThat(sut.viewModel.name.get(), `is`("mockTrack"))
+        Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
@@ -130,8 +130,8 @@ class RecordingPresenterTest {
         // Act
         sut.onStart()
         // Assert
-        assertThat(viewModel.isScanning.get(), `is`(true))
-        assertThat(viewModel.hasFix.get(), `is`(false))
+        assertThat(sut.viewModel.isScanning.get(), `is`(true))
+        assertThat(sut.viewModel.hasFix.get(), `is`(false))
     }
 
     @Test
@@ -139,10 +139,10 @@ class RecordingPresenterTest {
         // Act
         sut.onStop()
         // Assert
-        assertThat(viewModel.isScanning.get(), `is`(false))
-        assertThat(viewModel.hasFix.get(), `is`(false))
-        assertThat(viewModel.maxSatellites.get(), `is`(0))
-        assertThat(viewModel.currentSatellites.get(), `is`(0))
+        assertThat(sut.viewModel.isScanning.get(), `is`(false))
+        assertThat(sut.viewModel.hasFix.get(), `is`(false))
+        assertThat(sut.viewModel.maxSatellites.get(), `is`(0))
+        assertThat(sut.viewModel.currentSatellites.get(), `is`(0))
     }
 
     @Test
@@ -150,8 +150,8 @@ class RecordingPresenterTest {
         // Act
         sut.onFirstFix()
         // Assert
-        assertThat(viewModel.hasFix.get(), `is`(true))
-        assertThat(viewModel.signalQuality.get(), `is`(4))
+        assertThat(sut.viewModel.hasFix.get(), `is`(true))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(4))
     }
 
     @Test
@@ -159,9 +159,9 @@ class RecordingPresenterTest {
         // Act
         sut.onChange(0, 0)
         // Assert
-        assertThat(viewModel.maxSatellites.get(), `is`(0))
-        assertThat(viewModel.currentSatellites.get(), `is`(0))
-        assertThat(viewModel.signalQuality.get(), `is`(none))
+        assertThat(sut.viewModel.maxSatellites.get(), `is`(0))
+        assertThat(sut.viewModel.currentSatellites.get(), `is`(0))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(none))
     }
 
     @Test
@@ -169,9 +169,9 @@ class RecordingPresenterTest {
         // Act
         sut.onChange(4, 4)
         // Assert
-        assertThat(viewModel.maxSatellites.get(), `is`(4))
-        assertThat(viewModel.currentSatellites.get(), `is`(4))
-        assertThat(viewModel.signalQuality.get(), `is`(low))
+        assertThat(sut.viewModel.maxSatellites.get(), `is`(4))
+        assertThat(sut.viewModel.currentSatellites.get(), `is`(4))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(low))
     }
 
     @Test
@@ -179,9 +179,9 @@ class RecordingPresenterTest {
         // Act
         sut.onChange(6, 20)
         // Assert
-        assertThat(viewModel.maxSatellites.get(), `is`(20))
-        assertThat(viewModel.currentSatellites.get(), `is`(6))
-        assertThat(viewModel.signalQuality.get(), `is`(medium))
+        assertThat(sut.viewModel.maxSatellites.get(), `is`(20))
+        assertThat(sut.viewModel.currentSatellites.get(), `is`(6))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(medium))
     }
 
     @Test
@@ -189,7 +189,7 @@ class RecordingPresenterTest {
         // Act
         sut.onChange(8, 20)
         // Assert
-        assertThat(viewModel.signalQuality.get(), `is`(high))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(high))
     }
 
     @Test
@@ -197,6 +197,6 @@ class RecordingPresenterTest {
         // Act
         sut.onChange(10, 20)
         // Assert
-        assertThat(viewModel.signalQuality.get(), `is`(excellent))
+        assertThat(sut.viewModel.signalQuality.get(), `is`(excellent))
     }
 }

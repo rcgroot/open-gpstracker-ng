@@ -70,7 +70,7 @@ class ImportTrackTypeDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentImportTracktypeDialogBinding>(inflater, R.layout.fragment_import_tracktype_dialog, container, false)
-        val importTrackTypePresenter = ImportTrackTypePresenter()
+        val importTrackTypePresenter = ViewModelProviders.of(this).get(ImportTrackTypePresenter::class.java)
         binding.presenter = importTrackTypePresenter
         binding.model = presenter.model
         presenter.model.dismiss.observe { sender ->
@@ -85,16 +85,6 @@ class ImportTrackTypeDialogFragment : DialogFragment() {
         presenter = importTrackTypePresenter
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenter?.start()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter?.stop()
     }
 
     companion object {

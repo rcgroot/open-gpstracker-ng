@@ -32,10 +32,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation.Companion.GPS_STATUS_PACKAGE_NAME
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.high
@@ -50,25 +48,19 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class RecordingPresenter constructor(private val viewModel: RecordingViewModel, private val navigation: RecordingNavigation) :
+class RecordingPresenter @Inject constructor(
+        private val navigation: RecordingNavigation,
+        private val contentController: ContentController,
+        private val gpsStatusControllerFactory: GpsStatusControllerFactory,
+        private val packageManager: PackageManager,
+        private val statisticsFormatter: StatisticsFormatter,
+        private val summaryManager: SummaryManager) :
         ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
-    private var gpsStatusController: GpsStatusController? = null
-    @Inject
-    lateinit var contentControllerFactory: ContentControllerFactory
-    private var contentController: ContentController? = null
-    @Inject
-    lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
-    @Inject
-    lateinit var packageManager: PackageManager
-    @Inject
-    lateinit var statisticsFormatter: StatisticsFormatter
-    @Inject
-    lateinit var summaryManager: SummaryManager
+    val viewModel = RecordingViewModel(null)
 
-    init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
+    private var gpsStatusController: GpsStatusController? = null
+
 
     override fun didStart() {
         super.didStart()
@@ -88,9 +80,9 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     fun didSelectSignal() {
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
         if (intent == null) {
-            navigation.showInstallHintForGpsStatusApp(context)
+            navigation?.showInstallHintForGpsStatusApp(context)
         } else {
-            navigation.openExternalGpsStatusApp(context)
+            navigation?.openExternalGpsStatusApp(context)
         }
     }
 
@@ -111,9 +103,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     //region ContentController
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        if (contentController != null) {
-            readTrackSummary(contentUri)
-        }
+        readTrackSummary(contentUri)
     }
 
     private fun readTrackSummary(trackUri: Uri) {
@@ -167,13 +157,11 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
     //region Private
 
     private fun startContentUpdates() {
-        contentController = contentControllerFactory.createContentController(this)
-        contentController?.registerObserver(viewModel.trackUri.get())
+        contentController.registerObserver(viewModel.trackUri.get())
     }
 
     private fun stopContentUpdates() {
-        contentController?.unregisterObserver()
-        contentController = null
+        contentController.unregisterObserver()
     }
 
     private fun startGpsUpdates() {
@@ -190,7 +178,7 @@ class RecordingPresenter constructor(private val viewModel: RecordingViewModel, 
 
     private fun updateRecording(context: Context, loggingState: Int, name: String?, trackUri: Uri?) {
         if (trackUri != null) {
-            contentController?.registerObserver(trackUri)
+            contentController.registerObserver(trackUri)
             viewModel.trackUri.set(trackUri)
             if (name != null) {
                 viewModel.name.set(name)

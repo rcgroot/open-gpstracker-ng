@@ -46,10 +46,10 @@ class RecordingViewModel(uri: Uri?) {
     val signalQuality = ObservableInt(0)
 
     object signalQualityLevel {
-        val none = 0
-        val low = 1
-        val medium = 2
-        val high = 3
-        val excellent = 4
+        const val none = 0
+        const val low = 1
+        const val medium = 2
+        const val high = 3
+        const val excellent = 4
     }
 }

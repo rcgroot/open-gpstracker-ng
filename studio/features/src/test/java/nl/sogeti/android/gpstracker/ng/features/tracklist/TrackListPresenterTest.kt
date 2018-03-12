@@ -28,14 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
-import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
-import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.util.tracksUri
 import org.junit.Before
 import org.junit.Rule
@@ -52,43 +51,33 @@ class TrackListPresenterTest {
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
     @Mock
-    lateinit var view: TrackListViewModel.View
-    lateinit var viewModel: TrackListViewModel
-    @Mock
     lateinit var trackSelection: TrackSelection
-    @Mock
-    lateinit var contentControllerFactory: ContentControllerFactory
     @Mock
     lateinit var summaryManager: SummaryManager
     @Mock
     lateinit var contentController: ContentController
-    @Mock
-    lateinit var context: Context
     @Mock
     lateinit var executor: Executor
     @Mock
     lateinit var navigation: TrackListNavigation
     @Mock
     lateinit var notification: ImportNotification
+    @Mock
+    lateinit var shareIntentFactory: ShareIntentFactory
+    @Mock
+    lateinit var packageManager: PackageManager
     lateinit var sut: TrackListPresenter
 
     @Before
     fun setUp() {
-        viewModel = TrackListViewModel()
-        sut = TrackListPresenter(viewModel, view, navigation)
-        sut.trackSelection = trackSelection
-        sut.contentControllerFactory = contentControllerFactory
-        sut.summaryManager = summaryManager
-        sut.executor = executor
-        sut.notification = notification
-        `when`(contentControllerFactory.createContentController(any(), any()))
-                .thenReturn(contentController)
+        sut = TrackListPresenter(contentController, trackSelection, summaryManager, executor, shareIntentFactory, packageManager, notification)
+        sut.navigation = navigation
     }
 
     @Test
     fun testStart() {
         // Act
-        sut.start(context)
+        sut.start()
         // Assert
         verify(summaryManager).start()
         verify(contentController).registerObserver(tracksUri())
@@ -96,10 +85,8 @@ class TrackListPresenterTest {
 
     @Test
     fun testStop() {
-        // Arrange
-        sut.start(context)
         // Act
-        sut.willStop()
+        sut.onCleared()
         // Assert
         verify(contentController).unregisterObserver()
     }
@@ -108,7 +95,6 @@ class TrackListPresenterTest {
     fun testTrackSelection() {
         // Arrange
         val selectedUri = mock(Uri::class.java)
-        sut.start(context)
         // Act
         sut.didSelectTrack(selectedUri, "testname")
         // Assert

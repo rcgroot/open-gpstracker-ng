@@ -71,7 +71,7 @@ public class TrackActivity extends AppCompatActivity {
         ActivityTrackMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_track_map, new FeaturesBindingComponent());
         setSupportActionBar(binding.toolbar);
         binding.toolbar.bringToFront();
-        presenter = ViewModelProviders.of(this).get(TrackPresenter.class);
+        presenter = ViewModelProviders.of(this, TrackPresenter.Companion.newFactory()).get(TrackPresenter.class);
         presenter.setNavigation(navigation);
         presenter.getViewModel().getName().addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override

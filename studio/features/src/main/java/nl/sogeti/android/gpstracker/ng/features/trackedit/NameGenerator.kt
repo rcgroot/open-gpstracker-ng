@@ -42,7 +42,7 @@ class NameGenerator @Inject constructor(@Named("dayFormatter") private val dayFo
     fun generateName(context: Context, now: Calendar): String {
         val today = dayFormat.format(now.time)
         val period = period(context, now)
-        val location = locationFactory.getLocationName(context)
+        val location = locationFactory.getLocationName()
 
         return if (location == null) {
             context.getString(R.string.initial_time_track_name, today, period)

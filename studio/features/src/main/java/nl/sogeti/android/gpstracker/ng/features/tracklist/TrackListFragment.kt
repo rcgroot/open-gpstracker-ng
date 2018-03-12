@@ -56,7 +56,7 @@ class TrackListFragment : ActivityResultLambdaFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = ViewModelProviders.of(this).get(TrackListPresenter::class.java)
+        presenter = ViewModelProviders.of(this, TrackListPresenter.newFactory()).get(TrackListPresenter::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

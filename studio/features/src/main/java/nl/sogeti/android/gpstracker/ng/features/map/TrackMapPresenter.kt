@@ -28,75 +28,83 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
-import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.service.util.*
+import nl.sogeti.android.gpstracker.service.util.trackUri
+import nl.sogeti.android.gpstracker.service.util.tracksUri
+import nl.sogeti.android.gpstracker.utils.contentprovider.getLong
+import nl.sogeti.android.gpstracker.utils.contentprovider.getString
+import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import javax.inject.Inject
 
-class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedServicePresenter(), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener {
+class TrackMapPresenter @Inject constructor(
+        private val trackReaderFactory: TrackReaderFactory,
+        private val trackTileProviderFactory: TrackTileProviderFactory,
+        private val locationFactory: LocationFactory,
+        private val loggingStateController: LoggingStateController,
+        trackSelection: TrackSelection,
+        contentController: ContentController)
+    : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener, LoggingStateListener {
 
-    private var started = false
     private var executingReader: TrackReader? = null
-    private var contentController: ContentController? = null
-    private var googleMap: GoogleMap? = null
+
+    internal val viewModel = TrackMapViewModel()
+
     internal var recordingUri: Uri? = null
 
-    @Inject
-    lateinit var trackSelection: TrackSelection
-    @Inject
-    lateinit var contentControllerFactory: ContentControllerFactory
-    @Inject
-    lateinit var trackReaderFactory: TrackReaderFactory
-    @Inject
-    lateinit var trackTileProviderFactory: TrackTileProviderFactory
-    @Inject
-    lateinit var locationFactory: LocationFactory
-
     init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
-
-    override fun didStart() {
-        super.didStart()
-        started = true
-        trackSelection.addListener(this)
+        loggingStateController.connect(this)
         makeTrackSelection()
-        contentController = contentControllerFactory.createContentController(this)
-        contentController?.registerObserver(viewModel.trackUri.get())
-        addTilesToMap()
     }
 
-    override fun willStop() {
-        super.willStop()
-        started = false
-        trackSelection.removeListener(this)
-        contentController?.unregisterObserver()
-        contentController = null
-        googleMap = null
+    private var tileProvider: TrackTileProvider? = null
+
+    fun start(mapView: MapView) {
+        super.start()
+        tileProvider = trackTileProviderFactory.createTrackTileProvider(mapView.context, viewModel.waypoints)
+        mapView.getMapAsync(this)
     }
 
-    //region Track selection
-
-    override fun onTrackSelection(trackUri: Uri, trackName: String) {
+    override fun onTrackUpdate(trackUri: Uri?, name: String) {
         viewModel.trackUri.set(trackUri)
-        viewModel.name.set(trackName)
-        contentController?.registerObserver(trackUri)
-        startReadingTrack(trackUri)
+        viewModel.name.set(name)
+        if (trackUri != null) {
+            startReadingTrack(trackUri)
+        } else {
+            viewModel.name.set(name)
+            viewModel.waypoints.set(emptyList())
+            viewModel.completeBounds.set(null)
+            viewModel.trackHead.set(null)
+        }
     }
 
-    //endregion
+    override fun onStop() {
+        tileProvider = null
+        super.onStop()
+    }
+
+    override fun onCleared() {
+        loggingStateController.disconnect()
+        super.onCleared()
+    }
 
     //region Service connecting
 
@@ -121,27 +129,10 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
 
     //endregion
 
-    //region Content watching
-
-    override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        startReadingTrack(contentUri)
-    }
-
-    //endregion
-
     //region Google Map Tiles
 
     override fun onMapReady(googleMap: GoogleMap) {
-        this.googleMap = googleMap
-        addTilesToMap()
-    }
-
-    private fun addTilesToMap() {
-        val googleMap = googleMap
-        if (googleMap != null && started) {
-            val tileProvider = trackTileProviderFactory.createTrackTileProvider(context, viewModel.waypoints)
-            tileProvider.provideFor(googleMap)
-        }
+        tileProvider?.provideFor(googleMap)
     }
 
     //endregion
@@ -149,7 +140,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
     //region View callbacks
 
     fun onClickMyLocation() {
-        viewModel.trackHead.set(locationFactory.getLocationCoordinates(context))
+        viewModel.trackHead.set(locationFactory.getLocationCoordinates())
         viewModel.completeBounds.set(null)
     }
 
@@ -159,7 +150,7 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         var executingReader = this.executingReader
         if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
-            executingReader = trackReaderFactory.createTrackReader(context, trackUri, { name, bounds, waypoint ->
+            executingReader = trackReaderFactory.createTrackReader(trackUri, { name, bounds, waypoint ->
                 viewModel.name.set(name)
                 viewModel.waypoints.set(waypoint)
                 if (recordingUri == trackUri) {
@@ -180,16 +171,29 @@ class TrackMapPresenter(private val viewModel: TrackMapViewModel) : ConnectedSer
         if (selectedTrack != null && selectedTrack.lastPathSegment != "-1") {
             onTrackSelection(selectedTrack, trackSelection.trackName)
         } else {
-            val lastTrack = tracksUri().apply { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
+            val lastTrack = tracksUri().runQuery(BaseConfiguration.appComponent.contentResolver()) { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
             if (lastTrack?.first != null) {
                 val trackId = lastTrack.first!!
                 val lastTrackUri = trackUri(trackId)
                 val name = lastTrack.second ?: ""
                 trackSelection.selectTrack(lastTrackUri, name)
             } else {
-                viewModel.trackHead.set(locationFactory.getLocationCoordinates(context))
+                viewModel.trackHead.set(locationFactory.getLocationCoordinates())
             }
         }
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    companion object {
+
+        fun newFactory() =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        val presenter = FeatureConfiguration.featureComponent.trackMapPresenter()
+                        return presenter as T
+                    }
+                }
     }
 }
 

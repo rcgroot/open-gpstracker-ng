@@ -36,12 +36,12 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
         val uri = arguments?.get(ARG_URI) as Uri
         val presenter = ViewModelProviders.of(this, TrackEditPresenter.newFactory(uri)).get(TrackEditPresenter::class.java)
-        binding.model = presenter.model
+        binding.model = presenter.viewModel
         binding.presenter = presenter
         binding.spinner.onItemSelectedListener = presenter.onItemSelectedListener
         this.presenter = presenter
         this.binding = binding
-        presenter.model.dismissed.observe { sender ->
+        presenter.viewModel.dismissed.observe { sender ->
             if (sender is ObservableBoolean && sender.get()) {
                 dismiss()
             }

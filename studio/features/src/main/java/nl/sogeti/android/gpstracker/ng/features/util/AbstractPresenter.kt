@@ -34,9 +34,7 @@ abstract class AbstractPresenter : ViewModel() {
     open fun onStart() {
     }
 
-    @CallSuper
-    open fun onChange() {
-    }
+    abstract fun onChange()
 
     @CallSuper
     open fun onStop() {

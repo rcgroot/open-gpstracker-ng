@@ -42,9 +42,9 @@ import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackPolylineProvi
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.mapLatLng
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
-import nl.sogeti.android.gpstracker.service.util.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
-import nl.sogeti.android.gpstracker.service.util.count
+import nl.sogeti.android.gpstracker.utils.contentprovider.append
+import nl.sogeti.android.gpstracker.utils.contentprovider.count
 import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -235,7 +235,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
             val renderedWaypoints = rowViewModelForUri(oldItem).waypoints.get()
 
             val oldCount = renderedWaypoints?.count() ?: -1
-            val newCount = newItem.append(WAYPOINTS).count()
+            val newCount = newItem.append(WAYPOINTS).count(context.contentResolver)
 
             return oldCount == newCount
         }

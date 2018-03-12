@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.control
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
@@ -37,6 +38,7 @@ import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.service.util.*
+import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import nl.sogeti.android.opengpstrack.ng.features.R
 import java.util.*
 import java.util.concurrent.Executor
@@ -125,7 +127,7 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
 
     fun stopLogging(context: Context) {
         serviceManager.stopGPSLogging(context)
-        deleteEmptyTrack(context, serviceManager.trackId)
+        deleteEmptyTrack(context.contentResolver, serviceManager.trackId)
     }
 
     fun pauseLogging(context: Context) {
@@ -136,15 +138,15 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         serviceManager.resumeGPSLogging(context)
     }
 
-    private fun deleteEmptyTrack(context: Context, trackId: Long) {
+    private fun deleteEmptyTrack(contentResolver: ContentResolver, trackId: Long) {
         if (trackId <= 0) {
             return
         }
 
         val waypointsUri = waypointsUri(trackId)
-        val firstWaypointId = waypointsUri.apply { it.getLong(0) } ?: -1L
+        val firstWaypointId = waypointsUri.runQuery(contentResolver) { it.getLong(0) } ?: -1L
         if (firstWaypointId == -1L) {
-            context.contentResolver.delete(trackUri(trackId), null, null)
+            contentResolver.delete(trackUri(trackId), null, null)
         }
     }
 }

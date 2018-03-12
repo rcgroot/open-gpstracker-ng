@@ -26,13 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.service.util
+package nl.sogeti.android.gpstracker.utils.contentprovider
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
-import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import timber.log.Timber
 
 /* **
@@ -101,16 +101,17 @@ private fun <T> Cursor.applyGetter(columnName: String, getter: (Cursor, Int) -> 
  *
  * @param operation the operation to execute
  * @param projection optional projection
- * @param selection optional selection, query string with parameter arguments listed
+ * @param selection optional selection, runQuery string with parameter arguments listed
  *
  * @return List of T consisting of operation results, empty when there are no rows
  */
-fun <T> Uri.map(selection: Pair<String, List<String>>? = null,
+fun <T> Uri.map(resolver: ContentResolver,
+                selection: Pair<String, List<String>>? = null,
                 projection: List<String>? = null,
                 operation: (Cursor) -> T): List<T> {
     val result = mutableListOf<T>()
 
-    this.apply(selection, projection) {
+    this.runQuery(resolver, selection, projection) {
         do {
             result.add(operation(it))
         } while (it.moveToNext())
@@ -128,15 +129,16 @@ fun <T> Uri.map(selection: Pair<String, List<String>>? = null,
  *
  * @return Null or T when the operation was applied to the first row of the cursor
  */
-fun <T> Uri.apply(selectionPair: Pair<String, List<String>>? = null,
-                  projection: List<String>? = null,
-                  operation: (Cursor) -> T?): T? {
+fun <T> Uri.runQuery(resolver: ContentResolver,
+                     selectionPair: Pair<String, List<String>>? = null,
+                     projection: List<String>? = null,
+                     operation: (Cursor) -> T): T? {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result: T? = null
     var cursor: Cursor? = null
     try {
-        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection?.toTypedArray(), selection, selectionArgs, null)
+        cursor = resolver.query(this, projection?.toTypedArray(), selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = operation(cursor)
         }
@@ -155,14 +157,15 @@ fun Uri.append(id: Long): Uri {
     return ContentUris.withAppendedId(this, id)
 }
 
-fun Uri.count(selectionPair: Pair<String, List<String>>? = null): Int {
+fun Uri.count(resolver: ContentResolver,
+              selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
         val projection = arrayOf("count(*) AS count")
-        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection, selection, selectionArgs, null)
+        cursor = resolver.query(this, projection, selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.getInt(0)
         } else {
@@ -175,14 +178,15 @@ fun Uri.count(selectionPair: Pair<String, List<String>>? = null): Int {
     return result
 }
 
-fun Uri.countResult(projection: Array<String> = arrayOf(BaseColumns._ID),
+fun Uri.countResult(resolver: ContentResolver,
+                    projection: Array<String> = arrayOf(BaseColumns._ID),
                     selectionPair: Pair<String, List<String>>? = null): Int {
     val selectionArgs = selectionPair?.second?.toTypedArray()
     val selection = selectionPair?.first
     var result = 0
     var cursor: Cursor? = null
     try {
-        cursor = BaseConfiguration.appComponent.contentResolver().query(this, projection, selection, selectionArgs, null)
+        cursor = resolver.query(this, projection, selection, selectionArgs, null)
         if (cursor != null && cursor.moveToFirst()) {
             result = cursor.count
         } else {

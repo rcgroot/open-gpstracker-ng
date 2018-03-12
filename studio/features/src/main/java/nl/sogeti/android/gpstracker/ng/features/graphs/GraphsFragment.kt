@@ -54,7 +54,7 @@ class GraphsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        graphPresenter = ViewModelProviders.of(this).get(GraphsPresenter::class.java)
+        graphPresenter = ViewModelProviders.of(this, GraphsPresenter.newFactory()).get(GraphsPresenter::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

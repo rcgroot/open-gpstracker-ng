@@ -34,6 +34,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.view.View
 import android.widget.AdapterView
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import org.hamcrest.CoreMatchers.`is`
@@ -48,13 +49,10 @@ import org.mockito.junit.MockitoJUnit
 class TrackEditPresenterTest {
 
     lateinit var sut: TrackEditPresenter
-    lateinit var viewModel: TrackEditModel
     @get:Rule
     val mockitoRule = MockitoJUnit.rule()
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
-    @Mock
-    lateinit var view: TrackEditModel.View
     @Mock
     lateinit var trackUri: Uri
     @Mock
@@ -67,42 +65,27 @@ class TrackEditPresenterTest {
     lateinit var trackTypeDescriptions: TrackTypeDescriptions
     @Mock
     lateinit var cursor: Cursor
+    @Mock
+    lateinit var contentController: ContentController
 
     @Before
     fun setUp() {
+        sut = TrackEditPresenter(summaryManager, trackTypeDescriptions, contentController)
         `when`(trackUri.lastPathSegment).thenReturn("6")
-        viewModel = TrackEditModel(trackUri)
-        viewModel.selectedPosition.set(1)
-        sut = TrackEditPresenter(trackUri)
-        sut.summaryManager = summaryManager
-        sut.trackTypeDescriptions = trackTypeDescriptions
+        sut.viewModel.selectedPosition.set(1)
         `when`(context.contentResolver).thenReturn(contentResolver)
         `when`(contentResolver.query(any(), any(), any(), any(), any())).thenReturn(cursor)
-    }
-
-    @Test
-    fun testStart() {
-        // Arrange
-        `when`(trackTypeDescriptions.loadTrackType(trackUri)).thenReturn(TrackTypeDescriptions.allTrackTypes.get(4))
-        `when`(cursor.moveToFirst()).thenReturn(true)
-        `when`(cursor.getColumnIndex(any())).thenReturn(0)
-        `when`(cursor.getString(0)).thenReturn("mockname")
-        // Act
-        sut.start()
-        // Verify
-        assertThat(viewModel.selectedPosition.get(), `is`(4))
-        assertThat(viewModel.name.get(), `is`("mockname"))
     }
 
     @Test
     fun testOk() {
         // Arrange
         sut.start()
-        sut.model.selectedPosition.set(1)
+        sut.viewModel.selectedPosition.set(1)
         // Act
         sut.ok(trackUri, "mockName")
         // Assert
-        verify(view).dismiss()
+        assertThat(sut.viewModel.dismissed.get(), `is`(true))
         verify(summaryManager).removeFromCache(trackUri)
     }
 
@@ -111,7 +94,7 @@ class TrackEditPresenterTest {
         // Act
         sut.cancel()
         // Assert
-        verify(view).dismiss()
+        assertThat(sut.viewModel.dismissed.get(), `is`(true))
     }
 
     @Test
@@ -122,7 +105,7 @@ class TrackEditPresenterTest {
         // Act
         sut.onItemSelectedListener.onItemSelected(adapterView, view, 4, 5)
         // Assert
-        assertThat(viewModel.selectedPosition.get(), `is`(4))
+        assertThat(sut.viewModel.selectedPosition.get(), `is`(4))
     }
 
     @Test
@@ -132,6 +115,6 @@ class TrackEditPresenterTest {
         // Act
         sut.onItemSelectedListener.onNothingSelected(adapterView)
         // Assert
-        assertThat(viewModel.selectedPosition.get(), `is`(-1))
+        assertThat(sut.viewModel.selectedPosition.get(), `is`(-1))
     }
 }

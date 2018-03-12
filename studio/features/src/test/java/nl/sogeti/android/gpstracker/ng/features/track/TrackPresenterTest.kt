@@ -6,9 +6,9 @@ import android.database.Cursor
 import android.net.Uri
 import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
-import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -22,17 +22,12 @@ import org.mockito.junit.MockitoJUnit
 class TrackPresenterTest {
 
     lateinit var sut: TrackPresenter
-    lateinit var viewModel: TrackViewModel
     @get:Rule
     var appComponentRule = MockAppComponentTestRule()
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
     @Mock
-    lateinit var view: TrackViewModel.View
-    @Mock
     lateinit var contentController: ContentController
-    @Mock
-    lateinit var contentControllerFactory: ContentControllerFactory
     @Mock
     lateinit var context: Context
     @Mock
@@ -41,41 +36,38 @@ class TrackPresenterTest {
     lateinit var trackUri: Uri
     @Mock
     lateinit var navigation: TrackNavigator
+    @Mock
+    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     @Before
     fun setUp() {
-        viewModel = TrackViewModel()
-        sut = TrackPresenter(viewModel, view, navigation)
+        sut = TrackPresenter(trackTypeDescriptions, trackSelection, contentController)
+        sut.navigation = navigation
         `when`(trackSelection.trackUri).thenReturn(trackUri)
         `when`(trackSelection.trackName).thenReturn("selected")
-        sut.trackSelection = trackSelection
-        Mockito.`when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
-        sut.contentControllerFactory = contentControllerFactory
     }
 
     @Test
     fun didStart() {
         // Act
-        sut.start(context)
+        sut.start()
         // Assert
         verify(trackSelection).addListener(sut)
     }
 
     @Test
     fun willStop() {
-        // Arrange
-        sut.start(context)
         // Act
-        sut.willStop()
+        sut.onCleared()
         // Assert
         verify(trackSelection).removeListener(sut)
-        verify(contentController).registerObserver(trackUri)
+        verify(contentController).unregisterObserver()
     }
 
     @Test
     fun testOptionSelected() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
         sut.onListOptionSelected()
         // Assert
@@ -85,7 +77,7 @@ class TrackPresenterTest {
     @Test
     fun testAboutSelected() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
         sut.onAboutOptionSelected()
         // Assert
@@ -95,29 +87,11 @@ class TrackPresenterTest {
     @Test
     fun testEditSelected() {
         // Arrange
-        viewModel.trackUri.set(trackUri)
-        sut.start(context)
+        sut.viewModel.trackUri.set(trackUri)
+        sut.start()
         // Act
         sut.onEditOptionSelected()
         // Assert
         verify(navigation).showTrackEditDialog(trackUri)
-    }
-
-    @Test
-    fun testContentChange() {
-        // Arrange
-        sut.start(context)
-        val cursor = mock(Cursor::class.java)
-        `when`(cursor.moveToFirst()).thenReturn(true)
-        `when`(cursor.getColumnIndex(any())).thenReturn(1)
-        `when`(cursor.getString(1)).thenReturn("mockname")
-        val resolver = mock(ContentResolver::class.java)
-        `when`(context.contentResolver).thenReturn(resolver)
-        `when`(resolver.query(any(), any(), any(), any(), any())).thenReturn(cursor)
-        // Act
-        sut.onChangeUriContent(trackUri, trackUri)
-        // Assert
-        verify(view).showTrackName("mockname")
-        assertThat(viewModel.name.get(), `is`("mockname"))
     }
 }

@@ -121,7 +121,7 @@ public class GPStrackingProviderTest extends ProviderTestCase2<GPStrackingProvid
 
         Cursor trackCursor = this.mResolver.query(newTrackUri, new String[]{Tracks.NAME}, null, null, null);
         Assert.assertTrue("Should be possble to move to the first track", trackCursor.moveToFirst());
-        Assert.assertEquals("This track query should have 1 track", 1, trackCursor.getCount());
+        Assert.assertEquals("This track runQuery should have 1 track", 1, trackCursor.getCount());
         Assert.assertEquals("Name should be the same", testname, trackCursor.getString(0));
         trackCursor.close();
     }
@@ -138,7 +138,7 @@ public class GPStrackingProviderTest extends ProviderTestCase2<GPStrackingProvid
         newTrackUri = this.mResolver.insert(Tracks.CONTENT_URI, null);
         trackCursor = this.mResolver.query(newTrackUri, new String[]{Tracks.NAME}, null, null, null);
         Assert.assertTrue("Should be possble to move to the first track", trackCursor.moveToFirst());
-        Assert.assertEquals("This track query should have 1 track", 1, trackCursor.getCount());
+        Assert.assertEquals("This track runQuery should have 1 track", 1, trackCursor.getCount());
         Assert.assertEquals("Name should be the same", "", trackCursor.getString(0));
 
         ContentValues values = new ContentValues();
@@ -147,7 +147,7 @@ public class GPStrackingProviderTest extends ProviderTestCase2<GPStrackingProvid
         trackCursor.requery();
         Assert.assertEquals("One row should be updated", 1, updates);
         Assert.assertTrue("Should be possble to move to the first track", trackCursor.moveToFirst());
-        Assert.assertEquals("This track query should have 1 track", 1, trackCursor.getCount());
+        Assert.assertEquals("This track runQuery should have 1 track", 1, trackCursor.getCount());
         Assert.assertEquals("Name should be the same", testname, trackCursor.getString(0));
         trackCursor.close();
     }
@@ -293,7 +293,7 @@ public class GPStrackingProviderTest extends ProviderTestCase2<GPStrackingProvid
 
         trackCursor = this.mResolver.query(trackOneUri, new String[]{Tracks.NAME}, null, null, null);
         Assert.assertTrue("Should be possble to move to the first track", trackCursor.moveToFirst());
-        Assert.assertEquals("This track query should have 1 track", 1, trackCursor.getCount());
+        Assert.assertEquals("This track runQuery should have 1 track", 1, trackCursor.getCount());
         Assert.assertEquals("Name should be the same", testname + 1, trackCursor.getString(0));
         trackCursor.close();
 
@@ -302,7 +302,7 @@ public class GPStrackingProviderTest extends ProviderTestCase2<GPStrackingProvid
         Uri trackTwoUri = this.mResolver.insert(Tracks.CONTENT_URI, values);
         Cursor trackTwoCursor = this.mResolver.query(trackTwoUri, new String[]{Tracks.NAME}, null, null, null);
         Assert.assertTrue("Should be possble to move to the first track", trackTwoCursor.moveToFirst());
-        Assert.assertEquals("This track query should have 1 track", 1, trackTwoCursor.getCount());
+        Assert.assertEquals("This track runQuery should have 1 track", 1, trackTwoCursor.getCount());
         Assert.assertEquals("Name should be the same", testname + 2, trackTwoCursor.getString(0));
         trackTwoCursor.close();
         Uri segmentTwoUri = this.mResolver.insert(Uri.withAppendedPath(trackTwoUri, "segments"), values);

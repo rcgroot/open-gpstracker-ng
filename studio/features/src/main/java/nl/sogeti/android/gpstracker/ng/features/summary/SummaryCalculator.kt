@@ -36,9 +36,9 @@ import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.util.Waypoint
-import nl.sogeti.android.gpstracker.service.util.apply
-import nl.sogeti.android.gpstracker.service.util.getString
 import nl.sogeti.android.gpstracker.service.util.readTrack
+import nl.sogeti.android.gpstracker.utils.contentprovider.getString
+import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import javax.inject.Inject
 
 class SummaryCalculator {
@@ -78,7 +78,7 @@ class SummaryCalculator {
         }
 
         // Text values
-        val name = trackUri.apply { it.getString(ContentConstants.Tracks.NAME) }
+        val name = trackUri.runQuery(context.contentResolver) { it.getString(ContentConstants.Tracks.NAME) }
                 ?: "Unknown"
         val trackType = trackTypeDescriptions.loadTrackType(trackUri)
 

@@ -23,8 +23,6 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListNavigation
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListPresenter
 import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
-import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
-import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingService
 import nl.sogeti.android.gpstracker.ng.features.wear.PhoneMessageListenerService
@@ -40,20 +38,14 @@ interface FeatureComponent {
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
 
-    fun inject(graphsPresenter: TrackEditPresenter)
     fun inject(trackNavigator: TrackNavigator)
-    fun inject(trackPresenter: TrackPresenter)
-    fun inject(trackDeletePresenter: TrackDeletePresenter)
-    fun inject(trackMapPresenter: TrackMapPresenter)
     fun inject(gpxImportController: GpxImportController)
     fun inject(importService: ImportService)
     fun inject(aboutModel: AboutModel)
     fun inject(controlPresenter: ControlPresenter)
-    fun inject(recordingPresenter: RecordingPresenter)
     fun inject(recordingNavigation: RecordingNavigation)
     fun inject(importNotification: ImportNotification)
     fun inject(trackListNavigation: TrackListNavigation)
-    fun inject(trackListPresenter: TrackListPresenter)
     fun inject(trackListViewAdapter: TrackListViewAdapter)
     fun inject(loggingReceiver: LoggingReceiver)
     fun inject(summaryCalculator: SummaryCalculator)
@@ -62,10 +54,14 @@ interface FeatureComponent {
     fun inject(phoneMessageListenerService: PhoneMessageListenerService)
     fun inject(statisticsCollector: StatisticsCollector)
     fun inject(graphLabelsBindings: GraphLabelsBindings)
-    fun inject(abstractTrackPresenter: AbstractTrackPresenter)
-    fun inject(abstractTrackPresenter: AbstractSelectedTrackPresenter)
-    fun inject(graphsPresenter: GraphsPresenter)
     fun inject(graphSpeedOverTimeProvider: GraphSpeedOverTimeDataProvider)
     fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
+    fun trackDeletePresenter(): TrackDeletePresenter
+    fun trackEditPresenter(): TrackEditPresenter
+    fun graphsPresenter(): GraphsPresenter
+    fun trackPresenter(): TrackPresenter
+    fun trackMapPresenter(): TrackMapPresenter
+    fun trackListPresenter(): TrackListPresenter
+    fun recordingPresenter(): RecordingPresenter
 
 }

@@ -29,7 +29,6 @@
 package nl.sogeti.android.gpstracker.utils;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -42,6 +41,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import kotlin.jvm.functions.Function1;
+import nl.sogeti.android.gpstracker.utils.contentprovider.ContentProviderExtensionsKt;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
@@ -55,8 +55,6 @@ public class ContentProviderExtensionsTests {
     @Mock
     Uri mockUri;
     @Mock
-    Context mockContext;
-    @Mock
     ContentResolver mockContentResolver;
 
     @Before
@@ -69,7 +67,6 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.getString(0)).willReturn("FirstValue");
         given(mockCursor.getString(1)).willReturn("SecondValue");
         given(mockCursor.getString(2)).willReturn(null);
-        given(mockContext.getContentResolver()).willReturn(mockContentResolver);
     }
 
     @Test
@@ -112,7 +109,7 @@ public class ContentProviderExtensionsTests {
         given(mockContentResolver.query(mockUri, null, null, null, null)).willReturn(null);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContentResolver, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
@@ -132,7 +129,7 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.moveToFirst()).willReturn(false);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContentResolver, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 return "invoke_" + invoke;
@@ -154,7 +151,7 @@ public class ContentProviderExtensionsTests {
         given(mockCursor.moveToNext()).willReturn(false);
 
         // Execute
-        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContext, null, null, new Function1<Cursor, String>() {
+        List<String> list = ContentProviderExtensionsKt.map(mockUri, mockContentResolver, null, null, new Function1<Cursor, String>() {
             @Override
             public String invoke(Cursor cursor) {
                 invoke[0]++;

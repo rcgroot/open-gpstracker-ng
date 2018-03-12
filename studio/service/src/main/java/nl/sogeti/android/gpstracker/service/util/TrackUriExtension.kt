@@ -39,6 +39,7 @@ import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Segment
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Tracks.NAME
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.WaypointsColumns.*
+import nl.sogeti.android.gpstracker.utils.contentprovider.*
 import timber.log.Timber
 
 /**
@@ -171,15 +172,15 @@ fun Uri.readTrack(handler: ResultHandler, waypointSelection: Pair<String, List<S
     if (ServiceConfiguration.serviceComponent.providerAuthority() != this.authority) {
         return
     }
-    val name = this.apply(projection = listOf(NAME)) { it.getString(NAME) }
+    val name = this.runQuery(applicationContentResolver(), projection = listOf(NAME)) { it.getString(NAME) }
     handler.setTrack(this, name ?: "")
     val segmentsUri = this.append(SEGMENTS)
     var latestTime = 0L
-    segmentsUri.map(projection = listOf(_ID)) {
+    segmentsUri.map(applicationContentResolver(), projection = listOf(_ID)) {
         val segmentId = it.getLong(0)
         handler.addSegment()
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
-        waypointsUri.map(waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
+        waypointsUri.map(applicationContentResolver(), waypointSelection, listOf(LATITUDE, LONGITUDE, TIME), {
             val lat = it.getDouble(LATITUDE)
             val lon = it.getDouble(LONGITUDE)
             val time = it.getLong(TIME)
@@ -196,6 +197,9 @@ fun Uri.readTrack(handler: ResultHandler, waypointSelection: Pair<String, List<S
     }
 }
 
+private fun applicationContentResolver() =
+        BaseConfiguration.appComponent.contentResolver()
+
 /**
  * Build up a total of type T by applying a operation to
  * each waypoint pair along the track.
@@ -209,13 +213,13 @@ fun <T> Uri.traverseTrack(operation: (T?, Waypoint, Waypoint) -> T,
     val selection = selectionPair?.first
     Timber.v("$this with selection $selection on $selectionArgs")
     val segmentsUri = this.append(SEGMENTS)
-    val segments = segmentsUri.map{ it.getLong(ContentConstants.Segments._ID)!! }
+    val segments = segmentsUri.map(applicationContentResolver()) { it.getLong(ContentConstants.Segments._ID)!! }
     var result: T? = null
     for (segmentId in segments) {
         val waypointsUri = segmentsUri.append(segmentId).append(WAYPOINTS)
         var cursor: Cursor? = null
         try {
-            cursor = BaseConfiguration.appComponent.contentResolver().query(waypointsUri, null, selection, selectionArgs, null)
+            cursor = applicationContentResolver().query(waypointsUri, null, selection, selectionArgs, null)
             if (cursor != null && cursor.moveToFirst()) {
                 var first = buildWaypoint(cursor)
                 var second: Waypoint
@@ -247,11 +251,11 @@ fun buildWaypoint(cursor: Cursor): Waypoint {
 fun Uri.updateName(name: String) {
     val values = ContentValues()
     values.put(ContentConstants.TracksColumns.NAME, name)
-    BaseConfiguration.appComponent.contentResolver().update(this, values, null, null)
+    applicationContentResolver().update(this, values, null, null)
 }
 
 fun Uri.readName(): String {
-    return this.apply{ it.getString(ContentConstants.TracksColumns.NAME) }
+    return this.runQuery(applicationContentResolver()) {it.getString(ContentConstants.TracksColumns.NAME) }
             ?: ""
 }
 
@@ -259,9 +263,9 @@ fun Uri.updateCreateMetaData(key: String, value: String) {
     val values = ContentValues()
     values.put(ContentConstants.MetaDataColumns.KEY, key)
     values.put(ContentConstants.MetaDataColumns.VALUE, value)
-    val changed = BaseConfiguration.appComponent.contentResolver().update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
+    val changed = applicationContentResolver().update(this, values, "${ContentConstants.MetaDataColumns.KEY} = ?", arrayOf(key))
     if (changed == 0) {
-        BaseConfiguration.appComponent.contentResolver().insert(this, values)
+        applicationContentResolver().insert(this, values)
     }
 }
 

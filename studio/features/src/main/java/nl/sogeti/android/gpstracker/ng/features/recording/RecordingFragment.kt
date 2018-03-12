@@ -34,19 +34,19 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentRecordingBinding
 
 class RecordingFragment : Fragment() {
 
-    private val viewModel = RecordingViewModel(null)
-    private val presenter = RecordingPresenter(viewModel, RecordingNavigation())
+    private val presenter = FeatureConfiguration.featureComponent.recordingPresenter()
     private var permissionRequester = PermissionRequester()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentRecordingBinding>(inflater, R.layout.fragment_recording, container, false)
-        binding.viewModel = viewModel
+        binding.viewModel = presenter.viewModel
         binding.presenter = presenter
 
         return binding.root

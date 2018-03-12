@@ -28,23 +28,26 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.content.pm.PackageManager
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackEditModel
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
-import nl.sogeti.android.gpstracker.service.util.getLong
-import nl.sogeti.android.gpstracker.service.util.map
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
+import nl.sogeti.android.gpstracker.utils.contentprovider.getLong
+import nl.sogeti.android.gpstracker.utils.contentprovider.map
 import nl.sogeti.android.opengpstrack.ng.features.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
@@ -52,42 +55,24 @@ import javax.inject.Named
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
-class TrackListPresenter : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
-
-    private var contentController: ContentController? = null
-
-    @Inject
-    lateinit var trackSelection: TrackSelection
-
-    @Inject
-    lateinit var contentControllerFactory: ContentControllerFactory
-
-    @Inject
-    lateinit var summaryManager: SummaryManager
-
-    @Inject
-    @field:Named("SystemBackgroundExecutor")
-    lateinit var executor: Executor
-
-    @Inject
-    lateinit var shareIntentFactory: ShareIntentFactory
-
-    @Inject
-    lateinit var packageManager: PackageManager
-
-    @Inject
-    lateinit var notification: ImportNotification
+class TrackListPresenter @Inject constructor(
+        val contentController: ContentController,
+        val trackSelection: TrackSelection,
+        val summaryManager: SummaryManager,
+        @Named("SystemBackgroundExecutor") val executor: Executor,
+        val shareIntentFactory: ShareIntentFactory,
+        val packageManager: PackageManager,
+        val notification: ImportNotification
+        )
+    : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     var navigation: TrackListNavigation? = null
 
     val viewModel: TrackListViewModel = TrackListViewModel()
 
     init {
-        FeatureConfiguration.featureComponent.inject(this)
-
         trackSelection.addListener(this)
-        contentController = contentControllerFactory.createContentController(this)
-        contentController?.registerObserver(tracksUri())
+        contentController.registerObserver(tracksUri())
     }
 
     override fun onStart() {
@@ -104,10 +89,9 @@ class TrackListPresenter : AbstractPresenter(), ContentController.Listener, Trac
         super.onStop()
     }
 
-    override fun onCleared() {
+    public override fun onCleared() {
         trackSelection.removeListener(this)
-        contentController?.unregisterObserver()
-        contentController = null
+        contentController.unregisterObserver()
         notification.dismissCompletedImport()
         super.onCleared()
     }
@@ -122,7 +106,7 @@ class TrackListPresenter : AbstractPresenter(), ContentController.Listener, Trac
 
     private fun addTracksToModel() {
         executor.execute {
-            val trackList = tracksUri().map {
+            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver()) {
                 val id = it.getLong(ContentConstants.Tracks._ID)!!
                 trackUri(id)
             }
@@ -199,5 +183,19 @@ class TrackListPresenter : AbstractPresenter(), ContentController.Listener, Trac
     }
 
     //endregion
+
+
+    companion object {
+
+        @Suppress("UNCHECKED_CAST")
+        fun newFactory() =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                        val presenter = FeatureConfiguration.featureComponent.trackListPresenter()
+                        return presenter as T
+                    }
+                }
+
+    }
 }
 

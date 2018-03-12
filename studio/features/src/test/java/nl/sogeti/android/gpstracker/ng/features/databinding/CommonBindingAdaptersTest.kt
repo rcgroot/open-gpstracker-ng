@@ -50,25 +50,4 @@ class CommonBindingAdaptersTest {
         // Assert
         verify(webView).loadUrl(url)
     }
-
-    @Test
-    fun setAdapter() {
-        // Arrange
-        val adapter = mock(SpinnerAdapter::class.java)
-        val spinner = mock(AppCompatSpinner::class.java)
-        // Act
-        sut.setAdapter(spinner, adapter)
-        // Assert
-        verify(spinner).adapter = adapter
-    }
-
-    @Test
-    fun setSelected() {
-        // Arrange
-        val spinner = mock(AppCompatSpinner::class.java)
-        // Act
-        sut.setSelected(spinner, 5)
-        // Assert
-        spinner.setSelection(5)
-    }
 }

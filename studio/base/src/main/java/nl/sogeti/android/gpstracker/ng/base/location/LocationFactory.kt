@@ -29,10 +29,67 @@
 package nl.sogeti.android.gpstracker.ng.base.location
 
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
+import android.location.LocationManager.GPS_PROVIDER
+import android.location.LocationManager.NETWORK_PROVIDER
+import timber.log.Timber
+import java.io.IOException
+import java.util.*
+import javax.inject.Inject
 
-interface LocationFactory {
+class LocationFactory @Inject constructor(val context: Context) {
 
-    fun getLocationCoordinates(context: Context): LatLng?
+    fun getLocationCoordinates(): LatLng? {
+        val locationService = context.getSystemService(LOCATION_SERVICE) as? LocationManager
+        var location: LatLng? = null
+        try {
+            val gpsLocation = locationService?.getLastKnownLocation(GPS_PROVIDER)
+            val networkLocation = locationService?.getLastKnownLocation(NETWORK_PROVIDER)
+            var lastKnownLocation: Location?
+            if (gpsLocation != null && networkLocation != null) {
+                if (gpsLocation.time > networkLocation.time) {
+                    lastKnownLocation = gpsLocation
+                } else {
+                    lastKnownLocation = networkLocation
+                }
+            } else {
+                lastKnownLocation = gpsLocation ?: networkLocation
+            }
+            if (lastKnownLocation != null) {
+                location = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
+            }
+        } catch (e: SecurityException) {
+            Timber.e(e, "Last known location not found, missing permission.")
+        }
 
-    fun getLocationName(context: Context): String?
+        return location
+    }
+
+    fun getLocationName(): String? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        var locality: String? = null
+        val latLng = getLocationCoordinates()
+        if (latLng != null) {
+            try {
+                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 3)
+                for (address in addresses) {
+                    if (address.subLocality != null) {
+                        locality = address.subLocality
+                        break
+                    }
+                    if (address.subAdminArea != null) {
+                        locality = address.subAdminArea
+                        break
+                    }
+                }
+            } catch (exception: IOException) {
+                Timber.w(exception, "Failed to retrieved location name")
+            }
+        }
+
+        return locality
+    }
 }

@@ -1,5 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
+import android.content.ContentResolver
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
@@ -13,6 +14,7 @@ import org.junit.runners.model.Statement
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 class MockAppComponentTestRule : TestRule {
 
@@ -30,6 +32,8 @@ class MockAppComponentTestRule : TestRule {
                 mockAppComponent = Mockito.mock(AppComponent::class.java)
                 BaseConfiguration.appComponent = mockAppComponent
                 `when`(mockAppComponent.uriBuilder()).thenReturn(mockUriBuilder)
+                val mockResolver = mock(ContentResolver::class.java)
+                `when`(mockAppComponent.contentResolver()).thenReturn(mockResolver)
 
                 mockServiceComponent = Mockito.mock(ServiceComponent::class.java)
                 ServiceConfiguration.serviceComponent = mockServiceComponent

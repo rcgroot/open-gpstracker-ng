@@ -28,31 +28,36 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeleteModel
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
+import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.postMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
-class GraphsPresenter : AbstractSelectedTrackPresenter(), TrackSelection.Listener {
+class GraphsPresenter @Inject constructor(
+        val summaryManager: SummaryManager,
+        val statisticsFormatter: StatisticsFormatter,
+        trackSelection: TrackSelection,
+        contentController: ContentController)
+    : AbstractSelectedTrackPresenter(trackSelection, contentController), TrackSelection.Listener {
 
     internal val viewModel = GraphsViewModel()
-    @Inject
-    lateinit var summaryManager: SummaryManager
-    @Inject
-    lateinit var statisticsFormatter: StatisticsFormatter
 
     private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
     private var runningSelection = false
 
     init {
-        FeatureConfiguration.featureComponent.inject(this)
         resetTrack()
         graphDataProvider = GraphSpeedOverTimeDataProvider()
         viewModel.durationSelected.set(true)
@@ -113,12 +118,16 @@ class GraphsPresenter : AbstractSelectedTrackPresenter(), TrackSelection.Listene
         viewModel.paused.set(0L)
     }
 
-    override fun onTrackUpdate(trackUri: Uri, name: String) {
+    override fun onTrackUpdate(trackUri: Uri?, name: String) {
         viewModel.trackUri.set(trackUri)
-        summaryManager.collectSummaryInfo(trackUri) {
-            trackSummary = it
-            fillSummaryNumbers(it)
-            fillGraphWithSummary(it)
+        if (trackUri != null) {
+            summaryManager.collectSummaryInfo(trackUri) {
+                trackSummary = it
+                fillSummaryNumbers(it)
+                fillGraphWithSummary(it)
+            }
+        } else {
+            resetTrack()
         }
     }
 
@@ -142,6 +151,18 @@ class GraphsPresenter : AbstractSelectedTrackPresenter(), TrackSelection.Listene
         viewModel.xLabel.set(graphDataProvider.xLabel)
         viewModel.yLabel.set(graphDataProvider.yLabel)
         viewModel.graphLabels.set(graphDataProvider.valueDescriptor)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    companion object {
+
+        fun newFactory() =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        val presenter = FeatureConfiguration.featureComponent.graphsPresenter()
+                        return presenter as T
+                    }
+                }
     }
 }
 

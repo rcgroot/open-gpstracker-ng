@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -41,17 +42,18 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentMapBinding
 
 class TrackMapFragment : Fragment() {
 
-    private val viewModel = TrackMapViewModel()
-    private val trackPresenter = TrackMapPresenter(viewModel)
-    private val permissionRequester = PermissionRequester()
-    private var binding: FragmentMapBinding? = null
+    private lateinit var presenter: TrackMapPresenter
 
+    private val permissionRequester = PermissionRequester()
+
+    private var binding: FragmentMapBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false, FeaturesBindingComponent())
+        presenter = ViewModelProviders.of(this, TrackMapPresenter.newFactory()).get(TrackMapPresenter::class.java)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
-        binding.viewModel = viewModel
-        binding.presenter = trackPresenter
+        binding.viewModel = presenter.viewModel
+        binding.presenter = presenter
         this.binding = binding
 
         return binding.root
@@ -59,40 +61,39 @@ class TrackMapFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        binding!!.fragmentMapMapview.onStart()
+        val mapView = getMapView()
+        mapView.onStart()
         permissionRequester.start(this, {
-            trackPresenter.start(activity)
-            binding!!.fragmentMapMapview.getMapAsync(trackPresenter)
+            presenter.start(mapView)
         })
     }
 
     override fun onResume() {
         super.onResume()
-        binding!!.fragmentMapMapview.onResume()
+        getMapView().onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        binding!!.fragmentMapMapview.onPause()
+        getMapView().onPause()
 
     }
 
     override fun onStop() {
         super.onStop()
-        trackPresenter.stop()
+        presenter.stop()
         permissionRequester.stop()
-        binding!!.fragmentMapMapview.onStop()
+        getMapView().onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding!!.fragmentMapMapview.onSaveInstanceState(outState)
+        getMapView().onSaveInstanceState(outState)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding!!.fragmentMapMapview.onDestroy()
+        getMapView().onDestroy()
         binding = null
     }
 
@@ -104,4 +105,6 @@ class TrackMapFragment : Fragment() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionRequester.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
+
+    private fun getMapView() = binding!!.fragmentMapMapview
 }

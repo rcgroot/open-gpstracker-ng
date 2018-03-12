@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
-import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import com.google.android.gms.maps.model.LatLngBounds
@@ -38,7 +37,7 @@ import nl.sogeti.android.gpstracker.ng.features.util.latLng
 import nl.sogeti.android.gpstracker.service.util.ResultHandler
 import nl.sogeti.android.gpstracker.service.util.readTrack
 
-class TrackReader(private var context: Context, internal val trackUri: Uri, private val action: (String, LatLngBounds, List<List<LatLng>>) -> Unit)
+class TrackReader(internal val trackUri: Uri, private val action: (String, LatLngBounds, List<List<LatLng>>) -> Unit)
     : AsyncTask<Void, Void, ResultHandler>() {
 
 

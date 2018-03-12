@@ -37,14 +37,7 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class RecordingNavigation {
-
-    @Inject
-    lateinit var packageManager: PackageManager
-
-    init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
+class RecordingNavigation @Inject constructor(val packageManager: PackageManager) {
 
     fun openExternalGpsStatusApp(context: Context) {
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)

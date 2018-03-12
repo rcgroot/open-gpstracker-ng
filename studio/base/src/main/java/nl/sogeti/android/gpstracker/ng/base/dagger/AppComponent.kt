@@ -33,7 +33,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import dagger.Component
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
@@ -47,8 +46,6 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun trackSelection(): TrackSelection
-
-    fun contentControllerFactory(): ContentControllerFactory
 
     fun gpsStatusControllerFactory(): GpsStatusControllerFactory
 

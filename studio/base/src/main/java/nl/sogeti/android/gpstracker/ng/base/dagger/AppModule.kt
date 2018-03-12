@@ -32,12 +32,9 @@ import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 class AppModule(val application: Application) {

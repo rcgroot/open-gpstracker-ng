@@ -4,11 +4,14 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import javax.inject.Inject
 
 /**
  * Control the observing and monitoring for a observable uri content.
  */
-class ContentController(private val context: Context, private val listener: Listener) {
+class ContentController @Inject constructor(private val context: Context) {
+
+    var listener: Listener? = null
 
     private val contentObserver = ContentObserver()
 
@@ -41,7 +44,7 @@ class ContentController(private val context: Context, private val listener: List
         }
 
         override fun onChange(selfChange: Boolean, changedUri: Uri) {
-            registeredUri?.let { listener.onChangeUriContent(it, changedUri) }
+            registeredUri?.let { listener?.onChangeUriContent(it, changedUri) }
 
         }
     }

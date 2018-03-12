@@ -28,14 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
-import android.content.Context
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 
 class TrackReaderFactory {
 
-    fun createTrackReader(context: Context, trackUri: Uri, action: (String, LatLngBounds, List<List<LatLng>>) -> Unit): TrackReader {
-        return TrackReader(context, trackUri, action)
+    fun createTrackReader(trackUri: Uri, action: (String, LatLngBounds, List<List<LatLng>>) -> Unit): TrackReader {
+        return TrackReader(trackUri, action)
     }
 }

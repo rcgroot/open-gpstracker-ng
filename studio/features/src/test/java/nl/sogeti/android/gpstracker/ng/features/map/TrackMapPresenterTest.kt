@@ -34,27 +34,25 @@ import android.database.Cursor
 import android.net.Uri
 import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentControllerFactory
+import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.STATE_LOGGING
-import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
 
 class TrackMapPresenterTest {
 
     lateinit var sut: TrackMapPresenter
-    lateinit var viewModel: TrackMapViewModel
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()!!
     @get:Rule
@@ -62,11 +60,7 @@ class TrackMapPresenterTest {
     @Mock
     lateinit var contentController: ContentController
     @Mock
-    lateinit var contentControllerFactory: ContentControllerFactory
-    @Mock
     lateinit var trackUri: Uri
-    @Mock
-    lateinit var serviceManager: ServiceManagerInterface
     @Mock
     lateinit var trackSelection: TrackSelection
     @Mock
@@ -79,61 +73,43 @@ class TrackMapPresenterTest {
     lateinit var trackTileProviderFactory: TrackTileProviderFactory
     @Mock
     lateinit var trackTileProvider: TrackTileProvider
+    @Mock
+    lateinit var locationFactory: LocationFactory
+    @Mock
+    lateinit var loggingStateController: LoggingStateController
 
     @Before
     fun setup() {
-        viewModel = TrackMapViewModel()
-        sut = TrackMapPresenter(viewModel)
-        sut.serviceManager = serviceManager
+        sut = TrackMapPresenter(trackReaderFactory, trackTileProviderFactory, locationFactory, loggingStateController, trackSelection, contentController)
         `when`(trackSelection.trackUri).thenReturn(trackUri)
         `when`(trackSelection.trackName).thenReturn("selected")
-        sut.trackSelection = trackSelection
-        `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
-        sut.trackReaderFactory = trackReaderFactory
-        sut.contentControllerFactory = contentControllerFactory
+        `when`(trackReaderFactory.createTrackReader(any(), any())).thenReturn(trackReader)
 
-        Mockito.`when`(contentControllerFactory.createContentController(any(), any())).thenReturn(contentController)
         `when`(trackTileProviderFactory.createTrackTileProvider(any(), any())).thenReturn(trackTileProvider)
-        sut.trackTileProviderFactory = trackTileProviderFactory
-        sut.start(context)
+        sut.start()
     }
 
     @Test
     fun testStart() {
-        // Act
-        sut.start(context)
         // Assert
         verify(trackSelection).addListener(sut)
+    }
+
+    @Test
+    fun testRegistration() {
+        // Act
+        sut.trackUri = trackUri
+        // Assert
         verify(contentController).registerObserver(trackUri)
     }
+
 
     @Test
     fun testStop() {
         // Act
-        sut.willStop()
+        sut.onCleared()
         // Assert
         verify(trackSelection).removeListener(sut)
-    }
-
-    @Test
-    fun didConnectLogging() {
-        // Act
-        sut.onTrackSelection(trackUri, "somename")
-        sut.didConnectToService(context, trackUri, "somename", STATE_LOGGING)
-        // Assert
-        assertThat(sut.recordingUri, `is`(trackUri))
-        assertThat(viewModel.name.get(), `is`("somename"))
-    }
-
-    @Test
-    fun didConnectLoggingOtherTrack() {
-        // Act
-        val otherUri = mock(Uri::class.java)
-        sut.onTrackSelection(otherUri, "othername")
-        sut.didConnectToService(context, trackUri, "somename", STATE_LOGGING)
-        // Assert
-        assertThat(sut.recordingUri, `is`(trackUri))
-        assertThat(viewModel.name.get(), `is`("othername"))
     }
 
     @Test
@@ -146,44 +122,5 @@ class TrackMapPresenterTest {
         // Assert
         assertThat(sut.recordingUri, `is`(trackUri))
         verify(trackSelection).selectTrack(trackUri, "somename")
-    }
-
-    @Test
-    fun testContentChange() {
-        // Arrange
-        reset(trackReaderFactory)
-        `when`(trackReaderFactory.createTrackReader(any(), any(), any())).thenReturn(trackReader)
-        // Act
-        sut.onChangeUriContent(trackUri, trackUri)
-        // Assert
-        verify(trackReaderFactory).createTrackReader(any(), any(), any())
-    }
-
-    @Test
-    fun trackSelection() {
-        // Arrange
-        val trackSelection = mock(TrackSelection::class.java)
-        sut.trackSelection = trackSelection
-        val contentResolver = mock(ContentResolver::class.java)
-        `when`(context.contentResolver).thenReturn(contentResolver)
-        val cursor = mock(Cursor::class.java)
-        `when`(cursor.moveToFirst()).thenReturn(true)
-        mockColumn(cursor, "_ID", 1, 2)
-        mockColumn(cursor, "name", 2, "cursorname")
-        `when`(contentResolver.query(any(), any(), any(), any(), any())).thenReturn(cursor)
-        // Act
-        sut.didStart()
-        // Assert
-        verify(trackSelection).selectTrack(any(), matches("cursorname"))
-    }
-
-    private fun mockColumn(cursor: Cursor, name: String, i: Int, value: Long) {
-        `when`(cursor.getColumnIndex(name)).thenReturn(i)
-        `when`(cursor.getLong(i)).thenReturn(value)
-    }
-
-    private fun mockColumn(cursor: Cursor, name: String, i: Int, value: String) {
-        `when`(cursor.getColumnIndex(name)).thenReturn(i)
-        `when`(cursor.getString(i)).thenReturn(value)
     }
 }

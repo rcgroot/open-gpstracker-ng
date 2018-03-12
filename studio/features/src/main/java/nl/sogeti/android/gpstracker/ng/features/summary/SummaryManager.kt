@@ -30,12 +30,11 @@ package nl.sogeti.android.gpstracker.ng.features.summary
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
-import nl.sogeti.android.gpstracker.service.util.append
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
-import nl.sogeti.android.gpstracker.service.util.count
+import nl.sogeti.android.gpstracker.utils.contentprovider.append
+import nl.sogeti.android.gpstracker.utils.contentprovider.count
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -47,7 +46,7 @@ import javax.inject.Inject
 class SummaryManager {
 
     var executor: ExecutorService? = null
-    val summaryCache = ConcurrentHashMap<Uri, Summary>()
+    private val summaryCache = ConcurrentHashMap<Uri, Summary>()
     var activeCount = 0
     @Inject
     lateinit var calculator: SummaryCalculator
@@ -93,7 +92,7 @@ class SummaryManager {
             val cacheHit = summaryCache[trackUri]
             if (cacheHit != null) {
                 val trackWaypointsUri = trackUri.append(WAYPOINTS)
-                val trackCount = trackWaypointsUri.count()
+                val trackCount = trackWaypointsUri.count(context.contentResolver)
                 val cacheCount = cacheHit.count
                 if (trackCount == cacheCount) {
                     callbackSummary(cacheHit)
@@ -116,12 +115,7 @@ class SummaryManager {
         }
     }
 
-    fun numberOfThreads() =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                Runtime.getRuntime().availableProcessors()
-            } else {
-                2
-            }
+    fun numberOfThreads() = Runtime.getRuntime().availableProcessors()
 
     fun removeFromCache(trackUri: Uri) {
         summaryCache.remove(trackUri)

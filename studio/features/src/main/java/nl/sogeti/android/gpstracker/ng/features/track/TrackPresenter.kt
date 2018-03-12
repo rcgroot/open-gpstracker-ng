@@ -28,30 +28,33 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import javax.inject.Inject
 
-class TrackPresenter : AbstractSelectedTrackPresenter() {
+class TrackPresenter @Inject constructor(
+        val trackTypeDescriptions: TrackTypeDescriptions,
+        trackSelection: TrackSelection,
+        contentController: ContentController)
+    : AbstractSelectedTrackPresenter(trackSelection, contentController) {
 
     var navigation: TrackNavigator? = null
     val viewModel = TrackViewModel()
 
-    @Inject
-    lateinit var trackTypeDescriptions: TrackTypeDescriptions
-
-    init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
-
     //region Presenter context
 
-    override fun onTrackUpdate(trackUri: Uri, name: String) {
-        viewModel.trackUri.set(trackUri)
-        viewModel.name.set(name)
-        viewModel.trackIcon.set(trackTypeDescriptions.loadTrackType(trackUri).drawableId)
+    override fun onTrackUpdate(trackUri: Uri?, name: String) {
+        if (trackUri != null) {
+            viewModel.trackUri.set(trackUri)
+            viewModel.name.set(name)
+            viewModel.trackIcon.set(trackTypeDescriptions.loadTrackType(trackUri).drawableId)
+        }
     }
 
     //endregion
@@ -76,4 +79,16 @@ class TrackPresenter : AbstractSelectedTrackPresenter() {
     }
 
     //endregion
+
+    @Suppress("UNCHECKED_CAST")
+    companion object {
+
+        fun newFactory() =
+                object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                        val presenter = FeatureConfiguration.featureComponent.trackPresenter()
+                        return presenter as T
+                    }
+                }
+    }
 }

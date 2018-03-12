@@ -39,9 +39,9 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
-import nl.sogeti.android.gpstracker.service.util.countResult
-import nl.sogeti.android.gpstracker.service.util.getString
-import nl.sogeti.android.gpstracker.service.util.map
+import nl.sogeti.android.gpstracker.utils.contentprovider.countResult
+import nl.sogeti.android.gpstracker.utils.contentprovider.getString
+import nl.sogeti.android.gpstracker.utils.contentprovider.map
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -77,10 +77,10 @@ class GpxImportController(private val context: Context) {
         notification.didStartImport()
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
         val projection = listOf(COLUMN_DOCUMENT_ID, COLUMN_MIME_TYPE, COLUMN_DISPLAY_NAME)
-        val count = childrenUri.countResult()
+        val count = childrenUri.countResult(context.contentResolver)
         var progress = 0
         notification.onProgress(progress, count)
-        childrenUri.map(projection = projection) {
+        childrenUri.map(context.contentResolver, projection = projection) {
             val id = it.getString(COLUMN_DOCUMENT_ID)
             val mimeType = it.getString(COLUMN_MIME_TYPE)
             val name = it.getString(COLUMN_DISPLAY_NAME)
