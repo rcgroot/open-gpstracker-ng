@@ -80,9 +80,9 @@ class RecordingPresenter @Inject constructor(
     fun didSelectSignal() {
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
         if (intent == null) {
-            navigation?.showInstallHintForGpsStatusApp(context)
+            navigation.showInstallHintForGpsStatusApp(context)
         } else {
-            navigation?.openExternalGpsStatusApp(context)
+            navigation.openExternalGpsStatusApp(context)
         }
     }
 

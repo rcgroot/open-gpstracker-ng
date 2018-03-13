@@ -7,7 +7,7 @@ ext {
     targetSdk = 27
 
     // App support
-    supportLibraryVersion = '27.0.2'
+    supportLibraryVersion = '27.1.0'
     kotlinVersion = '1.2.30'
     wearableVersion = '2.2.0'
     constraintsLibraryVersion = '1.0.2'
