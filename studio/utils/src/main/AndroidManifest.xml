@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.renedegroot.android.test.utils" />
+<manifest package="nl.renedegroot.android.test.utils" />

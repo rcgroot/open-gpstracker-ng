@@ -68,8 +68,6 @@ class TrackMapPresenter @Inject constructor(
 
     internal val viewModel = TrackMapViewModel()
 
-    internal var recordingUri: Uri? = null
-
     init {
         loggingStateController.connect(this)
         makeTrackSelection()
@@ -109,21 +107,12 @@ class TrackMapPresenter @Inject constructor(
     //region Service connecting
 
     override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        if (loggingState == ServiceConstants.STATE_LOGGING) {
-            recordingUri = trackUri
-        } else {
-            recordingUri = null
-        }
+        didChangeLoggingState(context, trackUri, name, loggingState)
     }
 
     override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        if (loggingState == ServiceConstants.STATE_LOGGING) {
-            recordingUri = trackUri
-            if (trackUri != null) {
-                trackSelection.selectTrack(trackUri, name ?: "")
-            }
-        } else {
-            recordingUri = null
+        if (loggingState == ServiceConstants.STATE_LOGGING && trackUri != null) {
+            trackSelection.selectTrack(trackUri, name ?: "")
         }
     }
 
@@ -153,7 +142,7 @@ class TrackMapPresenter @Inject constructor(
             executingReader = trackReaderFactory.createTrackReader(trackUri, { name, bounds, waypoint ->
                 viewModel.name.set(name)
                 viewModel.waypoints.set(waypoint)
-                if (recordingUri == trackUri) {
+                if (loggingStateController.lastState == ServiceConstants.STATE_LOGGING) {
                     viewModel.completeBounds.set(null)
                     viewModel.trackHead.set(waypoint.lastOrNull()?.lastOrNull())
                 } else {

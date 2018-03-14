@@ -42,8 +42,8 @@ class VerticalControlAdapter(private val model: ControlViewModel, private val pr
 
     override fun getItemCount() = 2
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VerticalViewHolder? {
-        val inflater = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VerticalViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             0 -> {
                 val binding = DataBindingUtil.inflate<ItemStatisticsBinding>(inflater, R.layout.item_statistics, parent, false, WearBindingComponent())

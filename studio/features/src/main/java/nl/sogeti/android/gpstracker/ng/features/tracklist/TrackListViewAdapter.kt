@@ -112,7 +112,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         return displayedTracks[position].lastPathSegment.toLong()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = DataBindingUtil.inflate<RowTrackBinding>(LayoutInflater.from(context), R.layout.row_track, parent, false)
         val holder = ViewHolder(binding)
         // Weirdly enough the 'clickable="false"' in the XML resource doesn't work

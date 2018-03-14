@@ -26,6 +26,8 @@ class LoggingStateController @Inject constructor(
     private var loggingStateReceiver: BroadcastReceiver? = null
 
     var listener: LoggingStateListener? = null
+    internal var lastState = ServiceConstants.STATE_UNKNOWN
+        private set
 
     fun connect(listener: LoggingStateListener? = null) {
         registerReceiver()
@@ -39,9 +41,9 @@ class LoggingStateController @Inject constructor(
                         uri = trackUri(trackId)
                         name = uri.runQuery(BaseConfiguration.appComponent.contentResolver()) { cursor -> cursor.getString(NAME) }
                     }
-                    val loggingState = serviceManager.loggingState
-                    Timber.d("onConnect LoggerState %s %s %d", uri, name, loggingState)
-                    listener?.didConnectToService(context, uri, name, loggingState)
+                    lastState = serviceManager.loggingState
+                    Timber.d("onConnect LoggerState %s %s %d", uri, name, lastState)
+                    listener?.didConnectToService(context, uri, name, lastState)
                 }
             }
         }
@@ -67,12 +69,12 @@ class LoggingStateController @Inject constructor(
 
     private inner class LoggerStateReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val loggingState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN)
+            lastState = intent.getIntExtra(ServiceConstants.EXTRA_LOGGING_STATE, ServiceConstants.STATE_UNKNOWN)
             val trackUri = intent.getParcelableExtra<Uri>(ServiceConstants.EXTRA_TRACK)
             val name = intent.getStringExtra(ServiceConstants.EXTRA_TRACK_NAME)
 
-            Timber.d("onReceive LoggerStateReceiver %s %s %d", trackUri, name, loggingState)
-            listener?.didChangeLoggingState(context, trackUri, name, loggingState)
+            Timber.d("onReceive LoggerStateReceiver %s %s %d", trackUri, name, lastState)
+            listener?.didChangeLoggingState(context, trackUri, name, lastState)
         }
     }
 }
