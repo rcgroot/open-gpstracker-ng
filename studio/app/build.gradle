@@ -90,6 +90,7 @@ dependencies {
     api project(':features')
     implementation project(':service')
     implementation project(':base')
+    implementation project(':utils')
     implementation project(':wear-shared')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
@@ -113,6 +114,8 @@ dependencies {
     androidTestImplementation "com.android.support.test:rules:$rootProject.testRunnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion"
+    androidTestImplementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    androidTestImplementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

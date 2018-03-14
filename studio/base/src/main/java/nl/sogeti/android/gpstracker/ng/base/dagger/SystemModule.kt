@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
+import nl.sogeti.android.gpstracker.ng.base.location.GpsLocationFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import java.util.concurrent.Executor
@@ -31,7 +32,7 @@ class SystemModule {
     fun packageManager(application: Context): PackageManager = application.packageManager
 
     @Provides
-    fun locationFactory(application: Context): LocationFactory = LocationFactory(application)
+    fun locationFactory(application: Context): LocationFactory = GpsLocationFactory(application)
 
     @Provides
     fun contentResolver(application: Context): ContentResolver = application.contentResolver

@@ -30,10 +30,9 @@ package nl.sogeti.android.gpstracker.ng.screenshots
 
 import android.support.test.rule.ActivityTestRule
 import nl.sogeti.android.gpstracker.ng.robots.*
-import nl.sogeti.android.gpstracker.ng.track.TrackActivity
 import org.junit.*
 import android.support.test.rule.GrantPermissionRule
-
+import nl.sogeti.android.gpstracker.ng.features.track.TrackActivity
 
 
 class TourScreenshots {

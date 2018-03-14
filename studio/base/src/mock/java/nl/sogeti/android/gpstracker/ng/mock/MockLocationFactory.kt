@@ -28,15 +28,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.mock
 
-import android.content.Context
 import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 
 class MockLocationFactory : LocationFactory {
 
-    override fun getLocationCoordinates(context: Context): LatLng? = lastWaypoint
+    override fun getLocationCoordinates(): LatLng? = lastWaypoint
 
-    override fun getLocationName(context: Context): String? = "Gotham"
+    override fun getLocationName(): String? = "Gotham"
 
     companion object {
         var lastWaypoint = LatLng(52.3664734, 4.9212022)

@@ -34,7 +34,7 @@ import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.v7.app.AppCompatActivity
 import android.webkit.WebView
-import nl.sogeti.android.gpstracker.ng.about.AboutFragment
+import nl.sogeti.android.gpstracker.ng.features.about.AboutFragment
 import nl.sogeti.android.gpstracker.ng.util.WebViewIdlingResource
 import nl.sogeti.android.gpstracker.v2.R
 

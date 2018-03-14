@@ -37,12 +37,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import nl.sogeti.android.gpstracker.ng.control.ControlFragment;
+import nl.sogeti.android.gpstracker.ng.features.control.ControlFragment;
 import nl.sogeti.android.gpstracker.ng.util.EspressoTestMatchers;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
-import nl.sogeti.android.gpstracker.ng.mock.MockBroadcastSender;
-import nl.sogeti.android.gpstracker.service.mock.MockServiceManager;
 import nl.sogeti.android.gpstracker.ng.util.TestActivity;
+import nl.sogeti.android.gpstracker.service.mock.MockBroadcastSender;
+import nl.sogeti.android.gpstracker.service.mock.MockServiceManager;
 import nl.sogeti.android.gpstracker.v2.R;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -77,7 +77,7 @@ public class ControlFragmentEspressoTest {
     }
 
     @Test
-    public void testUnknownState() throws InterruptedException {
+    public void testUnknownState() {
         // Prepare
         TestActivity context = wrapperFragment.getActivity();
         MockServiceManager.globalState.setLoggingState(-123);

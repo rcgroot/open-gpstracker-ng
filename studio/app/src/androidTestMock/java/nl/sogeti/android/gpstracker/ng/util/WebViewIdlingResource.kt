@@ -1,16 +1,19 @@
 package nl.sogeti.android.gpstracker.ng.util
 
+import android.os.Handler
+import android.os.Looper
 import android.support.test.espresso.IdlingResource
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import nl.sogeti.android.gpstracker.ng.utils.executeOnUiThread
 
-class WebViewIdlingResource(val webView: WebView) : WebChromeClient(), IdlingResource {
+class WebViewIdlingResource(private val webView: WebView) : WebChromeClient(), IdlingResource {
 
-    var callback: IdlingResource.ResourceCallback? = null
+    private var callback: IdlingResource.ResourceCallback? = null
 
     init {
-        executeOnUiThread { webView.setWebChromeClient(this@WebViewIdlingResource) }
+        Handler(Looper.getMainLooper()).post {
+            webView.setWebChromeClient(this@WebViewIdlingResource)
+        }
     }
 
     override fun isIdleNow(): Boolean {

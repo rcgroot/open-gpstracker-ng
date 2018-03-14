@@ -10,7 +10,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.view.View
-import nl.sogeti.android.gpstracker.ng.tracklist.TrackListViewAdapter
+import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.v2.R
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf

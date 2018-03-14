@@ -38,7 +38,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import nl.sogeti.android.gpstracker.ng.about.AboutFragment;
+import nl.sogeti.android.gpstracker.ng.features.about.AboutFragment;
 import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.WebViewIdlingResource;
 import nl.sogeti.android.gpstracker.v2.R;
