@@ -34,12 +34,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackEditModel
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
@@ -63,8 +62,7 @@ class TrackListPresenter @Inject constructor(
         val shareIntentFactory: ShareIntentFactory,
         val packageManager: PackageManager,
         val notification: ImportNotification
-        )
-    : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
+) : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
 
     var navigation: TrackListNavigation? = null
 

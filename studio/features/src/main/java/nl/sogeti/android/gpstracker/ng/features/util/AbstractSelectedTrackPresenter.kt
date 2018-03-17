@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.ng.features.util
 import android.net.Uri
 import android.support.annotation.CallSuper
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.service.util.readName
 
 abstract class AbstractSelectedTrackPresenter(val trackSelection: TrackSelection, contentController: ContentController) : AbstractTrackPresenter(contentController), TrackSelection.Listener {

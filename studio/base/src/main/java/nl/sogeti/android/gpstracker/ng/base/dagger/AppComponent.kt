@@ -34,18 +34,13 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import javax.inject.Named
-import javax.inject.Singleton
 
-@Singleton
 @Component(modules = [AppModule::class, SystemModule::class])
 interface AppComponent {
-
-    fun trackSelection(): TrackSelection
 
     fun gpsStatusControllerFactory(): GpsStatusControllerFactory
 

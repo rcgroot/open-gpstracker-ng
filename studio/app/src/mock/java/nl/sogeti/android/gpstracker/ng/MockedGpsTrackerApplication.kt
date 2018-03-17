@@ -49,6 +49,7 @@ class MockedGpsTrackerApplication : GpsTrackerApplication() {
                 .mockSystemModule(MockSystemModule())
                 .build()
         serviceComponent = DaggerMockServiceComponent.builder()
+                .appComponent(BaseConfiguration.appComponent)
                 .mockServiceModule(MockServiceModule())
                 .build()
         featureComponent = DaggerFeatureComponent.builder()

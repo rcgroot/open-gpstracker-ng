@@ -37,4 +37,5 @@
     create new tracks.</string>
     <string name="notification_operation_channel_name">Open GPS Tracker GPS logger operations</string>
     <string name="notification_operation_channel_description">A separate process that records your GPS track</string>
+    <string name="initial_track_name">Unnamed track</string>
 </resources>

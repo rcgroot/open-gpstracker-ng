@@ -197,7 +197,7 @@ public class GPSLoggerService extends LingerService {
         mLoggerNotification = new LoggerNotification(this);
         mLoggerNotification.stopLogging();
         LoggerPersistence persistence = new LoggerPersistence(this);
-        mGPSListener = new GPSListener(this, new ServiceCommander(), persistence, mLoggerNotification, new PowerManager(this));
+        mGPSListener = new GPSListener(this, new ServiceCommander(this), persistence, mLoggerNotification, new PowerManager(this));
         mGPSListener.onCreate();
         Intent restoreIntent = new Intent();
         restoreIntent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESTORE);

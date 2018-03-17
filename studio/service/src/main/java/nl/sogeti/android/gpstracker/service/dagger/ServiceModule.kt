@@ -1,11 +1,9 @@
 package nl.sogeti.android.gpstracker.service.dagger
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.service.integration.ServiceManager
-import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.integration.*
 import nl.sogeti.android.gpstracker.utils.PermissionChecker
 import javax.inject.Named
 
@@ -13,7 +11,10 @@ import javax.inject.Named
 class ServiceModule {
 
     @Provides
-    fun serviceManagerInterface(): ServiceManagerInterface = ServiceManager()
+    fun serviceManagerInterface(application: Context): ServiceManagerInterface = ServiceManager(application)
+
+    @Provides
+    fun serviceCommanderInterface(application: Context): ServiceCommanderInterface = ServiceCommander(application)
 
     @Provides
     @Named("providerAuthority")

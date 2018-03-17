@@ -26,13 +26,13 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.ng.base.model
+package nl.sogeti.android.gpstracker.ng.features.model
 
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@FeatureScope
 class TrackSelection @Inject constructor() {
 
     var trackUri: Uri? = null

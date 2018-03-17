@@ -39,10 +39,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
@@ -68,12 +68,12 @@ class TrackMapPresenter @Inject constructor(
 
     internal val viewModel = TrackMapViewModel()
 
+    private var tileProvider: TrackTileProvider? = null
+
     init {
         loggingStateController.connect(this)
         makeTrackSelection()
     }
-
-    private var tileProvider: TrackTileProvider? = null
 
     fun start(mapView: MapView) {
         super.start()
@@ -142,7 +142,7 @@ class TrackMapPresenter @Inject constructor(
             executingReader = trackReaderFactory.createTrackReader(trackUri, { name, bounds, waypoint ->
                 viewModel.name.set(name)
                 viewModel.waypoints.set(waypoint)
-                if (loggingStateController.lastState == ServiceConstants.STATE_LOGGING) {
+                if (loggingStateController.loggingState == ServiceConstants.STATE_LOGGING) {
                     viewModel.completeBounds.set(null)
                     viewModel.trackHead.set(waypoint.lastOrNull()?.lastOrNull())
                 } else {

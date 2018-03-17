@@ -70,7 +70,7 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     public void didStart() {
         registerReceiver();
         final Context context = getContext();
-        serviceManager.startup(context, new Runnable() {
+        serviceManager.startup(new Runnable() {
             @Override
             public void run() {
                 synchronized (ConnectedServicePresenter.this) {
@@ -104,7 +104,7 @@ public abstract class ConnectedServicePresenter extends ContextedPresenter {
     @Override
     public void willStop() {
         unregisterReceiver();
-        serviceManager.shutdown(getContext());
+        serviceManager.shutdown();
     }
 
     private void registerReceiver() {

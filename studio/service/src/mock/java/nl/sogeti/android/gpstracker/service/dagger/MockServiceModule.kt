@@ -1,12 +1,10 @@
 package nl.sogeti.android.gpstracker.service.dagger
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.mock.MockPermissionChecker
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
-import nl.sogeti.android.gpstracker.service.integration.ServiceManager
-import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.integration.*
 import nl.sogeti.android.gpstracker.service.mock.MockServiceManager
 import nl.sogeti.android.gpstracker.utils.PermissionChecker
 import javax.inject.Named
@@ -15,7 +13,11 @@ import javax.inject.Named
 class MockServiceModule {
 
     @Provides
-    fun serviceManagerInterface(): ServiceManagerInterface = MockServiceManager()
+    fun serviceManagerInterface(context: Context): ServiceManagerInterface = MockServiceManager(context)
+
+
+    @Provides
+    fun serviceCommanderInterface(application: Context): ServiceCommanderInterface = MockServiceManager(application)
 
     @Provides
     @Named("providerAuthority")

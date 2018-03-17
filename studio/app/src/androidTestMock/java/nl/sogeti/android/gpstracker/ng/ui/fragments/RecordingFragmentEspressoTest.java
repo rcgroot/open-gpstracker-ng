@@ -63,7 +63,7 @@ public class RecordingFragmentEspressoTest {
     @Before
     public void setUp() {
         IdlingRegistry.getInstance().register(MockBroadcastSender.Espresso.getResource());
-        mockServiceManager = new MockServiceManager();
+        mockServiceManager = new MockServiceManager(sut.requireContext());
         mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         mockTracksContentProvider = new MockTracksContentProvider();
         sut = wrapperFragment.getFragment();
@@ -88,7 +88,7 @@ public class RecordingFragmentEspressoTest {
     @Test
     public void testVisibleWhenStarted() {
         // Execute
-        mockServiceManager.startGPSLogging(sut.getActivity(), null);
+        mockServiceManager.startGPSLogging(null);
         MockTracksContentProvider.globalState.createTrack(1L, MockTracksContentProvider.globalState.getGpxAmsterdam(), null);
 
         // Verify
@@ -98,7 +98,7 @@ public class RecordingFragmentEspressoTest {
     @Test
     public void testVisibleWhenPaused() {
         // Execute
-        mockServiceManager.pauseGPSLogging(sut.getActivity());
+        mockServiceManager.pauseGPSLogging();
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
@@ -107,7 +107,7 @@ public class RecordingFragmentEspressoTest {
     @Test
     public void testVisibleWhenResumed() {
         // Execute
-        mockServiceManager.resumeGPSLogging(sut.getActivity());
+        mockServiceManager.resumeGPSLogging();
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
@@ -116,7 +116,7 @@ public class RecordingFragmentEspressoTest {
     @Test
     public void testVisibleWhenStopped() {
         // Execute
-        mockServiceManager.stopGPSLogging(sut.getActivity());
+        mockServiceManager.stopGPSLogging();
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));

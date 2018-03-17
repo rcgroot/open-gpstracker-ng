@@ -63,9 +63,9 @@ public class ControlFragmentEspressoTest {
     @Before
     public void setUp() {
         IdlingRegistry.getInstance().register(MockBroadcastSender.Espresso.getResource());
-        mockServiceManager = new MockServiceManager();
-        mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         sut = wrapperFragment.getFragment();
+        mockServiceManager = new MockServiceManager(sut.requireContext());
+        mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
     }
 
     @After
@@ -99,7 +99,7 @@ public class ControlFragmentEspressoTest {
     @Test
     public void testVisibleWhenStarted() {
         // Execute
-        mockServiceManager.startGPSLogging(sut.getActivity(), null);
+        mockServiceManager.startGPSLogging("");
         // Verify
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
@@ -110,7 +110,7 @@ public class ControlFragmentEspressoTest {
     @Test
     public void testVisibleWhenPaused() {
         // Execute
-        mockServiceManager.pauseGPSLogging(sut.getActivity());
+        mockServiceManager.pauseGPSLogging();
         // Verify
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
@@ -121,7 +121,7 @@ public class ControlFragmentEspressoTest {
     @Test
     public void testVisibleWhenResumed() {
         // Execute
-        mockServiceManager.resumeGPSLogging(sut.getActivity());
+        mockServiceManager.resumeGPSLogging();
         // Verify
         onView(withId(R.id.widget_control_left)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
@@ -132,7 +132,7 @@ public class ControlFragmentEspressoTest {
     @Test
     public void testVisibleWhenStopped() {
         // Execute
-        mockServiceManager.stopGPSLogging(sut.getActivity());
+        mockServiceManager.stopGPSLogging();
         // Verify
         onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));

@@ -3,6 +3,7 @@ package nl.sogeti.android.gpstracker.ng.features.dagger
 import dagger.Component
 import nl.sogeti.android.gpstracker.ng.base.dagger.AppComponent
 import nl.sogeti.android.gpstracker.ng.features.about.AboutModel
+import nl.sogeti.android.gpstracker.ng.features.control.ControlFragment
 import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
@@ -56,6 +57,7 @@ interface FeatureComponent {
     fun inject(graphLabelsBindings: GraphLabelsBindings)
     fun inject(graphSpeedOverTimeProvider: GraphSpeedOverTimeDataProvider)
     fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
+    fun inject(controlFragment: ControlFragment)
     fun trackDeletePresenter(): TrackDeletePresenter
     fun trackEditPresenter(): TrackEditPresenter
     fun graphsPresenter(): GraphsPresenter

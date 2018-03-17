@@ -36,6 +36,7 @@ open class GpsTrackerApplication : BaseGpsTrackerApplication() {
                 .systemModule(SystemModule())
                 .build()
         serviceComponent = DaggerServiceComponent.builder()
+                .appComponent(BaseConfiguration.appComponent)
                 .serviceModule(ServiceModule())
                 .build()
         featureComponent = DaggerFeatureComponent.builder()

@@ -78,7 +78,6 @@
     <string name="period_afternoon">afternoon</string>
     <string name="period_evening">evening</string>
     <string name="period_night">night</string>
-    <string name="initial_track_name">Unnamed track</string>
     <string name="initial_time_track_name">%1$s %2$s</string>
     <string name="initial_time_location_track_name">%1$s %2$s in %3$s</string>
 

@@ -30,31 +30,39 @@ package nl.sogeti.android.gpstracker.ng.features.control
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentControlBinding
+import javax.inject.Inject
 
 /**
  * On screen controls for the logging state
  */
 class ControlFragment : Fragment() {
 
-    val viewModel = ControlViewModel()
-    private val controlPresenter = ControlPresenter(viewModel)
-    private var permissionRequester = PermissionRequester()
-    @VisibleForTesting
-    var binding: FragmentControlBinding? = null
+    @Inject
+    lateinit var presenter : ControlPresenter
+
+    @Inject
+    lateinit var permissionRequester : PermissionRequester
+
+    private var binding: FragmentControlBinding? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        FeatureConfiguration.featureComponent.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentControlBinding>(inflater, R.layout.fragment_control, container, false)
-        binding.viewModel = viewModel
-        binding.presenter = controlPresenter
+        binding.viewModel = presenter.viewModel
+        binding.presenter = presenter
         this.binding = binding
 
         return binding.root
@@ -62,14 +70,13 @@ class ControlFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val activity = activity ?: throw IllegalStateException("Attempting onStart outside lifecycle of fragment")
-        permissionRequester.start(this, { controlPresenter.start(activity) })
+        permissionRequester.start(this, { presenter.start() })
     }
 
     override fun onStop() {
         super.onStop()
         permissionRequester.stop()
-        controlPresenter.stop()
+        presenter.stop()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -3,10 +3,10 @@
  **    Author: rene
  ** Copyright: (c) Apr 24, 2011 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
- ** Sogeti Nederland B.V.            |  No part of this file may be reproduced  
- ** Distributed Software Engineering |  or transmitted in any form or by any        
- ** Lange Dreef 17                   |  means, electronic or mechanical, for the      
- ** 4131 NJ Vianen                   |  purpose, without the express written    
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
  ** The Netherlands                  |  permission of the copyright holder.
  *------------------------------------------------------------------------------
  *
@@ -36,12 +36,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
-import nl.sogeti.android.gpstracker.service.BuildConfig;
 import timber.log.Timber;
 
 import static nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission;
@@ -52,6 +50,7 @@ import static nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission;
 public class ServiceManager implements ServiceManagerInterface {
 
     private final Object mStartLock = new Object();
+    private final Context context;
     private IGPSLoggerServiceRemote mGPSLoggerRemote;
     private boolean mBound;
     /**
@@ -59,9 +58,11 @@ public class ServiceManager implements ServiceManagerInterface {
      */
     private ServiceConnection mServiceConnection;
     private Runnable mOnServiceConnected;
-    private final ServiceCommander commander = new ServiceCommander();
+    private final ServiceCommander commander;
 
-    public ServiceManager() {
+    public ServiceManager(Context context) {
+        this.context = context;
+        commander = new ServiceCommander(context);
         mBound = false;
     }
 
@@ -114,28 +115,28 @@ public class ServiceManager implements ServiceManagerInterface {
     }
 
     @Override
-    public void startGPSLogging(@NonNull Context context, @Nullable String trackName) {
-        commander.startGPSLogging(context, trackName);
+    public void startGPSLogging(@Nullable String trackName) {
+        commander.startGPSLogging(trackName);
     }
 
     @Override
-    public void stopGPSLogging(@NonNull Context context) {
-        commander.stopGPSLogging(context);
+    public void stopGPSLogging() {
+        commander.stopGPSLogging();
     }
 
     @Override
-    public void pauseGPSLogging(@NonNull Context context) {
-        commander.pauseGPSLogging(context);
+    public void pauseGPSLogging() {
+        commander.pauseGPSLogging();
     }
 
     @Override
-    public void resumeGPSLogging(@NonNull Context context) {
-        commander.resumeGPSLogging(context);
+    public void resumeGPSLogging() {
+        commander.resumeGPSLogging();
     }
 
     @Override
-    public boolean isPackageInstalled(Context context) {
-        return commander.isPackageInstalled(context);
+    public boolean isPackageInstalled() {
+        return commander.isPackageInstalled();
     }
 
     public int getLoggingState() {
@@ -204,7 +205,7 @@ public class ServiceManager implements ServiceManagerInterface {
      *
      * @param onServiceConnected Run on main thread after the service is bound
      */
-    public void startup(Context context, final Runnable onServiceConnected) {
+    public void startup(final Runnable onServiceConnected) {
         synchronized (mStartLock) {
             if (!mBound) {
                 mOnServiceConnected = onServiceConnected;
@@ -246,7 +247,7 @@ public class ServiceManager implements ServiceManagerInterface {
     /**
      * Means by which an Activity lifecycle aware object hints about binding and unbinding
      */
-    public void shutdown(Context context) {
+    public void shutdown() {
         synchronized (mStartLock) {
             try {
                 if (mBound) {

@@ -29,16 +29,19 @@
 package nl.sogeti.android.gpstracker.service.mock
 
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
+import nl.sogeti.android.gpstracker.service.integration.ServiceCommanderInterface
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
+import nl.sogeti.android.gpstracker.service.util.readName
 
-class MockServiceManager : ServiceManagerInterface {
+class MockServiceManager(val context: Context) : ServiceManagerInterface, ServiceCommanderInterface {
 
     val broadcaster = MockBroadcastSender()
     val gpsRecorder = Recorder()
 
-    override fun startup(context: Context, runnable: Runnable?) {
+    override fun startup(runnable: Runnable?) {
         started = true
         if (loggingState == STATE_UNKNOWN) {
             globalState.loggingState = STATE_STOPPED
@@ -46,7 +49,7 @@ class MockServiceManager : ServiceManagerInterface {
         runnable?.run()
     }
 
-    override fun shutdown(context: Context) {
+    override fun shutdown() {
         started = false
     }
 
@@ -54,32 +57,38 @@ class MockServiceManager : ServiceManagerInterface {
 
     override fun getTrackId(): Long = globalState.trackId
 
-    override fun startGPSLogging(context: Context, trackName: String?) {
+    override fun hasForInitialName(trackUri: Uri) = trackUri.readName() == "New mock"
+
+    override fun startGPSLogging() {
+        startGPSLogging("New mock")
+    }
+
+    override fun startGPSLogging(trackName: String?) {
         globalState.loggingState = STATE_LOGGING
         gpsRecorder.startRecording(trackName)
         broadcaster.sendStartedRecording(context, trackId)
     }
 
-    override fun stopGPSLogging(context: Context) {
+    override fun stopGPSLogging() {
         globalState.loggingState = STATE_STOPPED
 
         broadcaster.sendStoppedRecording(context)
     }
 
-    override fun pauseGPSLogging(context: Context) {
+    override fun pauseGPSLogging() {
         globalState.loggingState = STATE_PAUSED
 
         broadcaster.sendPausedRecording(context, trackId)
     }
 
-    override fun resumeGPSLogging(context: Context) {
+    override fun resumeGPSLogging() {
         globalState.loggingState = STATE_LOGGING
 
         broadcaster.sendResumedRecording(context, trackId)
         gpsRecorder.resumeRecording()
     }
 
-    override fun isPackageInstalled(context: Context): Boolean = true
+    override fun isPackageInstalled(): Boolean = true
 
     fun reset() {
         started = false

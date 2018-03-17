@@ -33,48 +33,76 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
-import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
+import nl.sogeti.android.gpstracker.service.integration.ServiceCommanderInterface
+import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.service.util.*
+import nl.sogeti.android.gpstracker.service.util.readName
+import nl.sogeti.android.gpstracker.service.util.trackUri
+import nl.sogeti.android.gpstracker.service.util.updateName
+import nl.sogeti.android.gpstracker.service.util.waypointsUri
 import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
-import nl.sogeti.android.opengpstrack.ng.features.R
 import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Inject
 import javax.inject.Named
 
-class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServicePresenter() {
-    @Inject
-    lateinit var nameGenerator: NameGenerator
-    @Inject
-    @field:Named("SystemBackgroundExecutor")
-    lateinit var asyncExecutor: Executor
+class ControlPresenter @Inject constructor(
+        private val nameGenerator: NameGenerator,
+        @Named("SystemBackgroundExecutor") private val asyncExecutor: Executor,
+        private val loggingStateController: LoggingStateController,
+        private val serviceCommander: ServiceCommanderInterface,
+        private val trackSelection: TrackSelection,
+        private val contentResolver: ContentResolver)
+    : AbstractPresenter(), LoggingStateListener {
+
+    internal val viewModel = ControlViewModel()
 
     val handler = Handler(Looper.getMainLooper())
+
     private val enableRunnable = { enableButtons() }
 
     init {
-        FeatureConfiguration.featureComponent.inject(this)
+        loggingStateController.listener = this
+        loggingStateController.connect(this)
+    }
+
+    override fun onChange() {
+        viewModel.state.set(loggingStateController.loggingState)
+        if (loggingStateController.loggingState != ServiceConstants.STATE_UNKNOWN) {
+            enableButtons()
+        }
+
+        loggingStateController.trackUri?.let {
+            if (loggingStateController.loggingState == STATE_LOGGING) {
+                asyncExecutor.execute {
+                    if (serviceCommander.hasForInitialName(it)) {
+                        val generatedName = nameGenerator.generateName(Calendar.getInstance())
+                        it.updateName(generatedName)
+                    }
+                }
+            }
+            trackSelection.selectTrack(it, it.readName())
+        }
+    }
+
+    override fun onCleared() {
+        loggingStateController.disconnect()
+        super.onCleared()
     }
 
     //region Service connection
 
     override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        viewModel.state.set(loggingState)
-        enableButtons()
+        didChangeLoggingState(context, trackUri, name, loggingState)
     }
 
     override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        viewModel.state.set(loggingState)
-        enableButtons()
-
-        if (trackUri != null && loggingState == STATE_LOGGING) {
-            asyncExecutor.execute {
-                checkForInitialName(context, trackUri)
-            }
-        }
+        markDirty()
     }
 
     //endregion
@@ -84,20 +112,18 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
     fun onClickLeft() {
         disableUntilChange(200)
         if (viewModel.state.get() == STATE_LOGGING) {
-            stopLogging(context)
+            stopLogging()
         } else if (viewModel.state.get() == STATE_PAUSED) {
-            stopLogging(context)
+            stopLogging()
         }
     }
 
     fun onClickRight() {
         disableUntilChange(200)
-        if (viewModel.state.get() == STATE_STOPPED) {
-            startLogging(context)
-        } else if (viewModel.state.get() == STATE_LOGGING) {
-            pauseLogging(context)
-        } else if (viewModel.state.get() == STATE_PAUSED) {
-            resumeLogging(context)
+        when {
+            viewModel.state.get() == STATE_STOPPED -> startLogging()
+            viewModel.state.get() == STATE_LOGGING -> pauseLogging()
+            viewModel.state.get() == STATE_PAUSED -> resumeLogging()
         }
     }
 
@@ -113,32 +139,25 @@ class ControlPresenter(private val viewModel: ControlViewModel) : ConnectedServi
         viewModel.enabled.set(true)
     }
 
-    private fun checkForInitialName(context: Context, trackUri: Uri) {
-        val name = trackUri.readName()
-        if (name == context.getString(R.string.initial_track_name)) {
-            val generatedName = nameGenerator.generateName(context, Calendar.getInstance())
-            trackUri.updateName(generatedName)
-        }
+    fun startLogging() {
+        serviceCommander.startGPSLogging()
     }
 
-    fun startLogging(context: Context) {
-        serviceManager.startGPSLogging(context, context.getString(R.string.initial_track_name))
+    fun stopLogging() {
+        serviceCommander.stopGPSLogging()
+        deleteEmptyTrack()
     }
 
-    fun stopLogging(context: Context) {
-        serviceManager.stopGPSLogging(context)
-        deleteEmptyTrack(context.contentResolver, serviceManager.trackId)
+    fun pauseLogging() {
+        serviceCommander.pauseGPSLogging()
     }
 
-    fun pauseLogging(context: Context) {
-        serviceManager.pauseGPSLogging(context)
+    fun resumeLogging() {
+        serviceCommander.resumeGPSLogging()
     }
 
-    fun resumeLogging(context: Context) {
-        serviceManager.resumeGPSLogging(context)
-    }
-
-    private fun deleteEmptyTrack(contentResolver: ContentResolver, trackId: Long) {
+    private fun deleteEmptyTrack() {
+        val trackId = loggingStateController.trackUri?.lastPathSegment?.toLongOrNull() ?: -1
         if (trackId <= 0) {
             return
         }

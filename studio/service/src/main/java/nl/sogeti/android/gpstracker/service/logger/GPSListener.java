@@ -534,7 +534,7 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
             mSegmentId = mPersistence.getSegmentId();
             if (previousState == ServiceConstants.STATE_LOGGING) {
                 mLoggingState = ServiceConstants.STATE_PAUSED;
-                serviceCommander.resumeGPSLogging(mService);
+                serviceCommander.resumeGPSLogging();
             } else if (previousState == ServiceConstants.STATE_PAUSED) {
                 mLoggingState = ServiceConstants.STATE_LOGGING;
                 pauseLogging();
@@ -710,7 +710,7 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
                 }
 
                 mLoggingState = ServiceConstants.STATE_PAUSED;
-                serviceCommander.resumeGPSLogging(GPSListener.this.mService);
+                serviceCommander.resumeGPSLogging();
             } else {
                 mLoggerNotification.stopPoorSignal();
             }

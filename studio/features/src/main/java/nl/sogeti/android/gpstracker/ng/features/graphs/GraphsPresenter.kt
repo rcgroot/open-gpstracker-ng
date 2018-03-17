@@ -32,13 +32,11 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.base.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeleteModel
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
-import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.postMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter

@@ -36,12 +36,14 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
-class NameGenerator @Inject constructor(@Named("dayFormatter") private val dayFormat: SimpleDateFormat,
-                                        private val locationFactory: LocationFactory) {
+class NameGenerator @Inject constructor(
+        val context: Context,
+        @Named("dayFormatter") private val dayFormat: SimpleDateFormat,
+        private val locationFactory: LocationFactory) {
 
-    fun generateName(context: Context, now: Calendar): String {
+    fun generateName(now: Calendar): String {
         val today = dayFormat.format(now.time)
-        val period = period(context, now)
+        val period = period(now)
         val location = locationFactory.getLocationName()
 
         return if (location == null) {
@@ -51,7 +53,7 @@ class NameGenerator @Inject constructor(@Named("dayFormatter") private val dayFo
         }
     }
 
-    private fun period(context: Context, now: Calendar): String {
+    private fun period(now: Calendar): String {
         val hour = now.get(Calendar.HOUR_OF_DAY)
         return when (hour) {
             in 0..4 -> context.getString(R.string.period_night)

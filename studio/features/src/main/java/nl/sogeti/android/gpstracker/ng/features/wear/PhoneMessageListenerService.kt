@@ -89,28 +89,28 @@ class PhoneMessageListenerService : MessageListenerService() {
     }
 
     private fun startLogging() {
-        val generatedName = nameGenerator.generateName(this, Calendar.getInstance())
-        serviceManager.startGPSLogging(this, generatedName)
+        val generatedName = nameGenerator.generateName(Calendar.getInstance())
+        serviceManager.startGPSLogging(generatedName)
         messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
     }
 
     private fun pauseLogging() {
-        serviceManager.pauseGPSLogging(this)
+        serviceManager.pauseGPSLogging()
         messageSender?.sendMessage(StatusMessage(StatusMessage.Status.PAUSE))
     }
 
     private fun resumeLogging() {
-        serviceManager.resumeGPSLogging(this)
+        serviceManager.resumeGPSLogging()
         messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
     }
 
     private fun stopLogging() {
-        serviceManager.stopGPSLogging(this)
+        serviceManager.stopGPSLogging()
         messageSender?.sendMessage(StatusMessage(StatusMessage.Status.STOP))
     }
 
     private fun respondLoggingState() {
-        serviceManager.startup(this) {
+        serviceManager.startup {
             ofMainThread {
                 when (serviceManager.loggingState) {
                     ServiceConstants.STATE_LOGGING -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.START))
@@ -119,7 +119,7 @@ class PhoneMessageListenerService : MessageListenerService() {
                     ServiceConstants.STATE_UNKNOWN -> messageSender?.sendMessage(StatusMessage(StatusMessage.Status.UNKNOWN))
                 }
                 statisticsCollector.sendLatest(trackUri(serviceManager.trackId))
-                serviceManager.shutdown(this)
+                serviceManager.shutdown()
             }
         }
     }
