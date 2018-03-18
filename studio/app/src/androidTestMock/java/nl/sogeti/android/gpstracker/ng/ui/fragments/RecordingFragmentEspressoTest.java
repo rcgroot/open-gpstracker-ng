@@ -63,26 +63,24 @@ public class RecordingFragmentEspressoTest {
     @Before
     public void setUp() {
         IdlingRegistry.getInstance().register(MockBroadcastSender.Espresso.getResource());
+        sut = wrapperFragment.getFragment();
         mockServiceManager = new MockServiceManager(sut.requireContext());
         mockServiceManager.getGpsRecorder().setShouldScheduleWaypoints(false);
         mockTracksContentProvider = new MockTracksContentProvider();
-        sut = wrapperFragment.getFragment();
     }
 
     @After
     public void tearDown() {
-        mockServiceManager.reset();
-        mockTracksContentProvider.reset();
-        mockServiceManager = null;
-        mockTracksContentProvider = null;
+        if (mockServiceManager != null) {
+            mockServiceManager.reset();
+            mockServiceManager = null;
+        }
+        if (mockTracksContentProvider != null) {
+            mockTracksContentProvider.reset();
+            mockTracksContentProvider = null;
+        }
         sut = null;
         IdlingRegistry.getInstance().unregister(MockBroadcastSender.Espresso.getResource());
-    }
-
-    @Test
-    public void testStartUp() {
-        // Verify
-        onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 
     @Test
@@ -111,14 +109,5 @@ public class RecordingFragmentEspressoTest {
 
         // Verify
         onView(withId(R.id.fragment_recording_container)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testVisibleWhenStopped() {
-        // Execute
-        mockServiceManager.stopGPSLogging();
-
-        // Verify
-        onView(withId(R.id.fragment_recording_container)).check(matches(not(isDisplayed())));
     }
 }

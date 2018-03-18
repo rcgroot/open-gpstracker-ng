@@ -77,21 +77,8 @@ public class ControlFragmentEspressoTest {
     }
 
     @Test
-    public void testUnknownState() {
-        // Prepare
-        TestActivity context = wrapperFragment.getActivity();
-        MockServiceManager.globalState.setLoggingState(-123);
-        // Execute
-        mockServiceManager.getBroadcaster().broadcastLoggingState(context, -123, null, 0);
-        // Verify
-        onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.widget_control_right)).check(matches(not(isDisplayed())));
-    }
-
-    @Test
     public void testStartUp() {
         // Verify
-        onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
     }
@@ -134,7 +121,6 @@ public class ControlFragmentEspressoTest {
         // Execute
         mockServiceManager.stopGPSLogging();
         // Verify
-        onView(withId(R.id.widget_control_left)).check(matches(not(isDisplayed())));
         onView(withId(R.id.widget_control_right)).check(matches(isDisplayed()));
         onView(withId(R.id.widget_control_right)).check(matches(EspressoTestMatchers.withDrawable(R.drawable.ic_navigation_black_24dp)));
     }

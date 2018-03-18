@@ -4,7 +4,6 @@ import android.databinding.BindingAdapter
 import android.support.design.widget.FloatingActionButton
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewPropertyAnimator
 import nl.sogeti.android.gpstracker.ng.features.databinding.CommonBindingAdapters
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
 import nl.sogeti.android.opengpstrack.ng.features.R
