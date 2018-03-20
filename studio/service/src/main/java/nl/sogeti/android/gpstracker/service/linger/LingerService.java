@@ -52,47 +52,6 @@ public abstract class LingerService extends Service {
     private boolean isFirstRun;
     private ContinueRunnable continueRunnable;
 
-    private final class ServiceHandler extends Handler {
-
-        ServiceHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            repostContinueRunnable();
-
-            if (msg.obj != null && msg.obj instanceof Intent) {
-                onHandleIntent((Intent) msg.obj);
-            }
-
-        }
-    }
-
-    private void repostContinueRunnable() {
-        ContinueRunnable runnable = getContinueRunnable();
-        mServiceHandler.removeCallbacks(continueRunnable);
-        mServiceHandler.postDelayed(runnable, getLingerDuration() * 1000L);
-    }
-
-    public ContinueRunnable getContinueRunnable() {
-        if (continueRunnable == null) {
-            continueRunnable = new ContinueRunnable();
-        }
-        return continueRunnable;
-    }
-
-    private final class ContinueRunnable implements Runnable {
-        @Override
-        public void run() {
-            if (shouldContinue()) {
-                mServiceHandler.postDelayed(this, mDuration * 1000L);
-            } else {
-                stopSelf();
-            }
-        }
-    }
-
     /**
      * Call this constructor from your default
      *
@@ -137,7 +96,14 @@ public abstract class LingerService extends Service {
 
     @Override
     public void onDestroy() {
-        mServiceLooper.quit();
+        mServiceHandler.removeCallbacks(continueRunnable);
+        mServiceHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mServiceLooper.quit();
+            }
+        });
+
         didDestroy();
     }
 
@@ -182,4 +148,45 @@ public abstract class LingerService extends Service {
 
     protected abstract boolean shouldContinue();
 
+
+    private final class ServiceHandler extends Handler {
+
+        ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            repostContinueRunnable();
+
+            if (msg.obj != null && msg.obj instanceof Intent) {
+                onHandleIntent((Intent) msg.obj);
+            }
+
+        }
+    }
+
+    private void repostContinueRunnable() {
+        ContinueRunnable runnable = getContinueRunnable();
+        mServiceHandler.removeCallbacks(continueRunnable);
+        mServiceHandler.postDelayed(runnable, getLingerDuration() * 1000L);
+    }
+
+    public ContinueRunnable getContinueRunnable() {
+        if (continueRunnable == null) {
+            continueRunnable = new ContinueRunnable();
+        }
+        return continueRunnable;
+    }
+
+    private final class ContinueRunnable implements Runnable {
+        @Override
+        public void run() {
+            if (shouldContinue()) {
+                mServiceHandler.postDelayed(this, mDuration * 1000L);
+            } else {
+                stopSelf();
+            }
+        }
+    }
 }

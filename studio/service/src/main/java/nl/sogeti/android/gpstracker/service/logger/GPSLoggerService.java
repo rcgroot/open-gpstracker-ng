@@ -154,7 +154,9 @@ public class GPSLoggerService extends LingerService {
     }
 
     private void executeCommandIntent(Intent intent) {
-        switch (intent.getIntExtra(ServiceConstants.Commands.COMMAND, -1)) {
+        int command = intent.getIntExtra(ServiceConstants.Commands.COMMAND, -1);
+        Timber.d("executeCommandIntent(Intent " + command + ")");
+        switch (command) {
             case ServiceConstants.Commands.EXTRA_COMMAND_RESTORE:
                 mGPSListener.crashRestoreState();
                 break;
