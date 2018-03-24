@@ -41,7 +41,6 @@ import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommanderInterface
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.updateName
 import nl.sogeti.android.gpstracker.service.util.waypointsUri
@@ -86,7 +85,7 @@ class ControlPresenter @Inject constructor(
                     }
                 }
             }
-            trackSelection.selectTrack(it, it.readName())
+            trackSelection.selection.value = it
         }
     }
 

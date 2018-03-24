@@ -58,7 +58,7 @@ class ImportService : JobIntentService() {
         private const val EXTRA_FILE = "GPX_FILE_URI"
         private const val EXTRA_TYPE = "EXTRA_TRACK_TYPE"
         private const val EXTRA_DIRECTORY = "GPX_DIRECTORY_URI"
-        private val JOB_ID = R.menu.menu_import_export
+        private val JOB_ID = R.menu.import_export
 
         fun importFile(uri: Uri, trackType: String = VALUE_TYPE_DEFAULT) {
             val work = Intent()

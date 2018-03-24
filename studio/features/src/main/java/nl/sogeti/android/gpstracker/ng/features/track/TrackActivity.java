@@ -123,7 +123,7 @@ public class TrackActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_map, menu);
+        getMenuInflater().inflate(R.menu.map, menu);
         DrawableCompat.setTint(menu.findItem(R.id.action_edit).getIcon(), ContextCompat.getColor(this, R.color.primary_text));
         DrawableCompat.setTint(menu.findItem(R.id.action_list).getIcon(), ContextCompat.getColor(this, R.color.primary_text));
         DrawableCompat.setTint(menu.findItem(R.id.action_graphs).getIcon(), ContextCompat.getColor(this, R.color.primary_text));

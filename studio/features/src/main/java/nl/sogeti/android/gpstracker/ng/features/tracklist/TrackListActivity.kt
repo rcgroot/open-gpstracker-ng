@@ -28,21 +28,21 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSearch
 import nl.sogeti.android.opengpstrack.ng.features.R
+import javax.inject.Inject
 
 class TrackListActivity : AppCompatActivity() {
 
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, TrackListActivity::class.java)
-            context.startActivity(intent)
-        }
-    }
+    @Inject
+    lateinit var trackSearch: TrackSearch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,5 +50,21 @@ class TrackListActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        FeatureConfiguration.featureComponent.inject(this)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.action == Intent.ACTION_SEARCH) {
+            trackSearch.query.value = intent.getStringExtra(SearchManager.QUERY)
+        }
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, TrackListActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }

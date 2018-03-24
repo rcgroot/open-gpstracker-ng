@@ -28,16 +28,21 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
+import android.app.SearchManager
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.database.CursorWrapper
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.*
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistBinding
+
 
 /**
  * Sets up display and selection of tracks in a list style
@@ -95,7 +100,42 @@ class TrackListFragment : ActivityResultLambdaFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        inflater.inflate(R.menu.menu_import_export, menu)
+        inflater.inflate(R.menu.search, menu)
+        inflater.inflate(R.menu.import_export, menu)
+
+        attachSearch(menu.findItem(R.id.action_search))
+        presenter.onSearchClosed()
+    }
+
+    private fun attachSearch(searchItem: MenuItem) {
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = searchItem.actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                setQueryToSuggestion(position, false)
+                return false
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                setQueryToSuggestion(position, true)
+                return false
+            }
+
+            private fun setQueryToSuggestion(position: Int, submit: Boolean) {
+                val item = searchView.suggestionsAdapter.getItem(position)
+                val selected = (item as? CursorWrapper)?.getString(1)
+                searchView.setQuery(selected, submit)
+            }
+        })
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean = true
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                presenter.onSearchClosed()
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =

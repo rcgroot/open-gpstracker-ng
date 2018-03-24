@@ -20,10 +20,7 @@ import nl.sogeti.android.gpstracker.ng.features.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.features.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeletePresenter
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackEditPresenter
-import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
-import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListNavigation
-import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListPresenter
-import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
+import nl.sogeti.android.gpstracker.ng.features.tracklist.*
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.ng.features.wear.LoggingService
 import nl.sogeti.android.gpstracker.ng.features.wear.PhoneMessageListenerService
@@ -58,6 +55,7 @@ interface FeatureComponent {
     fun inject(graphSpeedOverTimeProvider: GraphSpeedOverTimeDataProvider)
     fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
     fun inject(controlFragment: ControlFragment)
+    fun inject(trackListActivity: TrackListActivity)
     fun trackDeletePresenter(): TrackDeletePresenter
     fun trackEditPresenter(): TrackEditPresenter
     fun graphsPresenter(): GraphsPresenter

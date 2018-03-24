@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.pm.PackageManager
@@ -37,12 +38,13 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSearch
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_DEFAULT
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants
+import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Tracks._ID
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
 import nl.sogeti.android.gpstracker.utils.contentprovider.getLong
@@ -56,20 +58,35 @@ const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exp
 
 class TrackListPresenter @Inject constructor(
         val contentController: ContentController,
-        val trackSelection: TrackSelection,
+        private val trackSelection: TrackSelection,
+        private val trackSearch: TrackSearch,
         val summaryManager: SummaryManager,
         @Named("SystemBackgroundExecutor") val executor: Executor,
-        val shareIntentFactory: ShareIntentFactory,
-        val packageManager: PackageManager,
-        val notification: ImportNotification
-) : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener, TrackSelection.Listener {
+        private val shareIntentFactory: ShareIntentFactory,
+        private val packageManager: PackageManager,
+        private val notification: ImportNotification)
+    : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener {
 
     var navigation: TrackListNavigation? = null
 
     val viewModel: TrackListViewModel = TrackListViewModel()
 
+    private val selectionObserver = Observer<Uri> { trackUri -> onTrackSelected(trackUri) }
+    private val searchQueryObserver = Observer<String> { _ -> onSearchQuery() }
+
+    private val selection: Pair<String, List<String>>?
+        get() {
+            val argument = trackSearch.query.value.asArgument()
+            return if (argument.isNullOrBlank()) {
+                null
+            } else {
+                Pair("name LIKE ?", listOf(argument))
+            }
+        }
+
     init {
-        trackSelection.addListener(this)
+        trackSelection.selection.observeForever(selectionObserver)
+        trackSearch.query.observeForever(searchQueryObserver)
         contentController.registerObserver(tracksUri())
     }
 
@@ -88,7 +105,8 @@ class TrackListPresenter @Inject constructor(
     }
 
     public override fun onCleared() {
-        trackSelection.removeListener(this)
+        trackSelection.selection.removeObserver(selectionObserver)
+        trackSearch.query.removeObserver(searchQueryObserver)
         contentController.unregisterObserver()
         notification.dismissCompletedImport()
         super.onCleared()
@@ -104,13 +122,13 @@ class TrackListPresenter @Inject constructor(
 
     private fun addTracksToModel() {
         executor.execute {
-            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver()) {
-                val id = it.getLong(ContentConstants.Tracks._ID)!!
+            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver(), selection, listOf(_ID)) {
+                val id = it.getLong(_ID)!!
                 trackUri(id)
             }
-            viewModel.selectedTrack.set(trackSelection.trackUri)
+            viewModel.selectedTrack.set(trackSelection.selection.value)
             viewModel.tracks.set(trackList.asReversed())
-            trackSelection.trackUri?.let { scrollToTrack(it) }
+            trackSelection.selection.value?.let { scrollToTrack(it) }
         }
     }
 
@@ -124,7 +142,7 @@ class TrackListPresenter @Inject constructor(
     //region View (adapter) callbacks
 
     override fun didSelectTrack(track: Uri, name: String) {
-        trackSelection.selectTrack(track, name)
+        trackSelection.selection.value = track
         navigation?.finishTrackSelection()
     }
 
@@ -172,12 +190,20 @@ class TrackListPresenter @Inject constructor(
         }
     }
 
+    internal fun onSearchClosed() {
+        trackSearch.query.value = null
+    }
+
     //endregion
 
     //region Track selection listening
 
-    override fun onTrackSelection(trackUri: Uri, trackName: String) {
+    private fun onTrackSelected(trackUri: Uri?) {
         viewModel.selectedTrack.set(trackUri)
+    }
+
+    private fun onSearchQuery() {
+        markDirty()
     }
 
     //endregion
@@ -195,5 +221,19 @@ class TrackListPresenter @Inject constructor(
                 }
 
     }
+
+    private fun String?.asArgument(): String =
+            if (this == null) {
+                ""
+            } else {
+                val filtered = this.filter { it != '%' }
+                if (filtered.isNotBlank()) {
+                    "%$filtered%"
+                } else {
+                    ""
+                }
+
+            }
+
 }
 

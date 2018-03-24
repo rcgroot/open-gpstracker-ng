@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.model
 
+import android.arch.lifecycle.MutableLiveData
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureScope
 import javax.inject.Inject
@@ -35,31 +36,6 @@ import javax.inject.Inject
 @FeatureScope
 class TrackSelection @Inject constructor() {
 
-    var trackUri: Uri? = null
-        private set
-    var trackName: String = ""
-        private set
-
-    private val listeners = mutableListOf<Listener>()
-
-    fun addListener(listener: Listener) {
-        listeners.add(listener)
-    }
-
-    fun removeListener(listener: Listener) {
-        listeners.remove(listener)
-    }
-
-    fun selectTrack(trackUri: Uri, trackName: String) {
-        this.trackUri = trackUri
-        this.trackName = trackName
-        listeners.forEach {
-            it.onTrackSelection(trackUri, this.trackName)
-        }
-    }
-
-    interface Listener {
-        fun onTrackSelection(trackUri: Uri, trackName: String)
-    }
+    val selection: MutableLiveData<Uri> = MutableLiveData()
 
 }

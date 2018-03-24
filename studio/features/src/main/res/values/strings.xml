@@ -113,4 +113,5 @@
     <string name="notification_import_context_ongoing">Import in progress</string>
     <string name="notification_import_context_complete">Import complete</string>
     <string name="fragment_importtracktype_title">Import track type</string>
+    <string name="menu_item_search">Search</string>
 </resources>

@@ -39,15 +39,13 @@ import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.postMainThread
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import javax.inject.Inject
 
 class GraphsPresenter @Inject constructor(
-        val summaryManager: SummaryManager,
-        val statisticsFormatter: StatisticsFormatter,
+        private val summaryManager: SummaryManager,
         trackSelection: TrackSelection,
         contentController: ContentController)
-    : AbstractSelectedTrackPresenter(trackSelection, contentController), TrackSelection.Listener {
+    : AbstractSelectedTrackPresenter(trackSelection, contentController) {
 
     internal val viewModel = GraphsViewModel()
 

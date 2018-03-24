@@ -46,12 +46,10 @@ import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
-import nl.sogeti.android.gpstracker.service.integration.ContentConstants.TracksColumns.NAME
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
 import nl.sogeti.android.gpstracker.utils.contentprovider.getLong
-import nl.sogeti.android.gpstracker.utils.contentprovider.getString
 import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import javax.inject.Inject
 
@@ -60,9 +58,9 @@ class TrackMapPresenter @Inject constructor(
         private val trackTileProviderFactory: TrackTileProviderFactory,
         private val locationFactory: LocationFactory,
         private val loggingStateController: LoggingStateController,
-        trackSelection: TrackSelection,
+        private val trackSelection: TrackSelection,
         contentController: ContentController)
-    : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, TrackSelection.Listener, LoggingStateListener {
+    : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, LoggingStateListener {
 
     private var executingReader: TrackReader? = null
 
@@ -112,7 +110,7 @@ class TrackMapPresenter @Inject constructor(
 
     override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
         if (loggingState == ServiceConstants.STATE_LOGGING && trackUri != null) {
-            trackSelection.selectTrack(trackUri, name ?: "")
+            trackSelection.selection.value = trackUri
         }
     }
 
@@ -156,16 +154,12 @@ class TrackMapPresenter @Inject constructor(
     }
 
     private fun makeTrackSelection() {
-        val selectedTrack = trackSelection.trackUri
-        if (selectedTrack != null && selectedTrack.lastPathSegment != "-1") {
-            onTrackSelection(selectedTrack, trackSelection.trackName)
-        } else {
-            val lastTrack = tracksUri().runQuery(BaseConfiguration.appComponent.contentResolver()) { it.moveToLast(); Pair(it.getLong(BaseColumns._ID), it.getString(NAME)) }
-            if (lastTrack?.first != null) {
-                val trackId = lastTrack.first!!
-                val lastTrackUri = trackUri(trackId)
-                val name = lastTrack.second ?: ""
-                trackSelection.selectTrack(lastTrackUri, name)
+        val selectedTrack = trackSelection.selection.value
+        if (selectedTrack == null || selectedTrack.lastPathSegment != "-1") {
+            val lastTrack = tracksUri().runQuery(BaseConfiguration.appComponent.contentResolver()) { it.moveToLast(); it.getLong(BaseColumns._ID) }
+            if (lastTrack != null) {
+                val lastTrackUri = trackUri(lastTrack)
+                trackSelection.selection.value = lastTrackUri
             } else {
                 viewModel.trackHead.set(locationFactory.getLocationCoordinates())
             }

@@ -38,4 +38,7 @@
     <string name="notification_operation_channel_name">Open GPS Tracker GPS logger operations</string>
     <string name="notification_operation_channel_description">A separate process that records your GPS track</string>
     <string name="initial_track_name">Unnamed track</string>
+    <string name="search_hint">name of track</string>
+    <string name="search_label">Track name</string>
+    <string name="search_description">search for recorded GPS tracks</string>
 </resources>
