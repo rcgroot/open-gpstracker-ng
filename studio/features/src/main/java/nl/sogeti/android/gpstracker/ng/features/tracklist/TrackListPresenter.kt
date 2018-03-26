@@ -77,7 +77,7 @@ class TrackListPresenter @Inject constructor(
     private val selection: Pair<String, List<String>>?
         get() {
             val argument = trackSearch.query.value.asArgument()
-            return if (argument.isNullOrBlank()) {
+            return if (argument.isBlank()) {
                 null
             } else {
                 Pair("name LIKE ?", listOf(argument))
@@ -87,7 +87,7 @@ class TrackListPresenter @Inject constructor(
     init {
         trackSelection.selection.observeForever(selectionObserver)
         trackSearch.query.observeForever(searchQueryObserver)
-        contentController.registerObserver(tracksUri())
+        contentController.registerObserver(this, tracksUri())
     }
 
     override fun onStart() {
@@ -96,7 +96,15 @@ class TrackListPresenter @Inject constructor(
     }
 
     override fun onChange() {
-        addTracksToModel()
+        executor.execute {
+            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver(), selection, listOf(_ID)) {
+                val id = it.getLong(_ID)!!
+                trackUri(id)
+            }
+            viewModel.selectedTrack.set(trackSelection.selection.value)
+            viewModel.tracks.set(trackList.asReversed())
+            trackSelection.selection.value?.let { scrollToTrack(it) }
+        }
     }
 
     override fun onStop() {
@@ -115,22 +123,10 @@ class TrackListPresenter @Inject constructor(
     /* Content watching */
 
     override fun onChangeUriContent(contentUri: Uri, changesUri: Uri) {
-        super.markDirty()
+        markDirty()
     }
 
     /* Content retrieval */
-
-    private fun addTracksToModel() {
-        executor.execute {
-            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver(), selection, listOf(_ID)) {
-                val id = it.getLong(_ID)!!
-                trackUri(id)
-            }
-            viewModel.selectedTrack.set(trackSelection.selection.value)
-            viewModel.tracks.set(trackList.asReversed())
-            trackSelection.selection.value?.let { scrollToTrack(it) }
-        }
-    }
 
     private fun scrollToTrack(trackUri: Uri) {
         val position = viewModel.tracks.get()?.indexOf(trackUri)

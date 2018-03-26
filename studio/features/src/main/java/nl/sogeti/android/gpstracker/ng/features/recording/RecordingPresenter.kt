@@ -157,7 +157,7 @@ class RecordingPresenter @Inject constructor(
     //region Private
 
     private fun startContentUpdates() {
-        contentController.registerObserver(viewModel.trackUri.get())
+        contentController.registerObserver(this, viewModel.trackUri.get())
     }
 
     private fun stopContentUpdates() {
@@ -178,7 +178,7 @@ class RecordingPresenter @Inject constructor(
 
     private fun updateRecording(context: Context, loggingState: Int, name: String?, trackUri: Uri?) {
         if (trackUri != null) {
-            contentController.registerObserver(trackUri)
+            contentController.registerObserver(this, trackUri)
             viewModel.trackUri.set(trackUri)
             if (name != null) {
                 viewModel.name.set(name)

@@ -6,16 +6,12 @@ import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentCo
 
 abstract class AbstractTrackPresenter(private val contentController: ContentController) : AbstractPresenter(), ContentController.Listener {
 
-    var trackUri : Uri? = null
+    var trackUri: Uri? = null
         set(value) {
             field = value
-            contentController.registerObserver(trackUri)
+            contentController.registerObserver(this, trackUri)
             markDirty()
         }
-
-    init {
-        this.contentController.listener = this
-    }
 
     @CallSuper
     override fun onCleared() {

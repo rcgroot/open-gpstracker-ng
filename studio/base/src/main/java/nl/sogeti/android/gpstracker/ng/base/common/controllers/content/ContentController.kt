@@ -11,16 +11,19 @@ import javax.inject.Inject
  */
 class ContentController @Inject constructor(private val context: Context) {
 
-    var listener: Listener? = null
+    private var listener: Listener? = null
 
     private val contentObserver = ContentObserver()
 
-    fun registerObserver(toUri: Uri?) {
+    fun registerObserver(listener: Listener, toUri: Uri?) {
+        contentObserver.unregister()
+        this.listener = listener
         contentObserver.register(toUri)
     }
 
     fun unregisterObserver() {
         contentObserver.unregister()
+        this.listener = null
     }
 
     private inner class ContentObserver : android.database.ContentObserver(Handler(Looper.getMainLooper())) {
