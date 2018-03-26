@@ -525,9 +525,8 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
         mPrecision = mPersistence.getPrecision();
         mDistance = mPersistence.getDistance();
         int previousState = mPersistence.getLoggingState();
-
+        Timber.d("Load GPS Listen State() from previous state: " + previousState);
         if (previousState == ServiceConstants.STATE_LOGGING || previousState == ServiceConstants.STATE_PAUSED) {
-            Timber.d("Load GPS Listen State()");
             mLoggerNotification.startLogging(mPrecision, mLoggingState, mStatusMonitor, mTrackId);
 
             mTrackId = mPersistence.getTrackId();
@@ -677,7 +676,7 @@ class GPSListener implements LocationListener, GpsStatus.Listener {
         }
         Timber.d("startListening(" + provider + ", " + milliseconds / 1000L + "s, " + meters + "m, " + accuracy + "m)");
         mLocationManager.requestLocationUpdates(provider, milliseconds, meters, this);
-        mCheckPeriod = Math.max(12 * milliseconds, 120);
+        mCheckPeriod = Math.max(12 * milliseconds, 120 * 1000L);
     }
 
     void verifyLoggingState() {

@@ -13,7 +13,7 @@ import timber.log.Timber
 abstract class MessageListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent?) {
-        Timber.d("onDataChanged($messageEvent: MessageEvent?")
+        Timber.d("onMessageReceived($messageEvent: MessageEvent?")
         openMessage(messageEvent?.path, messageEvent?.data)
     }
 

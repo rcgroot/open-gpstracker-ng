@@ -35,7 +35,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
-import nl.sogeti.android.gpstracker.service.BuildConfig;
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommander;
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants;
 import nl.sogeti.android.gpstracker.service.linger.LingerService;
@@ -50,18 +49,13 @@ import timber.log.Timber;
  */
 public class GPSLoggerService extends LingerService {
 
+    public static final int LINGER_DURATION = 10;
     private GPSListener mGPSListener;
     private LoggerNotification mLoggerNotification;
     private IBinder mBinder = new GPSLoggerServiceImplementation();
 
     public GPSLoggerService() {
-        super("GPS Logger", 10);
-    }
-
-    static {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
+        super("GPS Logger", LINGER_DURATION);
     }
 
     @Override
@@ -104,7 +98,7 @@ public class GPSLoggerService extends LingerService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Timber.d("handleCommand(Intent " + intent.getAction() + ")");
+        Timber.d("onHandleIntent(Intent " + intent.getExtras().keySet() + ")");
         LoggerPersistence persistence = new LoggerPersistence(this);
         if (intent.hasExtra(ServiceConstants.Commands.CONFIG_PRECISION)) {
             int precision = intent.getIntExtra(ServiceConstants.Commands.CONFIG_PRECISION, ServiceConstants.LOGGING_NORMAL);
@@ -191,7 +185,7 @@ public class GPSLoggerService extends LingerService {
         if (mGPSListener.isLogging()) {
             setLingerDuration(mGPSListener.getCheckPeriod() / 1000L);
         } else {
-            setLingerDuration(10L);
+            setLingerDuration(LINGER_DURATION);
         }
     }
 
@@ -203,8 +197,7 @@ public class GPSLoggerService extends LingerService {
         mGPSListener.onCreate();
         Intent restoreIntent = new Intent();
         restoreIntent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESTORE);
-        onStartCommand(restoreIntent, 0, 0);
-
+        sendMessage(restoreIntent);
     }
 
     @Override

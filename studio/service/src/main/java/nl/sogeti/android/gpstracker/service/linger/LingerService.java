@@ -67,6 +67,7 @@ public abstract class LingerService extends Service {
 
     @Override
     public void onCreate() {
+        Timber.d("onCreate()");
         super.onCreate();
         HandlerThread thread = new HandlerThread("LingerService[" + mName + "]");
         thread.start();
@@ -77,6 +78,7 @@ public abstract class LingerService extends Service {
 
     @Override
     final public int onStartCommand(Intent intent, int flags, int startId) {
+        Timber.d("onStartCommand(Intent intent:" + intent + ", int flags:" + flags + ", int startId:" + startId + ")");
         if (isFirstRun) {
             isFirstRun = false;
             if (intent == null) {
@@ -86,16 +88,21 @@ public abstract class LingerService extends Service {
             }
         }
 
-        Message msg = mServiceHandler.obtainMessage();
-        msg.obj = intent;
-        mServiceHandler.sendMessage(msg);
+        sendMessage(intent);
 
         // Start sticky so ungraceful stop can be detected and relayed into a didContinue()
         return START_STICKY;
     }
 
+    protected void sendMessage(Intent intent) {
+        Message msg = mServiceHandler.obtainMessage();
+        msg.obj = intent;
+        mServiceHandler.sendMessage(msg);
+    }
+
     @Override
     public void onDestroy() {
+        Timber.d("onDestroy()");
         mServiceHandler.removeCallbacks(continueRunnable);
         mServiceHandler.post(new Runnable() {
             @Override
@@ -105,6 +112,7 @@ public abstract class LingerService extends Service {
         });
 
         didDestroy();
+        super.onDestroy();
     }
 
     public long getLingerDuration() {
