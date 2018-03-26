@@ -13,8 +13,8 @@ import nl.sogeti.android.gpstracker.service.BuildConfig;
 import nl.sogeti.android.gpstracker.service.R;
 import nl.sogeti.android.gpstracker.service.util.TrackUriExtensionKt;
 
-import static nl.sogeti.android.gpstracker.service.logger.LoggingConstants.FINE_DISTANCE;
-import static nl.sogeti.android.gpstracker.service.logger.LoggingConstants.FINE_INTERVAL;
+import static nl.sogeti.android.gpstracker.service.integration.ServiceConstants.LOGGING_CUSTOM;
+import static nl.sogeti.android.gpstracker.service.integration.ServiceConstants.LOGGING_FINE;
 
 public class ServiceCommander implements ServiceCommanderInterface {
 
@@ -39,10 +39,6 @@ public class ServiceCommander implements ServiceCommanderInterface {
         return intent;
     }
 
-    public void startGPSLogging() {
-        startGPSLogging(context.getString(R.string.initial_track_name));
-    }
-
 
     public boolean hasForInitialName(Uri trackUri) {
         String name = TrackUriExtensionKt.readName(trackUri);
@@ -50,20 +46,21 @@ public class ServiceCommander implements ServiceCommanderInterface {
         return context.getString(R.string.initial_track_name).equals(name);
     }
 
+    public void startGPSLogging() {
+        startGPSLogging(context.getString(R.string.initial_track_name));
+    }
+
     public void startGPSLogging(String trackName) {
+        startGPSLogging(trackName, LOGGING_FINE);
+    }
+
+    public void startGPSLogging(String trackName, int precision) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_START);
         intent.putExtra(ServiceConstants.EXTRA_TRACK_NAME, trackName);
-        intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, FINE_INTERVAL);
-        intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, FINE_DISTANCE);
+        intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, precision);
         intent.putExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, true);
         context.startService(intent);
-    }
-
-    public void startGPSLogging(int precision, int customInterval, float customDistance, String trackName) {
-        setCustomLoggingPrecision(customInterval, customDistance);
-        setLoggingPrecision(precision);
-        startGPSLogging(trackName);
     }
 
     public void pauseGPSLogging() {
@@ -100,6 +97,7 @@ public class ServiceCommander implements ServiceCommanderInterface {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, seconds);
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, meters);
+        intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, LOGGING_CUSTOM);
         context.startService(intent);
     }
 
