@@ -19,6 +19,20 @@
         android:icon="@drawable/ic_mode_edit_black_24dp"
         android:orderInCategory="40"
         android:title="@string/action_edit"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_satellite"
+        android:checkable="true"
+        android:icon="@drawable/ic_map_black_24dp"
+        android:orderInCategory="50"
+        android:title="@string/action_satellite"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_lock"
+        android:checkable="true"
+        android:icon="@drawable/ic_lock_outline_black_24dp"
+        android:orderInCategory="50"
+        android:title="@string/action_screen_wake_lock"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"

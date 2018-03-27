@@ -13,11 +13,11 @@ ext {
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
-    playServicesVersion = '11.8.0'
+    playServicesVersion = '12.0.0'
     googleServicesVersion = '3.1.0'
     fabricVerion = '1.24.4'
     crashlicticsVerion = '2.7.1'
-    archComponentsVerion = '1.1.0'
+    archComponentsVerion = '1.1.1'
 
     // Testing
     leakcanaryVersion = '1.5'

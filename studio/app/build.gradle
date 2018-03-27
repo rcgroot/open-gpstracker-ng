@@ -82,6 +82,8 @@ configurations.all {
         force "com.android.support:support-v4:$rootProject.supportLibraryVersion"
         force "com.android.support:design:$rootProject.supportLibraryVersion"
         force "android.arch.lifecycle:runtime:$rootProject.archComponentsVerion"
+        force "android.arch.lifecycle:livedata-core:$rootProject.archComponentsVerion"
+        force "android.arch.lifecycle:viewmodel:$rootProject.archComponentsVerion"
     }
 }
 

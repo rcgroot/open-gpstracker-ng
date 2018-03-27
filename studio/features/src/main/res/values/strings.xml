@@ -35,6 +35,8 @@
     <string name="action_list">List tracks</string>
     <string name="action_about">About</string>
     <string name="action_edit">Edit details</string>
+    <string name="action_satellite">Satellite map</string>
+    <string name="action_screen_wake_lock">Keep screen on</string>
     <!--Map list screen / Recording fragment-->
     <string name="fragment_recording_summary">%1$s in %2$s with a %3$s average speed</string>
     <string name="fragment_recording_satellites">SATS\n%1$d/%2$d</string>

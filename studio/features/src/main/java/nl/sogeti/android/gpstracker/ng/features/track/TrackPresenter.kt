@@ -78,6 +78,14 @@ class TrackPresenter @Inject constructor(
         navigation?.showGraphs()
     }
 
+    fun onSatelliteSelected() {
+        viewModel.showSatellite.set(!viewModel.showSatellite.get())
+    }
+
+    fun onScreenLockSelected() {
+        viewModel.wakeLockScreen.set(!viewModel.wakeLockScreen.get())
+    }
+
     //endregion
 
     @Suppress("UNCHECKED_CAST")
