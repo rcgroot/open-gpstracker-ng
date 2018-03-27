@@ -3,6 +3,8 @@ package nl.sogeti.android.gpstracker.ng.features.map.bindings
 import android.databinding.BindingAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID
+import com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
@@ -42,8 +44,6 @@ open class MapBindingAdapters {
 
     @BindingAdapter("center")
     fun setMapTarget(map: MapView, center: LatLng?) {
-        val OVERVIEW = 10.0F
-        val CLOSE_UP = 15.0F
         if (center != null) {
             map.getMapAsync {
                 val cameraFocus = com.google.android.gms.maps.model.LatLng(center.latitude, center.longitude)
@@ -55,5 +55,21 @@ open class MapBindingAdapters {
                 it.animateCamera(update)
             }
         }
+    }
+
+    @BindingAdapter("satellite")
+    fun setSatellite(map: MapView, showSatellite: Boolean) {
+        map.getMapAsync {
+            if (showSatellite) {
+                it.mapType = MAP_TYPE_HYBRID
+            } else {
+                it.mapType = MAP_TYPE_NORMAL
+            }
+        }
+    }
+
+    companion object {
+        private const val OVERVIEW = 10.0F
+        private const val CLOSE_UP = 15.0F
     }
 }
