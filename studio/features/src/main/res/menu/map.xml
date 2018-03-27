@@ -3,40 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:privateContext="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity">
     <item
-        android:id="@+id/action_list"
-        android:icon="@drawable/ic_format_list_numbered_black_24dp"
-        android:orderInCategory="20"
-        android:title="@string/action_list"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_graphs"
-        android:icon="@drawable/ic_graphs"
-        android:orderInCategory="20"
-        android:title="@string/action_graphs"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_edit"
-        android:icon="@drawable/ic_mode_edit_black_24dp"
-        android:orderInCategory="40"
-        android:title="@string/action_edit"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_satellite"
         android:checkable="true"
         android:icon="@drawable/ic_map_black_24dp"
-        android:orderInCategory="50"
+        android:orderInCategory="60"
         android:title="@string/action_satellite"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_lock"
         android:checkable="true"
         android:icon="@drawable/ic_lock_outline_black_24dp"
-        android:orderInCategory="50"
+        android:orderInCategory="60"
         android:title="@string/action_screen_wake_lock"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_about"
-        android:orderInCategory="50"
-        android:title="@string/action_about"
         app:showAsAction="never" />
 </menu>

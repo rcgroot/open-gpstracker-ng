@@ -40,7 +40,6 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.ActivityTrackMapBinding
@@ -48,8 +47,11 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.ActivityTrackMapBi
 class TrackActivity : AppCompatActivity() {
 
     private val navigation = TrackNavigator(this)
+
     private lateinit var presenter: TrackPresenter
+
     private var startWithOpenTracks: Boolean = false
+
     private val optionMenuObserver: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
             invalidateOptionsMenu()
@@ -64,8 +66,6 @@ class TrackActivity : AppCompatActivity() {
         presenter = ViewModelProviders.of(this, TrackPresenter.newFactory()).get(TrackPresenter::class.java)
         presenter.navigation = navigation
         presenter.viewModel.name.addOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.showSatellite.addOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(optionMenuObserver)
         binding.viewModel = presenter.viewModel
 
         if (savedInstanceState == null) {
@@ -96,8 +96,7 @@ class TrackActivity : AppCompatActivity() {
     override fun onDestroy() {
         presenter.navigation = null
         presenter.viewModel.name.removeOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.showSatellite.removeOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(optionMenuObserver)
+
         super.onDestroy()
     }
 
@@ -111,7 +110,7 @@ class TrackActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.map, menu)
+        menuInflater.inflate(R.menu.track, menu)
         DrawableCompat.setTint(menu.findItem(R.id.action_edit).icon, ContextCompat.getColor(this, R.color.primary_text))
         DrawableCompat.setTint(menu.findItem(R.id.action_list).icon, ContextCompat.getColor(this, R.color.primary_text))
         DrawableCompat.setTint(menu.findItem(R.id.action_graphs).icon, ContextCompat.getColor(this, R.color.primary_text))
@@ -120,9 +119,8 @@ class TrackActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.action_edit).isEnabled = presenter.viewModel.isEditable
-        menu.findItem(R.id.action_satellite).isChecked = presenter.viewModel.showSatellite.get()
-        menu.findItem(R.id.action_lock).isChecked = presenter.viewModel.wakeLockScreen.get()
 
         return true
     }
@@ -143,14 +141,6 @@ class TrackActivity : AppCompatActivity() {
             }
             item.itemId == R.id.action_graphs -> {
                 presenter.onGraphsOptionSelected()
-                true
-            }
-            item.itemId == R.id.action_satellite -> {
-                presenter.onSatelliteSelected()
-                true
-            }
-            item.itemId == R.id.action_lock -> {
-                presenter.onScreenLockSelected()
                 true
             }
             else -> super.onOptionsItemSelected(item)

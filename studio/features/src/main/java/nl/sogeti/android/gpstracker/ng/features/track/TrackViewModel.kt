@@ -28,7 +28,6 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track
 
-import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
@@ -40,6 +39,4 @@ class TrackViewModel {
     val trackIcon = ObservableInt(-1)
     val isEditable: Boolean
         get() = trackUri.get() != null
-    val showSatellite = ObservableBoolean(false)
-    val wakeLockScreen = ObservableBoolean(false)
 }

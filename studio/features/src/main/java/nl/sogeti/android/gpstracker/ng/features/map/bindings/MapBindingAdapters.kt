@@ -1,8 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features.map.bindings
 
 import android.databinding.BindingAdapter
-
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView

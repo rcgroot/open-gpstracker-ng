@@ -131,6 +131,14 @@ class TrackMapPresenter @Inject constructor(
         viewModel.completeBounds.set(null)
     }
 
+    fun onSatelliteSelected() {
+        viewModel.showSatellite.set(!viewModel.showSatellite.get())
+    }
+
+    fun onScreenLockSelected() {
+        viewModel.wakeLockScreen.set(!viewModel.wakeLockScreen.get())
+    }
+
     /* Private */
 
     private fun startReadingTrack(trackUri: Uri) {

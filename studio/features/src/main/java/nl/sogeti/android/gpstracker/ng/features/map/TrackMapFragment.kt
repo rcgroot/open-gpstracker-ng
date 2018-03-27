@@ -30,11 +30,10 @@ package nl.sogeti.android.gpstracker.ng.features.map
 
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.databinding.Observable
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -48,12 +47,25 @@ class TrackMapFragment : Fragment() {
 
     private var binding: FragmentMapBinding? = null
 
+    private val optionMenuObserver: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable, propertyId: Int) {
+            activity?.invalidateOptionsMenu()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false, FeaturesBindingComponent())
         presenter = ViewModelProviders.of(this, TrackMapPresenter.newFactory()).get(TrackMapPresenter::class.java)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
         binding.viewModel = presenter.viewModel
         binding.presenter = presenter
+        presenter.viewModel.showSatellite.addOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(optionMenuObserver)
         this.binding = binding
 
         return binding.root
@@ -86,15 +98,47 @@ class TrackMapFragment : Fragment() {
         getMapView().onStop()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        getMapView().onDestroy()
+        binding = null
+    }
+
+    override fun onDestroy() {
+        presenter.viewModel.showSatellite.removeOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(optionMenuObserver)
+        super.onDestroy()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         getMapView().onSaveInstanceState(outState)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        getMapView().onDestroy()
-        binding = null
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.map, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        menu.findItem(R.id.action_satellite).isChecked = presenter.viewModel.showSatellite.get()
+        menu.findItem(R.id.action_lock).isChecked = presenter.viewModel.wakeLockScreen.get()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when {
+            item.itemId == R.id.action_satellite -> {
+                presenter.onSatelliteSelected()
+                true
+            }
+            item.itemId == R.id.action_lock -> {
+                presenter.onScreenLockSelected()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onLowMemory() {
