@@ -18,8 +18,8 @@
         <item quantity="other">%d days</item>
     </plurals>
 
-    <string name="days_compact">%1dsd%2$dh duration</string>
-    <string name="hours_compact">%1dsh%2$dm duration</string>
-    <string name="minutes_compact">%1$dm%2$ds duration</string>
+    <string name="days_compact">%1$d d %2$d h</string>
+    <string name="hours_compact">%1$d h %2$d m</string>
+    <string name="minutes_compact">%1$d m %2$d s</string>
 
 </resources>
