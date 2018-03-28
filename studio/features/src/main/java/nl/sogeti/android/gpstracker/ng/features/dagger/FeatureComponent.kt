@@ -16,6 +16,7 @@ import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.features.track.TrackNavigator
 import nl.sogeti.android.gpstracker.ng.features.track.TrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeletePresenter
@@ -56,6 +57,7 @@ interface FeatureComponent {
     fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
     fun inject(controlFragment: ControlFragment)
     fun inject(trackListActivity: TrackListActivity)
+    fun inject(trackActivity: TrackActivity)
     fun trackDeletePresenter(): TrackDeletePresenter
     fun trackEditPresenter(): TrackEditPresenter
     fun graphsPresenter(): GraphsPresenter

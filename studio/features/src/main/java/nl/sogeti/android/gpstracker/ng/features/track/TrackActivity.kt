@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track
 
+import android.app.SearchManager
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -40,9 +41,12 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSearch
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.ActivityTrackMapBinding
+import javax.inject.Inject
 
 class TrackActivity : AppCompatActivity() {
 
@@ -58,8 +62,12 @@ class TrackActivity : AppCompatActivity() {
         }
     }
 
+    @Inject
+    lateinit var trackSearch: TrackSearch
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FeatureConfiguration.featureComponent.inject(this)
         val binding = DataBindingUtil.setContentView<ActivityTrackMapBinding>(this, R.layout.activity_track_map, FeaturesBindingComponent())
         setSupportActionBar(binding.toolbar)
         binding.toolbar.bringToFront()
@@ -77,7 +85,6 @@ class TrackActivity : AppCompatActivity() {
             presenter.viewModel.trackUri.set(uri)
             presenter.viewModel.name.set(name)
         }
-
     }
 
     override fun onStart() {
@@ -98,6 +105,13 @@ class TrackActivity : AppCompatActivity() {
         presenter.viewModel.name.removeOnPropertyChangedCallback(optionMenuObserver)
 
         super.onDestroy()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.action == Intent.ACTION_SEARCH) {
+            trackSearch.query.value = intent.getStringExtra(SearchManager.QUERY)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

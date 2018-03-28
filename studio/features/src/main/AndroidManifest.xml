@@ -11,6 +11,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity"
@@ -21,12 +28,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
         </activity>
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsActivity"

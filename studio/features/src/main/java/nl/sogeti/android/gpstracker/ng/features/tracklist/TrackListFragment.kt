@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.app.SearchManager
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ComponentName
 import android.content.Context
 import android.database.CursorWrapper
 import android.databinding.DataBindingUtil
@@ -111,7 +110,7 @@ class TrackListFragment : ActivityResultLambdaFragment() {
     private fun attachSearch(searchItem: MenuItem) {
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = searchItem.actionView as SearchView
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(ComponentName(activity, TrackListActivity::class.java)))
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
         searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean {
                 setQueryToSuggestion(position, false)
