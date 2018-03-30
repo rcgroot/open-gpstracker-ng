@@ -53,6 +53,16 @@ class TrackMapFragment : Fragment() {
         }
     }
 
+    private val wakelockObservable: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            if (presenter.viewModel.wakeLockScreen.get()) {
+                activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -66,6 +76,7 @@ class TrackMapFragment : Fragment() {
         binding.presenter = presenter
         presenter.viewModel.showSatellite.addOnPropertyChangedCallback(optionMenuObserver)
         presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(wakelockObservable)
         this.binding = binding
 
         return binding.root
@@ -86,27 +97,28 @@ class TrackMapFragment : Fragment() {
     }
 
     override fun onPause() {
-        super.onPause()
         getMapView().onPause()
+        super.onPause()
 
     }
 
     override fun onStop() {
-        super.onStop()
         presenter.stop()
         permissionRequester.stop()
         getMapView().onStop()
+        super.onStop()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         getMapView().onDestroy()
         binding = null
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
         presenter.viewModel.showSatellite.removeOnPropertyChangedCallback(optionMenuObserver)
         presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(wakelockObservable)
         super.onDestroy()
     }
 
