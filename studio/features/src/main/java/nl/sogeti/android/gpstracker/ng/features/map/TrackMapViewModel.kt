@@ -41,5 +41,6 @@ class TrackMapViewModel {
     val completeBounds = ObservableField<LatLngBounds?>()
     val trackHead = ObservableField<LatLng?>()
     val showSatellite = ObservableBoolean(false)
-    val wakeLockScreen = ObservableBoolean(false)
+    val willLock = ObservableBoolean(false)
+    val isLocked = ObservableBoolean(false)
 }

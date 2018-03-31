@@ -28,12 +28,15 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.model.not
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
@@ -43,6 +46,7 @@ import javax.inject.Inject
 
 class GraphsPresenter @Inject constructor(
         private val summaryManager: SummaryManager,
+        private val preferences: Preferences,
         trackSelection: TrackSelection,
         contentController: ContentController)
     : AbstractSelectedTrackPresenter(trackSelection, contentController) {
@@ -52,8 +56,12 @@ class GraphsPresenter @Inject constructor(
     private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
     private var runningSelection = false
+    private val inverseSpeedPreferenceObserver = Observer<Boolean> {
+        viewModel.inverseSpeed.set(it ?: false)
+    }
 
     init {
+        preferences.inverseSpeed.observeForever(inverseSpeedPreferenceObserver)
         resetTrack()
         graphDataProvider = GraphSpeedOverTimeDataProvider()
         viewModel.durationSelected.set(true)
@@ -67,6 +75,11 @@ class GraphsPresenter @Inject constructor(
     override fun onStop() {
         summaryManager.stop()
         super.onStop()
+    }
+
+    override fun onCleared() {
+        preferences.inverseSpeed.removeObserver(inverseSpeedPreferenceObserver)
+        super.onCleared()
     }
 
     //region View callbacks
@@ -100,6 +113,11 @@ class GraphsPresenter @Inject constructor(
             }
         }
     }
+
+    fun onInverseSpeedSelected() {
+        preferences.inverseSpeed.not()
+    }
+
     //endregion
 
     //region update

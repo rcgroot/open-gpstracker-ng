@@ -36,7 +36,7 @@ fun onMainThread(item: () -> Unit) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         item()
     } else {
-        Handler(Looper.getMainLooper()).post(item)
+        postMainThread(item)
     }
 }
 

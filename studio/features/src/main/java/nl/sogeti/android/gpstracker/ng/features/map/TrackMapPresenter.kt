@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
@@ -42,7 +43,10 @@ import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.model.not
+import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
@@ -59,6 +63,7 @@ class TrackMapPresenter @Inject constructor(
         private val locationFactory: LocationFactory,
         private val loggingStateController: LoggingStateController,
         private val trackSelection: TrackSelection,
+        private val preferences: Preferences,
         contentController: ContentController)
     : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, LoggingStateListener {
 
@@ -68,7 +73,18 @@ class TrackMapPresenter @Inject constructor(
 
     private var tileProvider: TrackTileProvider? = null
 
+    private val wakelockPreferenceObserver = Observer<Boolean> {
+        viewModel.willLock.set(it ?: false)
+        updateLock()
+    }
+
+    private val satellitePreferenceObserver = Observer<Boolean> {
+        viewModel.showSatellite.set(it ?: false)
+    }
+
     init {
+        preferences.wakelockScreen.observeForever(wakelockPreferenceObserver)
+        preferences.satellite.observeForever(satellitePreferenceObserver)
         loggingStateController.connect(this)
         makeTrackSelection()
     }
@@ -98,6 +114,8 @@ class TrackMapPresenter @Inject constructor(
     }
 
     override fun onCleared() {
+        preferences.wakelockScreen.removeObserver(wakelockPreferenceObserver)
+        preferences.satellite.removeObserver(satellitePreferenceObserver)
         loggingStateController.disconnect()
         super.onCleared()
     }
@@ -109,7 +127,9 @@ class TrackMapPresenter @Inject constructor(
     }
 
     override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        if (loggingState == ServiceConstants.STATE_LOGGING && trackUri != null) {
+        val isLogging = loggingState == ServiceConstants.STATE_LOGGING
+        updateLock()
+        if (isLogging && trackUri != null) {
             trackSelection.selection.value = trackUri
         }
     }
@@ -132,14 +152,20 @@ class TrackMapPresenter @Inject constructor(
     }
 
     fun onSatelliteSelected() {
-        viewModel.showSatellite.set(!viewModel.showSatellite.get())
+        preferences.satellite.not()
     }
 
     fun onScreenLockSelected() {
-        viewModel.wakeLockScreen.set(!viewModel.wakeLockScreen.get())
+        preferences.wakelockScreen.not()
     }
 
     /* Private */
+
+    private fun updateLock() {
+        val isLogging = loggingStateController.loggingState == ServiceConstants.STATE_LOGGING
+        val shouldLock = preferences.wakelockScreen.valueOrFalse()
+        viewModel.isLocked.set(isLogging && shouldLock)
+    }
 
     private fun startReadingTrack(trackUri: Uri) {
         var executingReader = this.executingReader

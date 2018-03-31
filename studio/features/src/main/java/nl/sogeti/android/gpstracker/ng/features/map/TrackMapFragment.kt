@@ -55,7 +55,8 @@ class TrackMapFragment : Fragment() {
 
     private val wakelockObservable: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            if (presenter.viewModel.wakeLockScreen.get()) {
+            val wakelock = presenter.viewModel.isLocked.get()
+            if (wakelock) {
                 activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -75,8 +76,8 @@ class TrackMapFragment : Fragment() {
         binding.viewModel = presenter.viewModel
         binding.presenter = presenter
         presenter.viewModel.showSatellite.addOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.addOnPropertyChangedCallback(wakelockObservable)
+        presenter.viewModel.willLock.addOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.isLocked.addOnPropertyChangedCallback(wakelockObservable)
         this.binding = binding
 
         return binding.root
@@ -112,15 +113,12 @@ class TrackMapFragment : Fragment() {
     override fun onDestroyView() {
         getMapView().onDestroy()
         binding = null
+        presenter.viewModel.showSatellite.removeOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.willLock.removeOnPropertyChangedCallback(optionMenuObserver)
+        presenter.viewModel.isLocked.removeOnPropertyChangedCallback(wakelockObservable)
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        presenter.viewModel.showSatellite.removeOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(optionMenuObserver)
-        presenter.viewModel.wakeLockScreen.removeOnPropertyChangedCallback(wakelockObservable)
-        super.onDestroy()
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -136,7 +134,7 @@ class TrackMapFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
 
         menu.findItem(R.id.action_satellite).isChecked = presenter.viewModel.showSatellite.get()
-        menu.findItem(R.id.action_lock).isChecked = presenter.viewModel.wakeLockScreen.get()
+        menu.findItem(R.id.action_lock).isChecked = presenter.viewModel.willLock.get()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

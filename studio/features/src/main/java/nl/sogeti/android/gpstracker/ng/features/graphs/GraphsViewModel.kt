@@ -50,6 +50,7 @@ class GraphsViewModel {
 
     val distanceSelected = ObservableBoolean(false)
     val durationSelected = ObservableBoolean(false)
+    val inverseSpeed = ObservableBoolean(false)
 
     val graphData = ObservableField<List<GraphPoint>>(emptyList())
     val graphLabels = ObservableField<GraphValueDescriptor>(object : GraphValueDescriptor {})

@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:privateContext="nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity">
+    <item
+        android:id="@+id/action_inverse_speed"
+        android:checkable="true"
+        android:icon="@drawable/ic_directions_run_black_24dp"
+        android:orderInCategory="60"
+        android:title="@string/action_inverse_speed"
+        app:showAsAction="never" />
+</menu>
