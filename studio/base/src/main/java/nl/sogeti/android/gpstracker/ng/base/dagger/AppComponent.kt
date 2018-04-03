@@ -38,7 +38,9 @@ import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusCon
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import javax.inject.Named
+import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [AppModule::class, SystemModule::class])
 interface AppComponent {
 

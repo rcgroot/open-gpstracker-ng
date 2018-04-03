@@ -69,7 +69,7 @@ class GraphLabelsBindings {
         if (speed == null || speed <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed)
+            textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed, true)
 
         }
     }

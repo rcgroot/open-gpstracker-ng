@@ -32,7 +32,7 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
         get() = this
 
     override fun describeYvalue(context: Context, yValue: Float): String {
-        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue, 1)
+        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue)
     }
 
     override fun describeXvalue(context: Context, xValue: Float): String {

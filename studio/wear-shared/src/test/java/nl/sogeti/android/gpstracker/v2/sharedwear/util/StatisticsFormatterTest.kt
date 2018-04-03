@@ -255,7 +255,7 @@ class StatisticsFormatterTest {
         `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F, 3600)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F / 3600)
         // Assert
         assertThat(speed, CoreMatchers.`is`("1 mock"))
     }
@@ -266,7 +266,7 @@ class StatisticsFormatterTest {
         `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 3600)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 3600)
         // Assert
         assertThat(speed, CoreMatchers.`is`("10 mock"))
     }
@@ -277,7 +277,7 @@ class StatisticsFormatterTest {
         // Arrange
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F, 10800)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 10800)
         // Assert
         assertThat(speed, CoreMatchers.`is`("3 mock"))
     }
