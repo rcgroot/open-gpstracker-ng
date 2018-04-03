@@ -33,6 +33,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
@@ -48,11 +49,10 @@ import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Inject
-import javax.inject.Named
 
 class ControlPresenter @Inject constructor(
         private val nameGenerator: NameGenerator,
-        @Named("SystemBackgroundExecutor") private val asyncExecutor: Executor,
+        @DiskIO private val executor: Executor,
         private val loggingStateController: LoggingStateController,
         private val serviceCommander: ServiceCommanderInterface,
         private val trackSelection: TrackSelection,
@@ -78,7 +78,7 @@ class ControlPresenter @Inject constructor(
 
         loggingStateController.trackUri?.let {
             if (loggingStateController.loggingState == STATE_LOGGING) {
-                asyncExecutor.execute {
+                executor.execute {
                     if (serviceCommander.hasForInitialName(it)) {
                         val generatedName = nameGenerator.generateName(Calendar.getInstance())
                         it.updateName(generatedName)

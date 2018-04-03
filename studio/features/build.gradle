@@ -53,6 +53,7 @@ dependencies {
     implementation project(':utils')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+    implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"

@@ -35,6 +35,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
@@ -52,7 +53,6 @@ import nl.sogeti.android.gpstracker.utils.contentprovider.map
 import nl.sogeti.android.opengpstrack.ng.features.R
 import java.util.concurrent.Executor
 import javax.inject.Inject
-import javax.inject.Named
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
@@ -61,7 +61,7 @@ class TrackListPresenter @Inject constructor(
         private val trackSelection: TrackSelection,
         private val trackSearch: TrackSearch,
         val summaryManager: SummaryManager,
-        @Named("SystemBackgroundExecutor") val executor: Executor,
+        @DiskIO val executor: Executor,
         private val shareIntentFactory: ShareIntentFactory,
         private val packageManager: PackageManager,
         private val notification: ImportNotification)

@@ -47,8 +47,14 @@ interface AppComponent {
     @Named("dayFormatter")
     fun dayFormatter(): SimpleDateFormat
 
-    @Named("SystemBackgroundExecutor")
-    fun executor(): Executor
+    @DiskIO
+    fun diskExecutor(): Executor
+
+    @NetworkIO
+    fun networkExecutor(): Executor
+
+    @Computation
+    fun computationExecutor(): Executor
 
     fun applicationContext(): Context
 

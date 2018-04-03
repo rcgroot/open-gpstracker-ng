@@ -11,7 +11,6 @@ import nl.sogeti.android.gpstracker.ng.base.location.GpsLocationFactory
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import java.util.concurrent.Executor
-import javax.inject.Named
 
 @Module
 class SystemModule {
@@ -24,9 +23,18 @@ class SystemModule {
     @Provides
     fun uriBuilder() = Uri.Builder()
 
+    //TODO add (singleton) scope and create separate instances
     @Provides
-    @Named("SystemBackgroundExecutor")
-    fun executor(): Executor = AsyncTask.THREAD_POOL_EXECUTOR
+    @Computation
+    fun computationExecutor(): Executor = AsyncTask.THREAD_POOL_EXECUTOR
+
+    @Provides
+    @DiskIO
+    fun diskExecutor(): Executor = AsyncTask.THREAD_POOL_EXECUTOR
+
+    @Provides
+    @NetworkIO
+    fun networkExecutor(): Executor = AsyncTask.THREAD_POOL_EXECUTOR
 
     @Provides
     fun packageManager(application: Context): PackageManager = application.packageManager
