@@ -3,7 +3,7 @@ package nl.sogeti.android.gpstracker.v2.sharedwear.util
 import android.content.Context
 import android.content.res.Resources
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -40,6 +40,7 @@ class StatisticsFormatterTest {
         this.sut = sut
 
         Mockito.`when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
+        Mockito.`when`(context.getString(R.string.format_runners_speed)).thenReturn("%1\$.0f:%2\$02.0f %3\$s")
         Mockito.`when`(context.getString(R.string.format_small_meters)).thenReturn("%.1f M")
         Mockito.`when`(context.getString(R.string.format_small_100_meters)).thenReturn("%.0f M")
         Mockito.`when`(context.getString(R.string.format_big_kilometer)).thenReturn("%.1f KM")
@@ -56,8 +57,10 @@ class StatisticsFormatterTest {
         Mockito.`when`(resources.getQuantityString(R.plurals.track_duration_days, 1, 1)).thenReturn("1 day")
         Mockito.`when`(resources.getQuantityString(R.plurals.track_duration_days, 3, 3)).thenReturn("3 days")
         Mockito.`when`(resources.getString(R.string.mps_to_speed)).thenReturn("3.6")
+        Mockito.`when`(resources.getString(R.string.spm_to_speed)).thenReturn("0.06")
         Mockito.`when`(resources.getString(R.string.m_to_big_distance)).thenReturn("1000.0")
         Mockito.`when`(resources.getString(R.string.m_to_small_distance)).thenReturn("1.0")
+        Mockito.`when`(resources.getString(R.string.speed_runners_unit)).thenReturn("min")
 
         referenceDate = Calendar.getInstance()
         referenceDate.set(Calendar.YEAR, 2016)
@@ -72,7 +75,7 @@ class StatisticsFormatterTest {
         // Act
         val distance = sut.convertMetersToDistance(context, 1.1234566F)
         // Assert
-        assertThat(distance, CoreMatchers.`is`("1.1 M"))
+        assertThat(distance, `is`("1.1 M"))
     }
 
     @Test
@@ -80,7 +83,7 @@ class StatisticsFormatterTest {
         // Act
         val distance = sut.convertMetersToDistance(context, 123.123456F)
         // Assert
-        assertThat(distance, CoreMatchers.`is`("123 M"))
+        assertThat(distance, `is`("123 M"))
     }
 
     @Test
@@ -88,7 +91,7 @@ class StatisticsFormatterTest {
         // Act
         val distance = sut.convertMetersToDistance(context, 12345.123456F)
         // Assert
-        assertThat(distance, CoreMatchers.`is`("12.3 KM"))
+        assertThat(distance, `is`("12.3 KM"))
     }
 
     @Test
@@ -96,7 +99,7 @@ class StatisticsFormatterTest {
         // Act
         val distance = sut.convertMetersToDistance(context, 123452.123456F)
         // Assert
-        assertThat(distance, CoreMatchers.`is`("123 KM"))
+        assertThat(distance, `is`("123 KM"))
     }
 
     @Test
@@ -104,7 +107,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, SIX_SECONDS / 6L)
         //
-        assertThat(duration, CoreMatchers.`is`("1 second"))
+        assertThat(duration, `is`("1 second"))
     }
 
     @Test
@@ -112,7 +115,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, SIX_SECONDS)
         //
-        assertThat(duration, CoreMatchers.`is`("6 seconds"))
+        assertThat(duration, `is`("6 seconds"))
     }
 
     @Test
@@ -120,7 +123,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, FIVE_MINUTES / 5L + SIX_SECONDS)
         //
-        assertThat(duration, CoreMatchers.`is`("1 minute"))
+        assertThat(duration, `is`("1 minute"))
     }
 
     @Test
@@ -128,7 +131,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, FIVE_MINUTES + SIX_SECONDS)
         //
-        assertThat(duration, CoreMatchers.`is`("5 minutes"))
+        assertThat(duration, `is`("5 minutes"))
     }
 
     @Test
@@ -136,7 +139,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS + FIVE_MINUTES)
         //
-        assertThat(duration, CoreMatchers.`is`("2 hours 5 minutes"))
+        assertThat(duration, `is`("2 hours 5 minutes"))
     }
 
     @Test
@@ -144,7 +147,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS / 2L)
         //
-        assertThat(duration, CoreMatchers.`is`("1 hour"))
+        assertThat(duration, `is`("1 hour"))
     }
 
     @Test
@@ -152,7 +155,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, TWO_HOURS)
         //
-        assertThat(duration, CoreMatchers.`is`("2 hours"))
+        assertThat(duration, `is`("2 hours"))
     }
 
 
@@ -161,7 +164,7 @@ class StatisticsFormatterTest {
         // Act
         val duration = sut.convertSpanDescriptiveDuration(context, THREE_DAYS + TWO_HOURS + FIVE_MINUTES)
         //
-        assertThat(duration, CoreMatchers.`is`("3 days 2 hours"))
+        assertThat(duration, `is`("3 days 2 hours"))
     }
 
     @Test
@@ -171,7 +174,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("-"))
+        assertThat(timeName, `is`("-"))
     }
 
     @Test
@@ -185,7 +188,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("1 hour ago"))
+        assertThat(timeName, `is`("1 hour ago"))
     }
 
 
@@ -201,7 +204,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("yesterday"))
+        assertThat(timeName, `is`("yesterday"))
     }
 
     @Test
@@ -216,7 +219,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("Nov 29, 2016"))
+        assertThat(timeName, `is`("Nov 29, 2016"))
     }
 
     @Test
@@ -231,7 +234,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("Nov 29, 2016"))
+        assertThat(timeName, `is`("Nov 29, 2016"))
     }
 
     @Test
@@ -246,7 +249,7 @@ class StatisticsFormatterTest {
         // Act
         val timeName = sut.convertTimestampToStart(context, timestamp)
         // Assert
-        assertThat(timeName, CoreMatchers.`is`("Dec 6, 2015"))
+        assertThat(timeName, `is`("Dec 6, 2015"))
     }
 
     @Test
@@ -255,9 +258,9 @@ class StatisticsFormatterTest {
         `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F / 3600)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 1000.0F / 3600, false)
         // Assert
-        assertThat(speed, CoreMatchers.`is`("1 mock"))
+        assertThat(speed, `is`("1 mock"))
     }
 
     @Test
@@ -266,19 +269,28 @@ class StatisticsFormatterTest {
         `when`(localeProvider.getLocale()).thenReturn(Locale.GERMAN)
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 3600)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 3600, false)
         // Assert
-        assertThat(speed, CoreMatchers.`is`("10 mock"))
+        assertThat(speed, `is`("10 mock"))
     }
-
 
     @Test
     fun testMPStoThreeKMP() {
         // Arrange
         sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
         // Act
-        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 10800)
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 10800, false)
         // Assert
-        assertThat(speed, CoreMatchers.`is`("3 mock"))
+        assertThat(speed, `is`("3 mock"))
+    }
+
+    @Test
+    fun `convert 10 kmp to 6 minutes per kilometer`() {
+        // Arrange
+        sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
+        // Act
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 3600, true)
+        // Assert
+        assertThat(speed, `is`("6:00 min"))
     }
 }

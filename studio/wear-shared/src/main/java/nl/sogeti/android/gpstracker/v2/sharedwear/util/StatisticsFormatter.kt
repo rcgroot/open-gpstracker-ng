@@ -104,7 +104,7 @@ class StatisticsFormatter(private val localeProvider: LocaleProvider, private va
         return if (meterPerSecond > 0) {
             if (runners) {
                 val conversion = context.resources.getFloat(R.string.spm_to_speed)
-                val runnerSpeed = (1F / meterPerSecond) * conversion
+                val runnerSpeed = (1F / meterPerSecond) / conversion
                 val minutes = floor(runnerSpeed)
                 val seconds = (runnerSpeed - minutes) * 60
                 val unit = context.resources.getString(R.string.speed_runners_unit)

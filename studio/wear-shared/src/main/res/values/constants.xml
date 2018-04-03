@@ -2,7 +2,7 @@
 <resources>
 
     <item name="spm_to_speed" type="string">0.06</item>
-    <string name="format_runners_speed">%1$.0f%2$2.0f %3$s</string>
+    <string name="format_runners_speed">%1$.0f:%2$2.0f %3$s</string>
     <item name="speed_runners_unit" type="string">min</item>
 
     <item name="mps_to_speed" type="string">3.6</item>
