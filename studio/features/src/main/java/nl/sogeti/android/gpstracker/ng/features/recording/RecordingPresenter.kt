@@ -34,6 +34,8 @@ import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
+import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation.Companion.GPS_STATUS_PACKAGE_NAME
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.high
@@ -54,7 +56,8 @@ class RecordingPresenter @Inject constructor(
         private val gpsStatusControllerFactory: GpsStatusControllerFactory,
         private val packageManager: PackageManager,
         private val statisticsFormatter: StatisticsFormatter,
-        private val summaryManager: SummaryManager) :
+        private val summaryManager: SummaryManager,
+        private val preferences: Preferences) :
         ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
 
     val viewModel = RecordingViewModel(null)
@@ -110,7 +113,7 @@ class RecordingPresenter @Inject constructor(
         summaryManager.collectSummaryInfo(trackUri) {
             val endTime = it.waypoints.last().last().time
             val startTime = it.waypoints.first().first().time
-            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance / (it.trackedPeriod / 1000))
+            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance / (it.trackedPeriod / 1000), preferences.inverseSpeed.valueOrFalse())
             val distance = statisticsFormatter.convertMetersToDistance(context, it.distance)
             val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
             val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)

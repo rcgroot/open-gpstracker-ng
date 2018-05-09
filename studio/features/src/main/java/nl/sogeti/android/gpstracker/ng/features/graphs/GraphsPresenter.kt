@@ -116,6 +116,7 @@ class GraphsPresenter @Inject constructor(
 
     fun onInverseSpeedSelected() {
         preferences.inverseSpeed.not()
+        trackSummary?.let { fillGraphWithSummary(it) }
     }
 
     //endregion

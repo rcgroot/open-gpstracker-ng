@@ -100,7 +100,7 @@ class StatisticsFormatter(private val localeProvider: LocaleProvider, private va
         return duration
     }
 
-    fun convertMeterPerSecondsToSpeed(context: Context, meterPerSecond: Float, runners: Boolean = true): String {
+    fun convertMeterPerSecondsToSpeed(context: Context, meterPerSecond: Float, runners: Boolean): String {
         return if (meterPerSecond > 0) {
             if (runners) {
                 val conversion = context.resources.getFloat(R.string.spm_to_speed)

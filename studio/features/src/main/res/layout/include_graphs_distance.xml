@@ -113,6 +113,7 @@
             app:layout_constraintLeft_toRightOf="@+id/graph_value_time"
             app:layout_constraintRight_toLeftOf="@+id/graph_value_points"
             app:speed="@{viewModel.speed}"
+            app:inverse="@{viewModel.inverseSpeed}"
             tools:text="56 kmh" />
 
         <TextView

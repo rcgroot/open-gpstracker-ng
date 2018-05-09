@@ -28,7 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import android.arch.lifecycle.MutableLiveData
 import nl.renedegroot.android.test.utils.any
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
@@ -54,6 +56,10 @@ class GraphSpeedTimeProviderTest {
     lateinit var calculator: SummaryCalculator
     @Mock
     lateinit var statisticsFormatter: StatisticsFormatter
+    @Mock
+    lateinit var preferences: Preferences
+    @Mock
+    lateinit var liveTrueData: MutableLiveData<Boolean>
 
     val gpxAmsterdam = listOf(Pair(52.377060, 4.898446), Pair(52.376394, 4.897263), Pair(52.376220, 4.902874), Pair(52.374049, 4.899943))
     val start = 1497243484247L
@@ -62,11 +68,14 @@ class GraphSpeedTimeProviderTest {
     val wayPoint3 = Waypoint(0, gpxAmsterdam[0].first, gpxAmsterdam[0].second, wayPoint2.time + 60000, 0.0, 0.0)
     val wayPoint4 = Waypoint(0, gpxAmsterdam[0].first, gpxAmsterdam[0].second, wayPoint3.time + 90000, 0.0, 0.0)
 
+
     @Before
     fun setUp() {
         sut = GraphSpeedOverTimeDataProvider()
         sut.calculator = calculator
         sut.statisticsFormatter = statisticsFormatter
+        sut.preferences = preferences
+        `when`(preferences.inverseSpeed).thenReturn(liveTrueData)
         `when`(calculator.distance(any(), any(), any())).thenReturn(313.37338f)
     }
 

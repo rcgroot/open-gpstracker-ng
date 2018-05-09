@@ -42,7 +42,7 @@ class NameGeneratorTest {
             "${it.arguments[1]} ${it.arguments[2]} in ${it.arguments[3]}"
         }
 
-        sut = NameGenerator(format, locationFactory)
+        sut = NameGenerator(context, format, locationFactory)
     }
 
     @Test
@@ -52,7 +52,7 @@ class NameGeneratorTest {
         `when`(now.get(Calendar.HOUR_OF_DAY)).thenReturn(1)
         `when`(format.format(any())).thenReturn("Saturday")
         // Act
-        val name = sut.generateName(context, now)
+        val name = sut.generateName(now)
         // Assert
         assertThat(name, `is`("Saturday night"))
     }
@@ -64,7 +64,7 @@ class NameGeneratorTest {
         `when`(now.get(Calendar.HOUR_OF_DAY)).thenReturn(7)
         `when`(format.format(any())).thenReturn("Monday")
         // Act
-        val name = sut.generateName(context, now)
+        val name = sut.generateName(now)
         // Assert
         assertThat(name, `is`("Monday morning"))
     }
@@ -76,7 +76,7 @@ class NameGeneratorTest {
         `when`(now.get(Calendar.HOUR_OF_DAY)).thenReturn(14)
         `when`(format.format(any())).thenReturn("Wednesday")
         // Act
-        val name = sut.generateName(context, now)
+        val name = sut.generateName(now)
         // Assert
         assertThat(name, `is`("Wednesday afternoon"))
     }
@@ -88,7 +88,7 @@ class NameGeneratorTest {
         `when`(now.get(Calendar.HOUR_OF_DAY)).thenReturn(21)
         `when`(format.format(any())).thenReturn("Sunday")
         // Act
-        val name = sut.generateName(context, now)
+        val name = sut.generateName( now)
         // Assert
         assertThat(name, `is`("Sunday evening"))
     }
@@ -102,7 +102,7 @@ class NameGeneratorTest {
         `when`(format.format(any())).thenReturn("Sunday")
         `when`(locationFactory.getLocationName()).thenReturn("Amsterdam")
         // Act
-        val name = sut.generateName(context, now)
+        val name = sut.generateName(now)
         // Assert
         assertThat(name, `is`("Sunday evening in Amsterdam"))
     }

@@ -18,7 +18,7 @@ class Preferences @Inject constructor(context: Context, @DiskIO private val exec
     val inverseSpeed = MutableLiveData<Boolean>()
     val wakelockScreen = MutableLiveData<Boolean>()
     val satellite = MutableLiveData<Boolean>()
-    private val preferences = context.getSharedPreferences("settings", MODE_PRIVATE)
+    private lateinit var preferences: SharedPreferences
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         when (key) {
             INVERSE_SPEED -> executor.execute { readInverseSpeed() }
@@ -37,16 +37,17 @@ class Preferences @Inject constructor(context: Context, @DiskIO private val exec
     }
 
     init {
-        preferences.registerOnSharedPreferenceChangeListener(preferenceListener)
-        inverseSpeed.observeForever(inverseSpeedObserver)
-        wakelockScreen.observeForever(wakelockScreenObserver)
-        satellite.observeForever(satelliteObserver)
-
         executor.execute {
+            preferences = context.getSharedPreferences("settings", MODE_PRIVATE)
+            preferences.registerOnSharedPreferenceChangeListener(preferenceListener)
+
             readInverseSpeed()
             readWakeLockScreen()
             readSatellite()
         }
+        inverseSpeed.observeForever(inverseSpeedObserver)
+        wakelockScreen.observeForever(wakelockScreenObserver)
+        satellite.observeForever(satelliteObserver)
     }
 
     @WorkerThread
@@ -64,7 +65,7 @@ class Preferences @Inject constructor(context: Context, @DiskIO private val exec
         inverseSpeed.postValue(preferences.getBoolean(INVERSE_SPEED, false))
     }
 
-    fun MutableLiveData<Boolean>.storeAsPreference(key: String) {
+    private fun MutableLiveData<Boolean>.storeAsPreference(key: String) {
         val storedValue = preferences.getBoolean(key, false)
         val value = valueOrFalse()
         if (storedValue != value) {

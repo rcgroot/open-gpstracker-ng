@@ -64,12 +64,12 @@ class GraphLabelsBindings {
         }
     }
 
-    @BindingAdapter("speed")
-    fun setSpeed(textView: TextView, speed: Float?) {
+    @BindingAdapter("speed", "inverse")
+    fun setSpeed(textView: TextView, speed: Float?, inverse: Boolean?) {
         if (speed == null || speed <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed, true)
+            textView.text = statisticsFormatter.convertMeterPerSecondsToSpeed(textView.context, speed, inverse ?: false)
 
         }
     }

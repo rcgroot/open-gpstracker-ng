@@ -1,6 +1,6 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-alpha12'
+    gradlePluginVersion = '3.2.0-alpha14'
     dataBindingVersion = '3.2.0-alpha10'
     buildTools = '27.0.3'
     minSdk = 21
@@ -8,7 +8,7 @@ ext {
 
     // App support
     supportLibraryVersion = '27.1.0'
-    kotlinVersion = '1.2.40'
+    kotlinVersion = '1.2.41'
     wearableVersion = '2.2.0'
     constraintsLibraryVersion = '1.0.2'
     timberVersion = '4.1.2'

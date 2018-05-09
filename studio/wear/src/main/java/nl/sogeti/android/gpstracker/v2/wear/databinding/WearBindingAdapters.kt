@@ -92,12 +92,13 @@ class WearBindingAdapters {
         }
     }
 
-    @BindingAdapter("speed")
-    fun setSpeed(textView: TextView, speed: Float?) {
+    @BindingAdapter("speed", "inverse")
+    fun setSpeed(textView: TextView, speed: Float?, inverse: Boolean?) {
         if (speed == null || speed <= 0L) {
             textView.text = textView.context.getText(R.string.empty_dash)
         } else {
-            textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed)
+            val inverse = inverse ?: false
+            textView.text = statisticsFormatting.convertMeterPerSecondsToSpeed(textView.context, speed, inverse)
                     .replace(' ', '\n')
                     .asSmallLetterSpans()
 
@@ -106,7 +107,7 @@ class WearBindingAdapters {
 
     private fun String.asSmallLetterSpans(): SpannableString {
         val spannable = SpannableString(this)
-        var start : Int? = null
+        var start: Int? = null
         for (i in 0 until this.length) {
             if (!this[i].isDigit() && start == null) {
                 start = i

@@ -7,6 +7,7 @@ import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.high
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.low
@@ -57,10 +58,12 @@ class RecordingPresenterTest {
     lateinit var statisticsFormatter: StatisticsFormatter
     @Mock
     lateinit var summaryManager: SummaryManager
+    @Mock
+    lateinit var preferences: Preferences
 
     @Before
     fun setUp() {
-        sut = RecordingPresenter(navigation, contentController, gpsStatusControllerFactory, packageManager, statisticsFormatter, summaryManager)
+        sut = RecordingPresenter(navigation, contentController, gpsStatusControllerFactory, packageManager, statisticsFormatter, summaryManager, preferences)
         sut.serviceManager = serviceManager
         `when`(gpsStatusControllerFactory.createGpsStatusController(any(), any())).thenReturn(gpsStatusController)
     }

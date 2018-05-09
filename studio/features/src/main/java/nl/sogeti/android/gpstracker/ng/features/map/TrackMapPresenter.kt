@@ -34,11 +34,13 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
+import android.support.annotation.WorkerThread
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
@@ -55,6 +57,7 @@ import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.service.util.tracksUri
 import nl.sogeti.android.gpstracker.utils.contentprovider.getLong
 import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class TrackMapPresenter @Inject constructor(
@@ -64,6 +67,7 @@ class TrackMapPresenter @Inject constructor(
         private val loggingStateController: LoggingStateController,
         private val trackSelection: TrackSelection,
         private val preferences: Preferences,
+        @DiskIO private val executor: Executor,
         contentController: ContentController)
     : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, LoggingStateListener {
 
@@ -86,7 +90,7 @@ class TrackMapPresenter @Inject constructor(
         preferences.wakelockScreen.observeForever(wakelockPreferenceObserver)
         preferences.satellite.observeForever(satellitePreferenceObserver)
         loggingStateController.connect(this)
-        makeTrackSelection()
+        executor.execute { makeTrackSelection() }
     }
 
     fun start(mapView: MapView) {
@@ -187,13 +191,14 @@ class TrackMapPresenter @Inject constructor(
         }
     }
 
+    @WorkerThread
     private fun makeTrackSelection() {
         val selectedTrack = trackSelection.selection.value
         if (selectedTrack == null || selectedTrack.lastPathSegment != "-1") {
             val lastTrack = tracksUri().runQuery(BaseConfiguration.appComponent.contentResolver()) { it.moveToLast(); it.getLong(BaseColumns._ID) }
             if (lastTrack != null) {
                 val lastTrackUri = trackUri(lastTrack)
-                trackSelection.selection.value = lastTrackUri
+                trackSelection.selection.postValue(lastTrackUri)
             } else {
                 viewModel.trackHead.set(locationFactory.getLocationCoordinates())
             }

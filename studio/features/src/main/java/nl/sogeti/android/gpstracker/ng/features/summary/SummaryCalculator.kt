@@ -73,7 +73,7 @@ class SummaryCalculator {
         var trackedPeriod = 0L
         deltas.forEach {
             it.forEach {
-                trackedPeriod += it.duration
+                trackedPeriod += it.deltaMilliseconds
             }
         }
 

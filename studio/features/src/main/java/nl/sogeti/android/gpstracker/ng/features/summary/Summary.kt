@@ -45,5 +45,5 @@ data class Summary(val trackUri: Uri,
     val count: Int
         get() = waypoints.fold(0, { count, list -> count + list.size })
 
-    data class Delta(val time: Long, val distance: Float, val meters: Float, val duration: Long)
+    data class Delta(val totalMilliseconds: Long, val totalMeters: Float, val deltaMeters: Float, val deltaMilliseconds: Long)
 }
