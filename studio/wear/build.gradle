@@ -67,7 +67,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
 
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
 
     compileOnly "com.google.android.wearable:wearable:$rootProject.wearableVersion"
 

@@ -98,12 +98,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
-    implementation "com.google.firebase:firebase-core:$rootProject.playServicesVersion"
+    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
     implementation("com.crashlytics.sdk.android:crashlytics:$rootProject.crashlicticsVerion@aar") {
         transitive = true
     }
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
     kapt "com.android.support.test:runner:$rootProject.testRunnerVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"

@@ -62,7 +62,6 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
             val speed = it.deltaMeters / (it.deltaMilliseconds / 1000F)
             if (speed >= 0F && it.deltaMeters > 0F) {
                 val distance = it.totalMeters + (it.deltaMeters / 2F)
-                assert(graphPoints.last().x < distance)
                 graphPoints.add(GraphPoint(distance, speed))
             }
         }

@@ -34,7 +34,7 @@ dependencies {
     api "com.google.android.gms:play-services-wearable:$rootProject.playServicesVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"

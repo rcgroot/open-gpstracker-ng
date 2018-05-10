@@ -87,7 +87,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kapt "com.android.databinding:compiler:$rootProject.dataBindingVersion"
+    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
 
     mockImplementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
 
