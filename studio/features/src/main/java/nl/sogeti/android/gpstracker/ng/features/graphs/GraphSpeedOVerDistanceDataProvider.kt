@@ -43,6 +43,9 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
             addSegmentToGraphPoints(it, graphPoints)
         }
 
+//        return graphPoints
+//        return filterOutliers(graphPoints)
+//        return smoothen(graphPoints)
         return smoothen(filterOutliers(graphPoints))
     }
 
@@ -61,7 +64,7 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
         deltas.forEach {
             val speed = it.deltaMeters / (it.deltaMilliseconds / 1000F)
             if (speed >= 0F && it.deltaMeters > 0F) {
-                val distance = it.totalMeters + (it.deltaMeters / 2F)
+                val distance = it.totalMeters - (it.deltaMeters / 2F)
                 graphPoints.add(GraphPoint(distance, speed))
             }
         }
