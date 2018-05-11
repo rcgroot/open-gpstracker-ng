@@ -36,7 +36,7 @@ import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemControlsBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemStatisticsBinding
 
-class VerticalControlAdapter(private val model: ControlViewModel, private val presenter: ControlPresenter) : RecyclerView.Adapter<VerticalControlAdapter.VerticalViewHolder>() {
+class VerticalControlAdapter(private val model: WearViewModel, private val presenter: ControlPresenter) : RecyclerView.Adapter<VerticalControlAdapter.VerticalViewHolder>() {
 
     override fun getItemViewType(position: Int) = if (position == 0) 0 else 1
 

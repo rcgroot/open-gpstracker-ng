@@ -32,10 +32,13 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 
-class ControlViewModel {
+class WearViewModel {
+
     val duration = ObservableField<Long>(0L)
     val distance = ObservableField<Float>(0F)
     val averageSpeed = ObservableField<Float>(0F)
+    val inverseSpeed = ObservableBoolean(false)
+
     val state = ObservableField<Control>(Control.Sync())
     val manualRefresh = ObservableBoolean(false)
     val confirmAction = ObservableField<Control?>()

@@ -7,14 +7,15 @@ import kotlinx.android.parcel.Parcelize
 
 @SuppressLint("ParcelCreator")
 @Parcelize
-data class StatisticsMessage(val speed: Float, val distance: Float, val duration: Long) : WearMessage(PATH_STATISTICS), Parcelable {
+data class StatisticsMessage(val speed: Float, val inverse: Boolean, val distance: Float, val duration: Long) : WearMessage(PATH_STATISTICS), Parcelable {
 
     constructor(dataMap: DataMap) :
-            this(dataMap.getFloat(SPEED), dataMap.getFloat(DISTANCE), dataMap.getLong(DURATION))
+            this(dataMap.getFloat(SPEED), dataMap.getBoolean(INVERSE), dataMap.getFloat(DISTANCE), dataMap.getLong(DURATION))
 
     override fun toDataMap(): DataMap {
         val dataMap = DataMap()
         dataMap.putFloat(SPEED, speed)
+        dataMap.putBoolean(INVERSE, inverse)
         dataMap.putFloat(DISTANCE, distance)
         dataMap.putLong(DURATION, duration)
         return dataMap
@@ -24,6 +25,7 @@ data class StatisticsMessage(val speed: Float, val distance: Float, val duration
         const val PATH_STATISTICS = "/ogt-recordings-statistics"
 
         private const val SPEED = "SPEED"
+        private const val INVERSE = "INVERSE"
         private const val DISTANCE = "DISTANCE"
         private const val DURATION = "DURATION"
     }

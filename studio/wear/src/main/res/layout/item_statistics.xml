@@ -13,7 +13,7 @@
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.v2.wear.ControlViewModel" />
+            type="nl.sogeti.android.gpstracker.v2.wear.WearViewModel" />
 
     </data>
 
@@ -50,6 +50,7 @@
             android:textAppearance="@style/TextAppearance.Wearable.Large"
             android:textColor="@color/text"
             android:textSize="28sp"
+            app:inverseSpeed="@{viewModel.inverse}"
             app:layout_constraintBottom_toTopOf="@+id/wear_control_left_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

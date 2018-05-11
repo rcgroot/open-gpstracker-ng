@@ -15,7 +15,7 @@
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.v2.wear.ControlViewModel" />
+            type="nl.sogeti.android.gpstracker.v2.wear.WearViewModel" />
     </data>
 
     <android.support.constraint.ConstraintLayout

@@ -41,7 +41,7 @@ import java.util.concurrent.Executors
 
 class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, MessageSender.MessageSenderStatusListener {
 
-    val viewModel = ControlViewModel()
+    val viewModel = WearViewModel()
     private var messageSender: MessageSender? = null
     private var loaderCancelTask: LoaderCancelTask? = null
 
@@ -141,6 +141,7 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
     fun didReceiveStatistics(statisticsMessage: StatisticsMessage) {
         Timber.d("Received $statisticsMessage")
         viewModel.averageSpeed.set(statisticsMessage.speed)
+        viewModel.inverseSpeed.set(statisticsMessage.inverse)
         viewModel.duration.set(statisticsMessage.duration)
         viewModel.distance.set(statisticsMessage.distance)
     }
@@ -207,7 +208,7 @@ class ControlPresenter(applicationContext: Context) : HolderFragment.Holdable, M
         viewModel.rightControl.set(Control.Start(false))
     }
 
-    class LoaderCancelTask(private val model: ControlViewModel) {
+    class LoaderCancelTask(private val model: WearViewModel) {
         var cancel = false
 
         fun schedule(seconds: Int): LoaderCancelTask {

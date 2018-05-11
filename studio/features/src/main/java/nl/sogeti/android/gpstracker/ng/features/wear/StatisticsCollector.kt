@@ -37,6 +37,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Process
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.service.util.readTrack
 import nl.sogeti.android.gpstracker.v2.sharedwear.datasync.DataSender
@@ -62,6 +63,9 @@ class StatisticsCollector {
 
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
+
+    @Inject
+    lateinit var preferences: Preferences
 
     var trackUri: Uri? = null
 
@@ -160,7 +164,8 @@ class StatisticsCollector {
                 val startTime = handler.waypoints.first().first().time
                 val currentMpS = recentMeters / (recentMilliSeconds / 1000F)
                 val duration = endTime - startTime
-                return StatisticsMessage(currentMpS, meters, duration)
+                val inverseSpeed = preferences.inverseSpeed.value ?: false
+                return StatisticsMessage(currentMpS, inverseSpeed, meters, duration)
             }
         }
 
