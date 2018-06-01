@@ -1,6 +1,6 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-alpha14'
+    gradlePluginVersion = '3.2.0-alpha16'
     buildTools = '27.0.3'
     minSdk = 21
     targetSdk = 27
