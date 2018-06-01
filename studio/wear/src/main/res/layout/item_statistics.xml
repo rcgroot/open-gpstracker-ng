@@ -50,7 +50,7 @@
             android:textAppearance="@style/TextAppearance.Wearable.Large"
             android:textColor="@color/text"
             android:textSize="28sp"
-            app:inverseSpeed="@{viewModel.inverse}"
+            app:inverse="@{viewModel.inverseSpeed}"
             app:layout_constraintBottom_toTopOf="@+id/wear_control_left_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
