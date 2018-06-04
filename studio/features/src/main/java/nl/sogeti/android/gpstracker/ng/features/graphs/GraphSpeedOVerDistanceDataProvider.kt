@@ -23,8 +23,8 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
     @Inject
     lateinit var graphSpeedConverter: GraphSpeedConverter
 
-//    private val inverseSpeed
-//        get() = preferences.inverseSpeed.valueOrFalse()
+    private val inverseSpeed
+        get() = preferences.inverseSpeed.valueOrFalse()
 
     override val yLabel: Int
         get() = R.string.graph_label_speed
@@ -43,17 +43,17 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
             addSegmentToGraphPoints(it, graphPoints)
         }
 
-//        return graphPoints
-//        return filterOutliers(graphPoints)
-//        return smoothen(graphPoints)
-        return smoothen(filterOutliers(graphPoints))
+        return graphPoints
+                .inverseSpeed()
+                .filterOutliers()
+                .smoothen()
     }
 
     override val valueDescriptor: GraphValueDescriptor
         get() = this
 
     override fun describeYvalue(context: Context, yValue: Float): String {
-        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue, preferences.inverseSpeed.valueOrFalse())
+        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue.toSpeed(), inverseSpeed)
     }
 
     override fun describeXvalue(context: Context, xValue: Float): String {
@@ -70,19 +70,22 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
         }
     }
 
-//
-//    fun Float.toY() =
-//            if (inverseSpeed) {
-//                graphSpeedConverter.speedToYValue(this)
-//            } else {
-//                this
-//            }
-//
-//    fun Float.toSpeed() =
-//            if (inverseSpeed) {
-//                graphSpeedConverter.yValueToSpeed(this)
-//            } else {
-//                this
-//            }
+    fun List<GraphPoint>.inverseSpeed(): List<GraphPoint> {
+        return if (inverseSpeed) {
+            this.map { GraphPoint(it.x, it.y.inverseSpeed()) }
+        } else {
+            this
+        }
+    }
+
+    private fun Float.inverseSpeed() =
+            graphSpeedConverter.speedToYValue(this)
+
+    private fun Float.toSpeed() =
+            if (inverseSpeed) {
+                graphSpeedConverter.yValueToSpeed(this)
+            } else {
+                this
+            }
 }
 

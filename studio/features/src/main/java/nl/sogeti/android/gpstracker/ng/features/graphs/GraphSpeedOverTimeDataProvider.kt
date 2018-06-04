@@ -45,13 +45,15 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
 
     @WorkerThread
     override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
-        val list = if (summary.deltas.firstOrNull()?.firstOrNull() != null) {
-            calculateTrack(summary.deltas)
-        } else {
-            listOf()
+        val graphPoints = mutableListOf<GraphPoint>()
+        summary.deltas.forEach {
+            addSegmentToGraphPoints(summary.deltas, graphPoints)
         }
 
-        return list
+        return graphPoints
+                .inverseSpeed()
+                .filterOutliers()
+                .smoothen()
     }
 
 
@@ -63,25 +65,12 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
         return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
     }
 
-    private fun calculateTrack(waypoints: List<List<Summary.Delta>>): List<GraphPoint> {
-        if (inverseSpeed) {
-            val speeds = waypoints.flatMap {
-                it.map { it.deltaMeters to (it.deltaMilliseconds / 1000F) }
-            }
-            graphSpeedConverter.calculateMinMax(speeds)
-        }
-
-        val list = mutableListOf<GraphPoint>()
+    private fun addSegmentToGraphPoints(waypoints: List<List<Summary.Delta>>, graphPoints: MutableList<GraphPoint>) {
         val baseTime = waypoints.first().first().totalMilliseconds
-        fun Long.toX() = (this - baseTime).toFloat()
         waypoints.forEach {
             val points = calculateSegment(it, baseTime)
-            list.add(GraphPoint(it.first().totalMilliseconds.toX(), 0f.toY()))
-            list.addAll(points)
-            list.add(GraphPoint(it.last().totalMilliseconds.toX(), 0f.toY()))
+            graphPoints.addAll(points)
         }
-
-        return list
     }
 
     fun calculateSegment(deltas: List<Summary.Delta>, baseTime: Long): List<GraphPoint> {
@@ -90,21 +79,25 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
         deltas.forEach {
             val speed = it.deltaMeters / (it.deltaMilliseconds / 1000F)
             if (speed >= 0F) {
-                list.add(GraphPoint((it.totalMilliseconds - it.deltaMilliseconds).toX(), speed.toY()))
-                list.add(GraphPoint(it.totalMilliseconds.toX(), speed.toY()))
+                val moment = it.totalMilliseconds - (it.deltaMilliseconds / 2L)
+                list.add(GraphPoint(moment.toX(), speed))
             }
         }
         return list
     }
 
-    fun Float.toY() =
-            if (inverseSpeed) {
-                graphSpeedConverter.speedToYValue(this)
-            } else {
-                this
-            }
+    fun List<GraphPoint>.inverseSpeed(): List<GraphPoint> {
+        return if (inverseSpeed) {
+            this.map { GraphPoint(it.x, it.y.inverseSpeed()) }
+        } else {
+            this
+        }
+    }
 
-    fun Float.toSpeed() =
+    private fun Float.inverseSpeed() =
+            graphSpeedConverter.speedToYValue(this)
+
+    private fun Float.toSpeed() =
             if (inverseSpeed) {
                 graphSpeedConverter.yValueToSpeed(this)
             } else {

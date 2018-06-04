@@ -1,31 +1,26 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
+import java.lang.Math.max
+import java.lang.Math.sqrt
 import kotlin.math.pow
-import kotlin.math.sqrt
 
 private const val HALF_SPAN_DEFAULT = 6
-private const val MAX_TIMES_STANDARD_DEVIATION = 3
+private const val MAX_TIMES_STANDARD_DEVIATION = 2
 
-fun smoothen(points: List<GraphPoint>) =
-        points.mapIndexed { i, point ->
-            val ySmooth = localAverage(points, i)
+fun List<GraphPoint>.filterOutliers(): List<GraphPoint> {
+    val mean = this.sumByDouble { it.y.toDouble() } / this.size
+    val sd = sqrt(this.sumByDouble { (it.y.toDouble() - mean).pow(2) } / (this.size - 1))
+    val min = max(0.0, mean - sd * MAX_TIMES_STANDARD_DEVIATION)
+    val max = mean + sd * MAX_TIMES_STANDARD_DEVIATION
+    return this.filter { it.y > min && it.y < max }
+}
+
+fun List<GraphPoint>.smoothen() =
+        this.mapIndexed { i, point ->
+            val ySmooth = localAverage(this, i)
             GraphPoint(point.x, ySmooth.toFloat())
         }
-
-fun filterOutliers(points: List<GraphPoint>): List<GraphPoint> {
-    val mean = points.sumByDouble { it.y.toDouble() } / points.size
-    val sd = sqrt(points.sumByDouble { (it.y.toDouble() - mean).pow(2) } / (points.size - 1))
-    val min = mean - MAX_TIMES_STANDARD_DEVIATION * sd
-    val max = mean + MAX_TIMES_STANDARD_DEVIATION * sd
-    return points.mapIndexed { i, point ->
-        if (point.y > min && point.y < max) {
-            point
-        } else {
-            GraphPoint(point.x, localAverage(points, i, 3).toFloat())
-        }
-    }
-}
 
 private fun localAverage(points: List<GraphPoint>, i: Int, halfSpan: Int = HALF_SPAN_DEFAULT): Double {
     val n = listOf(halfSpan, i, points.size - 1 - i).min() ?: 0

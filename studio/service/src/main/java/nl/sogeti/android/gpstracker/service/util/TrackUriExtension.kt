@@ -190,7 +190,7 @@ fun Uri.readTrack(handler: ResultHandler, waypointSelection: Pair<String, List<S
                     latestTime = time
                     handler.addWaypoint(waypoint)
                 } else {
-                    Timber.e("Found recorded waypoint newer then previous")
+                    Timber.e("Found recorded waypoint $time newer then previous $latestTime")
                 }
             }
         })
@@ -255,7 +255,7 @@ fun Uri.updateName(name: String) {
 }
 
 fun Uri.readName(): String {
-    return this.runQuery(applicationContentResolver()) {it.getString(ContentConstants.TracksColumns.NAME) }
+    return this.runQuery(applicationContentResolver()) { it.getString(ContentConstants.TracksColumns.NAME) }
             ?: ""
 }
 
