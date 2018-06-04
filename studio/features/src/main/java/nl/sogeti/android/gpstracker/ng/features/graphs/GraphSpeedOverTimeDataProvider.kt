@@ -46,9 +46,8 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
     @WorkerThread
     override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
         val graphPoints = mutableListOf<GraphPoint>()
-        summary.deltas.forEach {
-            addSegmentToGraphPoints(summary.deltas, graphPoints)
-        }
+        addSegmentToGraphPoints(summary.deltas, graphPoints)
+
         val milliseconds = 20_000
         return graphPoints
                 .inverseSpeed()
