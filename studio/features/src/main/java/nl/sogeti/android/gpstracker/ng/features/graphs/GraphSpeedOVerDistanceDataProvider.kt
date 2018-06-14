@@ -43,10 +43,10 @@ class GraphSpeedOVerDistanceDataProvider : GraphValueDescriptor, GraphDataProvid
             addSegmentToGraphPoints(it, graphPoints)
         }
 
-        val meters = 50
+        val meters = 10F
         return graphPoints
                 .inverseSpeed()
-                .filterOutliers()
+                .flattenOutliers()
                 .smoothen(meters)
     }
 

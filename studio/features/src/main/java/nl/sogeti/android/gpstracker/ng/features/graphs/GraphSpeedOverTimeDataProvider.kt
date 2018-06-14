@@ -48,10 +48,10 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
         val graphPoints = mutableListOf<GraphPoint>()
         addSegmentToGraphPoints(summary.deltas, graphPoints)
 
-        val milliseconds = 20_000
+        val milliseconds = 40_000F
         return graphPoints
                 .inverseSpeed()
-                .filterOutliers()
+                .flattenOutliers()
                 .smoothen(milliseconds)
     }
 
