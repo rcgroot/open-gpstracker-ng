@@ -165,12 +165,17 @@ class LineGraph : View {
         this.sectionHeight = (h - unitTextSideMargin - graphSideMargin) / 4f
         this.sectionWidth = (w - unitTextSideMargin - graphSideMargin) / 4f
         clearCachedPoints()
-        fillPointsCache()
         createLineShader()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (cachedPoints == null) {
+            cachedPoints = listOf()
+            ofMainThread {
+                fillPointsCache(data)
+            }
+        }
         drawGrid(canvas)
         drawGraphLine(canvas)
         drawAxis(canvas)
@@ -182,12 +187,6 @@ class LineGraph : View {
     }
 
     private fun drawGraphLine(canvas: Canvas) {
-        if (cachedPoints == null) {
-            cachedPoints = listOf()
-            ofMainThread {
-                fillPointsCache()
-            }
-        }
         // Gradient below
         linePath.reset()
         linePath.moveTo(unitTextSideMargin, h - unitTextSideMargin)
@@ -225,9 +224,6 @@ class LineGraph : View {
     }
 
     private fun drawText(canvas: Canvas) {
-        if (cachedPoints == null) {
-            fillPointsCache()
-        }
         val x1 = description.describeXvalue(context, minX)
         val x2 = description.describeXvalue(context, (minX + maxX) / 2)
         val x3 = description.describeXvalue(context, maxX)
@@ -263,7 +259,7 @@ class LineGraph : View {
     private var minX: Float = 0f
     private var maxX: Float = 1f
 
-    private fun fillPointsCache() {
+    private fun fillPointsCache(data: List<GraphPoint>) {
         minY = data.minBy { it.y }?.y ?: 0f
         maxY = data.maxBy { it.y }?.y ?: 100f
         minX = data.firstOrNull()?.x ?: 0f
@@ -273,9 +269,10 @@ class LineGraph : View {
             val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
             return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
         }
+        val newDataPoints = data.map { convertDataToPoint(it) }
 
         onMainThread {
-            cachedPoints = data.map { convertDataToPoint(it) }
+            cachedPoints = newDataPoints
             invalidate()
         }
     }
