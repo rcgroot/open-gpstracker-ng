@@ -7,7 +7,7 @@ ext {
 
     // App support
     supportLibraryVersion = '27.1.1'
-    kotlinVersion = '1.2.41'
+    kotlinVersion = '1.2.50'
     wearableVersion = '2.2.0'
     constraintsLibraryVersion = '1.1.0'
     timberVersion = '4.1.2'
