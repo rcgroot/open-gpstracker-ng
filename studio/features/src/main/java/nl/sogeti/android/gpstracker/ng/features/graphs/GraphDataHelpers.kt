@@ -23,9 +23,25 @@ fun List<GraphPoint>.flattenOutliers(): List<GraphPoint> {
 
 fun List<GraphPoint>.smoothen(span: Float) =
         this.mapIndexed { i, point ->
-            val ySmooth = this.localAverage(i, span/2F)
+            val ySmooth = this.localAverage(i, span / 2F)
             GraphPoint(point.x, ySmooth.toFloat())
         }
+
+fun <T> List<T>.condens(together: (T, T) -> Boolean, transform: (List<T>) -> T): List<T> {
+    val result = mutableListOf<T>()
+    var rangeStart = 0
+    forEachIndexed { index, item ->
+        if (!together(this[rangeStart], item)) {
+            result.add(transform(subList(rangeStart, index)))
+            rangeStart = index
+        }
+    }
+    val tail = subList(rangeStart, size)
+    if (tail.isNotEmpty()) {
+        result.add(transform(tail))
+    }
+    return result
+}
 
 private fun List<GraphPoint>.neighboursAverage(pivot: Int): GraphPoint =
         when (pivot) {

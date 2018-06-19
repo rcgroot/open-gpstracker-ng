@@ -34,6 +34,7 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import nl.sogeti.android.gpstracker.ng.features.graphs.condens
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -269,7 +270,19 @@ class LineGraph : View {
             val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
             return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
         }
-        val newDataPoints = data.map { convertDataToPoint(it) }
+
+        val bucketSize = (maxX - minX) / (width / 3F)
+        fun GraphPoint.bucket(): Int = ((this.x - minX) / bucketSize).toInt()
+
+        fun Collection<GraphPoint>.average(): GraphPoint {
+            val averageY = this.sumByDouble { it.y.toDouble() } / this.size
+            val averageX = this.sumByDouble { it.x.toDouble() } / this.size
+            return GraphPoint(averageX.toFloat(), averageY.toFloat())
+        }
+
+        val newDataPoints = data
+                .condens({ i, j -> i.bucket() == j.bucket() }, { it.average() })
+                .map { convertDataToPoint(it) }
 
         onMainThread {
             cachedPoints = newDataPoints
