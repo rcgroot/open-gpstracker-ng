@@ -45,7 +45,6 @@ import nl.sogeti.android.gpstracker.service.util.updateName
 import javax.inject.Inject
 
 class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
-                                             val trackTypeDescriptions: TrackTypeDescriptions,
                                              contentController: ContentController) : AbstractTrackPresenter(contentController) {
 
     val viewModel = TrackEditModel()
@@ -90,7 +89,7 @@ class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
 
     private fun loadTrackTypePosition(trackUri: Uri?) {
         if (trackUri != null) {
-            val trackType = trackTypeDescriptions.loadTrackType(trackUri)
+            val trackType = trackUri.loadTrackType()
             val position = viewModel.trackTypes.indexOfFirst { it == trackType }
             viewModel.selectedPosition.set(position)
         }
@@ -105,13 +104,14 @@ class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
 
     private fun saveTrackTypePosition(trackUri: Uri) {
         val trackType = viewModel.trackTypes[viewModel.selectedPosition.get()]
-        trackTypeDescriptions.saveTrackType(trackUri, trackType)
+        trackUri.saveTrackType(trackType)
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)
 
     companion object {
 
+        @Suppress("UNCHECKED_CAST")
         fun newFactory(uri: Uri) =
                 object : ViewModelProvider.Factory {
                     override fun <T : ViewModel?> create(viewModelClass: Class<T>): T {

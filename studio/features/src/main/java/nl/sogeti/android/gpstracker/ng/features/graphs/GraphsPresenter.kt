@@ -28,15 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.features.model.not
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
@@ -46,7 +43,6 @@ import javax.inject.Inject
 
 class GraphsPresenter @Inject constructor(
         private val summaryManager: SummaryManager,
-        private val preferences: Preferences,
         trackSelection: TrackSelection,
         contentController: ContentController)
     : AbstractSelectedTrackPresenter(trackSelection, contentController) {
@@ -56,14 +52,10 @@ class GraphsPresenter @Inject constructor(
     private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
     private var runningSelection = false
-    private val inverseSpeedPreferenceObserver = Observer<Boolean> {
-        viewModel.inverseSpeed.set(it ?: false)
-    }
 
     init {
-        preferences.inverseSpeed.observeForever(inverseSpeedPreferenceObserver)
         resetTrack()
-        graphDataProvider = GraphSpeedOverTimeDataProvider()
+        graphDataProvider = TimeDataProvider()
         viewModel.durationSelected.set(true)
     }
 
@@ -77,11 +69,6 @@ class GraphsPresenter @Inject constructor(
         super.onStop()
     }
 
-    override fun onCleared() {
-        preferences.inverseSpeed.removeObserver(inverseSpeedPreferenceObserver)
-        super.onCleared()
-    }
-
     //region View callbacks
 
     fun didSelectDistance() {
@@ -91,8 +78,9 @@ class GraphsPresenter @Inject constructor(
         viewModel.distanceSelected.set(true)
         viewModel.durationSelected.set(false)
         ofMainThread {
-            graphDataProvider = GraphSpeedOVerDistanceDataProvider()
-            trackSummary?.let { fillGraphWithSummary(it) }
+            trackSummary?.let {
+                setDataProviderWithSummary(DistanceDataProvider(), it)
+            }
             postMainThread {
                 runningSelection = false
             }
@@ -106,17 +94,13 @@ class GraphsPresenter @Inject constructor(
         viewModel.distanceSelected.set(false)
         viewModel.durationSelected.set(true)
         ofMainThread {
-            graphDataProvider = GraphSpeedOverTimeDataProvider()
-            trackSummary?.let { fillGraphWithSummary(it) }
+            trackSummary?.let {
+                setDataProviderWithSummary(TimeDataProvider(), it)
+            }
             postMainThread {
                 runningSelection = false
             }
         }
-    }
-
-    fun onInverseSpeedSelected() {
-        preferences.inverseSpeed.not()
-        trackSummary?.let { fillGraphWithSummary(it) }
     }
 
     //endregion
@@ -139,7 +123,7 @@ class GraphsPresenter @Inject constructor(
             summaryManager.collectSummaryInfo(trackUri) {
                 trackSummary = it
                 fillSummaryNumbers(it)
-                fillGraphWithSummary(it)
+                setDataProviderWithSummary(graphDataProvider, it)
             }
         } else {
             resetTrack()
@@ -159,13 +143,16 @@ class GraphsPresenter @Inject constructor(
         val seconds = summary.trackedPeriod / 1000F
         val speed = if (seconds > 0) summary.distance / seconds else 0F
         viewModel.speed.set(speed)
+
+        viewModel.inverseSpeed.set(summary.type.isRunning())
     }
 
-    private fun fillGraphWithSummary(it: Summary) {
-        viewModel.graphData.set(graphDataProvider.calculateGraphPoints(it))
-        viewModel.xLabel.set(graphDataProvider.xLabel)
-        viewModel.yLabel.set(graphDataProvider.yLabel)
-        viewModel.graphLabels.set(graphDataProvider.valueDescriptor)
+    private fun setDataProviderWithSummary(dataProvider: GraphDataProvider, summary: Summary) {
+        graphDataProvider = dataProvider
+        viewModel.graphData.set(dataProvider.calculateGraphPoints(summary, summary.type.isRunning()))
+        viewModel.xLabel.set(dataProvider.xLabel)
+        viewModel.yLabel.set(dataProvider.yLabel)
+        viewModel.graphLabels.set(dataProvider.valueDescriptor)
     }
 
     @Suppress("UNCHECKED_CAST")

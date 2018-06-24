@@ -63,35 +63,33 @@ class TrackTypeDescriptions {
                     TrackType(R.drawable.ic_track_type_boat, R.string.track_type_boat, VALUE_TYPE_BOAT)
             )
         }
-    }
 
+        fun trackTypeForContentType(contentType: String?): TrackType {
+            val trackType = allTrackTypes.find { it.contentValue == contentType }
 
-    fun trackTypeForContentType(contentType: String?): TrackType {
-        val trackType = allTrackTypes.find { it.contentValue == contentType }
-
-        return trackType ?: defaultType
-    }
-
-    fun loadTrackType(trackUri: Uri): TrackType {
-        val trackId: Long = trackUri.lastPathSegment.toLong()
-        val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(KEY_META_FIELD_TRACK_TYPE))
-        val contentType = metaDataTrackUri(trackId).runQuery(
-                BaseConfiguration.appComponent.contentResolver(),
-                selectionPair = typeSelection) {
-            it.getString(ContentConstants.MetaDataColumns.VALUE)
+            return trackType ?: defaultType
         }
-
-        return trackTypeForContentType(contentType)
     }
 
-    fun saveTrackType(trackUri: Uri, trackType: TrackType) {
-        saveTrackType(trackUri, trackType.contentValue)
+    data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String) {
+        fun isRunning() = contentValue == VALUE_TYPE_RUN
+    }
+}
+
+fun Uri.loadTrackType(): TrackTypeDescriptions.TrackType {
+    val trackId: Long = this.lastPathSegment.toLong()
+    val typeSelection = Pair("${ContentConstants.MetaDataColumns.KEY} = ?", listOf(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE))
+    val contentType = metaDataTrackUri(trackId).runQuery(
+            BaseConfiguration.appComponent.contentResolver(),
+            selectionPair = typeSelection) {
+        it.getString(ContentConstants.MetaDataColumns.VALUE)
     }
 
-    fun saveTrackType(trackUri: Uri, trackType: String) {
-        val trackId: Long = trackUri.lastPathSegment.toLong()
-        metaDataTrackUri(trackId).updateCreateMetaData(KEY_META_FIELD_TRACK_TYPE, trackType)
-    }
+    return TrackTypeDescriptions.trackTypeForContentType(contentType)
+}
 
-    data class TrackType(val drawableId: Int, val stringId: Int, val contentValue: String)
+
+fun Uri.saveTrackType(trackType: TrackTypeDescriptions.TrackType) {
+    val trackId: Long = this.lastPathSegment.toLong()
+    metaDataTrackUri(trackId).updateCreateMetaData(TrackTypeDescriptions.KEY_META_FIELD_TRACK_TYPE, trackType.contentValue)
 }

@@ -113,7 +113,7 @@ class RecordingPresenter @Inject constructor(
         summaryManager.collectSummaryInfo(trackUri) {
             val endTime = it.waypoints.last().last().time
             val startTime = it.waypoints.first().first().time
-            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance / (it.trackedPeriod / 1000), preferences.inverseSpeed.valueOrFalse())
+            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance / (it.trackedPeriod / 1000), it.type.isRunning())
             val distance = statisticsFormatter.convertMetersToDistance(context, it.distance)
             val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
             val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)

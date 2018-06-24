@@ -38,6 +38,7 @@ import android.support.annotation.RequiresApi
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.features.trackedit.saveTrackType
 import nl.sogeti.android.gpstracker.ng.features.tracklist.ImportNotification
 import nl.sogeti.android.gpstracker.utils.contentprovider.countResult
 import nl.sogeti.android.gpstracker.utils.contentprovider.getString
@@ -51,8 +52,6 @@ class GpxImportController(private val context: Context) {
     lateinit var parser: GpxParser
     @Inject
     lateinit var notification: ImportNotification
-    @Inject
-    lateinit var trackTypeDescriptions: TrackTypeDescriptions
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -69,7 +68,7 @@ class GpxImportController(private val context: Context) {
     private fun importTrack(uri: Uri, trackType: String) {
         val defaultName = extractName(uri)
         val trackUri = parser.parseTrack(context.contentResolver.openInputStream(uri), defaultName)
-        trackTypeDescriptions.saveTrackType(trackUri, trackType)
+        trackUri.saveTrackType(TrackTypeDescriptions.trackTypeForContentType(trackType))
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

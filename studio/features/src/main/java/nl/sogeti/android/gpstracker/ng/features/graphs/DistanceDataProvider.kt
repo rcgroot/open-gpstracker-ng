@@ -5,84 +5,65 @@ import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphValueDescriptor
-import nl.sogeti.android.gpstracker.ng.features.model.Preferences
-import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
-import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
+class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
 
-    @Inject
-    lateinit var calculator: SummaryCalculator
+    override var inverseSpeed: Boolean = false
 
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
 
     @Inject
-    lateinit var preferences: Preferences
-
-    @Inject
     lateinit var graphSpeedConverter: GraphSpeedConverter
-
-    private val inverseSpeed
-        get() = preferences.inverseSpeed.valueOrFalse()
 
     override val yLabel: Int
         get() = R.string.graph_label_speed
 
     override val xLabel: Int
-        get() = R.string.graph_label_time
-
-    override val valueDescriptor: GraphValueDescriptor
-        get() = this
+        get() = R.string.graph_label_distance
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
     @WorkerThread
-    override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
+    override fun calculateGraphPoints(summary: Summary, inverseRunnersSpeed: Boolean): List<GraphPoint> {
+        inverseSpeed = inverseRunnersSpeed
         val graphPoints = mutableListOf<GraphPoint>()
-        addSegmentToGraphPoints(summary.deltas, graphPoints)
+        summary.deltas.forEach {
+            addSegmentToGraphPoints(it, graphPoints)
+        }
 
-        val milliseconds = 40_000F
+        val meters = 10F
         return graphPoints
                 .inverseSpeed()
                 .flattenOutliers()
-                .smoothen(milliseconds)
+                .smoothen(meters)
     }
 
+    override val valueDescriptor: GraphValueDescriptor
+        get() = this
 
     override fun describeYvalue(context: Context, yValue: Float): String {
         return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue.toSpeed(), inverseSpeed)
     }
 
     override fun describeXvalue(context: Context, xValue: Float): String {
-        return statisticsFormatter.convertSpanDescriptiveDuration(context, xValue.toLong())
+        return statisticsFormatter.convertMetersToDistance(context, xValue)
     }
 
-    private fun addSegmentToGraphPoints(waypoints: List<List<Summary.Delta>>, graphPoints: MutableList<GraphPoint>) {
-        val baseTime = waypoints.first().first().totalMilliseconds
-        waypoints.forEach {
-            val points = calculateSegment(it, baseTime)
-            graphPoints.addAll(points)
-        }
-    }
-
-    fun calculateSegment(deltas: List<Summary.Delta>, baseTime: Long): List<GraphPoint> {
-        val list = mutableListOf<GraphPoint>()
-        fun Long.toX() = (this - baseTime).toFloat()
+    private fun addSegmentToGraphPoints(deltas: List<Summary.Delta>, graphPoints: MutableList<GraphPoint>) {
         deltas.forEach {
             val speed = it.deltaMeters / (it.deltaMilliseconds / 1000F)
-            if (speed >= 0F) {
-                val moment = it.totalMilliseconds - (it.deltaMilliseconds / 2L)
-                list.add(GraphPoint(moment.toX(), speed))
+            if (speed >= 0F && it.deltaMeters > 0F) {
+                val distance = it.totalMeters - (it.deltaMeters / 2F)
+                graphPoints.add(GraphPoint(distance, speed))
             }
         }
-        return list
     }
 
     fun List<GraphPoint>.inverseSpeed(): List<GraphPoint> {
@@ -102,5 +83,5 @@ class GraphSpeedOverTimeDataProvider : GraphValueDescriptor, GraphDataProvider {
             } else {
                 this
             }
-
 }
+

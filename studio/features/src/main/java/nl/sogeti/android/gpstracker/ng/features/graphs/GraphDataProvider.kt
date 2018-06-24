@@ -10,7 +10,8 @@ interface GraphDataProvider {
     val valueDescriptor: GraphValueDescriptor
     val xLabel: Int
     val yLabel: Int
+    val inverseSpeed : Boolean
 
     @WorkerThread
-    fun calculateGraphPoints(summary: Summary): List<GraphPoint>
+    fun calculateGraphPoints(summary: Summary, inverseRunnersSpeed: Boolean): List<GraphPoint>
 }

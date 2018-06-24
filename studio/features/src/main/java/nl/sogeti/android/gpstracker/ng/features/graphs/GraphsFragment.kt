@@ -30,7 +30,6 @@ package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
-import android.databinding.Observable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
@@ -44,12 +43,6 @@ class GraphsFragment : Fragment() {
 
     private var permissionRequester = PermissionRequester()
 
-    private val optionMenuObserver: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable, propertyId: Int) {
-            activity?.invalidateOptionsMenu()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -60,47 +53,19 @@ class GraphsFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentGraphsBinding>(inflater, R.layout.fragment_graphs, container, false)
         binding.viewModel = presenter.viewModel
         binding.presenter = presenter
-        presenter.viewModel.inverseSpeed.addOnPropertyChangedCallback(optionMenuObserver)
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { presenter.start() })
+        permissionRequester.start(this) { presenter.start() }
     }
 
     override fun onStop() {
         presenter.stop()
         permissionRequester.stop()
         super.onStop()
-    }
-
-    override fun onDestroyView() {
-        presenter.viewModel.inverseSpeed.addOnPropertyChangedCallback(optionMenuObserver)
-        super.onDestroyView()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.graph, menu)
-    }
-
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-
-        menu.findItem(R.id.action_inverse_speed).isChecked = presenter.viewModel.inverseSpeed.get()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when {
-            item.itemId == R.id.action_inverse_speed -> {
-                presenter.onInverseSpeedSelected()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     companion object {

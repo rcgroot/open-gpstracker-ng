@@ -8,8 +8,8 @@ import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
-import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedOVerDistanceDataProvider
-import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedOverTimeDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.DistanceDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
@@ -53,8 +53,8 @@ interface FeatureComponent {
     fun inject(phoneMessageListenerService: PhoneMessageListenerService)
     fun inject(statisticsCollector: StatisticsCollector)
     fun inject(graphLabelsBindings: GraphLabelsBindings)
-    fun inject(graphSpeedOverTimeProvider: GraphSpeedOverTimeDataProvider)
-    fun inject(graphSpeedOVerDistanceDataProvider: GraphSpeedOVerDistanceDataProvider)
+    fun inject(timeProvider: TimeDataProvider)
+    fun inject(distanceDataProvider: DistanceDataProvider)
     fun inject(controlFragment: ControlFragment)
     fun inject(trackListActivity: TrackListActivity)
     fun inject(trackActivity: TrackActivity)

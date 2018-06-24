@@ -34,12 +34,11 @@ import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
-import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
+import nl.sogeti.android.gpstracker.ng.features.trackedit.loadTrackType
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import javax.inject.Inject
 
 class TrackPresenter @Inject constructor(
-        val trackTypeDescriptions: TrackTypeDescriptions,
         trackSelection: TrackSelection,
         contentController: ContentController)
     : AbstractSelectedTrackPresenter(trackSelection, contentController) {
@@ -53,7 +52,7 @@ class TrackPresenter @Inject constructor(
         if (trackUri != null) {
             viewModel.trackUri.set(trackUri)
             viewModel.name.set(name)
-            viewModel.trackIcon.set(trackTypeDescriptions.loadTrackType(trackUri).drawableId)
+            viewModel.trackIcon.set(trackUri.loadTrackType().drawableId)
         }
     }
 

@@ -30,11 +30,12 @@ package nl.sogeti.android.gpstracker.ng.features.summary
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLngBounds
+import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 import nl.sogeti.android.gpstracker.service.util.Waypoint
 
 data class Summary(val trackUri: Uri,
                    val name: String,
-                   val type: Int,
+                   val type: TrackTypeDescriptions.TrackType,
                    val startTimestamp: Long,
                    val stopTimestamp: Long,
                    val trackedPeriod: Long,

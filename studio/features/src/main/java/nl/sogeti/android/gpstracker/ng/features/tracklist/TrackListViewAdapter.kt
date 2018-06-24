@@ -190,14 +190,14 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
     }
 
     private fun willDisplayTrack(context: Context, viewModel: TrackViewModel) {
-        summaryManager.collectSummaryInfo(viewModel.uri, {
+        summaryManager.collectSummaryInfo(viewModel.uri) {
             if (it.trackUri == viewModel.uri) {
                 viewModel.completeBounds.set(it.bounds)
                 val listOfLatLng = it.waypoints.map { it.map { it.mapLatLng() } }
                 viewModel.waypoints.set(listOfLatLng)
                 val trackPolylineProvider = TrackPolylineProvider(listOfLatLng)
                 viewModel.polylines.set(trackPolylineProvider.lineOptions)
-                viewModel.iconType.set(it.type)
+                viewModel.iconType.set(it.type.drawableId)
                 viewModel.name.set(it.name)
                 viewModel.startDay.set(statisticsFormatter.convertTimestampToStart(context, it.startTimestamp))
                 var duration = context.getString(R.string.empty_dash)
@@ -211,7 +211,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                 }
                 viewModel.distance.set(distance)
             }
-        })
+        }
     }
 
     class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root)
