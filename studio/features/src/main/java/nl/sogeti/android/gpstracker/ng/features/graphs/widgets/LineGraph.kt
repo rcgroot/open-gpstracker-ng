@@ -45,8 +45,7 @@ class LineGraph : View {
     var data: List<GraphPoint> = listOf()
         set(value) {
             field = value
-            clearCachedPoints()
-            invalidate()
+            fillPointsCache(data)
         }
     var xUnit = ""
         set(value) {
@@ -165,17 +164,14 @@ class LineGraph : View {
         this.h = h.toFloat()
         this.sectionHeight = (h - unitTextSideMargin - graphSideMargin) / 4f
         this.sectionWidth = (w - unitTextSideMargin - graphSideMargin) / 4f
-        clearCachedPoints()
+        cachedPoints = null
         createLineShader()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (cachedPoints == null) {
-            cachedPoints = listOf()
-            ofMainThread {
-                fillPointsCache(data)
-            }
+            fillPointsCache(data)
         }
         drawGrid(canvas)
         drawGraphLine(canvas)
@@ -261,27 +257,31 @@ class LineGraph : View {
     private var maxX: Float = 1f
 
     private fun fillPointsCache(data: List<GraphPoint>) {
-        minX = data.firstOrNull()?.x ?: 0f
-        maxX = data.lastOrNull()?.x ?: 100f
-        val bucketSize = (maxX - minX) / (width / 3F)
+        cachedPoints = listOf()
+        ofMainThread {
+            minX = data.firstOrNull()?.x ?: 0f
+            maxX = data.lastOrNull()?.x ?: 100f
+            val bucketSize = (maxX - minX) / (width / 3F)
 
-        val condensedData = data.condens(bucketSize)
+            val condensedData = data.condens(bucketSize)
 
-        minY = condensedData.minBy { it.y }?.y ?: 0f
-        maxY = condensedData.maxBy { it.y }?.y ?: 100f
+            minY = condensedData.minBy { it.y }?.y ?: 0f
+            maxY = condensedData.maxBy { it.y }?.y ?: 100f
 
-        fun convertDataToPoint(point: GraphPoint): PointF {
-            val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)
-            val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
-            return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
+            fun convertDataToPoint(point: GraphPoint): PointF {
+                val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)
+                val x = (point.x - minX) / (maxX - minX) * (sectionWidth * 4)
+                return PointF(x + unitTextSideMargin, h - unitTextSideMargin - y)
+            }
+
+            val newDataPoints = condensedData.map { convertDataToPoint(it) }
+
+            onMainThread {
+                cachedPoints = newDataPoints
+                invalidate()
+            }
         }
 
-        val newDataPoints = condensedData.map { convertDataToPoint(it) }
-
-        onMainThread {
-            cachedPoints = newDataPoints
-            invalidate()
-        }
     }
 
     private fun List<GraphPoint>.condens(bucketSize: Float): List<GraphPoint> {
@@ -294,10 +294,6 @@ class LineGraph : View {
         fun GraphPoint.bucket(): Int = ((this.x - minX) / bucketSize).toInt()
 
         return this.condens({ i, j -> i.bucket() == j.bucket() }, { it.average() })
-    }
-
-    private fun clearCachedPoints() {
-        cachedPoints = null
     }
 
     private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {
