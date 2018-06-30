@@ -33,6 +33,9 @@ import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager

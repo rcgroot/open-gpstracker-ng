@@ -8,8 +8,8 @@ import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
-import nl.sogeti.android.gpstracker.ng.features.graphs.DistanceDataProvider
-import nl.sogeti.android.gpstracker.ng.features.graphs.TimeDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation

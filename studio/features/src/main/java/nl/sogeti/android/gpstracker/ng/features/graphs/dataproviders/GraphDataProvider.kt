@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.features.graphs
+package nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders
 
 import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint

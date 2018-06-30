@@ -30,6 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import android.arch.lifecycle.MutableLiveData
 import nl.renedegroot.android.test.utils.any
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.model.Preferences
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
@@ -74,8 +75,6 @@ class GraphSpeedTimeProviderTest {
         sut = TimeDataProvider()
         sut.calculator = calculator
         sut.statisticsFormatter = statisticsFormatter
-        sut.preferences = preferences
-        `when`(preferences.inverseSpeed).thenReturn(liveTrueData)
         `when`(calculator.distance(any(), any(), any())).thenReturn(313.37338f)
     }
 
@@ -89,28 +88,4 @@ class GraphSpeedTimeProviderTest {
         assertThat(points.count(), `is`(4))
     }
 
-    @Test
-    fun forEmptyDelta() {
-        // Act
-        val result = listOf<Int>().toDeltas { x, y -> x + y }
-        // Assert
-        assertThat(result, `is`(emptyList()))
-    }
-
-    @Test
-    fun forTwoDelta() {
-        // Act
-        val result = listOf(1, 2).toDeltas { x, y -> x + y }
-        // Assert
-        assertThat(result, `is`(listOf(3)))
-    }
-
-
-    @Test
-    fun forSixDelta() {
-        // Act
-        val result = listOf(1, 2, 3, 4, 5, 6).toDeltas { x, y -> x + y }
-        // Assert
-        assertThat(result, `is`(listOf(3, 5, 7, 9, 11)))
-    }
 }

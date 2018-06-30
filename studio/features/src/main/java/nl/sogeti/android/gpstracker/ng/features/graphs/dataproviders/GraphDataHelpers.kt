@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.features.graphs
+package nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders
 
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
 import java.lang.Math.sqrt

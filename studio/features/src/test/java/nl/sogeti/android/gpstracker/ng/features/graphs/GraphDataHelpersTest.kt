@@ -1,5 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.condense
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
