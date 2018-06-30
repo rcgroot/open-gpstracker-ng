@@ -10,7 +10,7 @@ class GraphDataHelpersTest {
     fun `condens empty list`() {
         val list = emptyList<Int>()
 
-        val result = list.condens({ x, y -> x == y }, { it.sum() })
+        val result = list.condense({ x, y -> x == y }, { it.sum() })
 
         assertThat(result, `is`(emptyList()))
     }
@@ -19,7 +19,7 @@ class GraphDataHelpersTest {
     fun `condens unique list`() {
         val list = listOf(1, 2, 3, 4, 5, 6)
 
-        val result = list.condens({ x, y -> x == y }, { it.sum() })
+        val result = list.condense({ x, y -> x == y }, { it.sum() })
 
         assertThat(result, `is`(list))
     }
@@ -28,7 +28,7 @@ class GraphDataHelpersTest {
     fun `condens basic list`() {
         val list = listOf(1, 1, 2, 2, 3, 4, 5, 5, 5, 6)
 
-        val result = list.condens({ x, y -> x == y }, { it.sum() })
+        val result = list.condense({ x, y -> x == y }, { it.sum() })
 
         assertThat(result, `is`(listOf(2, 4, 3, 4, 15, 6)))
     }
@@ -37,7 +37,7 @@ class GraphDataHelpersTest {
     fun `condens repeating list`() {
         val list = listOf(1, 1, 2, 2, 3, 4, 5, 2, 2, 2, 5, 5, 6)
 
-        val result = list.condens({ x, y -> x == y }, { it.sum() })
+        val result = list.condense({ x, y -> x == y }, { it.sum() })
 
         assertThat(result, `is`(listOf(2, 4, 3, 4, 5, 6, 10, 6)))
     }

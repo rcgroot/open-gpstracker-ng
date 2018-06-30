@@ -47,7 +47,7 @@ class TimeDataProvider : GraphValueDescriptor, GraphDataProvider {
         return graphPoints
                 .inverseSpeed()
                 .flattenOutliers()
-                .smoothen(milliseconds)
+                .smooth(milliseconds)
     }
 
 

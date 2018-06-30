@@ -34,7 +34,7 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import nl.sogeti.android.gpstracker.ng.features.graphs.condens
+import nl.sogeti.android.gpstracker.ng.features.graphs.condense
 import nl.sogeti.android.gpstracker.utils.ofMainThread
 import nl.sogeti.android.gpstracker.utils.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -293,7 +293,7 @@ class LineGraph : View {
 
         fun GraphPoint.bucket(): Int = ((this.x - minX) / bucketSize).toInt()
 
-        return this.condens({ i, j -> i.bucket() == j.bucket() }, { it.average() })
+        return this.condense({ i, j -> i.bucket() == j.bucket() }, { it.average() })
     }
 
     private fun drawLine(canvas: Canvas, x: Float, y: Float, x2: Float, y2: Float, paint: Paint) {

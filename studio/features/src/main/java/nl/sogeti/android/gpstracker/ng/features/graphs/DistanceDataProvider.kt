@@ -42,7 +42,7 @@ class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
         return graphPoints
                 .inverseSpeed()
                 .flattenOutliers()
-                .smoothen(meters)
+                .smooth(meters)
     }
 
     override val valueDescriptor: GraphValueDescriptor

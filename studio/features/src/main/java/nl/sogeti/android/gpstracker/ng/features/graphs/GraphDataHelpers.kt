@@ -1,8 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import java.lang.Math.max
 import java.lang.Math.sqrt
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 
 private const val MAX_TIMES_STANDARD_DEVIATION = 2
@@ -12,22 +13,23 @@ fun List<GraphPoint>.flattenOutliers(): List<GraphPoint> {
     val sd = sqrt(this.sumByDouble { (it.y.toDouble() - mean).pow(2) } / this.size)
     val min = max(0.0, mean - sd * MAX_TIMES_STANDARD_DEVIATION)
     val max = mean + sd * MAX_TIMES_STANDARD_DEVIATION
+    fun withinNorm(point: GraphPoint) = point.y > min && point.y < max
     return this.mapIndexed { i, point ->
-        if (point.y > min && point.y < max) {
+        if (withinNorm(point)) {
             point
         } else {
-            this.neighboursAverage(i)
+            this.neighboursAverage(i) { withinNorm(it) }
         }
     }
 }
 
-fun List<GraphPoint>.smoothen(span: Float) =
+fun List<GraphPoint>.smooth(span: Float) =
         this.mapIndexed { i, point ->
             val ySmooth = this.localAverage(i, span / 2F)
             GraphPoint(point.x, ySmooth.toFloat())
         }
 
-fun <T> List<T>.condens(together: (T, T) -> Boolean, transform: (List<T>) -> T): List<T> {
+fun <T> List<T>.condense(together: (T, T) -> Boolean, transform: (List<T>) -> T): List<T> {
     val result = mutableListOf<T>()
     var rangeStart = 0
     forEachIndexed { index, item ->
@@ -43,15 +45,16 @@ fun <T> List<T>.condens(together: (T, T) -> Boolean, transform: (List<T>) -> T):
     return result
 }
 
-private fun List<GraphPoint>.neighboursAverage(pivot: Int): GraphPoint =
-        when (pivot) {
-            0 -> this[1]
-            this.lastIndex -> this[pivot - 1]
-            else -> {
-                val average = (this[pivot - 1].y + this[pivot + 1].y) / 2F
-                GraphPoint(this[pivot].x, average)
-            }
-        }
+private fun List<GraphPoint>.neighboursAverage(pivot: Int, span: Int = 4, allowed: (GraphPoint) -> Boolean = { true }): GraphPoint {
+    fun List<GraphPoint>.average(x: Float) =
+            GraphPoint(x, (sumByDouble { it.y.toDouble() } / size).toFloat())
+
+    val from = max(pivot - span, 0)
+    val to = min(pivot + span, lastIndex)
+    val localPoints = subList(from, to).filter { allowed(it) }
+
+    return localPoints.average(this[pivot].x)
+}
 
 private fun List<GraphPoint>.localAverage(pivot: Int, halfSpan: Float): Double {
     val collectedPoints = mutableListOf<GraphPoint>()
