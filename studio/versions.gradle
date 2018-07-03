@@ -9,7 +9,7 @@ ext {
     supportLibraryVersion = '27.1.1'
     kotlinVersion = '1.2.41'
     wearableVersion = '2.2.0'
-    constraintsLibraryVersion = '1.1.0'
+    constraintsLibraryVersion = '1.1.2'
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
     playServicesVersion = '15.0.1'
