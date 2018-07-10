@@ -1,6 +1,6 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-beta02'
+    gradlePluginVersion = '3.2.0-beta03'
     buildTools = '27.0.3'
     minSdk = 21
     targetSdk = 27
@@ -13,7 +13,7 @@ ext {
     timberVersion = '4.1.2'
     daggerVersion = '2.8'
     playServicesVersion = '15.0.1'
-    firebaseCoreVersion = '15.0.2'
+    firebaseCoreVersion = '16.0.1'
     googleServicesVersion = '3.2.1'
     fabricVerion = '1.25.4'
     crashlicticsVerion = '2.7.1'
