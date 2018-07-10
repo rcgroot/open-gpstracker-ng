@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.sogeti.android.opengpstrack.ng.features">
 
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+
     <application>
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
@@ -42,14 +44,6 @@
             android:parentActivityName="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
             android:theme="@style/AppTheme" />
 
-        <receiver
-            android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
-
         <provider
             android:name="nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider"
             android:authorities="${applicationId}.gpxshareprovider"
@@ -61,6 +55,24 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <receiver
+            android:name="nl.sogeti.android.gpstracker.ng.features.activityrecognition.ActivityRecognizerLoggingBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- region Wear support -->
+
+        <receiver
+            android:name="nl.sogeti.android.gpstracker.ng.features.wear.WearLoggingStateBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="nl.sogeti.android.gpstracker.LOGGING_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <service android:name="nl.sogeti.android.gpstracker.ng.features.wear.PhoneMessageListenerService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
@@ -71,8 +83,11 @@
             </intent-filter>
         </service>
         <service
-            android:name="nl.sogeti.android.gpstracker.ng.features.wear.LoggingService"
+            android:name="nl.sogeti.android.gpstracker.ng.features.wear.WearLoggingService"
             android:exported="false" />
+
+        <!-- end region -->
+
     </application>
 
 </manifest>

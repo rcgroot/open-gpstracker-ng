@@ -74,13 +74,12 @@ class GpxShareProvider : ContentProvider() {
         var file: ParcelFileDescriptor? = null
         val match = uriMatcher.match(uri)
         if (match == TRACK_ID) {
-            file = openPipeHelper(uri, MIME_TYPE_GPX, null, null,
-                    { output, shareUri, _, _, _ ->
-                        val outputstream = FileOutputStream(output.fileDescriptor)
-                        val trackUri = trackUri(shareUri.lastPathSegment.toLong())
-                        val gpxCreator = GpxCreator(context, trackUri)
-                        gpxCreator.createGpx(outputstream)
-                    })
+            file = openPipeHelper(uri, MIME_TYPE_GPX, null, null) { output, shareUri, _, _, _ ->
+                val outputStream = FileOutputStream(output.fileDescriptor)
+                val trackUri = trackUri(shareUri.lastPathSegment.toLong())
+                val gpxCreator = GpxCreator(context, trackUri)
+                gpxCreator.createGpx(outputStream)
+            }
         }
 
         return file

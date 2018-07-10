@@ -11,7 +11,6 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration.featureComp
 import nl.sogeti.android.gpstracker.ng.features.dagger.DaggerFeatureComponent
 import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureModule
 import nl.sogeti.android.gpstracker.ng.features.dagger.VersionInfoModule
-import nl.sogeti.android.gpstracker.ng.features.wear.LoggingReceiver
 import nl.sogeti.android.gpstracker.service.dagger.DaggerServiceComponent
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration.serviceComponent
 import nl.sogeti.android.gpstracker.service.dagger.ServiceModule

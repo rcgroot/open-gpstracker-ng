@@ -1,6 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.dagger
 
 import android.content.Context
+import com.google.android.gms.location.ActivityRecognitionClient
 import dagger.Module
 import dagger.Provides
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider
@@ -28,7 +29,7 @@ import javax.inject.Named
 @Module
 class FeatureModule(context: Context) {
 
-    private val context = context.applicationContext
+    private val context = context.applicationContext!!
 
     @FeatureScope
     @Provides
@@ -88,4 +89,7 @@ class FeatureModule(context: Context) {
 
     @Provides
     fun versionHelper() = VersionHelper()
+
+    @Provides
+    fun activityRecognitionClient() = ActivityRecognitionClient(context)
 }

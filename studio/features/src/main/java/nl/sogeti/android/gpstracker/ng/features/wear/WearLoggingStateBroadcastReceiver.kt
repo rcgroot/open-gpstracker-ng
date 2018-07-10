@@ -28,45 +28,30 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.wear
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
-import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Named
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateBroadcastReceiver
 
-class LoggingReceiver : BroadcastReceiver() {
-
-    @Inject
-    @field:Named("stateBroadcastAction")
-    lateinit var stateAction: String
+class WearLoggingStateBroadcastReceiver : LoggingStateBroadcastReceiver() {
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
-    override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == stateAction) {
-            onStateReceive(context, intent)
-        }
+    override fun didStopLogging(context: Context) {
+        context.startService(WearLoggingService.createStoppedIntent(context))
     }
 
-    private fun onStateReceive(context: Context, intent: Intent) {
-        val state = intent.getIntExtra(EXTRA_LOGGING_STATE, STATE_UNKNOWN)
-        if (intent.hasExtra(EXTRA_TRACK)) {
-            val trackUri: Uri = intent.getParcelableExtra(EXTRA_TRACK)
-            when (state) {
-                STATE_LOGGING -> context.startService(LoggingService.createStartedIntent(context, trackUri))
-                STATE_PAUSED -> context.startService(LoggingService.createPausedIntent(context, trackUri))
-                STATE_STOPPED -> context.startService(LoggingService.createStoppedIntent(context))
-            }
-        } else {
-            Timber.e("Failed to handle state change $intent")
-            context.stopService(LoggingService.createStoppedIntent(context))
-        }
+    override fun didPauseLogging(context: Context, trackUri: Uri) {
+        context.startService(WearLoggingService.createPausedIntent(context, trackUri))
+    }
+
+    override fun didStartLogging(context: Context, trackUri: Uri) {
+        context.startService(WearLoggingService.createStartedIntent(context, trackUri))
+    }
+
+    override fun onError(context: Context) {
+        context.stopService(WearLoggingService.createStoppedIntent(context))
     }
 }

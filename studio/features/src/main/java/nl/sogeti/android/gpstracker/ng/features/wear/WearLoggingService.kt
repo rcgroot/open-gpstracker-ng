@@ -37,7 +37,7 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import javax.inject.Inject
 
 
-class LoggingService : Service() {
+class WearLoggingService : Service() {
 
     @Inject
     lateinit var statisticsCollector: StatisticsCollector
@@ -85,7 +85,7 @@ class LoggingService : Service() {
 
         @JvmStatic
         fun createStartedIntent(context: Context, trackUri: Uri): Intent {
-            val intent = Intent(context, LoggingService::class.java)
+            val intent = Intent(context, WearLoggingService::class.java)
             intent.putExtra(TRACK, trackUri)
             intent.putExtra(STATE, START)
             return intent
@@ -93,7 +93,7 @@ class LoggingService : Service() {
 
         @JvmStatic
         fun createPausedIntent(context: Context, trackUri: Uri): Intent {
-            val intent = Intent(context, LoggingService::class.java)
+            val intent = Intent(context, WearLoggingService::class.java)
             intent.putExtra(TRACK, trackUri)
             intent.putExtra(STATE, PAUSE)
             return intent
@@ -101,7 +101,7 @@ class LoggingService : Service() {
 
         @JvmStatic
         fun createStoppedIntent(context: Context): Intent {
-            val intent = Intent(context, LoggingService::class.java)
+            val intent = Intent(context, WearLoggingService::class.java)
             intent.putExtra(STATE, STOP)
             return intent
         }
