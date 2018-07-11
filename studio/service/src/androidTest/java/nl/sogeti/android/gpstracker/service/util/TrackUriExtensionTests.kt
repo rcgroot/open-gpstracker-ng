@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.service.util
 
 import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication
-import nl.sogeti.android.gpstracker.ng.rules.MockAppComponentTestRule
+import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
 import org.junit.Rule

@@ -81,11 +81,13 @@ class GraphSpeedTimeProviderTest {
     @Test
     fun segmentPoints() {
         // Prepare
-        val waypoints = listOf(Summary.Delta(1L, 1F, 1F, 1L), Summary.Delta(2L, 2F, 1F, 2L))
+        val waypoints = listOf(
+                Summary.Delta(1L, 1F, 1F, 1L),
+                Summary.Delta(2L, 2F, 1F, 2L))
         // Execute
         val points = sut.calculateSegment(waypoints, start)
         // Assert
-        assertThat(points.count(), `is`(4))
+        assertThat(points.count(), `is`(2))
     }
 
 }

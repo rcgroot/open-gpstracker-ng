@@ -8,11 +8,11 @@ import org.junit.Test
 
 class TrackTypeDescriptionsTest {
 
-    lateinit var sut: TrackTypeDescriptions
+    lateinit var sut: TrackTypeDescriptions.Companion
 
     @Before
     fun setUp() {
-        sut = TrackTypeDescriptions()
+        sut = TrackTypeDescriptions
     }
 
     @Test

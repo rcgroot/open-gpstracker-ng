@@ -62,15 +62,13 @@ class TrackEditPresenterTest {
     @Mock
     lateinit var summaryManager: SummaryManager
     @Mock
-    lateinit var trackTypeDescriptions: TrackTypeDescriptions
-    @Mock
     lateinit var cursor: Cursor
     @Mock
     lateinit var contentController: ContentController
 
     @Before
     fun setUp() {
-        sut = TrackEditPresenter(summaryManager, trackTypeDescriptions, contentController)
+        sut = TrackEditPresenter(summaryManager, contentController)
         `when`(trackUri.lastPathSegment).thenReturn("6")
         sut.viewModel.selectedPosition.set(1)
         `when`(context.contentResolver).thenReturn(contentResolver)

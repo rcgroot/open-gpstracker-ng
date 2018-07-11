@@ -40,14 +40,14 @@ class ContentControllerTest {
 
     @Before
     fun setUp() {
-        sut = ContentController(context, listener)
+        sut = ContentController(context)
         `when`(context.contentResolver).thenReturn(contentResolver)
     }
 
     @Test
     fun testRegisterObserver() {
         // Act
-        sut.registerObserver(registerUri)
+        sut.registerObserver(listener, registerUri)
         // Assert
         verify(contentResolver).registerContentObserver(uriCaptor.capture(), booleanCaptor.capture(), contentObserverCaptor.capture())
         assertThat(uriCaptor.value, `is`(notNullValue()))
@@ -61,7 +61,7 @@ class ContentControllerTest {
     fun testCallback() {
         // Arrange
         val changedUri = mock(Uri::class.java)
-        sut.registerObserver(registerUri)
+        sut.registerObserver(listener, registerUri)
         verify(contentResolver).registerContentObserver(uriCaptor.capture(), booleanCaptor.capture(), contentObserverCaptor.capture())
         // Act
         contentObserverCaptor.value.onChange(false, changedUri)
@@ -73,7 +73,7 @@ class ContentControllerTest {
     fun testUnregisterObserver() {
         // Arrange
         val changedUri = mock(Uri::class.java)
-        sut.registerObserver(registerUri)
+        sut.registerObserver(listener, registerUri)
         sut.unregisterObserver()
         verify(contentResolver).registerContentObserver(uriCaptor.capture(), booleanCaptor.capture(), contentObserverCaptor.capture())
         val contentObserver = contentObserverCaptor.value

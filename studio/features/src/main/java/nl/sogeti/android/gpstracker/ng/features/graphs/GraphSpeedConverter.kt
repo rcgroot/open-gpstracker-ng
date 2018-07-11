@@ -5,6 +5,9 @@ import javax.inject.Inject
 class GraphSpeedConverter @Inject constructor() {
 
     fun speedToYValue(meterPerSecond: Float): Float {
+        if (meterPerSecond < 0.001) {
+            return 0F
+        }
         return (1F / meterPerSecond) / 0.06F
     }
 
