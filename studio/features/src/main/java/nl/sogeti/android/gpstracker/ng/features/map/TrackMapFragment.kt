@@ -34,17 +34,18 @@ import android.databinding.Observable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentMapBinding
+import javax.inject.Inject
 
 class TrackMapFragment : Fragment() {
 
+    @Inject
+    lateinit var permissionRequester : PermissionRequester
     private lateinit var presenter: TrackMapPresenter
-
-    private val permissionRequester = PermissionRequester()
-
     private var binding: FragmentMapBinding? = null
 
     private val optionMenuObserver: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
@@ -67,11 +68,12 @@ class TrackMapFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        presenter = ViewModelProviders.of(this).get(TrackMapPresenter::class.java)
+        FeatureConfiguration.featureComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentMapBinding>(inflater, R.layout.fragment_map, container, false, FeaturesBindingComponent())
-        presenter = ViewModelProviders.of(this, TrackMapPresenter.newFactory()).get(TrackMapPresenter::class.java)
         binding.fragmentMapMapview.onCreate(savedInstanceState)
         binding.viewModel = presenter.viewModel
         binding.presenter = presenter
@@ -87,9 +89,7 @@ class TrackMapFragment : Fragment() {
         super.onStart()
         val mapView = getMapView()
         mapView.onStart()
-        permissionRequester.start(this, {
-            presenter.start(mapView)
-        })
+        permissionRequester.start(this) { presenter.start(mapView) }
     }
 
     override fun onResume() {

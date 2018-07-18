@@ -35,8 +35,8 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.condense
-import nl.sogeti.android.gpstracker.utils.ofMainThread
-import nl.sogeti.android.gpstracker.utils.onMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class LineGraph : View {

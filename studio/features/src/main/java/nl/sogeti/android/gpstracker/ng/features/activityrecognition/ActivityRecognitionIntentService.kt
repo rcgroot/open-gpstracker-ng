@@ -13,7 +13,7 @@ import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.VALUE_TYPE_WALK
 import nl.sogeti.android.gpstracker.ng.features.trackedit.saveTrackType
 
-const internal val EXTRA_TRACK_URI = "EXTRA_TRACK_URI"
+internal const val EXTRA_TRACK_URI = "EXTRA_TRACK_URI"
 
 class ActivityRecognitionIntentService : IntentService("ActivityRecognitionIntentService") {
 

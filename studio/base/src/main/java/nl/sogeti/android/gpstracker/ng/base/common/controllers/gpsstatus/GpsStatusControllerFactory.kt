@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GnnsStatusControllerImpl
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
 
-open class GpsStatusControllerFactory {
+open class GpsStatusControllerFactory(val context: Context) {
 
-    open fun createGpsStatusController(context: Context, listener: GpsStatusController.Listener): GpsStatusController {
+    open fun createGpsStatusController(listener: GpsStatusController.Listener): GpsStatusController {
         return createGpsStatusController(context, listener, Build.VERSION.SDK_INT)
     }
 

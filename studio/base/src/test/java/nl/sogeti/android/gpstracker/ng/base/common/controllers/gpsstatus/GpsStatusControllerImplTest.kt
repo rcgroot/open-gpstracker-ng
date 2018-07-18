@@ -5,7 +5,6 @@ import android.content.Context
 import android.location.GpsSatellite
 import android.location.GpsStatus
 import android.location.LocationManager
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerImpl
 import org.junit.Before
 import org.junit.Rule
@@ -64,7 +63,7 @@ class GpsStatusControllerImplTest {
         // Act
         callback.onGpsStatusChanged(GpsStatus.GPS_EVENT_STARTED)
         // Assert
-        verify(listener).onStart()
+        verify(listener).onStartListening()
     }
 
     @Test
@@ -76,7 +75,7 @@ class GpsStatusControllerImplTest {
         // Act
         callback.onGpsStatusChanged(GpsStatus.GPS_EVENT_STOPPED)
         // Assert
-        verify(listener).onStop()
+        verify(listener).onStopListening()
     }
 
     @Test

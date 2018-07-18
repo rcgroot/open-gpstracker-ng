@@ -28,24 +28,28 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.content.ContentResolver
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
 import nl.sogeti.android.gpstracker.service.util.readName
 import javax.inject.Inject
 
-class TrackDeletePresenter @Inject constructor(
-        val contentResolver: ContentResolver,
-        val summaryManager: SummaryManager,
-        contentController: ContentController) : AbstractTrackPresenter(contentController) {
+class TrackDeletePresenter : AbstractTrackPresenter() {
 
-    lateinit var viewModel: TrackDeleteModel
+    internal val viewModel = TrackDeleteModel()
+    @Inject
+    lateinit var contentResolver: ContentResolver
+    @Inject
+    lateinit var summaryManager: SummaryManager
 
+    init {
+        FeatureConfiguration.featureComponent.inject(this)
+    }
+
+    @WorkerThread
     override fun onChange() {
         val trackUri = viewModel.trackUri.get()
         trackUri?.let {
@@ -68,24 +72,11 @@ class TrackDeletePresenter @Inject constructor(
 
     private fun loadTrackName(trackUri: Uri) {
         val trackName = trackUri.readName()
+        viewModel.trackUri.set(trackUri)
         viewModel.name.set(trackName)
     }
 
     private fun deleteTrack(trackUri: Uri) {
         contentResolver.delete(trackUri, null, null)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    companion object {
-
-        fun newFactory(uri: Uri) =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        val presenter = FeatureConfiguration.featureComponent.trackDeletePresenter()
-                        presenter.viewModel = TrackDeleteModel(uri)
-                        presenter.trackUri = uri
-                        return presenter as T
-                    }
-                }
     }
 }

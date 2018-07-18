@@ -28,16 +28,29 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.recording
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.support.v4.app.SupportActivity
 import android.support.v7.app.AlertDialog
-import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
+const val GPS_STATUS_PACKAGE_NAME = "com.eclipsim.gpsstatus2"
+
 class RecordingNavigation @Inject constructor(val packageManager: PackageManager) {
+
+    fun observe(activity: SupportActivity, liveData: LiveData<Navigation>) {
+        liveData.observe(activity, Observer {
+            when (it) {
+                is Navigation.GpsStatusAppOpen -> openExternalGpsStatusApp(activity)
+                is Navigation.GpsStatusAppInstallHint -> showInstallHintForGpsStatusApp(activity)
+            }
+        })
+    }
 
     fun openExternalGpsStatusApp(context: Context) {
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
@@ -49,17 +62,13 @@ class RecordingNavigation @Inject constructor(val packageManager: PackageManager
         AlertDialog.Builder(context)
                 .setTitle(R.string.fragment_recording_gpsstatus_title)
                 .setMessage(R.string.fragment_recording_gpsstatus_body)
-                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
-                .setPositiveButton(R.string.permission_button_install, { _, _ ->
+                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.permission_button_install) { _, _ ->
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$GPS_STATUS_PACKAGE_NAME"))
                     context.startActivity(intent)
-                })
+                }
                 .show()
-    }
-
-    companion object {
-
-        const val GPS_STATUS_PACKAGE_NAME = "com.eclipsim.gpsstatus2"
-
     }
 }

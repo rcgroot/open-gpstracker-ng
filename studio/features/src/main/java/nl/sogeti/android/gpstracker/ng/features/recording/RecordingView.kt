@@ -32,24 +32,35 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.features.util.SingleLiveEvent
+import nl.sogeti.android.opengpstrack.ng.features.R
 
-class RecordingViewModel(uri: Uri?) {
+class RecordingView(uri: Uri?) {
     val trackUri = ObservableField(uri)
     val isRecording = ObservableBoolean(false)
-    val state = ObservableField<String>("-")
+    val state = ObservableField<Int>(R.string.empty_dash)
     val name = ObservableField<String>("-")
-    val summary = ObservableField<String>("-")
+    val summary = ObservableField<SummaryText>()
     val maxSatellites = ObservableInt(0)
     val currentSatellites = ObservableInt(0)
     val isScanning = ObservableBoolean(false)
     val hasFix = ObservableBoolean(false)
     val signalQuality = ObservableInt(0)
 
-    object signalQualityLevel {
+    val navigation = SingleLiveEvent<Navigation>()
+
+    object SignalQualityLevel {
         const val none = 0
         const val low = 1
         const val medium = 2
         const val high = 3
         const val excellent = 4
     }
+}
+
+data class SummaryText(val string: Int, val meterPerSecond: Float, val isRunners: Boolean, val meters: Float, val msDuration: Long)
+
+sealed class Navigation {
+    class GpsStatusAppInstallHint : Navigation()
+    class GpsStatusAppOpen : Navigation()
 }

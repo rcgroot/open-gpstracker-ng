@@ -29,10 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
@@ -56,21 +56,27 @@ import javax.inject.Inject
 
 const val OGT_EXPORTER_PACKAGE_NAME = "nl.renedegroot.android.opengpstracker.exporter"
 
-class TrackListPresenter @Inject constructor(
-        val contentController: ContentController,
-        private val trackSelection: TrackSelection,
-        private val trackSearch: TrackSearch,
-        val summaryManager: SummaryManager,
-        @DiskIO val executor: Executor,
-        private val shareIntentFactory: ShareIntentFactory,
-        private val packageManager: PackageManager,
-        private val notification: ImportNotification)
-    : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener {
+class TrackListPresenter : AbstractPresenter(), ContentController.Listener, TrackListAdapterListener {
 
+    @Inject
+    lateinit var contentController: ContentController
+    @Inject
+    lateinit var trackSelection: TrackSelection
+    @Inject
+    lateinit var trackSearch: TrackSearch
+    @Inject
+    lateinit var summaryManager: SummaryManager
+    @field:DiskIO
+    @Inject
+    lateinit var executor: Executor
+    @Inject
+    lateinit var shareIntentFactory: ShareIntentFactory
+    @Inject
+    lateinit var packageManager: PackageManager
+    @Inject
+    lateinit var notification: ImportNotification
     var navigation: TrackListNavigation? = null
-
     val viewModel: TrackListViewModel = TrackListViewModel()
-
     private val selectionObserver = Observer<Uri> { trackUri -> onTrackSelected(trackUri) }
     private val searchQueryObserver = Observer<String> { _ -> onSearchQuery() }
 
@@ -85,6 +91,7 @@ class TrackListPresenter @Inject constructor(
         }
 
     init {
+        FeatureConfiguration.featureComponent.inject(this)
         trackSelection.selection.observeForever(selectionObserver)
         trackSearch.query.observeForever(searchQueryObserver)
         contentController.registerObserver(this, tracksUri())
@@ -95,16 +102,15 @@ class TrackListPresenter @Inject constructor(
         summaryManager.start()
     }
 
+    @WorkerThread
     override fun onChange() {
-        executor.execute {
-            val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver(), selection, listOf(_ID)) {
-                val id = it.getLong(_ID)!!
-                trackUri(id)
-            }
-            viewModel.selectedTrack.set(trackSelection.selection.value)
-            viewModel.tracks.set(trackList.asReversed())
-            trackSelection.selection.value?.let { scrollToTrack(it) }
+        val trackList = tracksUri().map(BaseConfiguration.appComponent.contentResolver(), selection, listOf(_ID)) {
+            val id = it.getLong(_ID)!!
+            trackUri(id)
         }
+        viewModel.selectedTrack.set(trackSelection.selection.value)
+        viewModel.tracks.set(trackList.asReversed())
+        trackSelection.selection.value?.let { scrollToTrack(it) }
     }
 
     override fun onStop() {
@@ -156,7 +162,7 @@ class TrackListPresenter @Inject constructor(
     }
 
     override fun didSelectExportToDirectory() {
-        val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
+        val intent: Intent? = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
         if (intent == null) {
             navigation?.showInstallHintForOGTExporterApp()
         } else {
@@ -165,14 +171,14 @@ class TrackListPresenter @Inject constructor(
     }
 
     override fun didSelectImportTrack() {
-        navigation?.startGpxFileSelection({ intent ->
+        navigation?.startGpxFileSelection { intent ->
             val uri = intent?.data
             uri?.let {
                 val trackType = intent.getStringExtra(KEY_META_FIELD_TRACK_TYPE)
                         ?: VALUE_TYPE_DEFAULT
                 ImportService.importFile(uri, trackType)
             }
-        })
+        }
     }
 
     override fun didSelectImportFromDirectory() {
@@ -203,20 +209,6 @@ class TrackListPresenter @Inject constructor(
     }
 
     //endregion
-
-
-    companion object {
-
-        @Suppress("UNCHECKED_CAST")
-        fun newFactory() =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                        val presenter = FeatureConfiguration.featureComponent.trackListPresenter()
-                        return presenter as T
-                    }
-                }
-
-    }
 
     private fun String?.asArgument(): String =
             if (this == null) {

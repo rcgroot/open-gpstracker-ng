@@ -5,14 +5,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.features.model.Preferences
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.high
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.low
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.medium
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.none
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.excellent
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.high
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.low
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.medium
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
@@ -131,7 +131,7 @@ class RecordingPresenterTest {
     @Test
     fun testGpsStart() {
         // Act
-        sut.onStart()
+        sut.onStartListening()
         // Assert
         assertThat(sut.viewModel.isScanning.get(), `is`(true))
         assertThat(sut.viewModel.hasFix.get(), `is`(false))
@@ -140,7 +140,7 @@ class RecordingPresenterTest {
     @Test
     fun testGpsStop() {
         // Act
-        sut.onStop()
+        sut.onStopListening()
         // Assert
         assertThat(sut.viewModel.isScanning.get(), `is`(false))
         assertThat(sut.viewModel.hasFix.get(), `is`(false))

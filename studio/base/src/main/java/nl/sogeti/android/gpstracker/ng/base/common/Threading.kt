@@ -26,7 +26,7 @@
  *   along with OpenGPSTracker.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package nl.sogeti.android.gpstracker.utils
+package nl.sogeti.android.gpstracker.ng.base.common
 
 import android.os.AsyncTask
 import android.os.Handler

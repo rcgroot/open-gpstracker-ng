@@ -9,10 +9,15 @@ import nl.sogeti.android.gpstracker.ng.features.control.ControlPresenter
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportService
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
+import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsFragment
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
+import nl.sogeti.android.gpstracker.ng.features.map.TrackMapFragment
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
+import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingBindingAdapters
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingFragment
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryCalculator
@@ -37,6 +42,15 @@ interface FeatureComponent {
 
     @Named("shareProviderAuthority")
     fun providerShareAuthority(): String
+    fun trackSelection(): TrackSelection
+
+    fun inject(injectable: TrackDeletePresenter)
+    fun inject(injectable: TrackEditPresenter)
+    fun inject(injectable: GraphsPresenter)
+    fun inject(injectable: TrackPresenter)
+    fun inject(injectable: TrackMapPresenter)
+    fun inject(injectable: TrackListPresenter)
+    fun inject(injectable: RecordingPresenter)
 
     fun inject(trackNavigator: TrackNavigator)
     fun inject(gpxImportController: GpxImportController)
@@ -59,14 +73,10 @@ interface FeatureComponent {
     fun inject(trackListActivity: TrackListActivity)
     fun inject(trackActivity: TrackActivity)
     fun inject(receiver: WearLoggingStateBroadcastReceiver)
+    fun inject(recordingBindingAdapters: RecordingBindingAdapters)
     fun inject(receiver: ActivityRecognizerLoggingBroadcastReceiver)
-
-    fun trackDeletePresenter(): TrackDeletePresenter
-    fun trackEditPresenter(): TrackEditPresenter
-    fun graphsPresenter(): GraphsPresenter
-    fun trackPresenter(): TrackPresenter
-    fun trackMapPresenter(): TrackMapPresenter
-    fun trackListPresenter(): TrackListPresenter
-    fun recordingPresenter(): RecordingPresenter
-
+    fun inject(recordingFragment: RecordingFragment)
+    fun inject(graphsFragment: GraphsFragment)
+    fun inject(trackMapFragment: TrackMapFragment)
+    fun inject(trackListFragment: TrackListFragment)
 }

@@ -4,8 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.location.GnssStatus
 import android.os.Build.VERSION_CODES.N
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.BaseGpsStatusControllerImpl
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 
 @TargetApi(N)
 class GnnsStatusControllerImpl(context: Context, listener: GpsStatusController.Listener) : BaseGpsStatusControllerImpl(context, listener) {
@@ -23,17 +22,19 @@ class GnnsStatusControllerImpl(context: Context, listener: GpsStatusController.L
         }
 
         override fun onSatelliteStatusChanged(status: GnssStatus) {
-            val used = (0..status.satelliteCount).count { status.usedInFix(it) }
+            val used = (0 until status.satelliteCount).count { status.usedInFix(it) }
             satellites(used, status.satelliteCount)
         }
     }
 
     override fun startUpdates() {
-        locationManager.registerGnssStatusCallback(callback)
+        onMainThread {
+            locationManager.registerGnssStatusCallback(callback)
+        }
     }
 
     override fun stopUpdates() {
-        listener.onStop()
+        listener.onStopListening()
         locationManager.unregisterGnssStatusCallback(callback)
     }
 

@@ -34,7 +34,7 @@ import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.utils.concurrent.ExecutorFactory
-import nl.sogeti.android.gpstracker.utils.ofMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.messaging.*
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage

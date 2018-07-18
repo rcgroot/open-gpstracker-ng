@@ -4,6 +4,9 @@ package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
 
 import android.content.Context
 import android.location.GpsStatus.*
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.BaseGpsStatusControllerImpl
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 
 class GpsStatusControllerImpl(context: Context, listener: GpsStatusController.Listener) : BaseGpsStatusControllerImpl(context, listener) {
     private val callback = object : Listener {
@@ -21,11 +24,13 @@ class GpsStatusControllerImpl(context: Context, listener: GpsStatusController.Li
     }
 
     override fun startUpdates() {
-        locationManager.addGpsStatusListener(callback)
+        onMainThread {
+            locationManager.addGpsStatusListener(callback)
+        }
     }
 
     override fun stopUpdates() {
-        listener.onStop()
+        listener.onStopListening()
         locationManager.removeGpsStatusListener(callback)
     }
 

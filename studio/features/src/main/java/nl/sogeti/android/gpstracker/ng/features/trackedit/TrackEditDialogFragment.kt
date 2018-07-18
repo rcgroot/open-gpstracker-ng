@@ -16,30 +16,21 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentEditDialog
 
 class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
-    private var presenter: TrackEditPresenter? = null
+    private lateinit var presenter: TrackEditPresenter
     private var binding: FragmentEditDialogBinding? = null
 
-    companion object {
-        private const val ARG_URI = "ARGUMENT_URI"
-        fun newInstance(uri: Uri): TrackEditDialogFragment {
-            val arguments = Bundle()
-            arguments.putParcelable(ARG_URI, uri)
-            val fragment = TrackEditDialogFragment()
-            fragment.arguments = arguments
-
-            return fragment
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val uri = arguments?.get(TrackEditDialogFragment.ARG_URI) as Uri
+        presenter = ViewModelProviders.of(this).get(TrackEditPresenter::class.java)
+        presenter.trackUri = uri
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentEditDialogBinding>(inflater, R.layout.fragment_edit_dialog, container, false, FeaturesBindingComponent())
-
-        val uri = arguments?.get(ARG_URI) as Uri
-        val presenter = ViewModelProviders.of(this, TrackEditPresenter.newFactory(uri)).get(TrackEditPresenter::class.java)
         binding.model = presenter.viewModel
         binding.presenter = presenter
         binding.spinner.onItemSelectedListener = presenter.onItemSelectedListener
-        this.presenter = presenter
         this.binding = binding
         presenter.viewModel.dismissed.observe { sender ->
             if (sender is ObservableBoolean && sender.get()) {
@@ -52,11 +43,23 @@ class TrackEditDialogFragment : DialogFragment(), TrackEditModel.View {
 
     override fun onStart() {
         super.onStart()
-        presenter?.start()
+        presenter.start()
     }
 
     override fun onStop() {
+        presenter.stop()
         super.onStop()
-        presenter?.stop()
+    }
+
+    companion object {
+        private const val ARG_URI = "ARGUMENT_URI"
+        fun newInstance(uri: Uri): TrackEditDialogFragment {
+            val arguments = Bundle()
+            arguments.putParcelable(ARG_URI, uri)
+            val fragment = TrackEditDialogFragment()
+            fragment.arguments = arguments
+
+            return fragment
+        }
     }
 }

@@ -28,15 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
+import android.support.annotation.WorkerThread
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.INVALID_POSITION
 import android.widget.ImageView
 import android.widget.TextView
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter
@@ -44,11 +42,11 @@ import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.service.util.updateName
 import javax.inject.Inject
 
-class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
-                                             contentController: ContentController) : AbstractTrackPresenter(contentController) {
+class TrackEditPresenter : AbstractTrackPresenter() {
 
+    @Inject
+    lateinit var summaryManager: SummaryManager
     val viewModel = TrackEditModel()
-
     val onItemSelectedListener: AdapterView.OnItemSelectedListener by lazy {
         object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -61,6 +59,11 @@ class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
         }
     }
 
+    init {
+        FeatureConfiguration.featureComponent.inject(this)
+    }
+
+    @WorkerThread
     override fun onChange() {
         viewModel.trackUri.set(trackUri)
         loadTrackTypePosition(trackUri)
@@ -92,8 +95,7 @@ class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
             val trackType = trackUri.loadTrackType()
             val position = viewModel.trackTypes.indexOfFirst { it == trackType }
             viewModel.selectedPosition.set(position)
-        }
-        else {
+        } else {
             viewModel.selectedPosition.set(INVALID_POSITION)
         }
     }
@@ -108,18 +110,4 @@ class TrackEditPresenter @Inject constructor(val summaryManager: SummaryManager,
     }
 
     data class ViewHolder(val imageView: ImageView, val textView: TextView)
-
-    companion object {
-
-        @Suppress("UNCHECKED_CAST")
-        fun newFactory(uri: Uri) =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel?> create(viewModelClass: Class<T>): T {
-                        val trackEditPresenter = FeatureConfiguration.featureComponent.trackEditPresenter()
-                        trackEditPresenter.trackUri = uri
-                        return trackEditPresenter as T
-                    }
-                }
-
-    }
 }

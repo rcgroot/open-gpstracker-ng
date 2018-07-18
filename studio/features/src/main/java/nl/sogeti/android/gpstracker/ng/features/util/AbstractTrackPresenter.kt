@@ -3,8 +3,12 @@ package nl.sogeti.android.gpstracker.ng.features.util
 import android.net.Uri
 import android.support.annotation.CallSuper
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
+import javax.inject.Inject
 
-abstract class AbstractTrackPresenter(private val contentController: ContentController) : AbstractPresenter(), ContentController.Listener {
+abstract class AbstractTrackPresenter : AbstractPresenter(), ContentController.Listener {
+
+    @Inject
+    lateinit var contentController: ContentController
 
     var trackUri: Uri? = null
         set(value) {

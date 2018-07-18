@@ -49,8 +49,8 @@ import java.util.List;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import nl.sogeti.android.gpstracker.ng.base.common.ThreadingKt;
 import nl.sogeti.android.gpstracker.ng.base.location.LatLng;
-import nl.sogeti.android.gpstracker.utils.CommonKt;
 import nl.sogeti.android.opengpstrack.ng.features.R;
 
 public class TrackTileProvider implements TileProvider {
@@ -118,7 +118,7 @@ public class TrackTileProvider implements TileProvider {
         pathRenderer = new PathRenderer(tileSize, strokeWidth, waypoints.get(), startBitmap, endBitmap);
         if (titleOverLay != null) {
             //Like: onMainThread { titleOverLay.clearTileCache() }
-            CommonKt.onMainThread(new Function0<Unit>() {
+            ThreadingKt.onMainThread(new Function0<Unit>() {
                 @Override
                 public Unit invoke() {
                     titleOverLay.clearTileCache();

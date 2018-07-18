@@ -32,21 +32,26 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentGraphsBinding
+import javax.inject.Inject
 
 class GraphsFragment : Fragment() {
 
+    @Inject
+    lateinit var permissionRequester: PermissionRequester
     private lateinit var presenter: GraphsPresenter
-
-    private var permissionRequester = PermissionRequester()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        presenter = ViewModelProviders.of(this, GraphsPresenter.newFactory()).get(GraphsPresenter::class.java)
+        presenter = ViewModelProviders.of(this).get(GraphsPresenter::class.java)
+        FeatureConfiguration.featureComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

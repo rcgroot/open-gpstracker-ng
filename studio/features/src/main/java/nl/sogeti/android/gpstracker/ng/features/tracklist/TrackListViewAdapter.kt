@@ -45,7 +45,7 @@ import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoin
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.utils.contentprovider.append
 import nl.sogeti.android.gpstracker.utils.contentprovider.count
-import nl.sogeti.android.gpstracker.utils.onMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.RowTrackBinding

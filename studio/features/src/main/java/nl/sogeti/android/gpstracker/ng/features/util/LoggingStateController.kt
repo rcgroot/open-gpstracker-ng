@@ -12,7 +12,7 @@ import nl.sogeti.android.gpstracker.service.integration.ServiceManagerInterface
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import nl.sogeti.android.gpstracker.utils.contentprovider.getString
 import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
-import nl.sogeti.android.gpstracker.utils.onMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named

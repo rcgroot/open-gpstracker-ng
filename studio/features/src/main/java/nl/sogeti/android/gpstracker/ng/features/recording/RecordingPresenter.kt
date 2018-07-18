@@ -31,51 +31,71 @@ package nl.sogeti.android.gpstracker.ng.features.recording
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
-import nl.sogeti.android.gpstracker.ng.features.model.Preferences
-import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingNavigation.Companion.GPS_STATUS_PACKAGE_NAME
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.excellent
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.high
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.low
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.medium
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel.signalQualityLevel.none
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.excellent
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.high
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.low
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.medium
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
-import nl.sogeti.android.gpstracker.ng.features.util.ConnectedServicePresenter
+import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
 import nl.sogeti.android.gpstracker.service.util.readName
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class RecordingPresenter @Inject constructor(
-        private val navigation: RecordingNavigation,
-        private val contentController: ContentController,
-        private val gpsStatusControllerFactory: GpsStatusControllerFactory,
-        private val packageManager: PackageManager,
-        private val statisticsFormatter: StatisticsFormatter,
-        private val summaryManager: SummaryManager,
-        private val preferences: Preferences) :
-        ConnectedServicePresenter(), ContentController.Listener, GpsStatusController.Listener {
+class RecordingPresenter :
+        AbstractPresenter(),
+        ContentController.Listener,
+        GpsStatusController.Listener,
+        LoggingStateListener {
 
-    val viewModel = RecordingViewModel(null)
-
+    internal val viewModel = RecordingView(null)
     private var gpsStatusController: GpsStatusController? = null
+    @Inject
+    lateinit var contentController: ContentController
+    @Inject
+    lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
+    @Inject
+    lateinit var packageManager: PackageManager
+    @Inject
+    lateinit var loggingStateController: LoggingStateController
+    @Inject
+    lateinit var summaryManager: SummaryManager
 
-
-    override fun didStart() {
-        super.didStart()
-        summaryManager.start()
-
+    init {
+        FeatureConfiguration.featureComponent.inject(this)
+        loggingStateController.listener = this
+        loggingStateController.connect(this)
     }
 
-    override fun willStop() {
-        super.willStop()
+    override fun onStart() {
+        super.onStart()
+        summaryManager.start()
+    }
+
+    @WorkerThread
+    override fun onChange() {
+        val name = loggingStateController.trackUri?.readName()
+        updateRecording(loggingStateController.loggingState, name, loggingStateController.trackUri)
+    }
+
+    override fun onStop() {
+        super.onStop()
         stopContentUpdates()
         stopGpsUpdates()
         summaryManager.stop()
+    }
+
+    override fun onCleared() {
+        loggingStateController.disconnect()
+        super.onCleared()
     }
 
     //region View
@@ -83,9 +103,9 @@ class RecordingPresenter @Inject constructor(
     fun didSelectSignal() {
         val intent = packageManager.getLaunchIntentForPackage(GPS_STATUS_PACKAGE_NAME)
         if (intent == null) {
-            navigation.showInstallHintForGpsStatusApp(context)
+            viewModel.navigation.value = Navigation.GpsStatusAppInstallHint()
         } else {
-            navigation.openExternalGpsStatusApp(context)
+            viewModel.navigation.value = Navigation.GpsStatusAppOpen()
         }
     }
 
@@ -94,11 +114,11 @@ class RecordingPresenter @Inject constructor(
     //region Service connection
 
     override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(context, loggingState, name, trackUri)
+        didChangeLoggingState(context, trackUri, name, loggingState)
     }
 
     override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        updateRecording(context, loggingState, name, trackUri)
+        markDirty()
     }
 
     //endregion
@@ -113,11 +133,9 @@ class RecordingPresenter @Inject constructor(
         summaryManager.collectSummaryInfo(trackUri) {
             val endTime = it.waypoints.last().last().time
             val startTime = it.waypoints.first().first().time
-            val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, it.distance / (it.trackedPeriod / 1000), it.type.isRunning())
-            val distance = statisticsFormatter.convertMetersToDistance(context, it.distance)
-            val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, endTime - startTime)
-            val summary = context.getString(R.string.fragment_recording_summary, distance, duration, speed)
-            viewModel.summary.set(summary)
+            val meterPerSecond = it.distance / (it.trackedPeriod / 1000)
+            val isRunners = it.type.isRunning()
+            viewModel.summary.set(SummaryText(R.string.fragment_recording_summary, meterPerSecond, isRunners, it.distance, endTime - startTime))
             viewModel.name.set(it.name)
         }
     }
@@ -126,12 +144,12 @@ class RecordingPresenter @Inject constructor(
 
     //region GPS status
 
-    override fun onStart() {
+    override fun onStartListening() {
         viewModel.isScanning.set(true)
         viewModel.hasFix.set(false)
     }
 
-    override fun onStop() {
+    override fun onStopListening() {
         viewModel.hasFix.set(false)
         viewModel.isScanning.set(false)
         onChange(0, 0)
@@ -169,7 +187,7 @@ class RecordingPresenter @Inject constructor(
 
     private fun startGpsUpdates() {
         if (gpsStatusController == null) {
-            gpsStatusController = gpsStatusControllerFactory.createGpsStatusController(context, this)
+            gpsStatusController = gpsStatusControllerFactory.createGpsStatusController(this)
             gpsStatusController?.startUpdates()
         }
     }
@@ -179,7 +197,7 @@ class RecordingPresenter @Inject constructor(
         gpsStatusController = null
     }
 
-    private fun updateRecording(context: Context, loggingState: Int, name: String?, trackUri: Uri?) {
+    private fun updateRecording(loggingState: Int, name: String?, trackUri: Uri?) {
         if (trackUri != null) {
             contentController.registerObserver(this, trackUri)
             viewModel.trackUri.set(trackUri)
@@ -201,9 +219,9 @@ class RecordingPresenter @Inject constructor(
             stopGpsUpdates()
         }
         when (loggingState) {
-            STATE_LOGGING -> viewModel.state.set(this.context.getString(R.string.state_logging))
-            STATE_PAUSED -> viewModel.state.set(this.context.getString(R.string.state_paused))
-            STATE_STOPPED -> viewModel.state.set(context.getString(R.string.state_stopped))
+            STATE_LOGGING -> viewModel.state.set(R.string.state_logging)
+            STATE_PAUSED -> viewModel.state.set(R.string.state_paused)
+            STATE_STOPPED -> viewModel.state.set(R.string.state_stopped)
         }
     }
 

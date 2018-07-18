@@ -20,8 +20,8 @@ import javax.inject.Singleton
 class SystemModule {
 
     @Provides
-    fun gpsStatusControllerFactory(): GpsStatusControllerFactory {
-        return GpsStatusControllerFactory()
+    fun gpsStatusControllerFactory(application: Context): GpsStatusControllerFactory {
+        return GpsStatusControllerFactory(application)
     }
 
     @Provides

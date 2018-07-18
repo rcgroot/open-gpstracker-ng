@@ -38,10 +38,13 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
+import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistBinding
+import javax.inject.Inject
 
 
 /**
@@ -50,7 +53,8 @@ import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistB
 class TrackListFragment : ActivityResultLambdaFragment() {
 
     lateinit var presenter: TrackListPresenter
-    private var permissionRequester = PermissionRequester()
+    @Inject
+    lateinit var permissionRequester: PermissionRequester
     private var binding: FragmentTracklistBinding? = null
 
     companion object {
@@ -61,7 +65,8 @@ class TrackListFragment : ActivityResultLambdaFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = ViewModelProviders.of(this, TrackListPresenter.newFactory()).get(TrackListPresenter::class.java)
+        presenter = ViewModelProviders.of(this).get(TrackListPresenter::class.java)
+        FeatureConfiguration.featureComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -80,7 +85,7 @@ class TrackListFragment : ActivityResultLambdaFragment() {
 
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { presenter.start() })
+        permissionRequester.start(this) { presenter.start() }
         setHasOptionsMenu(true)
     }
 

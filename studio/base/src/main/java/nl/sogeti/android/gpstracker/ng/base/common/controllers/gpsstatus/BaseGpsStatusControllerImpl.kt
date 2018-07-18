@@ -1,19 +1,18 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
+package nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus
 
 import android.content.Context
 import android.location.LocationManager
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 
 abstract class BaseGpsStatusControllerImpl(val context: Context, val listener: GpsStatusController.Listener) : GpsStatusController {
-    val locationManager: LocationManager
+    protected val locationManager: LocationManager
         get() = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     fun started() {
-        listener.onStart()
+        listener.onStartListening()
     }
 
     fun stopped() {
-        listener.onStop()
+        listener.onStopListening()
     }
 
     fun firstFix() {

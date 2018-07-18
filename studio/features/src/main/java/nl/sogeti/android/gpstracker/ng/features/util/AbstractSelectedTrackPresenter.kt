@@ -3,14 +3,12 @@ package nl.sogeti.android.gpstracker.ng.features.util
 import android.arch.lifecycle.Observer
 import android.net.Uri
 import android.support.annotation.CallSuper
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
-import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.readName
 
-abstract class AbstractSelectedTrackPresenter(
-        private val trackSelection: TrackSelection,
-        contentController: ContentController) : AbstractTrackPresenter(contentController) {
+abstract class AbstractSelectedTrackPresenter : AbstractTrackPresenter() {
 
+    protected val trackSelection = FeatureConfiguration.featureComponent.trackSelection()
     private val selectionObserver = Observer<Uri> { trackUri -> onTrackSelected(trackUri) }
 
     init {
@@ -21,11 +19,16 @@ abstract class AbstractSelectedTrackPresenter(
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
     @CallSuper
     public
     override fun onCleared() {
         trackSelection.selection.removeObserver(selectionObserver)
         super.onCleared()
+
     }
 
     private fun onTrackSelected(trackUri: Uri?) {

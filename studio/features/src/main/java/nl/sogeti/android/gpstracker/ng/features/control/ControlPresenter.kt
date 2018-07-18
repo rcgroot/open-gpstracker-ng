@@ -33,7 +33,9 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
+import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.trackedit.NameGenerator
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
@@ -50,26 +52,32 @@ import java.util.*
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
-class ControlPresenter @Inject constructor(
-        private val nameGenerator: NameGenerator,
-        @DiskIO private val executor: Executor,
-        private val loggingStateController: LoggingStateController,
-        private val serviceCommander: ServiceCommanderInterface,
-        private val trackSelection: TrackSelection,
-        private val contentResolver: ContentResolver)
-    : AbstractPresenter(), LoggingStateListener {
+class ControlPresenter : AbstractPresenter(), LoggingStateListener {
 
     internal val viewModel = ControlViewModel()
-
-    val handler = Handler(Looper.getMainLooper())
-
+    private val handler = Handler(Looper.getMainLooper())
     private val enableRunnable = { enableButtons() }
+    @Inject
+    lateinit var nameGenerator: NameGenerator
+    @Inject
+    @field:DiskIO
+    lateinit var executor: Executor
+    @Inject
+    lateinit var loggingStateController: LoggingStateController
+    @Inject
+    lateinit var serviceCommander: ServiceCommanderInterface
+    @Inject
+    lateinit var trackSelection: TrackSelection
+    @Inject
+    lateinit var contentResolver: ContentResolver
 
     init {
+        FeatureConfiguration.featureComponent.inject(this)
         loggingStateController.listener = this
         loggingStateController.connect(this)
     }
 
+    @WorkerThread
     override fun onChange() {
         viewModel.state.set(loggingStateController.loggingState)
         if (loggingStateController.loggingState != ServiceConstants.STATE_UNKNOWN) {
@@ -85,7 +93,7 @@ class ControlPresenter @Inject constructor(
                     }
                 }
             }
-            trackSelection.selection.value = it
+            trackSelection.selection.postValue(it)
         }
     }
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.GnssStatus
 import android.location.LocationManager
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -62,7 +61,7 @@ class GnnsStatusControllerImplTest {
         // Act
         callback.onStarted()
         // Assert
-        verify(listener).onStart()
+        verify(listener).onStartListening()
     }
 
     @Test
@@ -74,7 +73,7 @@ class GnnsStatusControllerImplTest {
         // Act
         callback.onStopped()
         // Assert
-        verify(listener).onStop()
+        verify(listener).onStopListening()
     }
 
     @Test

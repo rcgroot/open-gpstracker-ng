@@ -255,8 +255,9 @@ fun Uri.updateName(name: String) {
 }
 
 fun Uri.readName(): String {
-    return this.runQuery(applicationContentResolver()) { it.getString(ContentConstants.TracksColumns.NAME) }
-            ?: ""
+    return this.runQuery(applicationContentResolver()) {
+        it.getString(ContentConstants.TracksColumns.NAME)
+    } ?: ""
 }
 
 fun Uri.updateCreateMetaData(key: String, value: String) {

@@ -2,7 +2,6 @@ package nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus
 
 import android.content.Context
 import android.os.Build
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerImpl
 import org.hamcrest.Matchers.`is`
@@ -26,7 +25,7 @@ class GpsStatusControllerFactoryTest {
 
     @Before
     fun setUp() {
-        sut = GpsStatusControllerFactory()
+        sut = GpsStatusControllerFactory(application)
     }
 
     @Test

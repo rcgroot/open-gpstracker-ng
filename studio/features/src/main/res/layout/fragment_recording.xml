@@ -11,7 +11,7 @@
 
         <variable
             name="viewModel"
-            type="nl.sogeti.android.gpstracker.ng.features.recording.RecordingViewModel" />
+            type="nl.sogeti.android.gpstracker.ng.features.recording.RecordingView" />
     </data>
 
     <android.support.constraint.ConstraintLayout

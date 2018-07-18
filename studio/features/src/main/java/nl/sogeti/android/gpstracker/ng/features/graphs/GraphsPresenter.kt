@@ -28,35 +28,29 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
-import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
-import nl.sogeti.android.gpstracker.utils.ofMainThread
-import nl.sogeti.android.gpstracker.utils.postMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.postMainThread
 import javax.inject.Inject
 
-class GraphsPresenter @Inject constructor(
-        private val summaryManager: SummaryManager,
-        trackSelection: TrackSelection,
-        contentController: ContentController)
-    : AbstractSelectedTrackPresenter(trackSelection, contentController) {
+class GraphsPresenter : AbstractSelectedTrackPresenter() {
 
+    @Inject
+    lateinit var summaryManager: SummaryManager
     internal val viewModel = GraphsViewModel()
-
     private var graphDataProvider: GraphDataProvider
     private var trackSummary: Summary? = null
     private var runningSelection = false
 
     init {
+        FeatureConfiguration.featureComponent.inject(this)
         resetTrack()
         graphDataProvider = TimeDataProvider()
         viewModel.durationSelected.set(true)
@@ -156,18 +150,6 @@ class GraphsPresenter @Inject constructor(
         viewModel.xLabel.set(dataProvider.xLabel)
         viewModel.yLabel.set(dataProvider.yLabel)
         viewModel.graphLabels.set(dataProvider.valueDescriptor)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    companion object {
-
-        fun newFactory() =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        val presenter = FeatureConfiguration.featureComponent.graphsPresenter()
-                        return presenter as T
-                    }
-                }
     }
 }
 

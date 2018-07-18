@@ -32,8 +32,8 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.net.Uri
 
-class TrackDeleteModel(uri: Uri) {
-    val trackUri = ObservableField<Uri>(uri)
+class TrackDeleteModel {
+    val trackUri = ObservableField<Uri>()
     val name = ObservableField<String>("")
     val dismiss = ObservableBoolean(false)
 }

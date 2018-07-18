@@ -29,8 +29,6 @@
 package nl.sogeti.android.gpstracker.ng.features.map
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
@@ -46,7 +44,6 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.model.Preferences
-import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.model.not
 import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
@@ -60,22 +57,28 @@ import nl.sogeti.android.gpstracker.utils.contentprovider.runQuery
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
-class TrackMapPresenter @Inject constructor(
-        private val trackReaderFactory: TrackReaderFactory,
-        private val trackTileProviderFactory: TrackTileProviderFactory,
-        private val locationFactory: LocationFactory,
-        private val loggingStateController: LoggingStateController,
-        private val trackSelection: TrackSelection,
-        private val preferences: Preferences,
-        @DiskIO private val executor: Executor,
-        contentController: ContentController)
-    : AbstractSelectedTrackPresenter(trackSelection, contentController), OnMapReadyCallback, ContentController.Listener, LoggingStateListener {
+class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, ContentController.Listener, LoggingStateListener {
 
+    @Inject
+    lateinit var trackReaderFactory: TrackReaderFactory
+    @Inject
+    lateinit var trackTileProviderFactory: TrackTileProviderFactory
+    @Inject
+    lateinit var locationFactory: LocationFactory
+    @Inject
+    lateinit var loggingStateController: LoggingStateController
+    @Inject
+    lateinit var preferences: Preferences
+    @field:DiskIO
+    @Inject
+    lateinit var executor: Executor
     private var executingReader: TrackReader? = null
-
+    private var tileProvider: TrackTileProvider? = null
     internal val viewModel = TrackMapViewModel()
 
-    private var tileProvider: TrackTileProvider? = null
+    init {
+        FeatureConfiguration.featureComponent.inject(this)
+    }
 
     private val wakelockPreferenceObserver = Observer<Boolean> {
         viewModel.willLock.set(it ?: false)
@@ -175,7 +178,7 @@ class TrackMapPresenter @Inject constructor(
         var executingReader = this.executingReader
         if ((executingReader == null || executingReader.isFinished || executingReader.trackUri != trackUri)) {
             executingReader?.cancel(true)
-            executingReader = trackReaderFactory.createTrackReader(trackUri, { name, bounds, waypoint ->
+            executingReader = trackReaderFactory.createTrackReader(trackUri) { name, bounds, waypoint ->
                 viewModel.name.set(name)
                 viewModel.waypoints.set(waypoint)
                 if (loggingStateController.loggingState == ServiceConstants.STATE_LOGGING) {
@@ -185,7 +188,7 @@ class TrackMapPresenter @Inject constructor(
                     viewModel.trackHead.set(null)
                     viewModel.completeBounds.set(bounds)
                 }
-            })
+            }
             this.executingReader = executingReader
             executingReader.execute()
         }
@@ -203,19 +206,6 @@ class TrackMapPresenter @Inject constructor(
                 viewModel.trackHead.set(locationFactory.getLocationCoordinates())
             }
         }
-    }
-
-
-    @Suppress("UNCHECKED_CAST")
-    companion object {
-
-        fun newFactory() =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        val presenter = FeatureConfiguration.featureComponent.trackMapPresenter()
-                        return presenter as T
-                    }
-                }
     }
 }
 

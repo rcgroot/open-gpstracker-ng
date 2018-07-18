@@ -28,23 +28,19 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.net.Uri
-import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection
 import nl.sogeti.android.gpstracker.ng.features.trackedit.loadTrackType
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
-import javax.inject.Inject
 
-class TrackPresenter @Inject constructor(
-        trackSelection: TrackSelection,
-        contentController: ContentController)
-    : AbstractSelectedTrackPresenter(trackSelection, contentController) {
+class TrackPresenter : AbstractSelectedTrackPresenter() {
 
     var navigation: TrackNavigator? = null
     val viewModel = TrackViewModel()
+
+    init {
+        FeatureConfiguration.featureComponent.inject(this)
+    }
 
     //region Presenter context
 
@@ -78,16 +74,4 @@ class TrackPresenter @Inject constructor(
     }
 
     //endregion
-
-    @Suppress("UNCHECKED_CAST")
-    companion object {
-
-        fun newFactory() =
-                object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                        val presenter = FeatureConfiguration.featureComponent.trackPresenter()
-                        return presenter as T
-                    }
-                }
-    }
 }

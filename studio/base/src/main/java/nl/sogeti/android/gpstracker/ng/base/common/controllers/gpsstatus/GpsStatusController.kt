@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus
+package nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus
 
 interface GpsStatusController {
 
@@ -6,9 +6,9 @@ interface GpsStatusController {
     fun  stopUpdates()
 
     interface Listener {
-        fun onStart()
+        fun onStartListening()
         fun onChange(usedSatellites: Int, maxSatellites: Int)
         fun onFirstFix()
-        fun onStop()
+        fun onStopListening()
     }
 }

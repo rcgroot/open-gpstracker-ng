@@ -28,6 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.control
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -46,15 +47,13 @@ import javax.inject.Inject
 class ControlFragment : Fragment() {
 
     @Inject
-    lateinit var presenter : ControlPresenter
-
-    @Inject
-    lateinit var permissionRequester : PermissionRequester
-
+    lateinit var permissionRequester: PermissionRequester
+    private lateinit var presenter: ControlPresenter
     private var binding: FragmentControlBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = ViewModelProviders.of(this).get(ControlPresenter::class.java)
         FeatureConfiguration.featureComponent.inject(this)
     }
 
@@ -68,9 +67,14 @@ class ControlFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Called when the Fragment is visible to the user.  This is generally
+     * tied to {@link Activity#onStart() Activity.onStart} of the containing
+     * Activity's lifecycle.
+     */
     override fun onStart() {
         super.onStart()
-        permissionRequester.start(this, { presenter.start() })
+        permissionRequester.start(this) { presenter.start() }
     }
 
     override fun onStop() {

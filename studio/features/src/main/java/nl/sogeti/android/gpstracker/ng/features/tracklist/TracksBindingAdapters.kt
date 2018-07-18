@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import nl.sogeti.android.gpstracker.utils.postMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.postMainThread
 import nl.sogeti.android.opengpstrack.ng.features.R
 import timber.log.Timber
 

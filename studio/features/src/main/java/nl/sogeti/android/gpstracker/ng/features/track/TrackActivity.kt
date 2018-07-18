@@ -51,11 +51,8 @@ import javax.inject.Inject
 class TrackActivity : AppCompatActivity() {
 
     private val navigation = TrackNavigator(this)
-
     private lateinit var presenter: TrackPresenter
-
     private var startWithOpenTracks: Boolean = false
-
     private val optionMenuObserver: Observable.OnPropertyChangedCallback = object : Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable, propertyId: Int) {
             invalidateOptionsMenu()
@@ -67,11 +64,12 @@ class TrackActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = ViewModelProviders.of(this).get(TrackPresenter::class.java)
         FeatureConfiguration.featureComponent.inject(this)
         val binding = DataBindingUtil.setContentView<ActivityTrackMapBinding>(this, R.layout.activity_track_map, FeaturesBindingComponent())
         setSupportActionBar(binding.toolbar)
         binding.toolbar.bringToFront()
-        presenter = ViewModelProviders.of(this, TrackPresenter.newFactory()).get(TrackPresenter::class.java)
+
         presenter.navigation = navigation
         presenter.viewModel.name.addOnPropertyChangedCallback(optionMenuObserver)
         binding.viewModel = presenter.viewModel
