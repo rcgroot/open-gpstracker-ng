@@ -30,13 +30,13 @@ package nl.sogeti.android.gpstracker.ng.mock
 
 import android.os.Handler
 import android.os.Looper
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
 
 typealias Action = (GpsStatusController.Listener) -> Unit
 
 class MockGpsStatusController(val listener: GpsStatusController.Listener) : GpsStatusController {
     private val commands = listOf<Action>(
-            { it.onStart() },
+            { it.onStartListening() },
             { it.onChange(0, 0) },
             { it.onChange(0, 8) },
             { it.onChange(1, 10) },
@@ -45,7 +45,7 @@ class MockGpsStatusController(val listener: GpsStatusController.Listener) : GpsS
             { it.onChange(7, 14) },
             { it.onChange(9, 21) },
             { it.onFirstFix() },
-            { it.onStop() }
+            { it.onStopListening() }
     )
 
     private var handler: Handler? = null

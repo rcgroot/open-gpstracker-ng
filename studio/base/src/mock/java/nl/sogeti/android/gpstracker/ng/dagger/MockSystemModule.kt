@@ -35,12 +35,19 @@ import android.net.Uri
 import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
+import nl.sogeti.android.gpstracker.ng.base.dagger.Computation
+import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
+import nl.sogeti.android.gpstracker.ng.base.dagger.NetworkIO
 import nl.sogeti.android.gpstracker.ng.base.location.LocationFactory
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.mock.MockGpsStatusControllerFactory
 import nl.sogeti.android.gpstracker.ng.mock.MockLocationFactory
 import java.util.*
-import javax.inject.Named
+import java.util.concurrent.Executor
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 class MockSystemModule {
@@ -51,16 +58,26 @@ class MockSystemModule {
     }
 
     @Provides
-    fun gpsStatusControllerFactory(): GpsStatusControllerFactory {
-        return MockGpsStatusControllerFactory()
+    fun gpsStatusControllerFactory(application: Context): GpsStatusControllerFactory {
+        return MockGpsStatusControllerFactory(application)
     }
 
     @Provides
     fun uriBuilder() = Uri.Builder()
 
     @Provides
-    @Named("SystemBackgroundExecutor")
+    @Computation
     fun executor() = AsyncTask.THREAD_POOL_EXECUTOR
+
+    @Provides
+    @Singleton
+    @DiskIO
+    fun diskExecutor(): Executor = ThreadPoolExecutor(1, 2, 10L, TimeUnit.SECONDS, LinkedBlockingQueue())
+
+    @Provides
+    @Singleton
+    @NetworkIO
+    fun networkExecutor(): Executor = ThreadPoolExecutor(1, 16, 30L, TimeUnit.SECONDS, LinkedBlockingQueue())
 
     @Provides
     fun packageManager(application: Context): PackageManager = application.packageManager

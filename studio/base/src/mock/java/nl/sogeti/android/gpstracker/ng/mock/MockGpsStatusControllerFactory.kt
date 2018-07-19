@@ -29,13 +29,12 @@
 package nl.sogeti.android.gpstracker.ng.mock
 
 import android.content.Context
-import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusController
+import nl.sogeti.android.gpstracker.ng.base.common.controllers.gpsstatus.GpsStatusController
 import nl.sogeti.android.gpstracker.ng.common.controllers.gpsstatus.GpsStatusControllerFactory
 
-class MockGpsStatusControllerFactory : GpsStatusControllerFactory() {
+class MockGpsStatusControllerFactory(context: Context) : GpsStatusControllerFactory(context) {
 
-    override fun createGpsStatusController(context: Context, listener: GpsStatusController.Listener): GpsStatusController {
-
+    override fun createGpsStatusController(listener: GpsStatusController.Listener): GpsStatusController {
         return MockGpsStatusController(listener)
     }
 }

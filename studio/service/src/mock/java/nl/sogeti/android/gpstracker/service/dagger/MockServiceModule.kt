@@ -10,14 +10,14 @@ import nl.sogeti.android.gpstracker.utils.PermissionChecker
 import javax.inject.Named
 
 @Module
-class MockServiceModule {
+class MockServiceModule(val context: Context) {
 
     @Provides
-    fun serviceManagerInterface(context: Context): ServiceManagerInterface = MockServiceManager(context)
+    fun serviceManagerInterface(): ServiceManagerInterface = MockServiceManager(context)
 
 
     @Provides
-    fun serviceCommanderInterface(application: Context): ServiceCommanderInterface = MockServiceManager(application)
+    fun serviceCommanderInterface(): ServiceCommanderInterface = MockServiceManager(context)
 
     @Provides
     @Named("providerAuthority")
