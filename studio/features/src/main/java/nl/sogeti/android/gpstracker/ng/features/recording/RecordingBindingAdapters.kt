@@ -81,8 +81,8 @@ class RecordingBindingAdapters : CommonBindingAdapters() {
             val context = textView.context
             val speed = statisticsFormatter.convertMeterPerSecondsToSpeed(context, summary.meterPerSecond, summary.isRunners)
             val distance = statisticsFormatter.convertMetersToDistance(context, summary.meters)
-            val duration = statisticsFormatter.convertSpanToCompactDuration(context, summary.msDuration)
-            textView.text = context.getString(summary.string, speed, distance, duration)
+            val duration = statisticsFormatter.convertSpanDescriptiveDuration(context, summary.msDuration)
+            textView.text = context.getString(summary.string, distance, duration, speed)
         }
     }
 }

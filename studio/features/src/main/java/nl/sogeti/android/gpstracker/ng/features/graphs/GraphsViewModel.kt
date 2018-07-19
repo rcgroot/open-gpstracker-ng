@@ -49,7 +49,7 @@ class GraphsViewModel {
     val waypoints = ObservableField<String>("-")
 
     val distanceSelected = ObservableBoolean(false)
-    val durationSelected = ObservableBoolean(false)
+    val durationSelected = ObservableBoolean(true)
     val inverseSpeed = ObservableBoolean(false)
 
     val graphData = ObservableField<List<GraphPoint>>(emptyList())

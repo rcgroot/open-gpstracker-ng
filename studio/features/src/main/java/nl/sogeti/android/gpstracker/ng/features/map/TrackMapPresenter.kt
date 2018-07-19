@@ -75,11 +75,6 @@ class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, 
     private var executingReader: TrackReader? = null
     private var tileProvider: TrackTileProvider? = null
     internal val viewModel = TrackMapViewModel()
-
-    init {
-        FeatureConfiguration.featureComponent.inject(this)
-    }
-
     private val wakelockPreferenceObserver = Observer<Boolean> {
         viewModel.willLock.set(it ?: false)
         updateLock()
@@ -90,6 +85,7 @@ class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, 
     }
 
     init {
+        FeatureConfiguration.featureComponent.inject(this)
         preferences.wakelockScreen.observeForever(wakelockPreferenceObserver)
         preferences.satellite.observeForever(satellitePreferenceObserver)
         loggingStateController.connect(this)

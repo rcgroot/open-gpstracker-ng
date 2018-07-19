@@ -11,24 +11,14 @@ abstract class AbstractSelectedTrackPresenter : AbstractTrackPresenter() {
     protected val trackSelection = FeatureConfiguration.featureComponent.trackSelection()
     private val selectionObserver = Observer<Uri> { trackUri -> onTrackSelected(trackUri) }
 
-    init {
-        trackSelection.selection.observeForever(selectionObserver)
-        val selectedTrack = trackSelection.selection.value
-        selectedTrack?.let {
-            onTrackSelected(selectedTrack)
-        }
-    }
-
     override fun onStart() {
         super.onStart()
+        trackSelection.selection.observeForever(selectionObserver)
     }
 
-    @CallSuper
-    public
-    override fun onCleared() {
+    override fun onStop() {
         trackSelection.selection.removeObserver(selectionObserver)
-        super.onCleared()
-
+        super.onStop()
     }
 
     private fun onTrackSelected(trackUri: Uri?) {

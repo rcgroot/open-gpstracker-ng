@@ -51,17 +51,15 @@ class TrackDeletePresenter : AbstractTrackPresenter() {
 
     @WorkerThread
     override fun onChange() {
-        val trackUri = viewModel.trackUri.get()
         trackUri?.let {
-            loadTrackName(trackUri)
+            loadTrackName(it)
         }
     }
 
     fun ok() {
-        val trackUri = viewModel.trackUri.get()
         trackUri?.let {
-            deleteTrack(trackUri)
-            summaryManager.removeFromCache(trackUri)
+            deleteTrack(it)
+            summaryManager.removeFromCache(it)
             viewModel.dismiss.set(true)
         }
     }

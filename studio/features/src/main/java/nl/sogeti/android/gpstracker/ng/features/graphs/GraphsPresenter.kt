@@ -29,6 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
+import nl.sogeti.android.gpstracker.ng.base.common.postMainThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataProvider
@@ -36,8 +38,6 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataPro
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
-import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
-import nl.sogeti.android.gpstracker.ng.base.common.postMainThread
 import javax.inject.Inject
 
 class GraphsPresenter : AbstractSelectedTrackPresenter() {
@@ -45,15 +45,13 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
     @Inject
     lateinit var summaryManager: SummaryManager
     internal val viewModel = GraphsViewModel()
-    private var graphDataProvider: GraphDataProvider
+    private var graphDataProvider: GraphDataProvider = TimeDataProvider()
+
     private var trackSummary: Summary? = null
     private var runningSelection = false
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
-        resetTrack()
-        graphDataProvider = TimeDataProvider()
-        viewModel.durationSelected.set(true)
     }
 
     override fun onStart() {
