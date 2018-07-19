@@ -34,7 +34,7 @@ class LoggingStateController @Inject constructor(
 
     fun connect(listener: LoggingStateListener? = null) {
         registerReceiver()
-        serviceManager.startup() {
+        serviceManager.startup {
             synchronized(this) {
                 onMainThread {
                     val trackId = serviceManager.trackId

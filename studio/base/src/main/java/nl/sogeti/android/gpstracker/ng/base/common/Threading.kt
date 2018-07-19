@@ -32,7 +32,7 @@ import android.os.AsyncTask
 import android.os.Handler
 import android.os.Looper
 
-fun onMainThread(item: () -> Unit) {
+inline fun onMainThread(crossinline item: () -> Unit) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         item()
     } else {
@@ -40,8 +40,8 @@ fun onMainThread(item: () -> Unit) {
     }
 }
 
-fun postMainThread(item: () -> Unit) {
-    Handler(Looper.getMainLooper()).post(item)
+inline fun postMainThread(crossinline item: () -> Unit) {
+    Handler(Looper.getMainLooper()).post { item() }
 }
 
 fun ofMainThread(item: () -> Unit) {
