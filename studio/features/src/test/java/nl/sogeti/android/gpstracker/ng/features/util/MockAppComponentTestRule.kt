@@ -34,6 +34,7 @@ class MockAppComponentTestRule : TestRule {
                 `when`(mockAppComponent.uriBuilder()).thenReturn(mockUriBuilder)
                 val mockResolver = mock(ContentResolver::class.java)
                 `when`(mockAppComponent.contentResolver()).thenReturn(mockResolver)
+                `when`(mockAppComponent.computationExecutor()).thenReturn(ImmediateExecutor())
 
                 mockServiceComponent = Mockito.mock(ServiceComponent::class.java)
                 ServiceConfiguration.serviceComponent = mockServiceComponent

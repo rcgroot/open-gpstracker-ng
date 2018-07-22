@@ -39,7 +39,7 @@ class RecordingView(uri: Uri?) {
     val trackUri = ObservableField(uri)
     val isRecording = ObservableBoolean(false)
     val state = ObservableField<Int>(R.string.empty_dash)
-    val name = ObservableField<String>("-")
+    val name = ObservableField<String?>()
     val summary = ObservableField<SummaryText>()
     val maxSatellites = ObservableInt(0)
     val currentSatellites = ObservableInt(0)

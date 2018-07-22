@@ -14,6 +14,7 @@ import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQu
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.medium
 import nl.sogeti.android.gpstracker.ng.features.recording.RecordingView.SignalQualityLevel.none
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.MockAppComponentTestRule
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.integration.ServiceManager
@@ -25,8 +26,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
 
 class RecordingPresenterTest {
@@ -43,38 +43,32 @@ class RecordingPresenterTest {
     @Mock
     lateinit var gpsStatusController: GpsStatusController
     @Mock
-    lateinit var serviceManager: ServiceManager
-    @Mock
-    lateinit var trackUri: Uri
-    @Mock
     lateinit var context: Context
     @Mock
     lateinit var gpsStatusControllerFactory: GpsStatusControllerFactory
     @Mock
-    lateinit var navigation: RecordingNavigation
-    @Mock
-    lateinit var packageManager: PackageManager
-    @Mock
-    lateinit var statisticsFormatter: StatisticsFormatter
-    @Mock
     lateinit var summaryManager: SummaryManager
     @Mock
-    lateinit var preferences: Preferences
+    lateinit var loggingStateController: LoggingStateController
 
     @Before
     fun setUp() {
-        sut = RecordingPresenter(navigation, contentController, gpsStatusControllerFactory, packageManager, statisticsFormatter, summaryManager, preferences)
-        sut.serviceManager = serviceManager
-        `when`(gpsStatusControllerFactory.createGpsStatusController(any(), any())).thenReturn(gpsStatusController)
+        sut = RecordingPresenter()
+        sut.loggingStateController = loggingStateController
+        sut.summaryManager = summaryManager
+        sut.contentController = contentController
+        sut.gpsStatusControllerFactory = gpsStatusControllerFactory
+        `when`(gpsStatusControllerFactory.createGpsStatusController(any())).thenReturn(gpsStatusController)
     }
 
     @Test
     fun testStop() {
         // Arrange
-        sut.start(context)
-        sut.didConnectToService(context, trackUri, "mockTrack", ServiceConstants.STATE_LOGGING)
+        sut.start()
+        loggingStateTo(ServiceConstants.STATE_LOGGING)
+        reset(contentController)
         // Act
-        sut.willStop()
+        sut.stop()
         // Assert
         verify(contentController).unregisterObserver()
         verify(gpsStatusController).stopUpdates()
@@ -83,48 +77,44 @@ class RecordingPresenterTest {
     @Test
     fun testConnectToLoggingService() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
-        sut.didConnectToService(context, uri, "mockTrack", ServiceConstants.STATE_LOGGING)
+        loggingStateTo(ServiceConstants.STATE_LOGGING)
         // Assert
         Assert.assertThat(sut.viewModel.isRecording.get(), `is`(true))
-        Assert.assertThat(sut.viewModel.name.get(), `is`("mockTrack"))
         Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
     fun testConnectToPauseService() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
-        sut.didConnectToService(context, uri, "paused", ServiceConstants.STATE_PAUSED)
+        loggingStateTo(ServiceConstants.STATE_PAUSED)
         // Assert
         Assert.assertThat(sut.viewModel.isRecording.get(), `is`(true))
-        Assert.assertThat(sut.viewModel.name.get(), `is`("paused"))
         Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
     fun testConnectToStoppedService() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
-        sut.didConnectToService(context, uri, "stopped", ServiceConstants.STATE_STOPPED)
+        loggingStateTo(ServiceConstants.STATE_STOPPED)
         // Assert
         Assert.assertThat(sut.viewModel.isRecording.get(), `is`(false))
-        Assert.assertThat(sut.viewModel.name.get(), `is`("stopped"))
         Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
     @Test
     fun testChangeToLoggingService() {
         // Arrange
-        sut.start(context)
+        sut.start()
         // Act
-        sut.didChangeLoggingState(context, uri, "mockTrack", ServiceConstants.STATE_STOPPED)
+        loggingStateTo(ServiceConstants.STATE_STOPPED)
         // Assert
         Assert.assertThat(sut.viewModel.isRecording.get(), `is`(false))
-        Assert.assertThat(sut.viewModel.name.get(), `is`("mockTrack"))
         Assert.assertThat(sut.viewModel.trackUri.get(), `is`(uri))
     }
 
@@ -201,5 +191,11 @@ class RecordingPresenterTest {
         sut.onChange(10, 20)
         // Assert
         assertThat(sut.viewModel.signalQuality.get(), `is`(excellent))
+    }
+
+    private fun loggingStateTo(state: Int) {
+        `when`(loggingStateController.loggingState).thenReturn(state)
+        `when`(loggingStateController.trackUri).thenReturn(uri)
+        sut.didConnectToService(context, state, uri)
     }
 }

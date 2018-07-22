@@ -46,7 +46,6 @@ import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.*
-import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
@@ -71,7 +70,10 @@ class RecordingPresenter :
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
-        loggingStateController.listener = this
+    }
+
+    override fun onFirstStart() {
+        super.onFirstStart()
         loggingStateController.connect(this)
     }
 
@@ -82,8 +84,24 @@ class RecordingPresenter :
 
     @WorkerThread
     override fun onChange() {
-        val name = loggingStateController.trackUri?.readName()
-        updateRecording(loggingStateController.loggingState, name, loggingStateController.trackUri)
+        val trackUri = loggingStateController.trackUri
+        val state = loggingStateController.loggingState
+        val isRecording = (state == STATE_LOGGING) || (state == STATE_PAUSED)
+        viewModel.isRecording.set(isRecording)
+        when (state) {
+            STATE_LOGGING -> viewModel.state.set(R.string.state_logging)
+            STATE_PAUSED -> viewModel.state.set(R.string.state_paused)
+            STATE_STOPPED -> viewModel.state.set(R.string.state_stopped)
+        }
+        if (isRecording) {
+            startContentUpdates()
+            startGpsUpdates()
+            readTrackSummary(trackUri)
+        } else {
+            stopContentUpdates()
+            stopGpsUpdates()
+        }
+
     }
 
     override fun onStop() {
@@ -113,12 +131,12 @@ class RecordingPresenter :
 
     //region Service connection
 
-    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        didChangeLoggingState(context, trackUri, name, loggingState)
+    override fun didConnectToService(context: Context, loggingState: Int, trackUri: Uri?) {
+        didChangeLoggingState(context, loggingState, trackUri)
     }
 
-    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        markDirty()
+    override fun didChangeLoggingState(context: Context, loggingState: Int, trackUri: Uri?) {
+        updateRecording(loggingStateController.trackUri)
     }
 
     //endregion
@@ -129,14 +147,19 @@ class RecordingPresenter :
         readTrackSummary(contentUri)
     }
 
-    private fun readTrackSummary(trackUri: Uri) {
-        summaryManager.collectSummaryInfo(trackUri) {
-            val endTime = it.waypoints.last().last().time
-            val startTime = it.waypoints.first().first().time
-            val meterPerSecond = it.distance / (it.trackedPeriod / 1000)
-            val isRunners = it.type.isRunning()
-            viewModel.summary.set(SummaryText(R.string.fragment_recording_summary, meterPerSecond, isRunners, it.distance, endTime - startTime))
-            viewModel.name.set(it.name)
+    private fun readTrackSummary(trackUri: Uri?) {
+        if (trackUri == null) {
+            viewModel.summary.set(SummaryText(R.string.fragment_recording_summary, 0F, false, 0F, 0))
+            viewModel.name.set(null)
+        } else {
+            summaryManager.collectSummaryInfo(trackUri) {
+                val endTime = it.waypoints.last().last().time
+                val startTime = it.waypoints.first().first().time
+                val meterPerSecond = it.distance / (it.trackedPeriod / 1000)
+                val isRunners = it.type.isRunning()
+                viewModel.summary.set(SummaryText(R.string.fragment_recording_summary, meterPerSecond, isRunners, it.distance, endTime - startTime))
+                viewModel.name.set(it.name)
+            }
         }
     }
 
@@ -197,32 +220,14 @@ class RecordingPresenter :
         gpsStatusController = null
     }
 
-    private fun updateRecording(loggingState: Int, name: String?, trackUri: Uri?) {
+    private fun updateRecording(trackUri: Uri?) {
+        viewModel.trackUri.set(trackUri)
         if (trackUri != null) {
             contentController.registerObserver(this, trackUri)
-            viewModel.trackUri.set(trackUri)
-            if (name != null) {
-                viewModel.name.set(name)
-            } else {
-                viewModel.name.set(trackUri.readName())
-            }
-        }
-
-        val isRecording = (loggingState == STATE_LOGGING) || (loggingState == STATE_PAUSED)
-        viewModel.isRecording.set(isRecording)
-        if (isRecording && trackUri != null) {
-            startContentUpdates()
-            startGpsUpdates()
-            readTrackSummary(trackUri)
         } else {
-            stopContentUpdates()
-            stopGpsUpdates()
+            contentController.unregisterObserver()
         }
-        when (loggingState) {
-            STATE_LOGGING -> viewModel.state.set(R.string.state_logging)
-            STATE_PAUSED -> viewModel.state.set(R.string.state_paused)
-            STATE_STOPPED -> viewModel.state.set(R.string.state_stopped)
-        }
+        markDirty()
     }
 
     //endregion

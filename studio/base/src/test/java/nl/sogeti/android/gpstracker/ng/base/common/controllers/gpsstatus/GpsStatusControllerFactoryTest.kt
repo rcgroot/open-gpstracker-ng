@@ -25,7 +25,7 @@ class GpsStatusControllerFactoryTest {
 
     @Before
     fun setUp() {
-        sut = GpsStatusControllerFactory(application)
+        sut = GpsStatusControllerFactory(context)
     }
 
     @Test
@@ -47,7 +47,7 @@ class GpsStatusControllerFactoryTest {
     @Test
     fun createDefaultController() {
         // Act
-        val controller = sut.createGpsStatusController(context, listener)
+        val controller = sut.createGpsStatusController(listener)
         // Assert
         assertThat(controller, `is`(instanceOf(GpsStatusControllerImpl::class.java)))
     }

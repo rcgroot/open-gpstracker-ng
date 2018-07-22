@@ -14,14 +14,10 @@ open class GpsStatusControllerFactory(val context: Context) {
 
     @SuppressLint("NewApi")
     @Suppress("DEPRECATION")
-    fun createGpsStatusController(context: Context, listener: GpsStatusController.Listener, sdkVersion: Int): GpsStatusController {
-        val controller: GpsStatusController
-        if (sdkVersion >= Build.VERSION_CODES.N) {
-            controller = GnnsStatusControllerImpl(context, listener)
-        } else {
-            controller = GpsStatusControllerImpl(context, listener)
-        }
-
-        return controller
-    }
+    fun createGpsStatusController(context: Context, listener: GpsStatusController.Listener, sdkVersion: Int): GpsStatusController =
+            if (sdkVersion >= Build.VERSION_CODES.N) {
+                GnnsStatusControllerImpl(context, listener)
+            } else {
+                GpsStatusControllerImpl(context, listener)
+            }
 }

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.os.AsyncTask
 import android.support.annotation.CallSuper
 import android.support.annotation.WorkerThread
+import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 
 /**
  * Basis for a long lived (@see android.arch.lifecycle.ViewModel) Presenter that
@@ -12,6 +13,7 @@ import android.support.annotation.WorkerThread
  * Instantiate using the android.arch.lifecycle.ViewModel factory means.
  */
 abstract class AbstractPresenter : ViewModel() {
+    private var firstStart = true
     private var started = false
     private var dirty = true
 
@@ -21,6 +23,10 @@ abstract class AbstractPresenter : ViewModel() {
      */
     fun start() {
         started = true
+        if (firstStart) {
+            firstStart = false
+            onFirstStart()
+        }
         onStart()
         checkUpdate()
     }
@@ -40,6 +46,13 @@ abstract class AbstractPresenter : ViewModel() {
     protected fun markDirty() {
         dirty = true
         checkUpdate()
+    }
+
+    /**
+     * Called before right before the first time that @see onStart is called
+     */
+    @CallSuper
+    open fun onFirstStart() {
     }
 
     /**
@@ -67,7 +80,7 @@ abstract class AbstractPresenter : ViewModel() {
     private fun checkUpdate() {
         if (dirty && started) {
             dirty = false
-            AsyncTask.THREAD_POOL_EXECUTOR.execute {
+            BaseConfiguration.appComponent.computationExecutor().execute {
                 onChange()
             }
         }

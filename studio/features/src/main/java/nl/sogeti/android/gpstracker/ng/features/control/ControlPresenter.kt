@@ -73,19 +73,23 @@ class ControlPresenter : AbstractPresenter(), LoggingStateListener {
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
-        loggingStateController.listener = this
+    }
+
+    override fun onFirstStart() {
+        super.onFirstStart()
         loggingStateController.connect(this)
     }
 
     @WorkerThread
     override fun onChange() {
-        viewModel.state.set(loggingStateController.loggingState)
-        if (loggingStateController.loggingState != ServiceConstants.STATE_UNKNOWN) {
+        val state = loggingStateController.loggingState
+        viewModel.state.set(state)
+        if (state != ServiceConstants.STATE_UNKNOWN) {
             enableButtons()
         }
 
         loggingStateController.trackUri?.let {
-            if (loggingStateController.loggingState == STATE_LOGGING) {
+            if (state == STATE_LOGGING) {
                 executor.execute {
                     if (serviceCommander.hasForInitialName(it)) {
                         val generatedName = nameGenerator.generateName(Calendar.getInstance())
@@ -104,11 +108,11 @@ class ControlPresenter : AbstractPresenter(), LoggingStateListener {
 
     //region Service connection
 
-    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        didChangeLoggingState(context, trackUri, name, loggingState)
+    override fun didConnectToService(context: Context, loggingState: Int, trackUri: Uri?) {
+        didChangeLoggingState(context, loggingState, trackUri)
     }
 
-    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didChangeLoggingState(context: Context, loggingState: Int, trackUri: Uri?) {
         markDirty()
     }
 

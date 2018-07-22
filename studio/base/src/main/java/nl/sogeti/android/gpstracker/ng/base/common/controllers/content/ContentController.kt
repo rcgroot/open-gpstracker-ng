@@ -47,7 +47,9 @@ class ContentController @Inject constructor(private val context: Context) {
         }
 
         override fun onChange(selfChange: Boolean, changedUri: Uri) {
-            registeredUri?.let { listener?.onChangeUriContent(it, changedUri) }
+            registeredUri?.let {
+                listener?.onChangeUriContent(it, changedUri)
+            }
 
         }
     }

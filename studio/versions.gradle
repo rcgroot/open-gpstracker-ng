@@ -16,7 +16,7 @@ ext {
     firebaseCoreVersion = '16.0.1'
     googleServicesVersion = '3.2.1'
     fabricVerion = '1.25.4'
-    crashlicticsVerion = '2.7.1'
+    crashlicticsVerion = '2.9.4'
     archComponentsVerion = '1.1.1'
     ktxVersion = '0.3'
 

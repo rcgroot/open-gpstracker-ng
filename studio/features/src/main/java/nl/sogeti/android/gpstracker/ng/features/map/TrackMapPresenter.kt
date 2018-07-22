@@ -79,13 +79,16 @@ class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, 
         viewModel.willLock.set(it ?: false)
         updateLock()
     }
-
     private val satellitePreferenceObserver = Observer<Boolean> {
         viewModel.showSatellite.set(it ?: false)
     }
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
+    }
+
+    override fun onFirstStart() {
+        super.onFirstStart()
         preferences.wakelockScreen.observeForever(wakelockPreferenceObserver)
         preferences.satellite.observeForever(satellitePreferenceObserver)
         loggingStateController.connect(this)
@@ -96,6 +99,18 @@ class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, 
         super.start()
         tileProvider = trackTileProviderFactory.createTrackTileProvider(mapView.context, viewModel.waypoints)
         mapView.getMapAsync(this)
+    }
+
+    override fun onStop() {
+        tileProvider = null
+        super.onStop()
+    }
+
+    override fun onCleared() {
+        preferences.wakelockScreen.removeObserver(wakelockPreferenceObserver)
+        preferences.satellite.removeObserver(satellitePreferenceObserver)
+        loggingStateController.disconnect()
+        super.onCleared()
     }
 
     override fun onTrackUpdate(trackUri: Uri?, name: String) {
@@ -111,25 +126,13 @@ class TrackMapPresenter : AbstractSelectedTrackPresenter(), OnMapReadyCallback, 
         }
     }
 
-    override fun onStop() {
-        tileProvider = null
-        super.onStop()
-    }
-
-    override fun onCleared() {
-        preferences.wakelockScreen.removeObserver(wakelockPreferenceObserver)
-        preferences.satellite.removeObserver(satellitePreferenceObserver)
-        loggingStateController.disconnect()
-        super.onCleared()
-    }
-
     //region Service connecting
 
-    override fun didConnectToService(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
-        didChangeLoggingState(context, trackUri, name, loggingState)
+    override fun didConnectToService(context: Context, loggingState: Int, trackUri: Uri?) {
+        didChangeLoggingState(context, loggingState, trackUri)
     }
 
-    override fun didChangeLoggingState(context: Context, trackUri: Uri?, name: String?, loggingState: Int) {
+    override fun didChangeLoggingState(context: Context, loggingState: Int, trackUri: Uri?) {
         val isLogging = loggingState == ServiceConstants.STATE_LOGGING
         updateLock()
         if (isLogging && trackUri != null) {
