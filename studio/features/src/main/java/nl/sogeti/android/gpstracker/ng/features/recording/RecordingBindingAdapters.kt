@@ -85,4 +85,14 @@ class RecordingBindingAdapters : CommonBindingAdapters() {
             textView.text = context.getString(summary.string, distance, duration, speed)
         }
     }
+
+    @BindingAdapter("android:text")
+    fun setIntegerText(textView: TextView, textId: Int?) {
+        if (textId == null) {
+            textView.text = ""
+        } else {
+            textView.text = textView.resources.getText(textId)
+        }
+
+    }
 }
