@@ -92,7 +92,7 @@ class TrackEditPresenter : AbstractTrackPresenter() {
 
     private fun loadTrackTypePosition(trackUri: Uri?) {
         if (trackUri != null) {
-            val trackType = trackUri.loadTrackType()
+            val trackType = trackUri.readTrackType()
             val position = viewModel.trackTypes.indexOfFirst { it == trackType }
             viewModel.selectedPosition.set(position)
         } else {

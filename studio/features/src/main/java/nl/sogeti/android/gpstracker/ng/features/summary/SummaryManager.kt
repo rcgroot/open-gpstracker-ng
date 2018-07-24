@@ -47,7 +47,7 @@ class SummaryManager {
 
     var executor: ExecutorService? = null
     private val summaryCache = ConcurrentHashMap<Uri, Summary>()
-    var activeCount = 0
+    private var activeCount = 0
     @Inject
     lateinit var calculator: SummaryCalculator
     @Inject
@@ -58,16 +58,16 @@ class SummaryManager {
     }
 
     fun start() {
-        synchronized(this, {
+        synchronized(this) {
             activeCount++
             if (executor == null) {
                 executor = Executors.newFixedThreadPool(numberOfThreads(), BackgroundThreadFactory("SummaryManager"))
             }
-        })
+        }
     }
 
     fun stop() {
-        synchronized(this, {
+        synchronized(this) {
             activeCount--
             if (!isRunning()) {
                 executor?.shutdown()
@@ -77,10 +77,10 @@ class SummaryManager {
                 activeCount++
                 throw IllegalStateException("Received more stops then starts")
             }
-        })
+        }
     }
 
-    fun isRunning(): Boolean = synchronized(this, { activeCount > 0 })
+    fun isRunning(): Boolean = synchronized(this) { activeCount > 0 }
 
     /**
      * Collects summary data from the meta table.
@@ -88,7 +88,7 @@ class SummaryManager {
     fun collectSummaryInfo(trackUri: Uri,
                            callbackSummary: (Summary) -> Unit) {
         val executor = executor ?: return
-        executor.submit({
+        executor.submit {
             val cacheHit = summaryCache[trackUri]
             if (cacheHit != null) {
                 val trackWaypointsUri = trackUri.append(WAYPOINTS)
@@ -102,14 +102,14 @@ class SummaryManager {
             } else {
                 executeTrackCalculation(trackUri, callbackSummary)
             }
-        })
+        }
     }
 
     fun executeTrackCalculation(trackUri: Uri, callbackSummary: (Summary) -> Unit) {
         if (isRunning()) {
             val summary = calculator.calculateSummary(trackUri)
             if (isRunning()) {
-                summaryCache.put(trackUri, summary)
+                summaryCache[trackUri] = summary
                 callbackSummary(summary)
             }
         }

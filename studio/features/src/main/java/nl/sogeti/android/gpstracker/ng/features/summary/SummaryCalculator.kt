@@ -33,7 +33,7 @@ import android.location.Location
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
-import nl.sogeti.android.gpstracker.ng.features.trackedit.loadTrackType
+import nl.sogeti.android.gpstracker.ng.features.trackedit.readTrackType
 import nl.sogeti.android.gpstracker.ng.features.util.DefaultResultHandler
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.util.Waypoint
@@ -81,7 +81,7 @@ class SummaryCalculator {
         // Text values
         val name = trackUri.runQuery(context.contentResolver) { it.getString(ContentConstants.Tracks.NAME) }
                 ?: "Unknown"
-        val trackType = trackUri.loadTrackType()
+        val trackType = trackUri.readTrackType()
 
         // Return value
 

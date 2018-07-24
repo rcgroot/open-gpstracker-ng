@@ -37,18 +37,21 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackPolylineProvider
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
+import nl.sogeti.android.gpstracker.ng.features.trackedit.readTrackType
 import nl.sogeti.android.gpstracker.ng.features.util.mapLatLng
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoints.WAYPOINTS
+import nl.sogeti.android.gpstracker.service.util.readName
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory
 import nl.sogeti.android.gpstracker.utils.contentprovider.append
 import nl.sogeti.android.gpstracker.utils.contentprovider.count
-import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.RowTrackBinding
+import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -79,15 +82,11 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
 
     @MainThread
     fun updateTracks(tracks: List<Uri>) {
-        if (tracks == displayedTracks) {
-            return
-        }
-
         newTracks = tracks
         if (calculatingTracks == null) {
             calculatingTracks = newTracks
             newTracks = null
-            executor.submit({
+            executor.submit {
                 calculatingTracks?.let {
                     val diffResult = DiffUtil.calculateDiff(TrackDiffer(displayedTracks, it))
 
@@ -100,7 +99,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
                         }
                     }
                 }
-            })
+            }
         }
     }
 
@@ -229,11 +228,18 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
             val oldItem = oldList[oldItemPosition]
             val newItem = newList[newItemPosition]
             if (!isDisplayed(oldItemPosition) && !isDisplayed(newItemPosition)) {
+                // Offscreen rows we only care about the URI
                 return oldItem == newItem
             }
 
-            val renderedWaypoints = rowViewModelForUri(oldItem).waypoints.get()
+            if (rowViewModelForUri(oldItem).name.get() != newItem.readName()) {
+                return false
+            }
+            if (rowViewModelForUri(oldItem).iconType.get() != newItem.readTrackType().drawableId) {
+                return false
+            }
 
+            val renderedWaypoints = rowViewModelForUri(oldItem).waypoints.get()
             val oldCount = renderedWaypoints?.count() ?: -1
             val newCount = newItem.append(WAYPOINTS).count(context.contentResolver)
 

@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.trackedit.loadTrackType
+import nl.sogeti.android.gpstracker.ng.features.trackedit.readTrackType
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 
 class TrackPresenter : AbstractSelectedTrackPresenter() {
@@ -48,7 +48,7 @@ class TrackPresenter : AbstractSelectedTrackPresenter() {
         if (trackUri != null) {
             viewModel.trackUri.set(trackUri)
             viewModel.name.set(name)
-            viewModel.trackIcon.set(trackUri.loadTrackType().drawableId)
+            viewModel.trackIcon.set(trackUri.readTrackType().drawableId)
         }
     }
 
