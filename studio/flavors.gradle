@@ -1,0 +1,15 @@
+android {
+    flavorDimensions "service"
+
+    productFlavors {
+        store {
+            dimension "service"
+        }
+        develop {
+            dimension "service"
+        }
+        mock {
+            dimension "service"
+        }
+    }
+}

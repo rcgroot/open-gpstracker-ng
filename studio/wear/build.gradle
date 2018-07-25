@@ -18,21 +18,6 @@ android {
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }
 
-    productFlavors {
-        store {
-            dimension "service"
-        }
-        develop {
-            dimension "service"
-            applicationIdSuffix = ".develop"
-        }
-        mock {
-            dimension "service"
-            applicationIdSuffix = ".mock"
-        }
-    }
-
-    apply from: '../signing.gradle'
 
     buildTypes {
         release {
@@ -41,6 +26,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    apply from: '../flavors.gradle'
+
+    productFlavors {
+        develop {
+            applicationIdSuffix = ".develop"
+        }
+        mock {
+            applicationIdSuffix = ".mock"
+        }
+    }
+
+    apply from: '../signing.gradle'
 
     lintOptions {
         abortOnError false

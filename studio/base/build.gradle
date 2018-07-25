@@ -23,19 +23,7 @@ android {
         unitTests.returnDefaultValues = true
     }
 
-    flavorDimensions "service"
-
-    productFlavors {
-        store {
-            dimension "service"
-        }
-        develop {
-            dimension "service"
-        }
-        mock {
-            dimension "service"
-        }
-    }
+    apply from:'../flavors.gradle'
 
     buildTypes {
         release {

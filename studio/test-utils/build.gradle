@@ -21,6 +21,8 @@ android {
         }
     }
 
+    apply from: '../flavors.gradle'
+
 }
 
 dependencies {

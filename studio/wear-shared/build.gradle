@@ -23,6 +23,8 @@ android {
         }
     }
 
+    apply from:'../flavors.gradle'
+
     dataBinding {
         enabled = true
     }

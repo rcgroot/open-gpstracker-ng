@@ -21,18 +21,12 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    flavorDimensions "service"
-
+    apply from:'../flavors.gradle'
     productFlavors {
-        store {
-            dimension "service"
-        }
         develop {
-            dimension "service"
             applicationIdSuffix = ".develop"
         }
         mock {
-            dimension "service"
             applicationIdSuffix = ".mock"
         }
     }
