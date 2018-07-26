@@ -28,6 +28,10 @@ android {
         enabled = true
     }
 
+    lintOptions {
+        abortOnError false
+    }
+    
     testOptions {
         unitTests.returnDefaultValues = true
     }
