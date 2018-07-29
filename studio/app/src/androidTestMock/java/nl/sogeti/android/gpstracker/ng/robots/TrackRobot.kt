@@ -128,7 +128,6 @@ class TrackRobot(private val activity: Activity) : Robot<TrackRobot>("TrackScree
         val mapView = activity.findViewById<MapView>(R.id.fragment_map_mapview)
         resource = IdlingMapResource(mapView)
         IdlingRegistry.getInstance().register(resource)
-        sleep(5)
 
         return this
     }

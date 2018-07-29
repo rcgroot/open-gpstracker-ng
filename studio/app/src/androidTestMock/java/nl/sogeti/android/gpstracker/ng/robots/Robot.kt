@@ -29,8 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.robots
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Environment
 import android.os.SystemClock
 import android.support.test.InstrumentationRegistry
 import android.support.test.InstrumentationRegistry.getInstrumentation
@@ -39,6 +39,7 @@ import android.support.v4.content.ContextCompat
 import nl.sogeti.android.gpstracker.service.mock.MockServiceManager
 import timber.log.Timber
 import java.io.File
+
 
 open class Robot<T : Robot<T>>(private val screenName: String) {
 
@@ -93,45 +94,46 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
             }
 
             val directory = create(screenshotsDirectory())
-            var file: File? = null
 
-            if (directory != null) {
-                shotsFired++
-                file = File(directory, String.format("%03d %s.png", shotsFired, screenName))
-                Timber.d("Created new file $file")
-                file.createNewFile()
-            } else {
-                Timber.e("Failed to create directory $directory")
-            }
+            shotsFired++
+            val file = File(directory, String.format("%03d %s.png", shotsFired, screenName))
+            Timber.d("Created new file $file")
+            file.createNewFile()
 
-            if (file == null) {
-                throw IllegalStateException("Should have created a file")
-            }
 
             return file
         }
 
-        private fun create(path: File?): File? {
-            var path = path ?: return null
+        private fun create(path: File?): File {
+            if (path == null) {
+                throw IllegalStateException("Missing path")
+            }
             var exists = path.exists()
             if (!exists) {
                 exists = path.mkdir()
+                if (!exists) {
+                    throw IllegalStateException("Failed to create directory $path")
+                }
             }
 
-            return if (exists) path else null
+            return path
         }
 
         private fun screenshotsDirectory(): File? {
-            var screenshotDirectory: File? = null
-            val root = Environment.getExternalStorageDirectory()
-            if (root != null && root.exists()) {
-                screenshotDirectory = File(root, "screenshots")
-            } else {
-                Timber.e("Missing directory $root")
-            }
+            val file = getContext().filesDir.child("test-screenshots")
+            Timber.d("Storing screenshots in $file")
 
-            return screenshotDirectory
+            return file
+        }
+
+        private fun getContext(): Context {
+            return InstrumentationRegistry.getTargetContext()
+        }
+
+        private fun File?.child(dir: String): File? {
+            return File(this, dir)
         }
     }
+
 }
 

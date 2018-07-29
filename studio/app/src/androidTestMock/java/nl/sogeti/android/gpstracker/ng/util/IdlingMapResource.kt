@@ -3,29 +3,33 @@ package nl.sogeti.android.gpstracker.ng.util
 import android.support.test.espresso.IdlingResource
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
 import timber.log.Timber
 
 class IdlingMapResource(map: MapView) : IdlingResource, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapLoadedCallback {
 
     private var isMapLoaded = true
     private var isCameraIdle = true
-
+    private var googleMap: GoogleMap? = null
     private var callback: IdlingResource.ResourceCallback? = null
 
     init {
-        map.getMapAsync {
-            it.setOnCameraIdleListener(this)
-            it.setOnCameraMoveListener(this)
-            it.setOnMapLoadedCallback(this)
+        onMainThread {
+            map.getMapAsync {
+                googleMap = it
+                it.setOnCameraIdleListener(this)
+                it.setOnCameraMoveListener(this)
+                it.setOnMapLoadedCallback(this)
+            }
+            Timber.d("IdlingMapResource started")
         }
-        Timber.d("IdlingMapResource started")
     }
 
     override fun getName(): String = "MapResource"
 
     override fun isIdleNow(): Boolean {
         Timber.d("Is idle camera $isCameraIdle && loaded $isMapLoaded")
-        return isCameraIdle && isMapLoaded
+        return googleMap != null && isCameraIdle && isMapLoaded
     }
 
     override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {

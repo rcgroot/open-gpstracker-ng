@@ -14,7 +14,6 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListViewAdapter
 import nl.sogeti.android.gpstracker.v2.R
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.anyOf
 
 class TrackListRobot : Robot<TrackListRobot>("TrackList") {
 
@@ -60,7 +59,7 @@ class TrackListRobot : Robot<TrackListRobot>("TrackList") {
     }
 
     fun isTrackListDisplayed(): ViewInteraction {
-        return onView(anyOf(withId(R.id.fragment_tracklist), withId(R.id.fragment_tracklist_list)))
+        return onView(withId(R.id.fragment_tracklist_list))
                 .check(matches(isCompletelyDisplayed()))
     }
 

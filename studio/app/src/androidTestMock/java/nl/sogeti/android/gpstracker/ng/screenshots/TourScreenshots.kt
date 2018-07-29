@@ -29,10 +29,10 @@
 package nl.sogeti.android.gpstracker.ng.screenshots
 
 import android.support.test.rule.ActivityTestRule
-import nl.sogeti.android.gpstracker.ng.robots.*
-import org.junit.*
 import android.support.test.rule.GrantPermissionRule
 import nl.sogeti.android.gpstracker.ng.features.track.TrackActivity
+import nl.sogeti.android.gpstracker.ng.robots.*
+import org.junit.*
 
 
 class TourScreenshots {
@@ -81,6 +81,7 @@ class TourScreenshots {
                 .resumeRecording().takeScreenShot()
                 .sleep(10)
                 .stopRecording().takeScreenShot()
+                .stop()
     }
 
     @Test
@@ -92,6 +93,7 @@ class TourScreenshots {
                 .openTrackTypeSpinner().takeScreenShot()
                 .selectWalking()
                 .ok()
+                .stop()
     }
 
     @Test
@@ -109,6 +111,8 @@ class TourScreenshots {
                 .openRowContextMenu(0)
                 .delete().takeScreenShot()
                 .cancelDelete()
+        trackRobot
+                .stop()
     }
 
     @Test
@@ -119,6 +123,8 @@ class TourScreenshots {
         aboutRobot
                 .start()
                 .ok()
+        trackRobot
+                .stop()
     }
 
     @Test
@@ -129,6 +135,8 @@ class TourScreenshots {
         graphRobot
                 .takeScreenShot()
                 .back()
+        trackRobot
+                .stop()
 
     }
 }
