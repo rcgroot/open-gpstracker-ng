@@ -3,10 +3,10 @@
  **    Author: rene
  ** Copyright: (c) Apr 24, 2011 Sogeti Nederland B.V. All Rights Reserved.
  **------------------------------------------------------------------------------
- ** Sogeti Nederland B.V.            |  No part of this file may be reproduced  
- ** Distributed Software Engineering |  or transmitted in any form or by any        
- ** Lange Dreef 17                   |  means, electronic or mechanical, for the      
- ** 4131 NJ Vianen                   |  purpose, without the express written    
+ ** Sogeti Nederland B.V.            |  No part of this file may be reproduced
+ ** Distributed Software Engineering |  or transmitted in any form or by any
+ ** Lange Dreef 17                   |  means, electronic or mechanical, for the
+ ** 4131 NJ Vianen                   |  purpose, without the express written
  ** The Netherlands                  |  permission of the copyright holder.
  *------------------------------------------------------------------------------
  *
@@ -38,7 +38,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.location.Location;
 import android.net.Uri;
-import android.provider.LiveFolders;
+import android.support.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -139,7 +139,6 @@ public class GPStrackingProvider extends ContentProvider {
     private static final int WAYPOINT_ID = 9;
     private static final int WAYPOINT_MEDIA = 10;
     private static final int SEARCH_SUGGEST_ID = 11;
-    private static final int LIVE_FOLDERS = 12;
     private static final int MEDIA = 13;
     private static final int MEDIA_ID = 14;
     private static final int TRACK_METADATA = 15;
@@ -157,18 +156,12 @@ public class GPStrackingProvider extends ContentProvider {
                             Tracks._ID + " AS " + SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID
 
                     };
-    private static final String[] LIVE_PROJECTION =
-            new String[]
-                    {
-                            Tracks._ID + " AS " + LiveFolders._ID,
-                            Tracks.NAME + " AS " + LiveFolders.NAME,
-                            "datetime(" + Tracks.CREATION_TIME + "/1000, 'unixepoch') as " + LiveFolders.DESCRIPTION
-                    };
+
     private static final String LOCATION_TAG = "OpenGpsTracker";
 
     private static UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-    /**
+    /*
      * Although it is documented that in addURI(null, path, 0) "path" should be an absolute path this does not seem to
      * work. A relative path gets the jobs done and matches an absolute path.
      */
@@ -203,8 +196,6 @@ public class GPStrackingProvider extends ContentProvider {
         GPStrackingProvider.sURIMatcher.addURI(ContentConstants.GPS_TRACKS_AUTHORITY, "metadata", GPStrackingProvider.METADATA);
         GPStrackingProvider.sURIMatcher.addURI(ContentConstants.GPS_TRACKS_AUTHORITY, "metadata/#", GPStrackingProvider.METADATA_ID);
 
-        GPStrackingProvider.sURIMatcher.addURI(ContentConstants.GPS_TRACKS_AUTHORITY, "live_folders/tracks", GPStrackingProvider
-                .LIVE_FOLDERS);
         GPStrackingProvider.sURIMatcher.addURI(ContentConstants.GPS_TRACKS_AUTHORITY, "search_suggest_query", GPStrackingProvider
                 .SEARCH_SUGGEST_ID);
 
@@ -225,7 +216,7 @@ public class GPStrackingProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         int match = GPStrackingProvider.sURIMatcher.match(uri);
 
-        String tableName = null;
+        String tableName;
         String innerSelection = "1";
         String[] innerSelectionArgs = new String[]{};
         List<String> pathSegments = uri.getPathSegments();
@@ -289,19 +280,17 @@ public class GPStrackingProvider extends ContentProvider {
                 break;
             case TRACK_METADATA:
                 tableName = MetaData.METADATA;
-                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = " +
-                        "? ";
+                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = ? ";
                 innerSelectionArgs = new String[]{pathSegments.get(1), "-1", "-1"};
                 break;
             case SEGMENT_METADATA:
                 tableName = MetaData.METADATA;
-                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = " +
-                        "? ";
+                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = ? ";
                 innerSelectionArgs = new String[]{pathSegments.get(1), pathSegments.get(3), "-1"};
                 break;
             case WAYPOINT_METADATA:
                 tableName = MetaData.METADATA;
-                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = " +
+                innerSelection = MetaData.TRACK + " = ? and " + MetaData.SEGMENT + " = ? and " + MetaData.WAYPOINT + " = ? " +
                         "? ";
                 innerSelectionArgs = new String[]{pathSegments.get(1), pathSegments.get(3), pathSegments.get(5)};
                 break;
@@ -324,11 +313,6 @@ public class GPStrackingProvider extends ContentProvider {
                 }
                 projection = SUGGEST_PROJECTION;
                 break;
-            case LIVE_FOLDERS:
-                tableName = Tracks.TRACKS;
-                projection = LIVE_PROJECTION;
-                sortOrder = Tracks.CREATION_TIME + " desc";
-                break;
             case SEGMENTS_ALL:
                 tableName = Segments.SEGMENTS;
                 break;
@@ -340,9 +324,15 @@ public class GPStrackingProvider extends ContentProvider {
                 return null;
         }
 
+        return getQueryCursor(uri, projection, selection, selectionArgs, sortOrder, tableName, innerSelection, innerSelectionArgs);
+    }
+
+    @NonNull
+    private Cursor getQueryCursor(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, String tableName, String innerSelection, String[] innerSelectionArgs) {
         // SQLiteQueryBuilder is a helper class that creates the
         // proper SQL syntax for us.
         SQLiteQueryBuilder qBuilder = new SQLiteQueryBuilder();
+        qBuilder.setStrict(true);
 
         // Set the table we're querying.
         qBuilder.setTables(tableName);
@@ -352,7 +342,7 @@ public class GPStrackingProvider extends ContentProvider {
         } else {
             selection = "( " + innerSelection + " ) and " + selection;
         }
-        LinkedList<String> allArgs = new LinkedList<String>();
+        LinkedList<String> allArgs = new LinkedList<>();
         if (selectionArgs == null) {
             allArgs.addAll(Arrays.asList(innerSelectionArgs));
         } else {
@@ -365,7 +355,6 @@ public class GPStrackingProvider extends ContentProvider {
         SQLiteDatabase mDb = this.mDbHelper.getWritableDatabase();
         Cursor c = qBuilder.query(mDb, projection, selection, selectionArgs, null, null, sortOrder);
         c.setNotificationUri(getContext().getContentResolver(), uri);
-
         return c;
     }
 
