@@ -12,8 +12,8 @@ android {
         applicationId "nl.sogeti.android.gpstracker"
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
-        versionCode buildNumber as Integer
-        versionName "2.0.0-SNAPSHOT"
+        versionCode 200005 // 2 major 00 minor 00 patch 5 for main apk
+        versionName rootProject.appVersionName
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
         buildConfigField "String", "GIT_COMMIT", "\"" + (System.getenv("GIT_COMMIT") ?: "unknown") + "\"" as String
         archivesBaseName = "opengpstracker-ng-$versionName"

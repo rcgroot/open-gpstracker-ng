@@ -12,8 +12,8 @@ android {
         applicationId "nl.sogeti.android.gpstracker"
         targetSdkVersion 26
         minSdkVersion 23
-        versionCode buildNumber
-        versionName "2.0.0-SNAPSHOT"
+        versionCode 200001 // 2 major 00 minor 00 patch 1 for wear apk
+        versionName rootProject.appVersionName
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
     }

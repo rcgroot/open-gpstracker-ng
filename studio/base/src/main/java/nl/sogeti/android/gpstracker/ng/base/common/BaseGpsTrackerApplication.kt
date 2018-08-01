@@ -31,11 +31,13 @@ package nl.sogeti.android.gpstracker.ng.base.common
 import android.app.Application
 import android.os.StrictMode
 import android.support.annotation.CallSuper
+import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary
+import io.fabric.sdk.android.Fabric
 import nl.sogeti.android.gpstracker.ng.base.BuildConfig
-
 import timber.log.Timber
+
 
 /**
  * Start app generic services
@@ -51,13 +53,22 @@ open class BaseGpsTrackerApplication : Application() {
             // Running the app for the heap analyzer, not for the user
             return
         }
+        setupCrashlitics()
         setupLeakCanary()
         setupLogging()
         setupAnalytics()
     }
 
+    private fun setupCrashlitics() {
+        if (BuildConfig.FLAVOR != "mock") {
+            ofMainThread {
+                Fabric.with(this, Crashlytics())
+            }
+        }
+    }
+
     private fun setupAnalytics() {
-        if (BuildConfig.FLAVOR.equals("mock")) {
+        if (BuildConfig.FLAVOR == "mock") {
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         }
     }
