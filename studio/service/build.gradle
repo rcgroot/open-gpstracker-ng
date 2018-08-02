@@ -27,11 +27,6 @@ android {
             buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL"'
             buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"'
             buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker"'
-            manifestPlaceholders = [
-                    providerAuthority: "nl.sogeti.android.gpstracker",
-                    controlPermission: "nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL",
-                    tracksPermission : "nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"
-            ]
         }
         develop {
             dimension "service"
@@ -39,12 +34,6 @@ android {
             buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.develop.permission.TRACKING_CONTROL"'
             buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.develop.permission.TRACKING_HISTORY"'
             buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker.develop"'
-
-            manifestPlaceholders = [
-                    providerAuthority: "nl.sogeti.android.gpstracker.develop",
-                    controlPermission: "nl.sogeti.android.gpstracker.develop.permission.TRACKING_CONTROL",
-                    tracksPermission : "nl.sogeti.android.gpstracker.develop.permission.TRACKING_HISTORY"
-            ]
         }
         mock {
             dimension "service"
@@ -52,11 +41,6 @@ android {
             buildConfigField 'String', 'controlPermission', '"nl.sogeti.android.gpstracker.mock.permission.TRACKING_CONTROL"'
             buildConfigField 'String', 'tracksPermission', '"nl.sogeti.android.gpstracker.mock.permission.TRACKING_HISTORY"'
             buildConfigField 'String', 'packageName', '"nl.sogeti.android.gpstracker.mock"'
-            manifestPlaceholders = [
-                    providerAuthority: "nl.sogeti.android.gpstracker.mock",
-                    controlPermission: "nl.sogeti.android.gpstracker.mock.permission.TRACKING_CONTROL",
-                    tracksPermission : "nl.sogeti.android.gpstracker.mock.permission.TRACKING_HISTORY"
-            ]
         }
     }
 

@@ -4,12 +4,27 @@ android {
     productFlavors {
         store {
             dimension "service"
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker",
+                    controlPermission: "nl.sogeti.android.gpstracker.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.permission.TRACKING_HISTORY"
+            ]
         }
         develop {
             dimension "service"
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker.develop",
+                    controlPermission: "nl.sogeti.android.gpstracker.develop.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.develop.permission.TRACKING_HISTORY"
+            ]
         }
         mock {
             dimension "service"
+            manifestPlaceholders = [
+                    providerAuthority: "nl.sogeti.android.gpstracker.mock",
+                    controlPermission: "nl.sogeti.android.gpstracker.mock.permission.TRACKING_CONTROL",
+                    tracksPermission : "nl.sogeti.android.gpstracker.mock.permission.TRACKING_HISTORY"
+            ]
         }
     }
 }

@@ -17,6 +17,16 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
+            <intent-filter android:label="@string/title_activity_track">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="${providerAuthority}"
+                    android:mimeType="vnd.android.cursor.item/vnd.nl.sogeti.android.track"
+                    android:pathPrefix="/tracks"
+                    android:scheme="content" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

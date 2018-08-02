@@ -37,7 +37,6 @@
             android:enabled="true"
             android:exported="true"
             android:permission="${tracksPermission}">
-            <grant-uri-permission android:pathPrefix="/tracks/" />
 
             <path-permission
                 android:path="/search_suggest_query"
