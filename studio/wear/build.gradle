@@ -16,8 +16,8 @@ android {
         versionName rootProject.appVersionName
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
         buildConfigField "String", "GIT_COMMIT", "\"" + System.getenv("GIT_COMMIT") + "\"" as String ?: "\"Unknown\""
+        archivesBaseName = "opengpstracker-ng-wear-$versionName"
     }
-
 
     buildTypes {
         release {
