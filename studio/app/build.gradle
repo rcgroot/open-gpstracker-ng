@@ -12,7 +12,7 @@ android {
         applicationId "nl.sogeti.android.gpstracker"
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
-        versionCode 200005 // 2 major 00 minor 00 patch 5 for main apk
+        versionCode rootProject.appVersionCode
         versionName rootProject.appVersionName
         buildConfigField "int", "BUILD_NUMBER", buildNumber as String
         buildConfigField "String", "GIT_COMMIT", "\"" + (System.getenv("GIT_COMMIT") ?: "unknown") + "\"" as String
