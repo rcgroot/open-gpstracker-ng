@@ -34,12 +34,12 @@ import android.content.Context
 import android.database.CursorWrapper
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.widget.CursorAdapter
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -114,9 +114,9 @@ class TrackListFragment : ActivityResultLambdaFragment() {
 
     private fun attachSearch(searchItem: MenuItem) {
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = searchItem.actionView as SearchView
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+        val searchView = searchItem.actionView as SearchView?
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        searchView?.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean {
                 setQueryToSuggestion(position, false)
                 return false
@@ -128,8 +128,9 @@ class TrackListFragment : ActivityResultLambdaFragment() {
             }
 
             private fun setQueryToSuggestion(position: Int, submit: Boolean) {
-                val item = searchView.suggestionsAdapter.getItem(position)
-                val selected = (item as? CursorWrapper)?.getString(1)
+                val suggestionsAdapter: CursorAdapter? = searchView.suggestionsAdapter
+                val item = suggestionsAdapter?.getItem(position) as CursorWrapper?
+                val selected = item?.getString(1)
                 searchView.setQuery(selected, submit)
             }
         })
