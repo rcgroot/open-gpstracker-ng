@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    apply from:'../flavors.gradle'
+    apply from: '../flavors.gradle'
     productFlavors {
         develop {
             applicationIdSuffix = ".develop"
