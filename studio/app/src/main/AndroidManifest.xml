@@ -15,13 +15,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDtVu9cndWJdpmYFmqzh87ISijzchdIALQ" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="4c2772d3439d60ec6f95d62005c042fab1bad3bd" />
-    </application>
+        tools:ignore="GoogleAppIndexingWarning"></application>
 
 </manifest>
