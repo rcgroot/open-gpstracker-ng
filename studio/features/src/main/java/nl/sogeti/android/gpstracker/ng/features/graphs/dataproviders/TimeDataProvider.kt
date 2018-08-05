@@ -61,7 +61,7 @@ class TimeDataProvider : GraphValueDescriptor, GraphDataProvider {
     }
 
     private fun addSegmentToGraphPoints(waypoints: List<List<Summary.Delta>>, graphPoints: MutableList<GraphPoint>) {
-        val baseTime = waypoints.first().first().totalMilliseconds
+        val baseTime = waypoints.firstOrNull()?.firstOrNull()?.totalMilliseconds ?: 0L
         waypoints.forEach {
             val points = calculateSegment(it, baseTime)
             graphPoints.addAll(points)
