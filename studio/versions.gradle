@@ -5,9 +5,9 @@ ext {
     minSdk = 21
     targetSdk = 27
 
-    appVersionName = '2.0.2'
-    appVersionCode =  200025 // 2 major 00 minor 02 patch 5 for main apk
-    wearVersionCode = 200021 // 2 major 00 minor 02 patch 1 for wear apk
+    appVersionName = '2.0.3'
+    appVersionCode = 200035  // 2 major 00 minor 0x patch 5 for main apk
+    wearVersionCode = 200031 // 2 major 00 minor 0x patch 1 for wear apk
 
     // App support
     supportLibraryVersion = '27.1.1'
