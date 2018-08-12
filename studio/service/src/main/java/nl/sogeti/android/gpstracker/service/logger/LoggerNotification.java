@@ -128,7 +128,7 @@ class LoggerNotification {
         PendingIntent contentIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
 
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(service)
+                new NotificationCompat.Builder(service, NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(SMALL_ICON)
                         .setContentTitle(contentTitle)
                         .setContentText(contentText)
@@ -153,7 +153,8 @@ class LoggerNotification {
         Intent notificationIntent = new Intent(Intent.ACTION_VIEW, uri);
         PendingIntent contentIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(service)
+                new NotificationCompat.Builder(service, NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(SMALL_ICON)
                         .setAutoCancel(true)
                         .setTicker(tickerText)
                         .setContentTitle(contentTitle)
