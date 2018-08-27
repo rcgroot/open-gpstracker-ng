@@ -10,6 +10,7 @@
     <string name="service_datadisabled">Network positioning is disabled, logging is without effect.</string>
     <string name="service_dataenabled">Network positioning is enabled, commencing logging.</string>
     <string name="service_gpsproblem">Receiving no location information</string>
+    <string name="service_starting">Requesting GPS location</string>
     <string name="customupload_failed">The last upload of track progress failed</string>
     <string-array name="precision_choices">
         <item>Custom</item>

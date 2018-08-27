@@ -126,20 +126,11 @@ public class ServiceConstants {
         public static final String CONFIG_PRECISION = "nl.sogeti.android.gpstracker.extra.CONFIG_PRECISION";
         public static final String CONFIG_INTERVAL_DISTANCE = "nl.sogeti.android.gpstracker.extra.CONFIG_INTERVAL_DISTANCE";
         public static final String CONFIG_INTERVAL_TIME = "nl.sogeti.android.gpstracker.extra.CONFIG_INTERVAL_TIME";
-        public static final String CONFIG_SPEED_SANITY = "nl.sogeti.android.gpstracker.extra.CONFIG_SPEED_SANITY";
-        public static final String CONFIG_STATUS_MONITOR = "nl.sogeti.android.gpstracker.extra.CONFIG_STATUS_MONITOR";
-        public static final String CONFIG_STREAM_BROADCAST = "nl.sogeti.android.gpstracker.extra.CONFIG_STREAM_BROADCAST";
-        public static final String CONFIG_STREAM_INTERVAL_DISTANCE = "nl.sogeti.android.gpstracker.extra.CONFIG_STREAM_INTERVAL_DISTANCE";
-        public static final String CONFIG_STREAM_INTERVAL_TIME = "nl.sogeti.android.gpstracker.extra.CONFIG_STREAM_INTERVAL_TIME";
         public static final int EXTRA_COMMAND_START = 0;
         public static final int EXTRA_COMMAND_PAUSE = 1;
         public static final int EXTRA_COMMAND_RESUME = 2;
         public static final int EXTRA_COMMAND_STOP = 3;
         public static final int EXTRA_COMMAND_RESTORE = 4;
-        public static final String CONFIG_START_AT_BOOT = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_BOOT";
-        public static final String CONFIG_START_AT_POWER_CONNECT = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_POWER_CONNECT";
-        public static final String CONFIG_STOP_AT_POWER_DISCONNECT = "nl.sogeti.android.gpstracker.extra.CONFIG_STOP_AT_POWER_DISCONNECT";
-        public static final String CONFIG_START_AT_DOCK = "nl.sogeti.android.gpstracker.extra.CONFIG_START_AT_DOCK";
-        public static final String CONFIG_STOP_AT_UNDOCK = "nl.sogeti.android.gpstracker.extra.CONFIG_STOP_AT_UNDOCK";
+        public static final String CONFIG_FOREGROUND = "nl.sogeti.android.gpstracker.extra.CONFIG_FOREGROUND";
     }
 }
