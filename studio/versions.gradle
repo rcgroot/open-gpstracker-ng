@@ -3,7 +3,7 @@ ext {
     gradlePluginVersion = '3.2.0-rc02'
     buildTools = '27.0.3'
     minSdk = 21
-    targetSdk = 27
+    targetSdk = 28
 
     appVersionName = '2.0.5'
     appVersionCode = 200055  // 2 major 00 minor 0x patch 5 for main apk

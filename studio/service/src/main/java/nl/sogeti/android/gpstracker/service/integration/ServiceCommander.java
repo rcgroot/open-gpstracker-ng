@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
@@ -60,19 +61,19 @@ public class ServiceCommander implements ServiceCommanderInterface {
         intent.putExtra(ServiceConstants.EXTRA_TRACK_NAME, trackName);
         intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, precision);
         intent.putExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, true);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void pauseGPSLogging() {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_PAUSE);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void resumeGPSLogging() {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_RESUME);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void resumeGPSLogging(int precision, int customInterval, float customDistance) {
@@ -84,13 +85,13 @@ public class ServiceCommander implements ServiceCommanderInterface {
     public void stopGPSLogging() {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.COMMAND, ServiceConstants.Commands.EXTRA_COMMAND_STOP);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setLoggingPrecision(int mode) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, mode);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setCustomLoggingPrecision(long seconds, float meters) {
@@ -98,19 +99,19 @@ public class ServiceCommander implements ServiceCommanderInterface {
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_TIME, seconds);
         intent.putExtra(ServiceConstants.Commands.CONFIG_INTERVAL_DISTANCE, meters);
         intent.putExtra(ServiceConstants.Commands.CONFIG_PRECISION, LOGGING_CUSTOM);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setSanityFilter(boolean filter) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, filter);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setStatusMonitor(boolean monitor) {
         Intent intent = createServiceIntent();
         intent.putExtra(ServiceConstants.Commands.CONFIG_STATUS_MONITOR, monitor);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setAutomaticLogging(boolean atBoot, boolean atDocking, boolean atUnDocking, boolean atPowerConnect, boolean atPowerDisconnect) {
@@ -120,7 +121,7 @@ public class ServiceCommander implements ServiceCommanderInterface {
         intent.putExtra(ServiceConstants.Commands.CONFIG_STOP_AT_UNDOCK, atUnDocking);
         intent.putExtra(ServiceConstants.Commands.CONFIG_START_AT_POWER_CONNECT, atPowerConnect);
         intent.putExtra(ServiceConstants.Commands.CONFIG_STOP_AT_POWER_DISCONNECT, atPowerDisconnect);
-        context.startService(intent);
+        startService(intent);
     }
 
     public void setStreaming(boolean isStreaming, float distance, long time) {
@@ -128,6 +129,14 @@ public class ServiceCommander implements ServiceCommanderInterface {
         intent.putExtra(ServiceConstants.Commands.CONFIG_STREAM_BROADCAST, isStreaming);
         intent.putExtra(ServiceConstants.Commands.CONFIG_STREAM_INTERVAL_DISTANCE, distance);
         intent.putExtra(ServiceConstants.Commands.CONFIG_STREAM_INTERVAL_TIME, time);
-        context.startService(intent);
+        startService(intent);
+    }
+    
+    private void startService(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
     }
 }
