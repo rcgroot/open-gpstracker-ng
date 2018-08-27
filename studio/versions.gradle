@@ -1,7 +1,7 @@
 ext {
     // Building
     gradlePluginVersion = '3.2.0-rc02'
-    buildTools = '27.0.3'
+    buildTools = '28.0.2'
     minSdk = 21
     targetSdk = 28
 
@@ -10,12 +10,12 @@ ext {
     wearVersionCode = 200051 // 2 major 00 minor 0x patch 1 for wear apk
 
     // App support
-    supportLibraryVersion = '27.1.1'
-    kotlinVersion = '1.2.60'
-    wearableVersion = '2.2.0'
+    supportLibraryVersion = '28.0.0-rc01'
+    kotlinVersion = '1.2.61'
+    wearableVersion = '2.3.0'
     constraintsLibraryVersion = '1.1.2'
-    timberVersion = '4.1.2'
-    daggerVersion = '2.8'
+    timberVersion = '4.7.1'
+    daggerVersion = '2.17'
     playServicesVersion = '15.0.1'
     firebaseCoreVersion = '16.0.1'
     googleServicesVersion = '3.2.1'
