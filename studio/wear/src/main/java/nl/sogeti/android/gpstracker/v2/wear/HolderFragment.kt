@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 
 /**
  * A stripped replacement for HolderFragment found in ArchComponents

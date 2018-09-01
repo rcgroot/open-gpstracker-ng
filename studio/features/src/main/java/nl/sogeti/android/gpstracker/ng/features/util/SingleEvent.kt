@@ -15,10 +15,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.util
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.support.annotation.MainThread
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.annotation.MainThread
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 

@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableField
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import android.net.Uri
 
 class TrackDeleteModel {

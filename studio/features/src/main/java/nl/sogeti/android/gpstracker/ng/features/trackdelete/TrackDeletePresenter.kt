@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractTrackPresenter

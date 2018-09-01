@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.control
 
-import android.databinding.BindingAdapter
-import android.support.design.widget.FloatingActionButton
+import androidx.databinding.BindingAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.features.databinding.CommonBindingAdapters

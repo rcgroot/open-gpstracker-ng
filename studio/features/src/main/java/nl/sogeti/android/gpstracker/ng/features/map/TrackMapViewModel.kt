@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableField
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLngBounds
 import nl.sogeti.android.gpstracker.ng.base.location.LatLng

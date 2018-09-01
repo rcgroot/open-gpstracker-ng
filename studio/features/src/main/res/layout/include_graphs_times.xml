@@ -10,7 +10,7 @@
             type="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_scrollFlags="scroll|snap|enterAlways">
@@ -114,6 +114,6 @@
             app:layout_constraintRight_toRightOf="parent"
             tools:text="12m" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

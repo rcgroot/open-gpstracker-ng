@@ -28,12 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.databinding
 
-import android.databinding.BindingAdapter
+import androidx.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.res.ResourcesCompat
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import androidx.core.content.res.ResourcesCompat
 import android.view.TouchDelegate
 import android.view.View
 import android.webkit.WebView

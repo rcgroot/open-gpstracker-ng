@@ -1,10 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.features.databinding
 
 import android.graphics.Bitmap
-import android.support.v7.widget.AppCompatSpinner
+import androidx.appcompat.widget.AppCompatSpinner
 import android.webkit.WebView
 import android.widget.ImageView
-import android.widget.SpinnerAdapter
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock

@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
 import android.net.Uri
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import nl.sogeti.android.gpstracker.ng.base.common.controllers.content.ContentController
 import javax.inject.Inject
 

@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs.widgets;
 
-import android.databinding.BindingAdapter
+import androidx.databinding.BindingAdapter
 
 open class LineGraphBindings {
 

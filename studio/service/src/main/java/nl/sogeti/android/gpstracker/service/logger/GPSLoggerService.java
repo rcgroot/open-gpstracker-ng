@@ -32,7 +32,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommander;

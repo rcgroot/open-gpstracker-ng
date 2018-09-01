@@ -2,8 +2,8 @@ package nl.sogeti.android.gpstracker.ng.features.track
 
 import android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.net.Uri
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import android.view.View
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.features.about.AboutFragment
@@ -16,7 +16,7 @@ import nl.sogeti.android.gpstracker.ng.features.tracklist.TrackListActivity
 import nl.sogeti.android.opengpstrack.ng.features.R
 import timber.log.Timber
 
-class TrackNavigator(val activity: FragmentActivity){
+class TrackNavigator(val activity: androidx.fragment.app.FragmentActivity){
 
     init {
         FeatureConfiguration.featureComponent.inject(this)
@@ -52,7 +52,7 @@ class TrackNavigator(val activity: FragmentActivity){
     }
 
 
-    private fun toggleContainerFragment(goal: Fragment, tag: String) {
+    private fun toggleContainerFragment(goal: androidx.fragment.app.Fragment, tag: String) {
         val fragment = activity.supportFragmentManager.findFragmentById(R.id.track_leftcontainer)
         if (fragment != null) {
             if (fragment is TrackListFragment) {
@@ -66,7 +66,7 @@ class TrackNavigator(val activity: FragmentActivity){
         }
     }
 
-    private fun replaceFragmentInLeftContainer(goal: Fragment, tag: String) {
+    private fun replaceFragmentInLeftContainer(goal: androidx.fragment.app.Fragment, tag: String) {
         try {
             activity.supportFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_left,

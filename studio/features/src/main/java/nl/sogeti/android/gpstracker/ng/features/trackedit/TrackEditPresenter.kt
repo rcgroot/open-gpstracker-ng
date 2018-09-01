@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
 import android.net.Uri
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.INVALID_POSITION

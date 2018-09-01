@@ -10,7 +10,7 @@ android {
         targetSdkVersion rootProject.targetSdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -31,7 +31,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.0-rc02'
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
 
     testImplementation "junit:junit:$rootProject.junitVersion"

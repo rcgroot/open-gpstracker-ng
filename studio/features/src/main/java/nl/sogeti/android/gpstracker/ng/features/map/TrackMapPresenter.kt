@@ -28,11 +28,11 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -44,8 +44,6 @@ import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProvider
 import nl.sogeti.android.gpstracker.ng.features.map.rendering.TrackTileProviderFactory
 import nl.sogeti.android.gpstracker.ng.features.model.Preferences
-import nl.sogeti.android.gpstracker.ng.features.model.not
-import nl.sogeti.android.gpstracker.ng.features.model.valueOrFalse
 import nl.sogeti.android.gpstracker.ng.features.util.AbstractSelectedTrackPresenter
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateController
 import nl.sogeti.android.gpstracker.ng.features.util.LoggingStateListener

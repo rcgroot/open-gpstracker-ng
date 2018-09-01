@@ -2,7 +2,7 @@ package nl.sogeti.android.gpstracker.v2.sharedwear.util
 
 import android.content.Context
 import android.content.res.Resources
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
 import java.util.*

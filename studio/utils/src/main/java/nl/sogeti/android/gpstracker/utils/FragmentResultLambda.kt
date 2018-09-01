@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.utils
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 
 class FragmentResultLambda<T> : Fragment() {

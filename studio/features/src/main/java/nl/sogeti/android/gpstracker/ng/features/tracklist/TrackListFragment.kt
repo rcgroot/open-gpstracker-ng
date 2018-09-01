@@ -29,15 +29,15 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.app.SearchManager
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.database.CursorWrapper
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.widget.CursorAdapter
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.widget.SearchView
 import android.view.*
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
@@ -71,8 +71,8 @@ class TrackListFragment : ActivityResultLambdaFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DataBindingUtil.inflate<FragmentTracklistBinding>(inflater, R.layout.fragment_tracklist, container, false)
-        binding.fragmentTracklistList.layoutManager = LinearLayoutManager(activity)
-        val itemAnimator = DefaultItemAnimator()
+        binding.fragmentTracklistList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        val itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         itemAnimator.supportsChangeAnimations = false
         binding.fragmentTracklistList.itemAnimator = itemAnimator
         binding.presenter = presenter
@@ -128,7 +128,7 @@ class TrackListFragment : ActivityResultLambdaFragment() {
             }
 
             private fun setQueryToSuggestion(position: Int, submit: Boolean) {
-                val suggestionsAdapter: CursorAdapter? = searchView.suggestionsAdapter
+                val suggestionsAdapter: androidx.cursoradapter.widget.CursorAdapter? = searchView.suggestionsAdapter
                 val item = suggestionsAdapter?.getItem(position) as CursorWrapper?
                 val selected = item?.getString(1)
                 searchView.setQuery(selected, submit)

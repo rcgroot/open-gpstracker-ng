@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.features.graphs.widgets
 
 import android.content.Context
 import android.graphics.*
-import android.support.annotation.Size
+import androidx.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View

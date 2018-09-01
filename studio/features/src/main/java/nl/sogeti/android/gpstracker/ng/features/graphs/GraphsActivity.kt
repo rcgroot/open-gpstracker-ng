@@ -3,8 +3,8 @@ package nl.sogeti.android.gpstracker.ng.features.graphs
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class GraphsActivity : AppCompatActivity() {

@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.databinding
 
-import android.databinding.DataBindingComponent
+import androidx.databinding.DataBindingComponent
 import nl.sogeti.android.gpstracker.ng.features.control.ControlBindingAdapters
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.LineGraphBindings

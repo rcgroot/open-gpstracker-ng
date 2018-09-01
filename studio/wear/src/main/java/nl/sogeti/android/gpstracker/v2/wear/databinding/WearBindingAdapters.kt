@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.v2.wear.databinding
 
-import android.databinding.BindingAdapter
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.databinding.BindingAdapter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
 import android.widget.ImageView
@@ -66,7 +66,7 @@ class WearBindingAdapters {
     }
 
     @BindingAdapter("enabled")
-    fun setEnables(view: SwipeRefreshLayout, enabled: Boolean) {
+    fun setEnables(view: androidx.swiperefreshlayout.widget.SwipeRefreshLayout, enabled: Boolean) {
         view.isEnabled = enabled
     }
 

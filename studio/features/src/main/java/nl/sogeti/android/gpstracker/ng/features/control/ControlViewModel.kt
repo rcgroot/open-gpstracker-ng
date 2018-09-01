@@ -28,9 +28,9 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.control
 
-import android.databinding.BaseObservable
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableInt
+import androidx.databinding.BaseObservable
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableInt
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants.STATE_UNKNOWN
 
 class ControlViewModel : BaseObservable() {

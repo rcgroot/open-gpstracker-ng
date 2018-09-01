@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 
 sealed class Text {

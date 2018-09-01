@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map.rendering;
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 

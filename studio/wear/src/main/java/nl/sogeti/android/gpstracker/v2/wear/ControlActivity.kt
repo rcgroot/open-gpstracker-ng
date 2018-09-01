@@ -30,17 +30,16 @@ package nl.sogeti.android.gpstracker.v2.wear
 
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableField
-import android.databinding.ObservableInt
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PagerSnapHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import android.support.wearable.activity.WearableActivity
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ActivityControlBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 
@@ -81,8 +80,8 @@ class ControlActivity : WearableActivity() {
         binding.presenter = presenter
         binding.viewModel = presenter.viewModel
         binding.wearControlVertical.adapter = VerticalControlAdapter(presenter.viewModel, presenter)
-        binding.wearControlVertical.layoutManager = LinearLayoutManager(this)
-        val pagerSnapHelper = PagerSnapHelper()
+        binding.wearControlVertical.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        val pagerSnapHelper = androidx.recyclerview.widget.PagerSnapHelper()
         pagerSnapHelper.attachToRecyclerView(binding.wearControlVertical)
 
         setAmbientEnabled() // Enables Always-on

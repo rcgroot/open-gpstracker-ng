@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
-import android.databinding.BindingAdapter
-import android.support.v7.widget.AppCompatSpinner
+import androidx.databinding.BindingAdapter
+import androidx.appcompat.widget.AppCompatSpinner
 import nl.sogeti.android.gpstracker.ng.features.databinding.CommonBindingAdapters
 
 class TrackTypesBindingAdapters : CommonBindingAdapters() {

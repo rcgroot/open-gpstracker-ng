@@ -20,7 +20,7 @@
         app:state="@{viewModel.state}"
         tools:privateContext="nl.sogeti.android.gpstra2cker.ng.control.ControlFragment">
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/widget_control_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:visibility="visible"
             app:srcCompat="@drawable/ic_pause_black_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/widget_control_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

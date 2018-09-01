@@ -1,16 +1,14 @@
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
-import android.databinding.ObservableBoolean
+import androidx.lifecycle.ViewModelProviders
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
-import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentDeleteDialogBinding
 

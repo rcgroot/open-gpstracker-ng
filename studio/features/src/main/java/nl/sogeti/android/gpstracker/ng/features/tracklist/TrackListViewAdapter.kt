@@ -29,12 +29,12 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.content.Context
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.net.Uri
-import android.support.annotation.MainThread
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.MainThread
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
@@ -51,14 +51,13 @@ import nl.sogeti.android.gpstracker.utils.contentprovider.count
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.RowTrackBinding
-import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackListViewAdapter.ViewHolder>() {
+class TrackListViewAdapter(val context: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<TrackListViewAdapter.ViewHolder>() {
 
     private val executor = Executors.newFixedThreadPool(1, BackgroundThreadFactory("TrackListDiffer"))
-    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var layoutManager: androidx.recyclerview.widget.RecyclerView.LayoutManager? = null
     private val rowModels = mutableMapOf<Uri, TrackViewModel>()
     private var displayedTracks = listOf<Uri>()
     private var newTracks: List<Uri>? = null
@@ -131,17 +130,17 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         willDisplayTrack(holder.itemView.context, viewModel)
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         layoutManager = recyclerView.layoutManager
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+    override fun onDetachedFromRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         layoutManager = null
     }
 
     fun isDisplayed(position: Int): Boolean {
         val layoutManager = layoutManager ?: return false
-        if (layoutManager is LinearLayoutManager) {
+        if (layoutManager is androidx.recyclerview.widget.LinearLayoutManager) {
             return position >= layoutManager.findFirstVisibleItemPosition()
                     && position <= layoutManager.findLastVisibleItemPosition()
         }
@@ -213,7 +212,7 @@ class TrackListViewAdapter(val context: Context) : RecyclerView.Adapter<TrackLis
         }
     }
 
-    class ViewHolder(val binding: RowTrackBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: RowTrackBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
 
     inner class TrackDiffer(private val oldList: List<Uri>, private val newList: List<Uri>) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

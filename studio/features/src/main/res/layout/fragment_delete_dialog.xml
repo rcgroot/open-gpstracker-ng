@@ -13,7 +13,7 @@
             type="nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeleteModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -92,5 +92,5 @@
             app:layout_constraintVertical_bias="1.0" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

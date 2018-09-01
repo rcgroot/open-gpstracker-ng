@@ -1,12 +1,11 @@
 package nl.sogeti.android.gpstracker.ng.features.model
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.support.annotation.WorkerThread
-import androidx.core.content.edit
+import androidx.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
 import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureScope
 import java.util.concurrent.Executor

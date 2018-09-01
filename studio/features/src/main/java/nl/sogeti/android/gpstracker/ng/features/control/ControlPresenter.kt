@@ -33,7 +33,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.base.dagger.DiskIO
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.model.TrackSelection

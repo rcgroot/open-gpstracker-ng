@@ -28,14 +28,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.recording
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.support.v4.app.SupportActivity
-import android.support.v7.app.AlertDialog
+import androidx.core.app.ComponentActivity
+import androidx.appcompat.app.AlertDialog
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
@@ -43,7 +43,7 @@ const val GPS_STATUS_PACKAGE_NAME = "com.eclipsim.gpsstatus2"
 
 class RecordingNavigation @Inject constructor(val packageManager: PackageManager) {
 
-    fun observe(activity: SupportActivity, liveData: LiveData<Navigation>) {
+    fun observe(activity: ComponentActivity, liveData: LiveData<Navigation>) {
         liveData.observe(activity, Observer {
             when (it) {
                 is Navigation.GpsStatusAppOpen -> openExternalGpsStatusApp(activity)

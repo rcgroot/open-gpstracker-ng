@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.v2.wear.databinding
 
-import android.databinding.DataBindingComponent
+import androidx.databinding.DataBindingComponent
 
 open class WearBindingComponent : DataBindingComponent {
 
