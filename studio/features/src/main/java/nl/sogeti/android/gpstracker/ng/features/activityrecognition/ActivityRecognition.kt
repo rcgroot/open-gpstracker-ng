@@ -51,7 +51,7 @@ class ActivityRecognition @Inject constructor(
                         .build()
                 )
 
-        return ActivityTransitionRequest(transitions);
+        return ActivityTransitionRequest(transitions)
     }
 
     fun stop() {

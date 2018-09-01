@@ -73,6 +73,10 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name="nl.sogeti.android.gpstracker.ng.features.activityrecognition.ActivityRecognitionIntentService"
+            android:exported="false" />
+
         <!-- region Wear support -->
 
         <receiver
