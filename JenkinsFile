@@ -41,12 +41,7 @@ pipeline {
     }
     stage('Archive') {
         steps {
-            dropbox
-                configName: 'Releases',
-                flatten: true,
-                remoteDirectory: "'develop/'yyyyMMdd'-build-${BUILD_NUMBER}'",
-                remoteDirectorySDF: true,
-                sourceFiles: '**/*-debug.apk,**/*-release.apk'
+            dropbox configName: 'Releases', flatten: true, remoteDirectory: "'develop/'yyyyMMdd'-build-${BUILD_NUMBER}'", remoteDirectorySDF: true, sourceFiles: '**/*-debug.apk,**/*-release.apk'
         }
     }
     stage('Deploy') {
@@ -81,6 +76,7 @@ pipeline {
       }
     }
   }
+
   post {
     failure {
       // Notify developer team of the failure
