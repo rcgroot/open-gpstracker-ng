@@ -1,21 +1,21 @@
 ext {
     // Building
-    gradlePluginVersion = '3.2.0-rc03'
-    buildTools = '27.0.3'
+    gradlePluginVersion = '3.2.0'
+    buildTools = '28.0.2'
     minSdk = 21
-    targetSdk = 27
+    targetSdk = 28
 
     appVersionName = '2.0.5'
     appVersionCode = 200055  // 2 major 00 minor 0x patch 5 for main apk
     wearVersionCode = 200051 // 2 major 00 minor 0x patch 1 for wear apk
 
     // App support
-    supportLibraryVersion = '27.1.1'
-    kotlinVersion = '1.2.60'
-    wearableVersion = '2.2.0'
+    supportLibraryVersion = '28.0.0-rc01'
+    kotlinVersion = '1.2.71'
+    wearableVersion = '2.3.0'
     constraintsLibraryVersion = '1.1.2'
-    timberVersion = '4.1.2'
-    daggerVersion = '2.8'
+    timberVersion = '4.7.1'
+    daggerVersion = '2.17'
     playServicesVersion = '15.0.1'
     firebaseCoreVersion = '16.0.3'
     googleServicesVersion = '3.2.1'

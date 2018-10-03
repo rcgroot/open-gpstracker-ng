@@ -33,7 +33,7 @@ import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
 import nl.sogeti.android.gpstracker.ng.base.common.postMainThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
-import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataCalculator
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.ng.features.summary.SummaryManager
@@ -45,8 +45,7 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
     @Inject
     lateinit var summaryManager: SummaryManager
     internal val viewModel = GraphsViewModel()
-    private var graphDataProvider: GraphDataProvider = TimeDataProvider()
-
+    private var graphDataProvider: GraphDataCalculator = TimeDataProvider(viewModel.inverseSpeed.get())
     private var trackSummary: Summary? = null
     private var runningSelection = false
 
@@ -74,7 +73,7 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
         viewModel.durationSelected.set(false)
         ofMainThread {
             trackSummary?.let {
-                setDataProviderWithSummary(DistanceDataProvider(), it)
+                setSummary(it)
             }
             postMainThread {
                 runningSelection = false
@@ -90,7 +89,7 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
         viewModel.durationSelected.set(true)
         ofMainThread {
             trackSummary?.let {
-                setDataProviderWithSummary(TimeDataProvider(), it)
+                setSummary(it)
             }
             postMainThread {
                 runningSelection = false
@@ -118,7 +117,7 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
             summaryManager.collectSummaryInfo(trackUri) {
                 trackSummary = it
                 fillSummaryNumbers(it)
-                setDataProviderWithSummary(graphDataProvider, it)
+                setSummary(it)
             }
         } else {
             resetTrack()
@@ -142,12 +141,17 @@ class GraphsPresenter : AbstractSelectedTrackPresenter() {
         viewModel.inverseSpeed.set(summary.type.isRunning())
     }
 
-    private fun setDataProviderWithSummary(dataProvider: GraphDataProvider, summary: Summary) {
-        graphDataProvider = dataProvider
-        viewModel.graphData.set(dataProvider.calculateGraphPoints(summary, summary.type.isRunning()))
-        viewModel.xLabel.set(dataProvider.xLabel)
-        viewModel.yLabel.set(dataProvider.yLabel)
-        viewModel.graphLabels.set(dataProvider.valueDescriptor)
+    private fun setSummary(summary: Summary) {
+        val inverseSpeed = summary.type.isRunning()
+        if (viewModel.distanceSelected.get()) {
+            graphDataProvider = DistanceDataProvider(inverseSpeed)
+        } else if (viewModel.durationSelected.get()) {
+            graphDataProvider = TimeDataProvider(inverseSpeed)
+        }
+        viewModel.graphData.set(graphDataProvider.calculateGraphPoints(summary))
+        viewModel.xLabel.set(graphDataProvider.xLabel)
+        viewModel.yLabel.set(graphDataProvider.yLabel)
+        viewModel.graphLabels.set(graphDataProvider)
     }
 }
 

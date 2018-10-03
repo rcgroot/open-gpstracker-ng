@@ -5,21 +5,20 @@ import android.support.annotation.WorkerThread
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphSpeedConverter
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphValueDescriptor
 import nl.sogeti.android.gpstracker.ng.features.summary.Summary
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
-
-    override var inverseSpeed: Boolean = false
+class DistanceDataProvider(private val inverseSpeed: Boolean) : GraphDataCalculator {
 
     @Inject
     lateinit var statisticsFormatter: StatisticsFormatter
 
     @Inject
     lateinit var graphSpeedConverter: GraphSpeedConverter
+
+    val speedRangePicker = SpeedRangePicker(inverseSpeed)
 
     override val yLabel: Int
         get() = R.string.graph_label_speed
@@ -31,9 +30,14 @@ class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
         FeatureConfiguration.featureComponent.inject(this)
     }
 
+    override fun prettyMinYValue(context: Context, yValue: Float) =
+        speedRangePicker.prettyMinYValue(context, yValue)
+
+    override fun prettyMaxYValue(context: Context, yValue: Float) =
+        speedRangePicker.prettyMaxYValue(context, yValue)
+
     @WorkerThread
-    override fun calculateGraphPoints(summary: Summary, inverseRunnersSpeed: Boolean): List<GraphPoint> {
-        inverseSpeed = inverseRunnersSpeed
+    override fun calculateGraphPoints(summary: Summary): List<GraphPoint> {
         val graphPoints = mutableListOf<GraphPoint>()
         summary.deltas.forEach {
             addSegmentToGraphPoints(it, graphPoints)
@@ -46,11 +50,9 @@ class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
                 .smooth(meters)
     }
 
-    override val valueDescriptor: GraphValueDescriptor
-        get() = this
-
     override fun describeYvalue(context: Context, yValue: Float): String {
-        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, yValue.toSpeed(), inverseSpeed)
+        val speed = if (inverseSpeed) yValue.inverseSpeed() else yValue
+        return statisticsFormatter.convertMeterPerSecondsToSpeed(context, speed, inverseSpeed)
     }
 
     override fun describeXvalue(context: Context, xValue: Float): String {
@@ -67,7 +69,7 @@ class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
         }
     }
 
-    fun List<GraphPoint>.inverseSpeed(): List<GraphPoint> {
+    private fun List<GraphPoint>.inverseSpeed(): List<GraphPoint> {
         return if (inverseSpeed) {
             this.map { GraphPoint(it.x, it.y.inverseSpeed()) }
         } else {
@@ -75,14 +77,6 @@ class DistanceDataProvider : GraphValueDescriptor, GraphDataProvider {
         }
     }
 
-    private fun Float.inverseSpeed() =
-            graphSpeedConverter.speedToYValue(this)
-
-    private fun Float.toSpeed() =
-            if (inverseSpeed) {
-                graphSpeedConverter.yValueToSpeed(this)
-            } else {
-                this
-            }
+    private fun Float.inverseSpeed() = graphSpeedConverter.speedToYValue(this)
 }
 

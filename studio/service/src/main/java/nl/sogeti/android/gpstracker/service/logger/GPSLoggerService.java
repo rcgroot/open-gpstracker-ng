@@ -32,7 +32,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
-import android.os.RemoteException;
+import android.support.annotation.NonNull;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
 import nl.sogeti.android.gpstracker.service.integration.ServiceCommander;
@@ -99,6 +99,10 @@ public class GPSLoggerService extends LingerService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("onHandleIntent(Intent " + intent.getExtras().keySet() + ")");
+        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_FOREGROUND)) {
+            boolean foreground = intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_FOREGROUND, false);
+            mLoggerNotification.showForeground(this, foreground);
+        }
         LoggerPersistence persistence = new LoggerPersistence(this);
         if (intent.hasExtra(ServiceConstants.Commands.CONFIG_PRECISION)) {
             int precision = intent.getIntExtra(ServiceConstants.Commands.CONFIG_PRECISION, ServiceConstants.LOGGING_NORMAL);
@@ -115,39 +119,15 @@ public class GPSLoggerService extends LingerService {
             persistence.setCustomLocationIntervalSeconds(interval);
             mGPSListener.onPreferenceChange();
         }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY)) {
-            persistence.isSpeedChecked(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_SPEED_SANITY, true));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_STATUS_MONITOR)) {
-            persistence.isStatusMonitor(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_STATUS_MONITOR, false));
-            mGPSListener.onPreferenceChange();
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_STREAM_BROADCAST)) {
-            persistence.getStreamBroadcast(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_STREAM_BROADCAST, false));
-            persistence.setBroadcastIntervalMeters(intent.getFloatExtra(ServiceConstants.Commands.CONFIG_STREAM_INTERVAL_DISTANCE, 1L));
-            persistence.setBroadcastIntervalMinutes(intent.getLongExtra(ServiceConstants.Commands.CONFIG_STREAM_INTERVAL_TIME, 1L));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_START_AT_BOOT)) {
-            persistence.shouldLogAtBoot(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_START_AT_BOOT, false));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_START_AT_POWER_CONNECT)) {
-            persistence.shouldLogAtPowerConnected(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_START_AT_POWER_CONNECT, false));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_STOP_AT_POWER_DISCONNECT)) {
-            persistence.shouldLogAtPowerDisconnected(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_STOP_AT_POWER_DISCONNECT, false));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_START_AT_DOCK)) {
-            persistence.shouldLogAtDockCar(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_START_AT_DOCK, false));
-        }
-        if (intent.hasExtra(ServiceConstants.Commands.CONFIG_STOP_AT_UNDOCK)) {
-            persistence.shouldLogAtUndockCar(intent.getBooleanExtra(ServiceConstants.Commands.CONFIG_STOP_AT_UNDOCK, false));
-        }
         if (intent.hasExtra(ServiceConstants.Commands.COMMAND)) {
+            persistence.isStatusMonitor(false);
+            persistence.isSpeedChecked(true);
+            mGPSListener.onPreferenceChange();
             executeCommandIntent(intent);
         }
     }
 
-    private void executeCommandIntent(Intent intent) {
+    private void executeCommandIntent(@NonNull Intent intent) {
         int command = intent.getIntExtra(ServiceConstants.Commands.COMMAND, -1);
         Timber.d("executeCommandIntent(Intent " + command + ")");
         switch (command) {
@@ -208,38 +188,38 @@ public class GPSLoggerService extends LingerService {
 
     private class GPSLoggerServiceImplementation extends IGPSLoggerServiceRemote.Stub {
         @Override
-        public long getTrackId() throws RemoteException {
+        public long getTrackId() {
             return mGPSListener.getTrackId();
         }
 
         @Override
-        public int loggingState() throws RemoteException {
+        public int loggingState() {
             return mGPSListener.getLoggingState();
         }
 
         @Override
-        public Uri storeMediaUri(Uri mediaUri) throws RemoteException {
+        public Uri storeMediaUri(Uri mediaUri) {
             mGPSListener.storeMediaUri(mediaUri);
             return null;
         }
 
         @Override
-        public boolean isMediaPrepared() throws RemoteException {
+        public boolean isMediaPrepared() {
             return mGPSListener.isMediaPrepared();
         }
 
         @Override
-        public Uri storeMetaData(String key, String value) throws RemoteException {
+        public Uri storeMetaData(String key, String value) {
             return mGPSListener.storeMetaData(key, value);
         }
 
         @Override
-        public Location getLastWaypoint() throws RemoteException {
+        public Location getLastWaypoint() {
             return mGPSListener.getLastWaypoint();
         }
 
         @Override
-        public float getTrackedDistance() throws RemoteException {
+        public float getTrackedDistance() {
             return mGPSListener.getTrackedDistance();
         }
     }

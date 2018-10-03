@@ -25,7 +25,6 @@ import nl.sogeti.android.gpstracker.v2.sharedwear.util.StatisticsFormatter
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.TimeSpanCalculator
 import javax.inject.Named
 
-@FeatureScope
 @Module
 class FeatureModule(context: Context) {
 

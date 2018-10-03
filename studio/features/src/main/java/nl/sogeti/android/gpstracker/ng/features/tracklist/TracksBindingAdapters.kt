@@ -80,7 +80,7 @@ open class TracksBindingAdapters {
     @BindingAdapter("focusPosition")
     fun setFocusPosition(list: RecyclerView, position: Int?) {
         if (position != null && position > 0) {
-            postMainThread { list.layoutManager.scrollToPosition(position) }
+            postMainThread { list.layoutManager?.scrollToPosition(position) }
         }
     }
 }

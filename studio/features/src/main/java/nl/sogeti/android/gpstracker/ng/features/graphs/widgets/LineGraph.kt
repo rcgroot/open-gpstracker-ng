@@ -34,9 +34,10 @@ import android.support.annotation.Size
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.condense
 import nl.sogeti.android.gpstracker.ng.base.common.ofMainThread
 import nl.sogeti.android.gpstracker.ng.base.common.onMainThread
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataCalculator
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.condense
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class LineGraph : View {
@@ -57,7 +58,7 @@ class LineGraph : View {
             field = value
             invalidate()
         }
-    var description = object : GraphValueDescriptor {}
+    var description: GraphDataCalculator = GraphDataCalculator.DefaultGraphValueDescriptor
         set(value) {
             field = value
             invalidate()
@@ -133,15 +134,7 @@ class LineGraph : View {
             yUnit = "speed"
             data = listOf(GraphPoint(1f, 12F), GraphPoint(2F, 24F), GraphPoint(3F, 36F), GraphPoint(4F, 23F), GraphPoint(5F, 65F), GraphPoint(6F, 10F),
                     GraphPoint(7F, 80F), GraphPoint(8F, 65F), GraphPoint(9F, 13F))
-            description = object : GraphValueDescriptor {
-                override fun describeXvalue(context: Context, xValue: Float): String {
-                    return "X value"
-                }
-
-                override fun describeYvalue(context: Context, yValue: Float): String {
-                    return "Y value"
-                }
-            }
+            description = GraphDataCalculator.DefaultGraphValueDescriptor
         }
     }
 
@@ -265,8 +258,8 @@ class LineGraph : View {
 
             val condensedData = data.condens(bucketSize)
 
-            minY = condensedData.minBy { it.y }?.y ?: 0f
-            maxY = condensedData.maxBy { it.y }?.y ?: 100f
+            minY = description.prettyMinYValue(context, condensedData.minBy { it.y }?.y ?: 0f)
+            maxY = description.prettyMaxYValue(context, condensedData.maxBy { it.y }?.y ?: 100f)
 
             fun convertDataToPoint(point: GraphPoint): PointF {
                 val y = (point.y - minY) / (maxY - minY) * (sectionHeight * 4)

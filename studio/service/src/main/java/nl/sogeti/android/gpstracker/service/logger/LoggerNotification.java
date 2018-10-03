@@ -37,7 +37,7 @@ class LoggerNotification {
     private static final int ID_GPS_PROBLEM = R.string.service_gpsproblem;
     private static final int SMALL_ICON = R.drawable.ic_maps_indicator_current_position;
     private static final String NOTIFICATION_CHANNEL_ID = "logger_notification";
-    private final Service service;
+    private final Context service;
 
 
     int numberOfSatellites = 0;
@@ -45,29 +45,45 @@ class LoggerNotification {
     private NotificationManager notificationManager;
     private boolean isShowingDisabled = false;
 
-    LoggerNotification(Service service) {
-        this.service = service;
-        notificationManager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+    LoggerNotification(Context context) {
+        this.service = context;
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (new VersionHelper().isAtLeast(Build.VERSION_CODES.O)) {
             createChannel();
         }
     }
 
-    public void startLogging(int mPrecision, int mLoggingState, boolean mStatusMonitor, long mTrackId) {
+    void startLogging(int mPrecision, int mLoggingState, boolean mStatusMonitor, long mTrackId) {
         notificationManager.cancel(ID_STATUS);
 
-        Notification notification = buildLogging(mPrecision, mLoggingState, mStatusMonitor, mTrackId);
-        service.startForeground(ID_STATUS, notification);
-    }
-
-    public void updateLogging(int mPrecision, int mLoggingState, boolean mStatusMonitor, long mTrackId) {
         Notification notification = buildLogging(mPrecision, mLoggingState, mStatusMonitor, mTrackId);
         notificationManager.notify(ID_STATUS, notification);
     }
 
-    public void stopLogging() {
+    void updateLogging(int mPrecision, int mLoggingState, boolean mStatusMonitor, long mTrackId) {
+        Notification notification = buildLogging(mPrecision, mLoggingState, mStatusMonitor, mTrackId);
+        notificationManager.notify(ID_STATUS, notification);
+    }
+
+    void stopLogging() {
         notificationManager.cancel(ID_STATUS);
-        service.stopForeground(true);
+    }
+
+    private Notification buildStarting() {
+        Resources resources = service.getResources();
+        CharSequence contentTitle = resources.getString(R.string.service_title);
+        CharSequence contentText = resources.getString(R.string.service_starting);
+        Intent notificationIntent = new Intent(Intent.ACTION_VIEW, TrackUriExtensionKt.tracksUri());
+        PendingIntent contentIntent = PendingIntent.getActivity(service, 0, notificationIntent, 0);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(service, NOTIFICATION_CHANNEL_ID)
+                        .setSmallIcon(SMALL_ICON)
+                        .setContentTitle(contentTitle)
+                        .setContentText(contentText)
+                        .setContentIntent(contentIntent)
+                        .setOngoing(true);
+
+        return builder.build();
     }
 
     private Notification buildLogging(int precision, int state, boolean monitor, long trackId) {
@@ -138,7 +154,7 @@ class LoggerNotification {
         notificationManager.notify(ID_GPS_PROBLEM, builder.build());
     }
 
-    public void stopPoorSignal() {
+    void stopPoorSignal() {
         notificationManager.cancel(ID_GPS_PROBLEM);
     }
 
@@ -175,7 +191,7 @@ class LoggerNotification {
         toast.show();
     }
 
-    public boolean isShowingDisabled() {
+    boolean isShowingDisabled() {
         return isShowingDisabled;
     }
 
@@ -220,4 +236,11 @@ class LoggerNotification {
         }
     }
 
+    void showForeground(Service service, boolean foreground) {
+        if (foreground) {
+            service.startForeground(ID_STATUS, buildStarting());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            service.stopForeground(false);
+        }
+    }
 }
