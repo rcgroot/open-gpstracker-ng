@@ -1,6 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs.widgets;
 
 import android.databinding.BindingAdapter
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataCalculator
 
 open class LineGraphBindings {
 
@@ -10,7 +11,7 @@ open class LineGraphBindings {
     }
 
     @BindingAdapter("value_description")
-    fun setValueDescription(view: LineGraph, descriptor: GraphValueDescriptor?) {
-        view.description = descriptor ?: object : GraphValueDescriptor {}
+    fun setValueDescription(view: LineGraph, descriptor: GraphDataCalculator?) {
+        view.description = descriptor ?: GraphDataCalculator.DefaultGraphValueDescriptor
     }
 }

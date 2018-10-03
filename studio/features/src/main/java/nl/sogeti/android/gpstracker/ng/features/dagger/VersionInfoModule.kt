@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Named
 
-@FeatureScope
 @Module
 class VersionInfoModule(private val version: String, private val commit: String, private val buildNumber: String) {
 

@@ -32,8 +32,8 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.net.Uri
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.GraphDataCalculator
 import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphPoint
-import nl.sogeti.android.gpstracker.ng.features.graphs.widgets.GraphValueDescriptor
 import nl.sogeti.android.opengpstrack.ng.features.R
 
 class GraphsViewModel {
@@ -49,11 +49,11 @@ class GraphsViewModel {
     val waypoints = ObservableField<String>("-")
 
     val distanceSelected = ObservableBoolean(false)
-    val durationSelected = ObservableBoolean(true)
+    val durationSelected = ObservableBoolean(false)
     val inverseSpeed = ObservableBoolean(false)
 
     val graphData = ObservableField<List<GraphPoint>>(emptyList())
-    val graphLabels = ObservableField<GraphValueDescriptor>(object : GraphValueDescriptor {})
+    val graphLabels = ObservableField<GraphDataCalculator>(GraphDataCalculator.DefaultGraphValueDescriptor)
     val xLabel = ObservableInt(R.string.graph_label_time)
     val yLabel = ObservableInt(R.string.graph_label_speed)
 }

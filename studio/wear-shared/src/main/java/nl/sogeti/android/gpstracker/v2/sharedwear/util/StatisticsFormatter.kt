@@ -100,9 +100,9 @@ class StatisticsFormatter(private val localeProvider: LocaleProvider, private va
         return duration
     }
 
-    fun convertMeterPerSecondsToSpeed(context: Context, meterPerSecond: Float, runners: Boolean): String {
+    fun convertMeterPerSecondsToSpeed(context: Context, meterPerSecond: Float, inverseRunnerSpeed: Boolean): String {
         return if (meterPerSecond > 0) {
-            if (runners) {
+            if (inverseRunnerSpeed) {
                 val conversion = context.resources.getFloat(R.string.spm_to_speed)
                 val runnerSpeed = (1F / meterPerSecond) / conversion
                 val minutes = floor(runnerSpeed)
@@ -128,12 +128,6 @@ class StatisticsFormatter(private val localeProvider: LocaleProvider, private va
     fun convertTimestampToTime(context: Context, startTimestamp: Long): String {
         val date = Date(startTimestamp)
         return DateFormat.getTimeFormat(context).format(date)
-    }
-
-
-    private fun Resources.getFloat(@StringRes resourceId: Int): Float {
-        val stringValue = this.getString(resourceId)
-        return stringValue.toFloat()
     }
 
     companion object {

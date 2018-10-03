@@ -56,10 +56,14 @@ class ImportTrackTypeDialogFragment : DialogFragment() {
     }
 
     override fun dismiss() {
-        fragmentManager!!
-                .beginTransaction()
-                .remove(fragmentManager!!.findFragmentByTag(TAG_LAMBDA_FRAGMENT))
-                .commit()
+        fragmentManager?.let { fragmentManager ->
+            val fragment = fragmentManager.findFragmentByTag(TAG_LAMBDA_FRAGMENT)
+            if (fragment != null) {
+                fragmentManager.beginTransaction()
+                        .remove(fragment)
+                        .commit()
+            }
+        }
         super.dismiss()
     }
 

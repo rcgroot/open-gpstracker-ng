@@ -12,6 +12,7 @@ import nl.sogeti.android.gpstracker.ng.features.graphs.GraphLabelsBindings
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsFragment
 import nl.sogeti.android.gpstracker.ng.features.graphs.GraphsPresenter
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.DistanceDataProvider
+import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.SpeedRangePicker
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapFragment
 import nl.sogeti.android.gpstracker.ng.features.map.TrackMapPresenter
@@ -79,4 +80,5 @@ interface FeatureComponent {
     fun inject(graphsFragment: GraphsFragment)
     fun inject(trackMapFragment: TrackMapFragment)
     fun inject(trackListFragment: TrackListFragment)
+    fun inject(speedRangePicker: SpeedRangePicker)
 }
