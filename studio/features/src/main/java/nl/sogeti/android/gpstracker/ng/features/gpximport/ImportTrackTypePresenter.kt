@@ -28,11 +28,10 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.gpximport
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.view.View
 import android.widget.AdapterView
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
-import nl.sogeti.android.gpstracker.ng.features.util.AbstractPresenter
 
 class ImportTrackTypePresenter : ViewModel() {
 

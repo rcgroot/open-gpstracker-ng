@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.v2.wear
 
 import android.content.Context
-import android.databinding.ObservableField
+import androidx.databinding.ObservableField
 import android.os.Handler
 import android.os.Looper
 import nl.sogeti.android.gpstracker.utils.concurrent.BackgroundThreadFactory

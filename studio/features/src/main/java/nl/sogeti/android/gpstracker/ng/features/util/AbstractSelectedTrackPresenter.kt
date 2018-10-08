@@ -1,8 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.net.Uri
-import android.support.annotation.CallSuper
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.readName
 

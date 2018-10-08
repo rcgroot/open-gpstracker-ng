@@ -28,15 +28,15 @@
  */
 package nl.sogeti.android.gpstracker.v2.wear
 
-import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemControlsBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ItemStatisticsBinding
 
-class VerticalControlAdapter(private val model: WearViewModel, private val presenter: ControlPresenter) : RecyclerView.Adapter<VerticalControlAdapter.VerticalViewHolder>() {
+class VerticalControlAdapter(private val model: WearViewModel, private val presenter: ControlPresenter) : androidx.recyclerview.widget.RecyclerView.Adapter<VerticalControlAdapter.VerticalViewHolder>() {
 
     override fun getItemViewType(position: Int) = if (position == 0) 0 else 1
 
@@ -68,7 +68,7 @@ class VerticalControlAdapter(private val model: WearViewModel, private val prese
                 is VerticalViewHolder.ControlsViewHolder -> Unit
             }
 
-    sealed class VerticalViewHolder(itemView: android.view.View) : RecyclerView.ViewHolder(itemView) {
+    sealed class VerticalViewHolder(itemView: android.view.View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         class StatisticsViewHolder(val binding: ItemStatisticsBinding) : VerticalViewHolder(binding.root)
         class ControlsViewHolder(val binding: ItemControlsBinding) : VerticalViewHolder(binding.root)
     }

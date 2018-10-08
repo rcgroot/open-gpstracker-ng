@@ -2,8 +2,8 @@ package nl.sogeti.android.gpstracker.utils
 
 import android.app.Activity
 import android.content.Context
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 /**
  * replaces some framework static calls related to permission with injectable instance object

@@ -28,11 +28,11 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.map
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.net.Uri
 import android.provider.BaseColumns
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback

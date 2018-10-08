@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.v2.sharedwear.util
 
-import android.databinding.BaseObservable
-import android.databinding.Observable
+import androidx.databinding.BaseObservable
+import androidx.databinding.Observable
 
 fun BaseObservable.observe(changed: (sender: Observable) -> Unit) =
         this.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {

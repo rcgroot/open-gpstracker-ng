@@ -29,7 +29,7 @@
 package nl.sogeti.android.gpstracker.ng.features.map.rendering
 
 import android.content.Context
-import android.databinding.ObservableField
+import androidx.databinding.ObservableField
 import nl.sogeti.android.gpstracker.ng.base.location.LatLng
 
 class TrackTileProviderFactory {

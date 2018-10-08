@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.features
 
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureComponent
 import nl.sogeti.android.gpstracker.ng.features.databinding.FeaturesBindingComponent
 

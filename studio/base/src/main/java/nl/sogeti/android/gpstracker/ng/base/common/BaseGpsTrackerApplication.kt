@@ -30,7 +30,7 @@ package nl.sogeti.android.gpstracker.ng.base.common
 
 import android.app.Application
 import android.os.StrictMode
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.squareup.leakcanary.LeakCanary

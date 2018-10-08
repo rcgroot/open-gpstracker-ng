@@ -12,7 +12,7 @@
             type="nl.sogeti.android.gpstracker.ng.features.gpximport.ImportTrackTypeModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -33,7 +33,7 @@
 
         <!-- Order of binding attributes result in calling order:
                 And the adapters should be set first so the selection set will be valid-->
-        <android.support.v7.widget.AppCompatSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/fragment_importtracktype_spinner"
             android:layout_width="0dp"
             android:layout_height="48dp"
@@ -77,5 +77,5 @@
             app:layout_constraintVertical_bias="1.0" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

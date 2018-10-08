@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.track
 
-import android.databinding.ObservableField
-import android.databinding.ObservableInt
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import android.net.Uri
 import nl.sogeti.android.opengpstrack.ng.features.R
 

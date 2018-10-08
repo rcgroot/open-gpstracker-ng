@@ -32,9 +32,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AlertDialog
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GENERAL
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportTrackTypeDialogFragment
@@ -47,7 +47,7 @@ import nl.sogeti.android.gpstracker.utils.VersionHelper
 import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
 
-class TrackListNavigation(val fragment: Fragment) {
+class TrackListNavigation(val fragment: androidx.fragment.app.Fragment) {
 
     @Inject
     lateinit var packageManager: PackageManager

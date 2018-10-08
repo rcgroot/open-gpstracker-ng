@@ -12,7 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -22,7 +22,7 @@ android {
         }
     }
 
-    apply from:'../flavors.gradle'
+    apply from: '../flavors.gradle'
 
     dataBinding {
         enabled = true
@@ -31,7 +31,7 @@ android {
     lintOptions {
         abortOnError false
     }
-    
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -44,28 +44,27 @@ dependencies {
     implementation project(':service')
     implementation project(':utils')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
-    implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
+    implementation libraries.kotlin.stdlib
+    implementation "androidx.core:core-ktx:1.0.0"
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
-    implementation "com.google.android.gms:play-services-location:$rootProject.playServicesVersion"
-    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation "com.google.android.gms:play-services-maps:16.0.0"
+    implementation "com.google.android.gms:play-services-location:16.0.0"
+    implementation libraries.android.dagger
     api "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation "android.arch.lifecycle:viewmodel:$rootProject.archComponentsVerion"
-    implementation "android.arch.lifecycle:extensions:$rootProject.archComponentsVerion"
-    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    kapt libraries.android.daggercompiler
+    kapt libraries.android.databindingcompiler
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
     testImplementation project(':test-utils')
 
-    androidTestImplementation "com.android.support.test:runner:$rootProject.testRunnerVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
 }

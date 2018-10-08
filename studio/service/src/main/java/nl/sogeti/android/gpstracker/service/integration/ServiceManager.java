@@ -36,8 +36,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import nl.sogeti.android.gpstracker.integration.IGPSLoggerServiceRemote;
 import timber.log.Timber;

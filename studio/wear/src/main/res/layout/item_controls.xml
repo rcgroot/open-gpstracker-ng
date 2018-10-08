@@ -16,19 +16,19 @@
             type="nl.sogeti.android.gpstracker.v2.wear.WearViewModel" />
     </data>
 
-    <android.support.wear.widget.BoxInsetLayout
+    <androidx.wear.widget.BoxInsetLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/box_inset_layout_padding"
         tools:context="nl.sogeti.android.gpstracker.v2.wear.ControlActivity"
         tools:deviceIds="wear">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:padding="@dimen/inner_frame_layout_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/controls_buttons_start"
                 android:layout_width="@dimen/mini_fab_size"
                 android:layout_height="@dimen/mini_fab_size"
@@ -41,7 +41,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/controls_buttons_stop"
                 android:layout_width="@dimen/mini_fab_size"
                 android:layout_height="@dimen/mini_fab_size"
@@ -54,7 +54,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/controls_buttons_pause"
                 android:layout_width="@dimen/mini_fab_size"
                 android:layout_height="@dimen/mini_fab_size"
@@ -83,6 +83,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Recording" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.wear.widget.BoxInsetLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.wear.widget.BoxInsetLayout>
 </layout>

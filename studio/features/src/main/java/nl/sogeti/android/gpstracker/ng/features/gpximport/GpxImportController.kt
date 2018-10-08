@@ -34,7 +34,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document.*
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions

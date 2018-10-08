@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.trackedit
 
 import android.content.Context
-import android.support.v7.content.res.AppCompatResources
+import androidx.appcompat.content.res.AppCompatResources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

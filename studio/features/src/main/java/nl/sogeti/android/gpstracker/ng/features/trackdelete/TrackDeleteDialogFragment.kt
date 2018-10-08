@@ -1,15 +1,14 @@
 package nl.sogeti.android.gpstracker.ng.features.trackdelete
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
-import android.databinding.ObservableBoolean
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import nl.sogeti.android.gpstracker.ng.features.recording.RecordingPresenter
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableBoolean
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProviders
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentDeleteDialogBinding
@@ -33,8 +32,6 @@ class TrackDeleteDialogFragment : DialogFragment() {
             if (sender is ObservableBoolean && sender.get())
                 dismiss()
         }
-
-        this.presenter = presenter
 
         return binding.root
     }

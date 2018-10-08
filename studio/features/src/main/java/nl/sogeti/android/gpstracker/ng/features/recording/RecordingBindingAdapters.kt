@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.recording
 
-import android.databinding.BindingAdapter
-import android.support.v7.content.res.AppCompatResources
+import androidx.databinding.BindingAdapter
+import androidx.appcompat.content.res.AppCompatResources
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView

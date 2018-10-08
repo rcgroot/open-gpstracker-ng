@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.service.integration;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public interface ServiceManagerInterface {
 

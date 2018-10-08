@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import nl.renedegroot.android.test.utils.any
 import nl.sogeti.android.gpstracker.ng.features.graphs.dataproviders.TimeDataProvider
 import nl.sogeti.android.gpstracker.ng.features.model.Preferences

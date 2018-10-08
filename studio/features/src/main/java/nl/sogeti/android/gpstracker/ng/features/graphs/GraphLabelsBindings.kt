@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.features.graphs
 
-import android.databinding.BindingAdapter
-import android.support.annotation.StringRes
+import androidx.databinding.BindingAdapter
+import androidx.annotation.StringRes
 import android.view.View
 import android.widget.TextView
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration

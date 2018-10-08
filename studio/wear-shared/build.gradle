@@ -27,7 +27,7 @@ android {
         abortOnError false
     }
 
-    apply from:'../flavors.gradle'
+    apply from: '../flavors.gradle'
 
     dataBinding {
         enabled = true
@@ -37,8 +37,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.google.android.gms:play-services-wearable:$rootProject.playServicesVersion"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
+    api "com.google.android.gms:play-services-wearable:16.0.1"
+    implementation libraries.kotlin.stdlib
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
     kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
 

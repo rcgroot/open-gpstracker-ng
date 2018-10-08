@@ -28,15 +28,14 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.gpximport
 
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
-import android.databinding.ObservableBoolean
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableBoolean
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProviders
 import nl.sogeti.android.gpstracker.utils.FragmentResultLambda
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
@@ -46,7 +45,7 @@ class ImportTrackTypeDialogFragment : DialogFragment() {
 
     private lateinit var presenter: ImportTrackTypePresenter
 
-    fun show(manager: FragmentManager, tag: String, resultLambda: (String) -> Unit) {
+    fun show(manager: androidx.fragment.app.FragmentManager, tag: String, resultLambda: (String) -> Unit) {
         val lambdaHolder = FragmentResultLambda<String>()
         lambdaHolder.resultLambda = resultLambda
         manager.beginTransaction().add(lambdaHolder, TAG_LAMBDA_FRAGMENT).commit()

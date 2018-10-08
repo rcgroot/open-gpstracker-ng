@@ -29,8 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.Manifest;
-import android.support.test.espresso.IdlingRegistry;
-import android.support.test.rule.GrantPermissionRule;
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.rule.GrantPermissionRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,10 +44,10 @@ import nl.sogeti.android.gpstracker.service.mock.MockServiceManager;
 import nl.sogeti.android.gpstracker.service.mock.MockTracksContentProvider;
 import nl.sogeti.android.gpstracker.v2.R;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.not;
 
 public class RecordingFragmentEspressoTest {

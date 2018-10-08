@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.gpximport
 
-import android.databinding.ObservableBoolean
-import android.databinding.ObservableInt
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableInt
 import android.widget.AdapterView
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions
 

@@ -27,7 +27,7 @@
             app:center="@{viewModel.trackHead}"
             app:satellite="@{viewModel.showSatellite}" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/widget_map_mylocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

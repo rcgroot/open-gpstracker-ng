@@ -29,8 +29,8 @@
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.Manifest;
-import android.support.test.espresso.Espresso;
-import android.support.test.rule.GrantPermissionRule;
+import androidx.test.espresso.Espresso;
+import androidx.test.rule.GrantPermissionRule;
 import android.webkit.WebView;
 
 import org.junit.After;
@@ -43,10 +43,10 @@ import nl.sogeti.android.gpstracker.ng.util.FragmentTestRule;
 import nl.sogeti.android.gpstracker.ng.util.WebViewIdlingResource;
 import nl.sogeti.android.gpstracker.v2.R;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 public class AboutFragmentEspressoTest {
 

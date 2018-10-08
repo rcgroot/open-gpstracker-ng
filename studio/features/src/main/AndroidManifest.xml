@@ -4,6 +4,12 @@
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application>
+
+        <!-- Added library due to bug in Play Services: https://issuetracker.google.com/issues/79478779 -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <activity
             android:name="nl.sogeti.android.gpstracker.ng.features.track.TrackActivity"
             android:launchMode="singleTask"

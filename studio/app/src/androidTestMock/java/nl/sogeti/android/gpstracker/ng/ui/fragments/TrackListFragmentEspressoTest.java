@@ -1,7 +1,7 @@
 package nl.sogeti.android.gpstracker.ng.ui.fragments;
 
 import android.Manifest;
-import android.support.test.rule.GrantPermissionRule;
+import androidx.test.rule.GrantPermissionRule;
 
 import org.junit.Before;
 import org.junit.Rule;

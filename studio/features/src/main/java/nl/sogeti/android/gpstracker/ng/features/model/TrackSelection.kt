@@ -28,7 +28,7 @@
  */
 package nl.sogeti.android.gpstracker.ng.features.model
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.net.Uri
 import nl.sogeti.android.gpstracker.ng.features.dagger.FeatureScope
 import javax.inject.Inject

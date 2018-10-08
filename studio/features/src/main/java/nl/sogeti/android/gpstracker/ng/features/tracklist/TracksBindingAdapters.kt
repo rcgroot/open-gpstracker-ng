@@ -1,9 +1,9 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
-import android.databinding.BindingAdapter
+import androidx.databinding.BindingAdapter
 import android.net.Uri
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,7 +14,7 @@ import timber.log.Timber
 open class TracksBindingAdapters {
 
     @BindingAdapter("tracks")
-    fun setTracks(recyclerView: RecyclerView, tracks: List<Uri>?) {
+    fun setTracks(recyclerView: androidx.recyclerview.widget.RecyclerView, tracks: List<Uri>?) {
         val viewAdapter: TrackListViewAdapter
         if (recyclerView.adapter is TrackListViewAdapter) {
             viewAdapter = recyclerView.adapter as TrackListViewAdapter
@@ -27,7 +27,7 @@ open class TracksBindingAdapters {
     }
 
     @BindingAdapter("selected")
-    fun setTracks(recyclerView: RecyclerView, track: Uri?) {
+    fun setTracks(recyclerView: androidx.recyclerview.widget.RecyclerView, track: Uri?) {
         val viewAdapter: TrackListViewAdapter
         if (recyclerView.adapter is TrackListViewAdapter) {
             viewAdapter = recyclerView.adapter as TrackListViewAdapter
@@ -40,7 +40,7 @@ open class TracksBindingAdapters {
     }
 
     @BindingAdapter("tracksListener")
-    fun setListener(recyclerView: RecyclerView, listener: TrackListAdapterListener?) {
+    fun setListener(recyclerView: androidx.recyclerview.widget.RecyclerView, listener: TrackListAdapterListener?) {
         val adapter = recyclerView.adapter
         if (adapter != null && adapter is TrackListViewAdapter) {
             adapter.listener = listener
@@ -50,7 +50,7 @@ open class TracksBindingAdapters {
     }
 
     @BindingAdapter("editMode")
-    fun setEditMode(card: CardView, editMode: Boolean) {
+    fun setEditMode(card: androidx.cardview.widget.CardView, editMode: Boolean) {
         val share = card.findViewById<View>(R.id.row_track_share)
         val delete = card.findViewById<View>(R.id.row_track_delete)
         val edit = card.findViewById<View>(R.id.row_track_edit)
@@ -78,7 +78,7 @@ open class TracksBindingAdapters {
     }
 
     @BindingAdapter("focusPosition")
-    fun setFocusPosition(list: RecyclerView, position: Int?) {
+    fun setFocusPosition(list: androidx.recyclerview.widget.RecyclerView, position: Int?) {
         if (position != null && position > 0) {
             postMainThread { list.layoutManager?.scrollToPosition(position) }
         }

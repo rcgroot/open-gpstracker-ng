@@ -65,15 +65,14 @@ dependencies {
     implementation project(':utils')
     implementation project(':base')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlinVersion"
-    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation libraries.kotlin.stdlib
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
+    implementation libraries.android.dagger
+    kapt libraries.android.daggercompiler
+    kapt libraries.android.databindingcompiler
 
-    mockImplementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+    mockImplementation 'androidx.test.espresso:espresso-idling-resource:3.1.0-beta01'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
     testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"

@@ -36,8 +36,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AlertDialog
 import nl.sogeti.android.gpstracker.service.BuildConfig.controlPermission
 import nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission
 import nl.sogeti.android.gpstracker.service.R
@@ -74,7 +74,7 @@ class PermissionRequester {
         ServiceConfiguration.serviceComponent.inject(this)
     }
 
-    fun start(fragment: Fragment, runnable: () -> Unit) {
+    fun start(fragment: androidx.fragment.app.Fragment, runnable: () -> Unit) {
         runnables.put(this, runnable)
         checkOpenGPSTrackerAccess(fragment)
     }
@@ -89,7 +89,7 @@ class PermissionRequester {
         }
     }
 
-    private fun checkOpenGPSTrackerAccess(fragment: Fragment) {
+    private fun checkOpenGPSTrackerAccess(fragment: androidx.fragment.app.Fragment) {
         val activity = fragment.activity
                 ?: throw IllegalStateException("Unable to check permission in contextless fragment")
         val startRequest = DialogInterface.OnClickListener { _, _ -> showRequest(fragment) }
@@ -111,7 +111,7 @@ class PermissionRequester {
         }
     }
 
-    fun onRequestPermissionsResult(fragment: Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun onRequestPermissionsResult(fragment: androidx.fragment.app.Fragment, requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         val activity = fragment.activity
                 ?: throw IllegalStateException("Unable to check permission in contextless fragment")
         if (requestCode == REQUEST_tracksPermission) {
@@ -166,7 +166,7 @@ class PermissionRequester {
         }
     }
 
-    private fun showRequest(fragment: Fragment) {
+    private fun showRequest(fragment: androidx.fragment.app.Fragment) {
         synchronized(request, {
             permissionDialog?.dismiss()
             permissionDialog = null

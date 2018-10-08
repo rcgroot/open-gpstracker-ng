@@ -13,7 +13,7 @@
             type="nl.sogeti.android.gpstracker.ng.features.graphs.GraphsViewModel" />
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,7 +21,7 @@
             layout="@layout/include_graphs"
             bind:viewModel="@{viewModel}" />
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null">
@@ -35,8 +35,8 @@
                 bind:presenter="@{presenter}"
                 bind:viewModel="@{viewModel}" />
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>
