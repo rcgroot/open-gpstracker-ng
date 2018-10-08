@@ -33,7 +33,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import nl.sogeti.android.gpstracker.ng.base.common.BaseGpsTrackerApplication;
 import timber.log.Timber;
 
 public class BaseGpsTrackerApplicationTest {
@@ -44,12 +43,13 @@ public class BaseGpsTrackerApplicationTest {
     public void setup() {
         sut = new BaseGpsTrackerApplication();
         Timber.uprootAll();
+        sut.setInstallLeakCanary(false);
     }
 
     @Test
     public void onCreateDebug() {
         // Prepare
-        sut.setDebug(true);
+        sut.setLogcatLogging(true);
 
         // Execute
         sut.onCreate();
@@ -61,7 +61,7 @@ public class BaseGpsTrackerApplicationTest {
     @Test
     public void onCreateRelease() {
         // Prepare
-        sut.setDebug(false);
+        sut.setLogcatLogging(false);
 
         // Execute
         sut.onCreate();

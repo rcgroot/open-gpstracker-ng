@@ -44,7 +44,10 @@ import timber.log.Timber
  */
 open class BaseGpsTrackerApplication : Application() {
 
-    var debug = BuildConfig.DEBUG
+    var logcatLogging = BuildConfig.DEBUG
+    var installLeakCanary = true
+    private val installCrashlytics = BuildConfig.FLAVOR != "mock"
+    private val installAnalytics = BuildConfig.FLAVOR != "mock"
 
     @CallSuper
     override fun onCreate() {
@@ -60,7 +63,7 @@ open class BaseGpsTrackerApplication : Application() {
     }
 
     private fun setupCrashlitics() {
-        if (BuildConfig.FLAVOR != "mock") {
+        if (installCrashlytics) {
             ofMainThread {
                 Fabric.with(this, Crashlytics())
             }
@@ -68,17 +71,19 @@ open class BaseGpsTrackerApplication : Application() {
     }
 
     private fun setupAnalytics() {
-        if (BuildConfig.FLAVOR == "mock") {
+        if (installAnalytics) {
             FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(false)
         }
     }
 
     private fun setupLeakCanary() {
-        LeakCanary.install(this)
+        if (installLeakCanary) {
+            LeakCanary.install(this)
+        }
     }
 
     protected fun setupLogging() {
-        if (debug) {
+        if (logcatLogging) {
             Timber.plant(Timber.DebugTree())
             if (StrictMode.ThreadPolicy.Builder().build() != null) {
                 StrictMode.setThreadPolicy(
@@ -89,5 +94,4 @@ open class BaseGpsTrackerApplication : Application() {
             }
         }
     }
-
 }
