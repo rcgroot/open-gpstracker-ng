@@ -35,7 +35,7 @@ import android.content.IntentFilter
 import android.content.IntentFilter.SYSTEM_LOW_PRIORITY
 import android.os.Handler
 import android.os.Looper
-import android.support.test.espresso.idling.CountingIdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.service.integration.ServiceConstants
 import nl.sogeti.android.gpstracker.service.util.trackUri

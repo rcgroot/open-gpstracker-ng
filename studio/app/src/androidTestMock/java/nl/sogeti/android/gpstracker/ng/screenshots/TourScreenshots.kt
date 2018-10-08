@@ -28,8 +28,8 @@
  */
 package nl.sogeti.android.gpstracker.ng.screenshots
 
-import android.support.test.rule.ActivityTestRule
-import android.support.test.rule.GrantPermissionRule
+import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import nl.sogeti.android.gpstracker.ng.features.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.robots.*
 import org.junit.*

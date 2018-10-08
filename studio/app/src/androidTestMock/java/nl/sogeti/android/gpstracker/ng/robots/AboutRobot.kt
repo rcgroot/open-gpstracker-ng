@@ -28,12 +28,12 @@
  */
 package nl.sogeti.android.gpstracker.ng.robots
 
-import android.support.test.espresso.Espresso
-import android.support.test.espresso.IdlingRegistry
-import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.v7.app.AppCompatActivity
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.matcher.ViewMatchers
 import nl.sogeti.android.gpstracker.ng.features.about.AboutFragment
 import nl.sogeti.android.gpstracker.ng.util.WebViewIdlingResource
 import nl.sogeti.android.gpstracker.v2.R

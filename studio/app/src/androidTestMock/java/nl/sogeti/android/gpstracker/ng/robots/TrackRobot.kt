@@ -29,12 +29,12 @@
 package nl.sogeti.android.gpstracker.ng.robots
 
 import android.app.Activity
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import android.support.test.espresso.IdlingRegistry
-import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.matcher.RootMatchers.isPlatformPopup
-import android.support.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
+import androidx.test.espresso.matcher.ViewMatchers.*
 import com.google.android.gms.maps.MapView
 import nl.sogeti.android.gpstracker.ng.util.IdlingMapResource
 import nl.sogeti.android.gpstracker.v2.R

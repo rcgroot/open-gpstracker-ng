@@ -1,11 +1,11 @@
 package nl.sogeti.android.gpstracker.ng.util
 
-import android.databinding.ViewDataBinding
 import android.os.Bundle
-import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ActivityTestRule
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
+import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
 import timber.log.Timber
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -48,7 +48,7 @@ class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean
 
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         fragment.arguments = arguments
-        activity.runOnUiThread({
+        activity.runOnUiThread {
             if (fragment is DialogFragment) {
                 fragment.show(activity.supportFragmentManager, "DialogTAG")
             } else {
@@ -57,7 +57,7 @@ class FragmentTestRule<out T : Fragment>(fragmentClass: Class<T>, touch: Boolean
                         .replace(android.R.id.content, fragment)
                         .commitNowAllowingStateLoss()
             }
-        })
+        }
         instrumentation.waitForIdleSync()
     }
 

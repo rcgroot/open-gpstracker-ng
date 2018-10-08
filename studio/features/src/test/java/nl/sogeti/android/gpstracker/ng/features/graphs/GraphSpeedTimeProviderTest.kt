@@ -72,7 +72,7 @@ class GraphSpeedTimeProviderTest {
 
     @Before
     fun setUp() {
-        sut = TimeDataProvider()
+        sut = TimeDataProvider(false)
         sut.calculator = calculator
         sut.statisticsFormatter = statisticsFormatter
         `when`(calculator.distance(any(), any(), any())).thenReturn(313.37338f)

@@ -2,9 +2,9 @@ package nl.sogeti.android.gpstracker.ng.util
 
 import android.os.Handler
 import android.os.Looper
-import android.support.test.espresso.IdlingResource
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import androidx.test.espresso.IdlingResource
 
 class WebViewIdlingResource(private val webView: WebView) : WebChromeClient(), IdlingResource {
 
@@ -12,7 +12,7 @@ class WebViewIdlingResource(private val webView: WebView) : WebChromeClient(), I
 
     init {
         Handler(Looper.getMainLooper()).post {
-            webView.setWebChromeClient(this@WebViewIdlingResource)
+            webView.webChromeClient = this@WebViewIdlingResource
         }
     }
 

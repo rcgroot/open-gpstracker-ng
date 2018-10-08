@@ -32,9 +32,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v4.content.res.ResourcesCompat.getDrawable
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
@@ -47,7 +47,7 @@ class DrawableMatcher(val id: Int) : TypeSafeMatcher<View>() {
     override fun matchesSafely(item: View?): Boolean {
         var matches = false
         if (item is ImageView) {
-            val expectedDrawable = getDrawable(item.resources, id, null)
+            val expectedDrawable = getDrawable(item.context, id)
             if (expectedDrawable != null) {
                 val expectedBitmap = renderDrawable(expectedDrawable)
 

@@ -132,7 +132,7 @@ class StatisticsCollector {
     }
 
     private fun unObserveUri() {
-        if (contentObserver != null) {
+        contentObserver?.let { contentObserver ->
             context.contentResolver?.unregisterContentObserver(contentObserver)
         }
     }

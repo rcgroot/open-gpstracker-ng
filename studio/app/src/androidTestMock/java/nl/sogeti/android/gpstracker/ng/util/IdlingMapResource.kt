@@ -1,6 +1,6 @@
 package nl.sogeti.android.gpstracker.ng.util
 
-import android.support.test.espresso.IdlingResource
+import androidx.test.espresso.IdlingResource
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import nl.sogeti.android.gpstracker.ng.base.common.onMainThread

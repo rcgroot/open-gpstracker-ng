@@ -32,10 +32,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.SystemClock
-import android.support.test.InstrumentationRegistry
-import android.support.test.InstrumentationRegistry.getInstrumentation
-import android.support.test.uiautomator.UiDevice
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.UiDevice
 import nl.sogeti.android.gpstracker.service.mock.MockServiceManager
 import timber.log.Timber
 import java.io.File
@@ -127,7 +127,8 @@ open class Robot<T : Robot<T>>(private val screenName: String) {
         }
 
         private fun getContext(): Context {
-            return InstrumentationRegistry.getTargetContext()
+            return InstrumentationRegistry.getInstrumentation().targetContext
+
         }
 
         private fun File?.child(dir: String): File? {
