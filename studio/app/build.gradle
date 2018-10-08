@@ -88,28 +88,28 @@ dependencies {
 
     implementation libraries.kotlin.stdlib
     implementation libraries.android.annotation
-    implementation libraries.android.dagger
+    implementation libraries.google.dagger
     implementation libraries.google.firebasecore
     implementation(libraries.google.crashlytics) {
         transitive = true
     }
-    kapt libraries.android.daggercompiler
-    kapt libraries.android.databindingcompiler
 
     testImplementation libraries.test.junit
-    testImplementation libraries.test.mockito
+    testImplementation libraries.test.mockito_core
     testImplementation libraries.test.robolectric
 
-    testImplementation libraries.square.leakcanarynoop
-
     androidTestMockImplementation libraries.androidtest.uiautomator
-    androidTestImplementation libraries.androidtest.runner
+
     androidTestImplementation libraries.androidtest.rules
+    androidTestImplementation libraries.androidtest.runner
     androidTestImplementation libraries.androidtest.espresso_core
     androidTestImplementation libraries.androidtest.espresso_contrib
-    kapt libraries.androidtest.runner
     androidTestImplementation libraries.square.timber
     androidTestImplementation libraries.google.play_services_maps
+
+    kapt libraries.google.daggercompiler
+    kapt libraries.android.databindingcompiler
+    kapt libraries.androidtest.runner
 }
 
 apply plugin: 'com.google.gms.google-services'

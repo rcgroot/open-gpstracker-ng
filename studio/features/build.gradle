@@ -45,26 +45,28 @@ dependencies {
     implementation project(':utils')
 
     implementation libraries.kotlin.stdlib
-    implementation "androidx.core:core-ktx:1.0.0"
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation "com.google.android.gms:play-services-maps:16.0.0"
-    implementation "com.google.android.gms:play-services-location:16.0.0"
-    implementation libraries.android.dagger
-    api "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    kapt libraries.android.daggercompiler
-    kapt libraries.android.databindingcompiler
+    implementation libraries.android.core_ktx
+    implementation libraries.square.timber
+    implementation libraries.android.appcompat
+    implementation libraries.google.play_services_maps
+    implementation libraries.google.play_services_location
+    implementation libraries.google.dagger
+    implementation libraries.android.constraint_layout
+    implementation libraries.android.appcompat
+    implementation libraries.android.cardview
+    implementation libraries.android.material
+    implementation libraries.android.lifecycle_viewmodel
+    implementation libraries.android.lifecycle_extensions
 
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    testImplementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
     testImplementation project(':test-utils')
 
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
+    testImplementation libraries.test.junit
+    testImplementation libraries.test.mockito_core
+    testImplementation libraries.test.hamcrest_library
+
+    androidTestImplementation libraries.androidtest.runner
+    androidTestImplementation libraries.androidtest.espresso_core
+
+    kapt libraries.google.daggercompiler
+    kapt libraries.android.databindingcompiler
 }

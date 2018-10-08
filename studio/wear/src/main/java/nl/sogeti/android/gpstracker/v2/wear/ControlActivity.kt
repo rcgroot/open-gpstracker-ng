@@ -30,16 +30,15 @@ package nl.sogeti.android.gpstracker.v2.wear
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.support.wearable.activity.WearableActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import android.support.wearable.activity.WearableActivity
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatisticsMessage
 import nl.sogeti.android.gpstracker.v2.sharedwear.model.StatusMessage
+import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.gpstracker.v2.wear.databinding.ActivityControlBinding
 import nl.sogeti.android.gpstracker.v2.wear.databinding.WearBindingComponent
 

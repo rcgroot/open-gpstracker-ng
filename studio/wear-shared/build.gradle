@@ -37,12 +37,14 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.google.android.gms:play-services-wearable:16.0.1"
+    api libraries.google.play_services_wearable
     implementation libraries.kotlin.stdlib
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
+    implementation libraries.square.timber
 
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
     testImplementation project(':test-utils')
+
+    testImplementation libraries.test.junit
+    testImplementation libraries.test.mockito_core
+
+    kapt libraries.android.databindingcompiler
 }

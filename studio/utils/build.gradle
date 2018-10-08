@@ -24,16 +24,17 @@ android {
         abortOnError false
     }
 
-    apply from:'../flavors.gradle'
+    apply from: '../flavors.gradle'
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libraries.kotlin.stdlib
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
 
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
+    implementation libraries.kotlin.stdlib
+    implementation libraries.android.appcompat
+    implementation libraries.square.timber
+
+    testImplementation libraries.test.junit
+    testImplementation libraries.test.mockito_core
 }

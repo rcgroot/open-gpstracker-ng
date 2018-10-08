@@ -33,7 +33,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation libraries.kotlin.stdlib
-    implementation "junit:junit:$rootProject.junitVersion"
-    implementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    implementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
+    implementation libraries.test.junit
+    implementation libraries.test.mockito_core
+    implementation libraries.test.hamcrest_library
 }

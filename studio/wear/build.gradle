@@ -54,18 +54,18 @@ dependencies {
     implementation project(':wear-shared')
     implementation project(':utils')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    implementation "com.google.android.support:wearable:$rootProject.wearableVersion"
-    implementation "com.google.android.gms:play-services-wearable:16.0.1"
-    implementation 'androidx.percentlayout:percentlayout:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.wear:wear:1.0.0'
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation libraries.kotlin.stdlib
+    implementation libraries.android.constraint_layout
+    implementation libraries.android.wear
+    implementation libraries.google.wearable
+    implementation libraries.google.play_services_wearable
+    implementation libraries.android.percentlayout
+    implementation libraries.android.recyclerview
+    implementation libraries.square.timber
+    implementation libraries.android.material
 
-    kapt "androidx.databinding:databinding-compiler:$rootProject.gradlePluginVersion"
+    kapt libraries.android.databindingcompiler
 
-    compileOnly "com.google.android.wearable:wearable:$rootProject.wearableVersion"
+    compileOnly libraries.google.wearable
 
 }

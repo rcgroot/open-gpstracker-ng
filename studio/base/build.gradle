@@ -47,23 +47,24 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation libraries.kotlin.stdlib
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
-    implementation("com.crashlytics.sdk.android:crashlytics:$rootProject.crashlicticsVerion@aar") {
+    implementation libraries.android.lifecycle
+    implementation libraries.square.timber
+    implementation libraries.android.appcompat
+    implementation libraries.google.firebasecore
+    implementation(libraries.google.crashlytics) {
         transitive = true
     }
-    implementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.leakcanaryVersion"
-    //    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.leakcanaryVersion"
-    implementation libraries.android.dagger
-    kapt libraries.android.daggercompiler
+    implementation libraries.google.dagger
+    implementation libraries.square.leakcanary
+    //  implementation libraries.square.leakcanarynoop
+
+    testImplementation libraries.test.junit
+    testImplementation libraries.test.mockito_core
+    testImplementation libraries.test.hamcrest_library
+
+    androidTestImplementation libraries.androidtest.runner
+    androidTestImplementation libraries.androidtest.espresso_core
+
+    kapt libraries.google.daggercompiler
     kapt libraries.android.databindingcompiler
-
-    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    testImplementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
-
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta01'
 }

@@ -66,19 +66,20 @@ dependencies {
     implementation project(':base')
 
     implementation libraries.kotlin.stdlib
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
-    implementation libraries.android.dagger
-    kapt libraries.android.daggercompiler
+    implementation libraries.android.appcompat
+    implementation libraries.square.timber
+    implementation libraries.google.dagger
+
+    mockImplementation libraries.androidtest.espresso_idling_resource
+
+    testImplementation libraries.test.junit
+    testImplementation libraries.test.mockito_core
+    testImplementation libraries.test.hamcrest_library
+
+    androidTestImplementation libraries.test.dexmaker
+    androidTestImplementation libraries.test.dexmaker_dx
+    androidTestImplementation libraries.test.dexmaker_mockito
+
+    kapt libraries.google.daggercompiler
     kapt libraries.android.databindingcompiler
-
-    mockImplementation 'androidx.test.espresso:espresso-idling-resource:3.1.0-beta01'
-
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    testImplementation "org.mockito:mockito-core:$rootProject.mockitoVersion"
-    testImplementation "org.hamcrest:hamcrest-library:$rootProject.hamcrestVersion"
-
-    androidTestImplementation 'com.crittercism.dexmaker:dexmaker:1.4'
-    androidTestImplementation 'com.crittercism.dexmaker:dexmaker-dx:1.4'
-    androidTestImplementation 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
 }
