@@ -28,12 +28,13 @@
  */
 package nl.sogeti.android.gpstracker.ng.base.common;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import timber.log.Timber;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BaseGpsTrackerApplicationTest {
 
@@ -44,6 +45,7 @@ public class BaseGpsTrackerApplicationTest {
         sut = new BaseGpsTrackerApplication();
         Timber.uprootAll();
         sut.setInstallLeakCanary(false);
+        sut.setInstallAnalytics(false);
     }
 
     @Test
@@ -55,7 +57,7 @@ public class BaseGpsTrackerApplicationTest {
         sut.onCreate();
 
         // Verify
-        Assert.assertEquals(Timber.treeCount(), 1);
+        assertThat(Timber.treeCount(), is(1));
     }
 
     @Test
@@ -67,6 +69,6 @@ public class BaseGpsTrackerApplicationTest {
         sut.onCreate();
 
         // Verify
-        Assert.assertEquals(Timber.treeCount(), 0);
+        assertThat(Timber.treeCount(), is(0));
     }
 }

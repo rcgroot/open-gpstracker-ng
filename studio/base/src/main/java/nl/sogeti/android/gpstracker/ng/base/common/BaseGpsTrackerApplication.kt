@@ -46,8 +46,8 @@ open class BaseGpsTrackerApplication : Application() {
 
     var logcatLogging = BuildConfig.DEBUG
     var installLeakCanary = true
-    private val installCrashlytics = BuildConfig.FLAVOR != "mock"
-    private val installAnalytics = BuildConfig.FLAVOR != "mock"
+    var installCrashlytics = BuildConfig.FLAVOR != "mock"
+    var installAnalytics = BuildConfig.FLAVOR != "mock"
 
     @CallSuper
     override fun onCreate() {
