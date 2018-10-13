@@ -1,8 +1,8 @@
 package nl.sogeti.android.gpstracker.ng.features.util
 
-import androidx.lifecycle.ViewModel
 import androidx.annotation.CallSuper
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.ViewModel
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 
 /**
