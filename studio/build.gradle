@@ -6,7 +6,7 @@ buildscript {
         google()
         jcenter()
         maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
         }
         maven {
             url 'https://maven.fabric.io/public'
@@ -26,8 +26,14 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
         }
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs = ["-progressive"]
     }
 }
 

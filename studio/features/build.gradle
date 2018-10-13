@@ -2,7 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
+
 android {
+
     compileSdkVersion rootProject.targetSdk
     buildToolsVersion rootProject.buildTools
 
@@ -62,6 +64,7 @@ dependencies {
 
     testImplementation libraries.test.junit
     testImplementation libraries.test.mockito_core
+    testImplementation libraries.test.mockito_kotlin
     testImplementation libraries.test.hamcrest_library
 
     androidTestImplementation libraries.androidtest.runner
