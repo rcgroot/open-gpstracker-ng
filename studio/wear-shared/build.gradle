@@ -8,7 +8,7 @@ androidExtensions {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion rootProject.targetSdk
     buildToolsVersion rootProject.buildTools
 
     defaultConfig {
