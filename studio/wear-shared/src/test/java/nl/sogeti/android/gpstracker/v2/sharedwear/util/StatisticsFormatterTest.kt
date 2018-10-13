@@ -40,7 +40,7 @@ class StatisticsFormatterTest {
         this.sut = sut
 
         Mockito.`when`(context.getString(R.string.format_speed)).thenReturn("%.0f mock")
-        Mockito.`when`(context.getString(R.string.format_runners_speed)).thenReturn("%1\$.0f:%2\$02.0f %3\$s")
+        Mockito.`when`(context.getString(R.string.format_runners_speed)).thenReturn("%1\$d:%2\$02d %3\$s")
         Mockito.`when`(context.getString(R.string.format_small_meters)).thenReturn("%.1f M")
         Mockito.`when`(context.getString(R.string.format_small_100_meters)).thenReturn("%.0f M")
         Mockito.`when`(context.getString(R.string.format_big_kilometer)).thenReturn("%.1f KM")
@@ -292,5 +292,15 @@ class StatisticsFormatterTest {
         val speed = sut.convertMeterPerSecondsToSpeed(context, 10000.0F / 3600, true)
         // Assert
         assertThat(speed, `is`("6:00 min"))
+    }
+
+    @Test
+    fun `convert to 7 min-km not 6-60 min-km`() {
+        // Arrange
+        sut = StatisticsFormatter(localeProvider, timeSpanCalculator)
+        // Act
+        val speed = sut.convertMeterPerSecondsToSpeed(context, 2.381F, true)
+        // Assert
+        assertThat(speed, `is`("7:00 min"))
     }
 }

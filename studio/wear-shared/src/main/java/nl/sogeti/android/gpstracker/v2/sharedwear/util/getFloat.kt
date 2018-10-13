@@ -4,6 +4,8 @@ import android.content.res.Resources
 import androidx.annotation.StringRes
 
 fun Resources.getFloat(@StringRes resourceId: Int): Float {
-    val stringValue = this.getString(resourceId)
+    val stringValue: String? = this.getString(resourceId)
+    checkNotNull(stringValue)
+
     return stringValue.toFloat()
 }

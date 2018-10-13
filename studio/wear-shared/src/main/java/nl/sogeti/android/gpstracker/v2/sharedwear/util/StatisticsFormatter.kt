@@ -1,12 +1,10 @@
 package nl.sogeti.android.gpstracker.v2.sharedwear.util
 
 import android.content.Context
-import android.content.res.Resources
-import androidx.annotation.StringRes
 import android.text.format.DateFormat
 import nl.sogeti.android.gpstracker.v2.sharedwear.R
 import java.util.*
-import kotlin.math.floor
+import kotlin.math.roundToInt
 
 class StatisticsFormatter(private val localeProvider: LocaleProvider, private val timeSpanUtil: TimeSpanCalculator) {
 
@@ -105,8 +103,9 @@ class StatisticsFormatter(private val localeProvider: LocaleProvider, private va
             if (inverseRunnerSpeed) {
                 val conversion = context.resources.getFloat(R.string.spm_to_speed)
                 val runnerSpeed = (1F / meterPerSecond) / conversion
-                val minutes = floor(runnerSpeed)
-                val seconds = (runnerSpeed - minutes) * 60
+                val totalSeconds = (runnerSpeed * 60).roundToInt()
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
                 val unit = context.resources.getString(R.string.speed_runners_unit)
                 context.getString(R.string.format_runners_speed).format(localeProvider.getLocale(), minutes, seconds, unit)
             } else {
