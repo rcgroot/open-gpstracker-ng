@@ -1,1 +1,1 @@
-include ':app', ':utils', ':wear', ':wear-shared', ':service', ':base', ':features', ':test-utils'
+include ':app', ':utils', ':wear', ':wear-shared', ':service', ':base', ':features', ':test-utils', ':exporter'

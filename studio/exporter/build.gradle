@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
-
 android {
 
     compileSdkVersion rootProject.targetSdk
@@ -24,6 +23,8 @@ android {
         }
     }
 
+    resourcePrefix 'exporter__'
+
     apply from: '../flavors.gradle'
 
     dataBinding {
@@ -41,27 +42,16 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':exporter')
     implementation project(':base')
-    implementation project(':wear-shared')
-    implementation project(':service')
     implementation project(':utils')
+    implementation project(':service')
 
     implementation libraries.kotlin.stdlib
-    implementation libraries.android.core_ktx
-    implementation libraries.square.timber
     implementation libraries.android.appcompat
-    implementation libraries.google.play_services_maps
-    implementation libraries.google.play_services_location
-    implementation libraries.google.dagger
-    implementation libraries.android.constraint_layout
-    implementation libraries.android.appcompat
-    implementation libraries.android.cardview
-    implementation libraries.android.material
     implementation libraries.android.lifecycle_viewmodel
     implementation libraries.android.lifecycle_extensions
-
-    testImplementation project(':test-utils')
+    implementation libraries.square.timber
+    implementation libraries.google.play_services_drive
 
     testImplementation libraries.test.junit
     testImplementation libraries.test.mockito_core

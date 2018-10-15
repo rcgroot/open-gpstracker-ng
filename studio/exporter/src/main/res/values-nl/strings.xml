@@ -1,0 +1,53 @@
+<!--
+   /* *****************************************************************************
+    **    Author: René de Groot
+    ** Copyright: (c) 2016 René de Groot All Rights Reserved.
+    ** ****************************************************************************
+    ** No part of this file may be reproduced
+    ** or transmitted in any form or by any
+    ** means, electronic or mechanical, for the
+    ** purpose, without the express written
+    ** permission of the copyright holder.
+    * *****************************************************************************
+    *
+    *   This file is part of "Open GPS Tracker - Exporter".
+    *
+    *   "Open GPS Tracker - Exporter" is free software: you can redistribute it and/or modify
+    *   it under the terms of the GNU General Public License as published by
+    *   the Free Software Foundation, either version 3 of the License, or
+    *   (at your option) any later version.
+    *
+    *   "Open GPS Tracker - Exporter" is distributed in the hope that it will be useful,
+    *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    *   GNU General Public License for more details.
+    *
+    *   You should have received a copy of the GNU General Public License
+    *   along with "Open GPS Tracker - Exporter".  If not, see <http://www.gnu.org/licenses/>.
+    *
+    */
+-->
+<resources>
+    <string name="exporter__export_explained">Deze app kan alle opgenomen routes in Open GPS Tracker exporten naar GPX bestanden op Google Drive.</string>
+    <string name="exporter__export_drive_connected">Google Drive toegang verleend</string>
+    <string name="exporter__export_ogt_connected">Route database toegang verleend</string>
+    <string name="exporter__export_ogt_done">Route export voltooid</string>
+    <string name="exporter__export_step1">Stap 1: Toegang tot route database</string>
+    <string name="exporter__export_step2">Stap 2: Toegang tot Google Drive</string>
+    <string name="exporter__export_step3">Stap 3: Exporteer routes uit database naar GPX bestanden</string>
+    <string name="exporter__export_button_connect_tracks">Verbind database</string>
+    <string name="exporter__export_button_connect_drive">Verbind Drive</string>
+    <string name="exporter__export_button_start_export">Exporteer nu</string>
+    <string name="exporter__export_tracks">Voltooide routes: %1$d van de %2$d</string>
+    <string name="exporter__export_waypoints">Voltooide locaties: %1$d van de %2$d</string>
+
+    <!-- Export task -->
+    <string name="exporter__ticker_saving">Opslaan: </string>
+    <string name="exporter__taskerror_gpx_write">GPX data schrijven</string>
+    <string name="exporter__ticker_failed">Route opslaan mislukt: </string>
+    <string name="exporter__error_filenotfound"> reden: Kan bestand of SD kaart niet vinden</string>
+    <string name="exporter__error_filename"> reden: Foute bestandsnaam</string>
+    <string name="exporter__error_buildxml"> reden: XML opbouw mislukt</string>
+    <string name="exporter__error_writefailed"> reden: Wegschrijven doel mislukt</string>
+    <string name="exporter__error_tracks_not_found"> reden: Geen routes in de database</string>
+</resources>

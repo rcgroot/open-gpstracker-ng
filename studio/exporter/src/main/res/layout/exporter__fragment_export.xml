@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+   /* *****************************************************************************
+    **    Author: René de Groot
+    ** Copyright: (c) 2016 René de Groot All Rights Reserved.
+    ** ****************************************************************************
+    ** No part of this file may be reproduced
+    ** or transmitted in any form or by any
+    ** means, electronic or mechanical, for the
+    ** purpose, without the express written
+    ** permission of the copyright holder.
+    * *****************************************************************************
+    *
+    *   This file is part of "Open GPS Tracker - Exporter".
+    *
+    *   "Open GPS Tracker - Exporter" is free software: you can redistribute it and/or modify
+    *   it under the terms of the GNU General Public License as published by
+    *   the Free Software Foundation, either version 3 of the License, or
+    *   (at your option) any later version.
+    *
+    *   "Open GPS Tracker - Exporter" is distributed in the hope that it will be useful,
+    *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    *   GNU General Public License for more details.
+    *
+    *   You should have received a copy of the GNU General Public License
+    *   along with "Open GPS Tracker - Exporter".  If not, see <http://www.gnu.org/licenses/>.
+    *
+    */
+-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="presenter"
+            type="nl.renedegroot.opengpstracker.exporter.ExportPresenter" />
+
+        <variable
+            name="model"
+            type="nl.renedegroot.opengpstracker.exporter.ExportModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/exporter__activity_horizontal_margin"
+        android:paddingTop="@dimen/exporter__activity_horizontal_margin"
+        android:paddingRight="@dimen/exporter__activity_horizontal_margin"
+        android:paddingBottom="@dimen/exporter__activity_horizontal_margin">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/exporter__fragment_export_nextStep"
+            android:layout_alignParentTop="true">
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:divider="@drawable/exporter__space_8dp_height"
+                app:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_explained"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exporter__export_explained" />
+
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_step1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="@string/exporter__export_step1" />
+
+                <CheckBox
+                    android:id="@+id/exporter__fragment_export_ogt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="@{model.isTrackerConnected}"
+                    android:enabled="@{!model.isTrackerConnected}"
+                    android:onClick="@{(view) -> presenter.onConnectTracks(view)}"
+                    android:text="@string/exporter__export_ogt_connected" />
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_step2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="@string/exporter__export_step2" />
+
+                <CheckBox
+                    android:id="@+id/exporter__fragment_export_drive"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="@{model.isDriveConnected}"
+                    android:enabled="@{!model.isDriveConnected}"
+                    android:onClick="@{(view) -> presenter.onConnectDrive(view)}"
+                    android:text="@string/exporter__export_drive_connected" />
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_step3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="@string/exporter__export_step3" />
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_progress_tracks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@{@string/exporter__export_tracks(model.completedTracks, model.totalTracks)}"
+                    android:textColor="@android:color/black"
+                    android:visibility="@{model.isRunning || model.isFinished ? View.VISIBLE : View.GONE}"
+                    tools:text="Tracks: 1 out of 12" />
+
+                <TextView
+                    android:id="@+id/exporter__fragment_export_progress_waypoints"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="true"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@{@string/exporter__export_waypoints(model.completedWaypoints, model.totalWaypoints)}"
+                    android:textColor="@android:color/black"
+                    android:visibility="@{model.isRunning || model.isFinished ? View.VISIBLE : View.GONE}"
+                    tools:text="Waypoints: 1 out of 34" />
+
+                <ProgressBar
+                    android:id="@+id/exporter__fragment_export_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:keepScreenOn="true"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:visibility="@{model.isRunning ? View.VISIBLE : View.GONE}" />
+
+
+                <CheckBox
+                    android:id="@+id/exporter__fragment_export_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="@{model.isFinished}"
+                    android:enabled="false"
+                    android:text="@string/exporter__export_ogt_done" />
+
+            </android.support.v7.widget.LinearLayoutCompat>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/exporter__fragment_export_nextStep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:enabled="@{!model.isRunning &amp;&amp; !model.isFinished}"
+            android:onClick="@{(view) -> presenter.nextStep(model)}"
+            android:text="@{!model.isTrackerConnected?@string/exporter__export_button_connect_tracks:!model.isDriveConnected?@string/exporter__export_button_connect_drive:@string/exporter__export_button_start_export}" />
+    </RelativeLayout>
+</layout>

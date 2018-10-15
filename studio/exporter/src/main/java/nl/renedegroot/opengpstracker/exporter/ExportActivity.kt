@@ -15,35 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package nl.renedegroot.opengpstracker.exporter
 
-package nl.sogeti.android.gpstracker.ng.features.graphs
-
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import nl.sogeti.android.opengpstrack.ng.features.R
+import nl.sogeti.android.gpstracker.service.util.PermissionRequester
 
-class GraphsActivity : AppCompatActivity() {
+/**
+ * Owns the export model and communicated the the Android system regarding
+ * permissions.
+ */
+class ExportActivity : AppCompatActivity() {
 
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, GraphsActivity::class.java)
-            context.startActivity(intent)
-        }
-    }
+    private val permissionRequestor = PermissionRequester()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_graph)
+        setContentView(R.layout.exporter__activity_export)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        if (savedInstanceState == null) {
-            val fragment = GraphsFragment()
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_graphs_container, fragment).commit()
-        }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        driveManager.processResult(requestCode, resultCode)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        permissionRequestor.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
 }

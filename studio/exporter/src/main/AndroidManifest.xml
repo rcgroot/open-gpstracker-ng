@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="nl.renedegroot.opengpstracker.exporter">
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <application>
+        <activity
+            android:name=".ExportActivity"
+            android:label="@string/exporter__app_name_short"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="com.google.android.apps.drive.APP_ID"
+                android:value="id=808343543560" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+

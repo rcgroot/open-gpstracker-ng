@@ -162,12 +162,7 @@ class TrackListPresenter : AbstractPresenter(), ContentController.Listener, Trac
     }
 
     override fun didSelectExportToDirectory() {
-        val intent: Intent? = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
-        if (intent == null) {
-            navigation?.showInstallHintForOGTExporterApp()
-        } else {
-            navigation?.openExternalOGTExporterApp()
-        }
+        navigation?.startGpxExport()
     }
 
     override fun didSelectImportTrack() {

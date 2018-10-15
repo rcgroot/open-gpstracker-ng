@@ -36,14 +36,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
 import nl.sogeti.android.gpstracker.service.BuildConfig.controlPermission
 import nl.sogeti.android.gpstracker.service.BuildConfig.tracksPermission
 import nl.sogeti.android.gpstracker.service.R
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration
 import nl.sogeti.android.gpstracker.utils.PermissionChecker
-import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 
@@ -64,7 +62,7 @@ class PermissionRequester {
 
         private val isShowingDialog: Boolean
             get() = arrayOf(permissionDialog, installDialog, missingDialog)
-                    .fold(false, { acc, dialog -> acc || dialog != null })
+                    .fold(false) { acc, dialog -> acc || dialog != null }
     }
 
     @Inject
@@ -75,7 +73,7 @@ class PermissionRequester {
     }
 
     fun start(fragment: androidx.fragment.app.Fragment, runnable: () -> Unit) {
-        runnables.put(this, runnable)
+        runnables[this] = runnable
         checkOpenGPSTrackerAccess(fragment)
     }
 
@@ -115,7 +113,7 @@ class PermissionRequester {
         val activity = fragment.activity
                 ?: throw IllegalStateException("Unable to check permission in contextless fragment")
         if (requestCode == REQUEST_tracksPermission) {
-            synchronized(request, {
+            synchronized(request) {
                 request = emptyArray()
                 val grants = grantResults.indices
                         .filter { grantResults[it] == PackageManager.PERMISSION_GRANTED }
@@ -131,7 +129,7 @@ class PermissionRequester {
                     val ok = DialogInterface.OnClickListener { _, _ -> checkOpenGPSTrackerAccess(fragment) }
                     showMissing(activity, missing, ok)
                 }
-            })
+            }
         }
     }
 
@@ -167,19 +165,19 @@ class PermissionRequester {
     }
 
     private fun showRequest(fragment: androidx.fragment.app.Fragment) {
-        synchronized(request, {
+        synchronized(request) {
             permissionDialog?.dismiss()
             permissionDialog = null
             if (request.isEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 request = arrayOf(tracksPermission, controlPermission, ACCESS_FINE_LOCATION)
                 fragment.requestPermissions(request, REQUEST_tracksPermission)
             }
-        })
+        }
     }
 
     private fun showMissing(context: Context, missing: List<String>, ok: DialogInterface.OnClickListener) {
         if (!isShowingDialog) {
-            val permissions = missing.fold("", { description: String, permission: String -> description + ", $permission" })
+            val permissions = missing.fold("") { description: String, permission: String -> description + ", $permission" }
             missingDialog = AlertDialog.Builder(context)
                     .setMessage("Missing $permissions")
                     .setNegativeButton(android.R.string.cancel, null)

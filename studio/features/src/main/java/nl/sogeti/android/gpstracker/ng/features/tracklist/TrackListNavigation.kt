@@ -33,8 +33,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
+import nl.renedegroot.opengpstracker.exporter.ExportActivity
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GENERAL
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportTrackTypeDialogFragment
@@ -134,10 +134,10 @@ class TrackListNavigation(val fragment: androidx.fragment.app.Fragment) {
                 .setTitle(R.string.fragment_tracks_exporter_title)
                 .setMessage(R.string.fragment_tracks_exporter_body)
                 .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
-                .setPositiveButton(R.string.permission_button_install, { _, _ ->
+                .setPositiveButton(R.string.permission_button_install) { _, _ ->
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$OGT_EXPORTER_PACKAGE_NAME"))
                     context.startActivity(intent)
-                })
+                }
                 .show()
     }
 
@@ -145,6 +145,12 @@ class TrackListNavigation(val fragment: androidx.fragment.app.Fragment) {
         val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
         fragment.startActivity(intent)
+    }
+
+    fun startGpxExport() {
+        val context = fragment.context ?: return
+        val intent = Intent(context, ExportActivity::class.java)
+        context.startActivity(intent)
     }
 
     companion object {

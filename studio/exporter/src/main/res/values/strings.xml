@@ -1,0 +1,57 @@
+<!--
+   /* *****************************************************************************
+    **    Author: René de Groot
+    ** Copyright: (c) 2016 René de Groot All Rights Reserved.
+    ** ****************************************************************************
+    ** No part of this file may be reproduced
+    ** or transmitted in any form or by any
+    ** means, electronic or mechanical, for the
+    ** purpose, without the express written
+    ** permission of the copyright holder.
+    * *****************************************************************************
+    *
+    *   This file is part of "Open GPS Tracker - Exporter".
+    *
+    *   "Open GPS Tracker - Exporter" is free software: you can redistribute it and/or modify
+    *   it under the terms of the GNU General Public License as published by
+    *   the Free Software Foundation, either version 3 of the License, or
+    *   (at your option) any later version.
+    *
+    *   "Open GPS Tracker - Exporter" is distributed in the hope that it will be useful,
+    *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    *   GNU General Public License for more details.
+    *
+    *   You should have received a copy of the GNU General Public License
+    *   along with "Open GPS Tracker - Exporter".  If not, see <http://www.gnu.org/licenses/>.
+    *
+    */
+-->
+<resources>
+    <string name="exporter__app_name" translatable="false">Open GPS Tracker - Exporter</string>
+    <string name="exporter__app_name_short" translatable="false">OGT Exporter</string>
+    <string name="exporter__about_version" translatable="false">Version %1$s (%2$s, build %3$d)</string>
+    <string name="exporter__export_explained">This application can export all your Open GPS Tracker tracks to GPX files on Google Drive.</string>
+    <string name="exporter__export_drive_connected">Google Drive access permitted</string>
+    <string name="exporter__export_ogt_connected">Tracks database access permitted</string>
+    <string name="exporter__export_ogt_done">Tracks export completed</string>
+    <string name="exporter__export_tracks">Tracks: %1$d out of %2$d</string>
+    <string name="exporter__export_waypoints">Waypoints: %1$d out of %2$d</string>
+    <string name="exporter__export_step1">Step 1: Access track database</string>
+    <string name="exporter__export_step2">Step 2: Access Google Drive</string>
+    <string name="exporter__export_step3">Step 3: Export tracks from track database to GPX files on Google Drive</string>
+    <string name="exporter__export_button_connect_tracks">Connect tracks</string>
+    <string name="exporter__export_button_connect_drive">Connect drive</string>
+    <string name="exporter__export_button_start_export">Export now</string>
+
+    <!-- Export task -->
+    <string name="exporter__ticker_saving">Saving: </string>
+    <string name="exporter__taskerror_gpx_write">Writing GPX data</string>
+    <string name="exporter__ticker_failed">Unable to save the route: </string>
+    <string name="exporter__error_filenotfound"> reason: Can not find file or directory on SD card</string>
+    <string name="exporter__error_filename"> reason: Incorrect filename</string>
+    <string name="exporter__error_buildxml"> reason: Error building XML</string>
+    <string name="exporter__error_writefailed"> reason: Error writing to destination</string>
+    <string name="exporter__error_tracks_not_found"> reason: No tracks in the database</string>
+
+</resources>

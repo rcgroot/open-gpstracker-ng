@@ -47,6 +47,7 @@ ext {
                     play_services_maps    : "com.google.android.gms:play-services-maps:16.0.0",
                     play_services_location: "com.google.android.gms:play-services-location:16.0.0",
                     play_services_wearable: "com.google.android.gms:play-services-wearable:16.0.1",
+                    play_services_drive   : "com.google.android.gms:play-services-drive:16.0.0",
                     wearable              : "com.google.android.support:wearable:2.3.0",
             ],
             square     : [
