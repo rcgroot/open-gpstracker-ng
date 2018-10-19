@@ -1,4 +1,4 @@
-package nl.sogeti.android.gpstracker.utils
+package nl.sogeti.android.gpstracker.utils.activityresult
 
 import android.content.Intent
 

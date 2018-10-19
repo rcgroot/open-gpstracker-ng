@@ -29,28 +29,26 @@
 package nl.sogeti.android.gpstracker.ng.features.tracklist
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import nl.renedegroot.opengpstracker.exporter.ExportActivity
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
-import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GENERAL
+import nl.sogeti.android.gpstracker.ng.features.gpxexport.MIME_TYPE_GENERAL
 import nl.sogeti.android.gpstracker.ng.features.gpximport.ImportTrackTypeDialogFragment
 import nl.sogeti.android.gpstracker.ng.features.track.TrackActivity
 import nl.sogeti.android.gpstracker.ng.features.trackdelete.TrackDeleteDialogFragment
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackEditDialogFragment
 import nl.sogeti.android.gpstracker.ng.features.trackedit.TrackTypeDescriptions.Companion.KEY_META_FIELD_TRACK_TYPE
-import nl.sogeti.android.gpstracker.utils.ActivityResultLambda
+import nl.sogeti.android.gpstracker.utils.activityresult.ActivityResultLambda
 import nl.sogeti.android.gpstracker.utils.VersionHelper
-import nl.sogeti.android.opengpstrack.ng.features.R
 import javax.inject.Inject
+
+private const val TAG_DIALOG = "DIALOG"
 
 class TrackListNavigation(val fragment: androidx.fragment.app.Fragment) {
 
-    @Inject
-    lateinit var packageManager: PackageManager
     @Inject
     lateinit var versionHelper: VersionHelper
 
@@ -128,34 +126,10 @@ class TrackListNavigation(val fragment: androidx.fragment.app.Fragment) {
         }
     }
 
-    fun showInstallHintForOGTExporterApp() {
-        val context = fragment.context ?: return
-        AlertDialog.Builder(context)
-                .setTitle(R.string.fragment_tracks_exporter_title)
-                .setMessage(R.string.fragment_tracks_exporter_body)
-                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
-                .setPositiveButton(R.string.permission_button_install) { _, _ ->
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$OGT_EXPORTER_PACKAGE_NAME"))
-                    context.startActivity(intent)
-                }
-                .show()
-    }
-
-    fun openExternalOGTExporterApp() {
-        val intent = packageManager.getLaunchIntentForPackage(OGT_EXPORTER_PACKAGE_NAME)
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        fragment.startActivity(intent)
-    }
-
     fun startGpxExport() {
         val context = fragment.context ?: return
         val intent = Intent(context, ExportActivity::class.java)
         context.startActivity(intent)
     }
 
-    companion object {
-
-        private const val TAG_DIALOG = "DIALOG"
-
-    }
 }

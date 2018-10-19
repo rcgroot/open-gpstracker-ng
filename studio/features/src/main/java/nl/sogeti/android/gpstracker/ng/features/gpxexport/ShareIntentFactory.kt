@@ -31,16 +31,19 @@ package nl.sogeti.android.gpstracker.ng.features.gpxexport
 
 import android.content.Intent
 import android.net.Uri
+import nl.renedegroot.opengpstracker.exporter.gpx.GpxCreator
+import nl.renedegroot.opengpstracker.exporter.gpx.GpxCreator.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.base.BaseConfiguration
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration.featureComponent
-import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider.Companion.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 
 class ShareIntentFactory {
 
     fun createShareIntent(track: Uri): Intent {
         val shareIntent = Intent()
-        val trackStream = sharedTrackUri(track.lastPathSegment.toLong())
+        val fileName = GpxCreator.fileName(track)
+        val trackId = checkNotNull(track.lastPathSegment).toLong()
+        val trackStream = sharedTrackUri(trackId, fileName)
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_STREAM, trackStream)
         shareIntent.type = MIME_TYPE_GPX
@@ -53,13 +56,12 @@ class ShareIntentFactory {
      * @param trackId
      * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5
      */
-    fun sharedTrackUri(trackId: Long): Uri {
-        return BaseConfiguration.appComponent.uriBuilder()
-                .scheme("content")
-                .authority(featureComponent.providerShareAuthority())
-                .appendPath(ContentConstants.Tracks.TRACKS)
-                .appendEncodedPath(trackId.toString())
-                .build()
-    }
+    private fun sharedTrackUri(trackId: Long, fileName: String): Uri = BaseConfiguration.appComponent.uriBuilder()
+            .scheme("content")
+            .authority(featureComponent.providerShareAuthority())
+            .appendPath(ContentConstants.Tracks.TRACKS)
+            .appendEncodedPath(trackId.toString())
+            .appendPath(fileName)
+            .build()
 
 }

@@ -41,7 +41,7 @@
 
         <variable
             name="model"
-            type="nl.renedegroot.opengpstracker.exporter.ExportModel" />
+            type="nl.renedegroot.opengpstracker.exporter.ExportViewModel" />
     </data>
 
     <RelativeLayout
@@ -58,7 +58,7 @@
             android:layout_above="@+id/exporter__fragment_export_nextStep"
             android:layout_alignParentTop="true">
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -85,7 +85,6 @@
                     android:layout_height="wrap_content"
                     android:checked="@{model.isTrackerConnected}"
                     android:enabled="@{!model.isTrackerConnected}"
-                    android:onClick="@{(view) -> presenter.onConnectTracks(view)}"
                     android:text="@string/exporter__export_ogt_connected" />
 
                 <TextView
@@ -101,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:checked="@{model.isDriveConnected}"
                     android:enabled="@{!model.isDriveConnected}"
-                    android:onClick="@{(view) -> presenter.onConnectDrive(view)}"
+                    android:onClick="@{(view) -> presenter.onConnectDriveClicked(view)}"
                     android:text="@string/exporter__export_drive_connected" />
 
                 <TextView
@@ -145,7 +144,6 @@
                     android:paddingRight="8dp"
                     android:visibility="@{model.isRunning ? View.VISIBLE : View.GONE}" />
 
-
                 <CheckBox
                     android:id="@+id/exporter__fragment_export_done"
                     android:layout_width="match_parent"
@@ -154,7 +152,7 @@
                     android:enabled="false"
                     android:text="@string/exporter__export_ogt_done" />
 
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </ScrollView>
 
         <Button
@@ -163,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:enabled="@{!model.isRunning &amp;&amp; !model.isFinished}"
-            android:onClick="@{(view) -> presenter.nextStep(model)}"
+            android:onClick="@{(view) -> presenter.onNextStepClicked(model)}"
             android:text="@{!model.isTrackerConnected?@string/exporter__export_button_connect_tracks:!model.isDriveConnected?@string/exporter__export_button_connect_drive:@string/exporter__export_button_start_export}" />
     </RelativeLayout>
 </layout>

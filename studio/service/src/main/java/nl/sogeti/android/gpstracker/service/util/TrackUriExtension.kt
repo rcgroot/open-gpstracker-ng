@@ -41,6 +41,7 @@ import nl.sogeti.android.gpstracker.service.integration.ContentConstants.Waypoin
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.WaypointsColumns.*
 import nl.sogeti.android.gpstracker.utils.contentprovider.*
 import timber.log.Timber
+import java.util.*
 
 /**
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks
@@ -134,7 +135,6 @@ fun waypointUri(trackId: Long, segmentId: Long, waypointId: Long): Uri {
             .build()
 }
 
-
 /**
  * @param trackId
  * @return uri, for example content://nl.sogeti.android.gpstracker.authority/tracks/5/waypoints
@@ -145,6 +145,17 @@ fun waypointsUri(trackId: Long): Uri {
             .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(ContentConstants.Tracks.TRACKS)
             .appendEncodedPath(trackId.toString())
+            .appendPath(WAYPOINTS)
+            .build()
+}
+
+/**
+ * @return uri, for example content://nl.sogeti.android.gpstracker.authority/waypoints
+ */
+fun waypointsUri(): Uri {
+    return BaseConfiguration.appComponent.uriBuilder()
+            .scheme("content")
+            .authority(ServiceConfiguration.serviceComponent.providerAuthority())
             .appendPath(WAYPOINTS)
             .build()
 }
@@ -255,9 +266,15 @@ fun Uri.updateName(name: String) {
 }
 
 fun Uri.readName(): String {
-    return this.runQuery(applicationContentResolver()) {
+    return runQuery(applicationContentResolver()) {
         it.getString(ContentConstants.TracksColumns.NAME)
     } ?: ""
+}
+
+fun Uri.readCreationTime(): Date {
+    return runQuery(applicationContentResolver()) {
+        Date(it.getLong(ContentConstants.TracksColumns.CREATION_TIME) ?: 0L)
+    } ?: Date(0L)
 }
 
 fun Uri.updateCreateMetaData(key: String, value: String) {

@@ -36,7 +36,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableBoolean
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
-import nl.sogeti.android.gpstracker.utils.FragmentResultLambda
+import nl.sogeti.android.gpstracker.utils.activityresult.FragmentResultLambda
 import nl.sogeti.android.gpstracker.v2.sharedwear.util.observe
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentImportTracktypeDialogBinding

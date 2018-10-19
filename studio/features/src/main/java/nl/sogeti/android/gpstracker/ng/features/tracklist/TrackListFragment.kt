@@ -34,14 +34,11 @@ import android.content.Context
 import android.database.CursorWrapper
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.cursoradapter.widget.CursorAdapter
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.appcompat.widget.SearchView
 import android.view.*
 import nl.sogeti.android.gpstracker.ng.features.FeatureConfiguration
 import nl.sogeti.android.gpstracker.service.util.PermissionRequester
-import nl.sogeti.android.gpstracker.utils.ActivityResultLambdaFragment
+import nl.sogeti.android.gpstracker.utils.activityresult.ActivityResultLambdaFragment
 import nl.sogeti.android.opengpstrack.ng.features.R
 import nl.sogeti.android.opengpstrack.ng.features.databinding.FragmentTracklistBinding
 import javax.inject.Inject

@@ -123,12 +123,13 @@ class StatisticsCollector {
         handlerThread.start()
         val handler = Handler(handlerThread.looper)
         unObserveUri()
-        contentObserver = object : ContentObserver(handler) {
+        val contentObserver = object : ContentObserver(handler) {
             override fun onChange(selfChange: Boolean) {
                 sendLatest(trackUri)
             }
         }
         context.contentResolver?.registerContentObserver(trackUri, true, contentObserver)
+        this.contentObserver = contentObserver
     }
 
     private fun unObserveUri() {

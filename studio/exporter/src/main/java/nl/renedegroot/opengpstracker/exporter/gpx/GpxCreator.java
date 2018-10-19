@@ -34,6 +34,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Xml;
 
+import org.jetbrains.annotations.NotNull;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedOutputStream;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import nl.sogeti.android.gpstracker.service.dagger.ServiceConfiguration;
@@ -60,23 +62,26 @@ import timber.log.Timber;
  * @version $Id$
  */
 public class GpxCreator {
+
+    public static final String MIME_TYPE_GPX = "application/gpx+xml";
+
     private static final String NS_SCHEMA = "http://www.w3.org/2001/XMLSchema-instance";
     private static final String NS_GPX_11 = "http://www.topografix.com/GPX/1/1";
     private static final String NS_GPX_10 = "http://www.topografix.com/GPX/1/0";
     private static final String NS_OGT_10 = "http://gpstracker.android.sogeti.nl/GPX/1/0";
-    private static final SimpleDateFormat ZULU_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final SimpleDateFormat ZULU_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 
     static {
         TimeZone utc = TimeZone.getTimeZone("UTC");
         ZULU_DATE_FORMAT.setTimeZone(utc); // ZULU_DATE_FORMAT format ends with Z for UTC so make that true
     }
 
-    private final Context context;
+    private final ContentResolver cntentResolver;
     private final Uri trackUri;
     private String mName = "Untitled";
 
-    public GpxCreator(Context context, Uri trackUri) {
-        this.context = context;
+    public GpxCreator(ContentResolver cntentResolver, Uri trackUri) {
+        this.cntentResolver = cntentResolver;
         this.trackUri = trackUri;
     }
 
@@ -126,10 +131,10 @@ public class GpxCreator {
         serializer.attribute(null, "xmlns", NS_GPX_11);
 
         // <metadata/> Big header of the track
-        serializeTrackHeader(context, serializer, trackUri);
+        serializeTrackHeader(serializer, trackUri);
 
         // Add waypoints with text notes
-        serializeWaypoints(context, serializer, Uri.withAppendedPath(trackUri, "/media"));
+        serializeWaypoints(serializer, Uri.withAppendedPath(trackUri, "/media"));
 
         // <trk/> [0...] Track
         serializer.text("\n");
@@ -148,13 +153,12 @@ public class GpxCreator {
         serializer.endDocument();
     }
 
-    private void serializeTrackHeader(Context context, XmlSerializer serializer, Uri trackUri) throws IOException {
-        ContentResolver resolver = context.getContentResolver();
+    private void serializeTrackHeader(XmlSerializer serializer, Uri trackUri) throws IOException {
         Cursor trackCursor = null;
 
         String databaseName = null;
         try {
-            trackCursor = resolver.query(trackUri, new String[]{Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME}, null,
+            trackCursor = cntentResolver.query(trackUri, new String[]{Tracks._ID, Tracks.NAME, Tracks.CREATION_TIME}, null,
                     null, null);
             if (trackCursor.moveToFirst()) {
                 databaseName = trackCursor.getString(1);
@@ -180,18 +184,17 @@ public class GpxCreator {
         }
     }
 
-    private void serializeWaypoints(Context context, XmlSerializer serializer, Uri media) throws IOException {
+    private void serializeWaypoints(XmlSerializer serializer, Uri media) throws IOException {
         Cursor mediaCursor = null;
         Cursor waypointCursor = null;
-        ContentResolver resolver = context.getContentResolver();
         try {
-            mediaCursor = resolver.query(media, new String[]{Media.URI, Media.TRACK, Media.SEGMENT, Media.WAYPOINT},
+            mediaCursor = cntentResolver.query(media, new String[]{Media.URI, Media.TRACK, Media.SEGMENT, Media.WAYPOINT},
                     null, null, null);
             if (mediaCursor != null && mediaCursor.moveToFirst()) {
                 do {
                     Uri waypointUri = TrackUriExtensionKt.waypointUri(mediaCursor.getLong(1), mediaCursor.getLong(2), mediaCursor
                             .getLong(3));
-                    waypointCursor = resolver.query(waypointUri, new String[]{Waypoints.LATITUDE, Waypoints.LONGITUDE,
+                    waypointCursor = cntentResolver.query(waypointUri, new String[]{Waypoints.LATITUDE, Waypoints.LONGITUDE,
                             Waypoints.ALTITUDE, Waypoints.TIME}, null, null, null);
                     serializer.text("\n");
                     serializer.startTag("", "wpt");
@@ -216,7 +219,7 @@ public class GpxCreator {
                     }
 
                     Uri mediaUri = Uri.parse(mediaCursor.getString(0));
-                    if (mediaUri.getScheme().equals("file")) {
+                    if ("file".equals(mediaUri.getScheme())) {
                         if (mediaUri.getLastPathSegment().endsWith("txt")) {
                             quickTag(serializer, "", "name", mediaUri.getLastPathSegment());
                             serializer.startTag("", "desc");
@@ -235,7 +238,7 @@ public class GpxCreator {
                                 }
                             }
                         }
-                    } else if (mediaUri.getScheme().equals("content")) {
+                    } else if ("content".equals(mediaUri.getScheme())) {
                         if ((ServiceConfiguration.serviceComponent.providerAuthority() + ".string").equals(mediaUri.getAuthority())) {
                             quickTag(serializer, "", "name", mediaUri.getLastPathSegment());
                         }
@@ -257,9 +260,8 @@ public class GpxCreator {
 
     private void serializeSegments(XmlSerializer serializer, Uri segments) throws IOException {
         Cursor segmentCursor = null;
-        ContentResolver resolver = context.getContentResolver();
         try {
-            segmentCursor = resolver.query(segments, new String[]{Segments._ID}, null, null, null);
+            segmentCursor = cntentResolver.query(segments, new String[]{Segments._ID}, null, null, null);
             if (segmentCursor != null && segmentCursor.moveToFirst()) {
                 do {
                     Uri waypoints = Uri.withAppendedPath(segments, segmentCursor.getLong(0) + "/waypoints");
@@ -280,9 +282,8 @@ public class GpxCreator {
 
     private void serializeTrackPoints(XmlSerializer serializer, Uri waypoints) throws IOException {
         Cursor waypointsCursor = null;
-        ContentResolver resolver = context.getContentResolver();
         try {
-            waypointsCursor = resolver.query(waypoints, new String[]{Waypoints.LONGITUDE, Waypoints.LATITUDE,
+            waypointsCursor = cntentResolver.query(waypoints, new String[]{Waypoints.LONGITUDE, Waypoints.LATITUDE,
                     Waypoints.TIME, Waypoints.ALTITUDE, Waypoints._ID, Waypoints.SPEED, Waypoints.ACCURACY,
                     Waypoints.BEARING}, null, null, null);
             if (waypointsCursor != null && waypointsCursor.moveToFirst()) {
@@ -342,5 +343,20 @@ public class GpxCreator {
         serializer.startTag(ns, tag);
         serializer.text(content);
         serializer.endTag(ns, tag);
+    }
+
+    @NotNull
+    public static String fileName(@NotNull Uri track) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault());
+        StringBuffer sb = new StringBuffer();
+        sb.append("track_");
+        sb.append(track.getLastPathSegment());
+        sb.append("_");
+        sb.append(dateFormat.format(TrackUriExtensionKt.readCreationTime(track)));
+        sb.append("_");
+        sb.append(TrackUriExtensionKt.readName(track));
+        sb.append(".gpx");
+
+        return sb.toString();
     }
 }

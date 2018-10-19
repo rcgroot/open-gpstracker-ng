@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.android.gms.location.ActivityRecognitionClient
 import dagger.Module
 import dagger.Provides
-import nl.sogeti.android.gpstracker.ng.features.gpxexport.GpxShareProvider
+import nl.sogeti.android.gpstracker.ng.features.gpxexport.AUTHORITY
 import nl.sogeti.android.gpstracker.ng.features.gpxexport.ShareIntentFactory
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxImportController
 import nl.sogeti.android.gpstracker.ng.features.gpximport.GpxParser
@@ -56,7 +56,7 @@ class FeatureModule(context: Context) {
     @Provides
     @Named("shareProviderAuthority")
     fun shareProviderAuthority(): String {
-        return GpxShareProvider.AUTHORITY
+        return AUTHORITY
     }
 
     @Provides

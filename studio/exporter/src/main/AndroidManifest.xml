@@ -11,7 +11,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="com.google.android.apps.drive.APP_ID"
-                android:value="id=808343543560" />
+                android:value="id=838022395448" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

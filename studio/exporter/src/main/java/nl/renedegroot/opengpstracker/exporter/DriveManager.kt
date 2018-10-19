@@ -18,13 +18,12 @@
 package nl.renedegroot.opengpstracker.exporter
 
 import android.app.Activity
-import android.content.Context
 import android.content.IntentSender
 import android.os.Bundle
-import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.drive.Drive
+import nl.sogeti.android.gpstracker.utils.activityresult.ActivityResultHandlerRegistry
 import timber.log.Timber
 
 private const val REQUEST_CODE_RESOLUTION = 1
@@ -33,52 +32,32 @@ private const val REQUEST_CODE_ERROR = 2
 /**
  * Communicates with the Google Drive
  */
-internal class DriveManager(val context: Context) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+internal class DriveManager(val activity: Activity) {
 
-    var driveClient: GoogleApiClient? = null
-        private set
-    private var onConnected: (Boolean) -> Unit = {}
-
-    fun start(onConnected: (Boolean) -> Unit = {}) {
-        this.onConnected = onConnected
-        if (driveClient == null) {
-            driveClient = GoogleApiClient.Builder(context.applicationContext)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build()
+    private var driveClient: GoogleApiClient? = null
+    private var onConnected: (GoogleApiClient?) -> Unit = {}
+    private val connectionCallback = object : GoogleApiClient.ConnectionCallbacks {
+        override fun onConnected(result: Bundle?) {
+            Timber.d("onConnectionFailed $result")
+            onConnected(driveClient)
+            onConnected = {}
         }
-        driveClient?.connect()
-    }
 
-    fun processResult(requestCode: Int, resultCode: Int): Boolean {
-        if (requestCode == REQUEST_CODE_RESOLUTION) {
-            if (resultCode == Activity.RESULT_OK) {
-                driveClient?.connect()
-            }
-            return true
+        override fun onConnectionSuspended(value: Int) {
+            Timber.d("onConnectionSuspended $value")
         }
-        return false
     }
-
-    fun stop() {
-        onConnected = {}
-        driveClient?.disconnect()
-    }
-
-    override fun onConnected(result: Bundle?) {
-        Timber.d("onConnectionFailed $result")
-        onConnected(true)
-        onConnected = {}
-    }
-
-    override fun onConnectionFailed(result: ConnectionResult) {
+    private val connectionFailed = GoogleApiClient.OnConnectionFailedListener { result ->
         Timber.d("onConnectionFailed $result")
         if (result.hasResolution()) {
             try {
+                (activity as ActivityResultHandlerRegistry)
+                        .registerActivityResult(REQUEST_CODE_RESOLUTION) { resultCode, _ ->
+                            processResult(resultCode)
+                        }
                 result.startResolutionForResult(activity, REQUEST_CODE_RESOLUTION)
             } catch (exception: IntentSender.SendIntentException) {
-                onConnected(false)
+                onConnected(null)
                 onConnected = {}
             }
 
@@ -86,12 +65,35 @@ internal class DriveManager(val context: Context) : GoogleApiClient.ConnectionCa
             GoogleApiAvailability
                     .getInstance()
                     .getErrorDialog(activity, result.errorCode, REQUEST_CODE_ERROR).show()
-            onConnected(false)
+            onConnected(null)
             onConnected = {}
         }
     }
 
-    override fun onConnectionSuspended(value: Int) {
-        Timber.d("onConnectionSuspended $value")
+    fun start(onConnected: (GoogleApiClient?) -> Unit = {}) {
+        this.onConnected = onConnected
+        if (driveClient == null) {
+            driveClient = GoogleApiClient.Builder(activity.applicationContext)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(connectionCallback)
+                    .addOnConnectionFailedListener(connectionFailed)
+                    .build()
+        }
+        driveClient?.connect()
+    }
+
+    private fun processResult(resultCode: Int) {
+        if (resultCode == Activity.RESULT_OK) {
+            Timber.d("Problem resolved")
+            driveClient?.connect()
+        } else {
+            Timber.d("Problem remains")
+        }
+    }
+
+    fun stop() {
+        onConnected = {}
+        driveClient?.disconnect()
     }
 }

@@ -35,25 +35,25 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import nl.renedegroot.opengpstracker.exporter.gpx.GpxCreator
+import nl.renedegroot.opengpstracker.exporter.gpx.GpxCreator.MIME_TYPE_GPX
 import nl.sogeti.android.gpstracker.ng.base.BuildConfig
-import nl.sogeti.android.gpstracker.ng.features.gpxexport.tasks.GpxCreator
 import nl.sogeti.android.gpstracker.service.util.trackUri
 import timber.log.Timber
 import java.io.FileOutputStream
 
+const val MIME_TYPE_GENERAL = "application/octet-stream"
+const val AUTHORITY = BuildConfig.APPLICATION_ID + ".gpxshareprovider"
+
+private const val TRACK_ID = 1
+
 class GpxShareProvider : ContentProvider() {
 
-    companion object {
-        const val MIME_TYPE_GPX = "application/gpx+xml"
-        const val MIME_TYPE_GENERAL = "application/octet-stream"
-        val AUTHORITY = BuildConfig.APPLICATION_ID + ".gpxshareprovider"
-        val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-        private val TRACK_ID = 1
+    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
-        init {
-            uriMatcher.addURI(AUTHORITY, "tracks/#", TRACK_ID)
-        }
-
+    init {
+        uriMatcher.addURI(AUTHORITY, "tracks/#", TRACK_ID)
+        uriMatcher.addURI(AUTHORITY, "tracks/#/*", TRACK_ID)
     }
 
     override fun onCreate(): Boolean {
@@ -73,11 +73,12 @@ class GpxShareProvider : ContentProvider() {
     override fun openFile(uri: Uri?, mode: String?): ParcelFileDescriptor? {
         var file: ParcelFileDescriptor? = null
         val match = uriMatcher.match(uri)
-        if (match == TRACK_ID) {
+        if (uri != null && match == TRACK_ID) {
             file = openPipeHelper(uri, MIME_TYPE_GPX, null, null) { output, shareUri, _, _, _ ->
                 val outputStream = FileOutputStream(output.fileDescriptor)
-                val trackUri = trackUri(shareUri.lastPathSegment.toLong())
-                val gpxCreator = GpxCreator(context, trackUri)
+                val trackId = shareUri.pathSegments[1].toLong()
+                val trackUri = trackUri(trackId)
+                val gpxCreator = GpxCreator(context!!.contentResolver, trackUri)
                 gpxCreator.createGpx(outputStream)
             }
         }

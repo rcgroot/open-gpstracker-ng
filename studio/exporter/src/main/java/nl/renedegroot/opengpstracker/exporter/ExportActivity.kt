@@ -15,21 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package nl.renedegroot.opengpstracker.exporter
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import nl.sogeti.android.gpstracker.service.util.PermissionRequester
+import nl.sogeti.android.gpstracker.utils.activityresult.ActivityResultHandlerRegistry
+import nl.sogeti.android.gpstracker.utils.activityresult.DefaultActivityResultHandlerRegistry
 
-/**
- * Owns the export model and communicated the the Android system regarding
- * permissions.
- */
-class ExportActivity : AppCompatActivity() {
-
-    private val permissionRequestor = PermissionRequester()
+class ExportActivity : AppCompatActivity(),
+        ActivityResultHandlerRegistry by DefaultActivityResultHandlerRegistry() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +36,8 @@ class ExportActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        onRegisteredActivityResult(requestCode, resultCode, data)
+
         super.onActivityResult(requestCode, resultCode, data)
-        driveManager.processResult(requestCode, resultCode)
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        permissionRequestor.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
 }

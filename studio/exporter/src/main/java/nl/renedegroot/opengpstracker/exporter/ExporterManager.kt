@@ -18,16 +18,17 @@
 
 package nl.renedegroot.opengpstracker.exporter
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.GoogleApiClient
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants
 import nl.sogeti.android.gpstracker.service.integration.ContentConstants.CONTENT_URI
-import timber.log.Timber
-import java.util.*
+import nl.sogeti.android.gpstracker.service.util.waypointsUri
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -35,71 +36,50 @@ import java.util.concurrent.TimeUnit
 /**
  * Manager the exporting process
  */
-internal class ExporterManager(private val context: Context) {
-    private val listeners = HashSet<ProgressListener>()
+internal class ExporterManager(private val contentResolver: ContentResolver) : DriveUploadTask.Callback {
+
     private val NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     private val executor = ThreadPoolExecutor(1, NUMBER_OF_CORES, 10, TimeUnit.SECONDS, LinkedBlockingDeque())
     private var shouldStop = false
     private val waypointProgressPerTrack = mutableMapOf<Uri, Int>()
     private val completedTracks = mutableSetOf<Uri>()
-    private val progressListener = InnerProgressListener()
+
+    val state = MutableLiveData<ExportState>()
+
+    init {
+        state.postValue(ExportState.Idle)
+    }
+
+    sealed class ExportState {
+        object Idle : ExportState()
+        class Active(val completedTracks: Int, val totalTracks: Int, val completedWaypoints: Int, val totalWaypoints: Int) : ExportState()
+        class Finished(val completedTracks: Int, val completedWaypoints: Int) : ExportState()
+        class Error(@StringRes val message: Int) : ExportState()
+    }
 
     fun startExport(driveApi: GoogleApiClient) {
         shouldStop = false
-        val resolver = context.contentResolver
         var tracks: Cursor? = null
         var waypoints: Cursor? = null
         try {
-            tracks = resolver.query(CONTENT_URI, arrayOf(ContentConstants.Tracks._ID), null, null, null)
-            waypoints = resolver.query(ContentConstants.Waypoints.CONTENT_URI, arrayOf(Waypoints._ID), null, null, null)
-            if (tracks?.moveToFirst() ?: false && waypoints?.moveToFirst() ?: false) {
-                setTotalTrack(tracks.count)
-                setTotalWaypoints(waypoints.count)
+            tracks = contentResolver.query(CONTENT_URI, arrayOf(ContentConstants.Tracks._ID), null, null, null)
+            waypoints = contentResolver.query(waypointsUri(), arrayOf(ContentConstants.Waypoints._ID), null, null, null)
+            if (tracks?.moveToFirst() == true && waypoints?.moveToFirst() == true) {
+                state.postValue(ExportState.Active(0, tracks.count, 0, waypoints.count))
                 do {
                     val id = tracks.getLong(0);
                     val trackUri = ContentUris.withAppendedId(CONTENT_URI, id);
-                    waypointProgressPerTrack.put(trackUri, 0)
-                    val creator = DriveUploadTask(context, trackUri, progressListener, driveApi)
+                    waypointProgressPerTrack[trackUri] = 0
+                    val creator = DriveUploadTask(contentResolver, trackUri, this, driveApi)
                     creator.executeOn(executor)
 
                 } while (tracks.moveToNext() && !shouldStop)
             } else {
-                progressListener.showError("Finding tracks", context.getString(R.string.error_tracks_not_found), null);
+                state.postValue(ExportState.Error(R.string.exporter__error_tracks_not_found))
             }
         } finally {
             tracks?.close()
             waypoints?.close()
-        }
-    }
-
-    private fun setTotalWaypoints(count: Int) {
-        listeners.forEach { it.updateExportProgress(totalWaypoints = count) }
-    }
-
-    private fun setTotalTrack(count: Int) {
-        listeners.forEach { it.updateExportProgress(totalTracks = count) }
-    }
-
-    private fun updateProgress() {
-        val completedTracks = completedTracks.size
-        val completedWaypoints = waypointProgressPerTrack.values.sum()
-        listeners.forEach {
-            it.updateExportProgress(
-                    isRunning = true,
-                    completedTracks = completedTracks,
-                    completedWaypoints = completedWaypoints)
-        }
-    }
-
-    private fun finished() {
-        val completedTracks = completedTracks.size
-        val completedWaypoints = waypointProgressPerTrack.values.sum()
-        listeners.forEach {
-            it.updateExportProgress(
-                    isRunning = false,
-                    isFinished = true,
-                    completedTracks = completedTracks,
-                    completedWaypoints = completedWaypoints)
         }
     }
 
@@ -108,44 +88,28 @@ internal class ExporterManager(private val context: Context) {
         executor.queue.clear()
     }
 
-    fun addListener(listener: ProgressListener) {
-        listeners.add(listener)
+    override fun onError(message: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun removeListener(listener: ProgressListener) {
-        listeners.remove(listener)
+    override fun onCancel() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    interface ProgressListener {
-
-        fun updateExportProgress(isRunning: Boolean? = true, isFinished: Boolean? = false, completedTracks: Int? = null, totalTracks: Int? = null, completedWaypoints: Int? = null, totalWaypoints: Int? = null)
+    override fun onFinished(trackUri: Uri) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    class InnerProgressListener : ProgressListener {
-        override fun started(source: Uri?) {
-            Timber.d("Started $source")
-        }
 
-        override fun setProgress(source: Uri?, value: Int) {
-            if (source != null) {
-                waypointProgressPerTrack.put(source, value)
-            }
-        }
+    private fun updateProgress(active: ExportState.Active) {
+        val completedTracks = completedTracks.size
+        val completedWaypoints = waypointProgressPerTrack.values.sum()
+        state.postValue(ExportState.Active(completedTracks, active.totalTracks, completedWaypoints, active.totalWaypoints))
+    }
 
-        override fun finished(source: Uri?, result: Uri?) {
-            Timber.d("Finished $source")
-            if (source != null) {
-                completedTracks.add(source)
-                if (completedTracks.size == waypointProgressPerTrack.size) {
-                    finished()
-                } else {
-                    updateProgress()
-                }
-            }
-        }
-
-        override fun showError(task: String?, errorMessage: String?, exception: Exception?) {
-            Toast.makeText(context, "$task failed $errorMessage", Toast.LENGTH_SHORT).show()
-        }
+    private fun finished() {
+        val completedTracks = completedTracks.size
+        val completedWaypoints = waypointProgressPerTrack.values.sum()
+        state.postValue(ExportState.Finished(completedTracks, completedWaypoints))
     }
 }

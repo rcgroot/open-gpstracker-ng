@@ -18,32 +18,51 @@
 
 package nl.renedegroot.opengpstracker.exporter
 
-import android.content.Context
+import android.content.ContentResolver
 import android.net.Uri
-import android.os.AsyncTask
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.Result
 import com.google.android.gms.drive.*
 import com.google.android.gms.drive.query.Filters
 import com.google.android.gms.drive.query.Query
 import com.google.android.gms.drive.query.SearchableField
 import nl.renedegroot.opengpstracker.exporter.gpx.GpxCreator
 import timber.log.Timber
+import java.util.concurrent.ThreadPoolExecutor
+
+private const val FOLDER_NAME = "Open GPS Tracker - Exports"
+private const val FOLDER_MIME = "application/vnd.google-apps.folder"
 
 /**
  * Async task that uses the GpxCreate URI to Stream capability to fill a Google Drive file with said stream
  */
 internal class DriveUploadTask(
-        context: Context,
-        trackUri: Uri,
-        private val listener: ExporterManager.ProgressListener,
-        private val driveApi: GoogleApiClient) : AsyncTask<Void, Void, Uri>() {
+        cntentResolver: ContentResolver,
+        val trackUri: Uri,
+        private val callback: DriveUploadTask.Callback,
+        private val driveApi: GoogleApiClient) {
 
-    private val TASK = "Drive upload"
-    private val FOLDER_NAME = "Open GPS Tracker - Exports"
-    private val FOLDER_MIME = "application/vnd.google-apps.folder"
-    private val gpxCreator = GpxCreator(context, trackUri)
+    private val gpxCreator = GpxCreator(cntentResolver, trackUri)
+    private var isCancelled: Boolean = false
+    private val filename: String by lazy { GpxCreator.fileName(trackUri) }
 
-    override fun doInBackground(vararg params: Void): Uri? {
+
+    fun executeOn(executor: ThreadPoolExecutor) {
+        executor.execute {
+            doInBackground()
+            if (!isCancelled) {
+                callback.onFinished(trackUri)
+            }
+        }
+    }
+
+    fun cancel() {
+        isCancelled = true
+        callback.onCancel()
+
+    }
+
+    private fun doInBackground() {
         Timber.d("Looking for export folder")
         val rootFolder = Drive.DriveApi.getRootFolder(driveApi);
         val query = Query.Builder()
@@ -54,27 +73,27 @@ internal class DriveUploadTask(
         processResult(rootListResult)
         Timber.d("Searched for export folder $rootListResult")
         if (isCancelled) {
-            return null
+            return
         }
 
         val exportFolder: DriveFolder
-        var gpxListResult: DriveApi.MetadataBufferResult?
+        val gpxListResult: DriveApi.MetadataBufferResult?
         if (rootListResult?.metadataBuffer?.count ?: 0 > 0) {
             Timber.d("Found export folder")
             val folderId = rootListResult?.metadataBuffer?.get(0)?.driveId
-            exportFolder = folderId.asDriveFolder()
+            exportFolder = folderId?.asDriveFolder()!!
             Timber.d("Have export folder $exportFolder")
 
             Timber.d("Looking for GPX file")
             val fileQuery = Query.Builder()
                     .addFilter(Filters.eq(SearchableField.TITLE, filename))
-                    .addFilter(Filters.eq(SearchableField.MIME_TYPE, mimeType))
+                    .addFilter(Filters.eq(SearchableField.MIME_TYPE, GpxCreator.MIME_TYPE_GPX))
                     .build()
             gpxListResult = exportFolder.queryChildren(driveApi, fileQuery).await()
             processResult(gpxListResult)
             Timber.d("Searched for GPX file $gpxListResult")
             if (isCancelled) {
-                return null
+                return
             }
         } else {
             gpxListResult = null
@@ -85,7 +104,7 @@ internal class DriveUploadTask(
             val createFolderResult = rootFolder?.createFolder(driveApi, metadata)?.await()
             processResult(createFolderResult)
             if (isCancelled) {
-                return null
+                return
             }
             exportFolder = createFolderResult!!.driveFolder
             Timber.d("Created export folder $exportFolder")
@@ -98,23 +117,23 @@ internal class DriveUploadTask(
             val driveContentsResult = Drive.DriveApi.newDriveContents(driveApi).await();
             processResult(driveContentsResult)
             if (isCancelled) {
-                return null
+                return
             }
 //            super.exportGpx(driveContentsResult.driveContents.outputStream)
             gpxCreator.createGpx(driveContentsResult.driveContents.outputStream)
             if (isCancelled) {
-                return null
+                return
             }
             Timber.d("Created GPX content $driveContentsResult")
             Timber.d("Creating GPX file")
             val metadata = MetadataChangeSet.Builder()
                     .setTitle(filename)
-                    .setMimeType(mimeType)
-                    .build();
+                    .setMimeType(GpxCreator.MIME_TYPE_GPX)
+                    .build()
             val fileResult = exportFolder.createFile(driveApi, metadata, driveContentsResult.driveContents).await();
             processResult(fileResult)
             if (isCancelled) {
-                return null
+                return
             }
             Timber.d("Creating GPX file $fileResult")
         } else {
@@ -130,20 +149,27 @@ internal class DriveUploadTask(
             val writeResult = openFile.driveContents.commit(driveApi, null).await()
             processResult(writeResult)
             if (isCancelled) {
-                return null
+                return
             }
             Timber.d("Overwriten GPX content $writeResult")
         }
 
-        return null
+        return
     }
 
-    internal fun processResult(result: Result): Boolean {
-        val isSuccess = result.status.isSuccess
+    internal fun processResult(result: Result?): Boolean {
+        val isSuccess = result != null && result.status.isSuccess
         if (!isSuccess) {
-            handleError(TASK, null, result.status.statusMessage)
+            isCancelled = true
+            callback.onError(result?.status?.statusMessage ?: "Missing error description")
         }
 
-        return isSuccess;
+        return isSuccess
+    }
+
+    interface Callback {
+        fun onError(message: String)
+        fun onCancel()
+        fun onFinished(trackUri: Uri)
     }
 }

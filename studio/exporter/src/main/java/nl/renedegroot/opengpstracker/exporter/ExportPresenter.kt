@@ -18,91 +18,96 @@
 
 package nl.renedegroot.opengpstracker.exporter
 
+import android.content.ContentResolver
 import android.view.View
 import android.widget.CheckBox
-import androidx.lifecycle.ViewModel
-import timber.log.Timber
+import androidx.lifecycle.*
+import com.google.android.gms.common.api.GoogleApiClient
+import nl.sogeti.android.gpstracker.utils.Consumable
 
-internal class ExportPresenter(
-        private val driveManager: DriveManager,
-        private val exporterManager: ExporterManager) : ViewModel(), ExporterManager.ProgressListener {
+internal class ExportPresenter(private val exporterManager: ExporterManager) : ViewModel() {
 
-    internal val model = ExportModel()
+    private val _navigation = MutableLiveData<Consumable<ExportNavigation>>()
+    internal val navigation: LiveData<Consumable<ExportNavigation>>
+        get() = _navigation
+    internal val viewModel = ExportViewModel()
+    private var driveClient: GoogleApiClient? = null
+    private val exportObserver = Observer<ExporterManager.ExportState> {
+        onExportUpdate(it)
+    }
 
     init {
-        connectToServices()
-        exporterManager.addListener(this)
+        exporterManager.state.observeForever(exportObserver)
     }
 
     override fun onCleared() {
-        driveManager.stop()
         exporterManager.stopExport()
-        exporterManager.removeListener(this)
+        exporterManager.state.removeObserver(exportObserver)
         super.onCleared()
     }
 
-    fun connectToServices() {
-        model.isTrackerConnected.set(true)
-        driveManager.start { isConnected ->
-            model.isDriveConnected.set(isConnected)
-            if (isConnected) {
-                Timber.d("Everything is connected")
-            } else {
-                Timber.d("Drive failed")
+    private fun onExportUpdate(state: ExporterManager.ExportState?) = when (state) {
+        null, ExporterManager.ExportState.Idle -> {
+            viewModel.isRunning.set(false)
+            viewModel.isFinished.set(false)
+        }
+        is ExporterManager.ExportState.Active -> {
+            viewModel.isRunning.set(true)
+            viewModel.isFinished.set(false)
+            viewModel.completedTracks.set(state.completedTracks)
+            viewModel.completedWaypoints.set(state.completedWaypoints)
+            viewModel.totalTracks.set(state.totalTracks)
+            viewModel.totalWaypoints.set(state.totalWaypoints)
+        }
+        is ExporterManager.ExportState.Finished -> {
+            viewModel.isRunning.set(false)
+            viewModel.isFinished.set(true)
+            viewModel.completedTracks.set(state.completedTracks)
+            viewModel.completedWaypoints.set(state.completedWaypoints)
+        }
+        is ExporterManager.ExportState.Error -> {
+            viewModel.isRunning.set(false)
+            viewModel.isFinished.set(true)
+        }
+    }
+
+
+    fun onConnectDriveClicked(view: View) {
+        if (view is CheckBox) {
+            view.isChecked = false
+        }
+        connectToDrive()
+    }
+
+    private fun connectToDrive() {
+        _navigation.postValue(Consumable(ExportNavigation.ConnectDrive))
+    }
+
+    fun onDriveConnected(client: GoogleApiClient?) {
+        val connected = client == null
+        viewModel.isDriveConnected.set(connected)
+        driveClient = client
+    }
+
+    fun onNextStepClicked(model: ExportViewModel) {
+        if (!model.isDriveConnected.get()) {
+            connectToDrive()
+        } else {
+            driveClient?.let {
+                exporterManager.startExport(it)
             }
         }
     }
 
-    fun connectGoogleDrive() {
-        driveManager.start { isConnected ->
-            model.isDriveConnected.set(isConnected)
+    internal class Factory(val contentResolver: ContentResolver): ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val exporterManager = ExporterManager(contentResolver)
+            @Suppress("UNCHECKED_CAST")
+            return ExportPresenter(exporterManager) as T
         }
     }
+}
 
-    fun connectTracksDatabase() {
-        model.isTrackerConnected.set(true)
-    }
-
-    override fun updateExportProgress(isRunning: Boolean?, isFinished: Boolean?, completedTracks: Int?, totalTracks: Int?, completedWaypoints: Int?, totalWaypoints: Int?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    fun startTracksConnect() {
-        connectTracksDatabase()
-    }
-
-    fun startDriveConnect() {
-        connectGoogleDrive()
-    }
-
-    fun startExport() {
-        val client = driveManager.driveClient;
-        if (client != null) {
-            exporterManager.startExport(client)
-        }
-    }
-
-    fun onConnectDrive(view: View) {
-        if (view is CheckBox) {
-            view.isChecked = false
-        }
-        startDriveConnect()
-    }
-
-    fun onConnectTracks(view: View) {
-        if (view is CheckBox) {
-            view.isChecked = false
-        }
-        startTracksConnect()
-    }
-
-    fun nextStep(model: ExportModel) {
-        if (!model.isTrackerConnected.get()) {
-            startTracksConnect()
-        } else if (!model.isDriveConnected.get()) {
-            startDriveConnect()
-        } else {
-            startExport()
-        }
-    }
+sealed class ExportNavigation {
+    object ConnectDrive : ExportNavigation()
 }

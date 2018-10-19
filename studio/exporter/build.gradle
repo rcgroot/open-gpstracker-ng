@@ -50,6 +50,8 @@ dependencies {
     implementation libraries.android.appcompat
     implementation libraries.android.lifecycle_viewmodel
     implementation libraries.android.lifecycle_extensions
+    implementation libraries.android.coordinatorlayout
+    implementation libraries.android.material
     implementation libraries.square.timber
     implementation libraries.google.play_services_drive
 

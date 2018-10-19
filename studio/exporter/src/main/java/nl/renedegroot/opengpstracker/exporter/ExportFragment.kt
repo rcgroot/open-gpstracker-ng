@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import nl.renedegroot.opengpstracker.exporter.databinding.ExporterFragmentExportBinding
 
@@ -31,21 +32,36 @@ import nl.renedegroot.opengpstracker.exporter.databinding.ExporterFragmentExport
  */
 class ExportFragment : Fragment() {
 
+    private var driveManager: DriveManager? = null
     private lateinit var presenter: ExportPresenter
     private var binding: ExporterFragmentExportBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = ViewModelProviders.of(this).get(ExportPresenter::class.java)
+        driveManager = DriveManager(activity!!)
+        val contentResolver = context!!.applicationContext.contentResolver
+        presenter = ViewModelProviders.of(this, ExportPresenter.Factory(contentResolver)).get(ExportPresenter::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val createdBinding = DataBindingUtil.inflate<ExporterFragmentExportBinding>(inflater, R.layout.exporter__fragment_export, container, false)
         createdBinding.presenter = presenter
-        createdBinding.model = presenter.model
+        createdBinding.model = presenter.viewModel
         binding = createdBinding
+        presenter.navigation.observe(this, Observer { consumable ->
+            consumable.consume { value -> navigate(value) }
+        })
 
         return createdBinding.root
+    }
+
+    private fun navigate(navigation: ExportNavigation) = when (navigation) {
+        ExportNavigation.ConnectDrive -> driveManager?.start { presenter.onDriveConnected(it) }
+    }
+
+    override fun onDestroy() {
+        driveManager = null
+        super.onDestroy()
     }
 }
